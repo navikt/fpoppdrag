@@ -1,0 +1,616 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+    <artifactId>fpoppdrag</artifactId>
+    <version>${revision}${sha1}${changelist}</version>
+    <packaging>pom</packaging>
+    <name>FP Oppdrag :: Root</name>
+
+    <modules>
+        <module>domene</module>
+        <module>domenetjenester</module>
+        <module>web</module>
+        <module>kodeverk</module>
+        <module>migreringer</module>
+    </modules>
+
+    <properties>
+        <revision>1.0</revision>
+        <sha1></sha1>
+        <changelist>-SNAPSHOT</changelist>
+        <java.version>10</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- Felles avhengigheter i prosjektet Disse skal ALLTID være en
+            RELEASE-avhengighet UNNTAK: feature-brancher og lokalt -->
+        <felles.version>1.1.0_20190320153313_e079c6a</felles.version>
+        <vl-fpoppdrag-integrasjon.version>1.0_20190307170717_6420aad</vl-fpoppdrag-integrasjon.version>
+
+        <!-- Kontrakter -->
+        <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e </fpoppdrag-kontrakt.version>
+        <foreldrepenger-kontrakter.version>5.0_201904100151808_88fce8d</foreldrepenger-kontrakter.version>
+
+        <!-- NAV -->
+
+        <!-- Eksterne -->
+        <assertj.version>3.7.0</assertj.version>
+
+        <cxf.version>3.2.6</cxf.version>
+        <woodstox.version>5.1.0</woodstox.version>
+        <surefire.version>2.21.0</surefire.version>
+        <asm.version>6.2.1</asm.version>
+        <metrics.version>3.2.5</metrics.version>
+
+        <geronimo.jaspi.version>2.0.0</geronimo.jaspi.version>
+        <geronimo.osgi.version>1.1</geronimo.osgi.version>
+        <hamcrest.version>1.3</hamcrest.version>
+        <jandex.version>2.0.4.Final</jandex.version>
+        <junit.version>5.2.0</junit.version>
+        <logstash.version>4.10</logstash.version>
+        <mockito.version>2.12.0</mockito.version>
+        <swagger.version>1.5.17</swagger.version>
+
+        <!-- Transitive avh. versjoner for å sikre unikhet (enforcer dependencyConvergence).
+            Skal ikke benyttes direkte av vår egen kode. -->
+        <apache.ws.xmlschema.version>2.2.2</apache.ws.xmlschema.version>
+        <joda-time.version>2.9.9</joda-time.version>
+        <javaslang.version>2.0.6</javaslang.version>
+        <plexus.version>3.0.8</plexus.version>
+
+        <!-- Transitive avh. versjoner for å sikre unikhet (enforcer dependencyConvergence). Skal ikke benyttes direkte av vår egen kode. -->
+        <jasypt.version>1.9.2</jasypt.version>
+        <javaslang.version>2.0.6</javaslang.version>
+
+        <joda-time.version>2.9.9</joda-time.version>
+        <ow2.asm.version>6.2</ow2.asm.version>
+        <swagger.spec-parser.version>1.0.28</swagger.spec-parser.version>
+
+        <owaspencoder.version>1.2.1</owaspencoder.version>
+
+        <!-- Dupliserte properties fra vl-felles. Pass på å oppdatere begge steder. Disse trengs for definisjon av videre plugins -->
+        <!-- <flyway.version>5.1.4</flyway.version> FIXME: støtter ikke oracle 11, se på hva som skal til for å kjøre på 12 -->
+        <flyway.version>4.2.0</flyway.version>
+        <ojdbc.version>12.2.0.1</ojdbc.version>
+        <abac-attribute-constants.version>2.0.0</abac-attribute-constants.version>
+
+        <jetty.version>9.4.12.v20180830</jetty.version>
+
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+                <artifactId>kodeverk</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+                <artifactId>migreringer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.oppdrag.domene</groupId>
+                <artifactId>oppdragslager</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.oppdrag.domene</groupId>
+                <artifactId>feed</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+                <artifactId>domenetjenester-organisasjon</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+                <artifactId>domenetjenester-person</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+                <artifactId>domenetjenester-simulering</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+                <artifactId>domenetjenester-iverksett</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Intern Test -->
+            <dependency>
+                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+                <artifactId>migreringer</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Felles -->
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles</groupId>
+                <artifactId>felles</artifactId>
+                <version>${felles.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles</groupId>
+                <artifactId>felles-prosesstask</artifactId>
+                <version>${felles.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles</groupId>
+                <artifactId>felles-prosesstask</artifactId>
+                <version>${felles.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles</groupId>
+                <artifactId>felles-util</artifactId>
+                <version>${felles.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+                <artifactId>felles-integrasjon-pom</artifactId>
+                <version>${felles.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+                <artifactId>felles-integrasjon-bom</artifactId>
+                <version>${felles.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>2.2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+                <artifactId>oppdrag-klient</artifactId>
+                <version>${vl-fpoppdrag-integrasjon.version}</version>
+            </dependency>
+
+            <!-- Kontrakter -->
+            <dependency>
+                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+                <artifactId>fpoppdrag-kontrakt-pom</artifactId>
+                <version>${fpoppdrag-kontrakt.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+                <artifactId>fpoppdrag-v1</artifactId>
+                <version>${fpoppdrag-kontrakt.version}</version>
+                <classifier>jaxb</classifier>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+                <artifactId>okonomistotte-v1</artifactId>
+                <version>${fpoppdrag-kontrakt.version}</version>
+                <classifier>jaxb</classifier>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+                <artifactId>foreldrepenger-kontrakter-root</artifactId>
+                <version>${foreldrepenger-kontrakter.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+                <artifactId>fp-tilkjent-ytelse-v1</artifactId>
+                <version>${foreldrepenger-kontrakter.version}</version>
+            </dependency>
+
+            <!-- Annet -->
+            <dependency>
+                <groupId>javax.jws</groupId>
+                <artifactId>jsr181-api</artifactId>
+                <version>1.0-MR1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-servlets</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-healthchecks</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-annotation</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.owasp.encoder</groupId>
+                <artifactId>encoder</artifactId>
+                <version>${owaspencoder.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.swagger2markup</groupId>
+                <artifactId>markup-document-builder</artifactId>
+                <version>1.1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>${logstash.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.papertrailapp</groupId>
+                <artifactId>logback-syslog4j</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+
+            <!-- Java 10 -->
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>2.4.0-b180830.0438</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.ws</groupId>
+                <artifactId>jaxws-api</artifactId>
+                <version>2.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jvnet.mimepull</groupId>
+                <artifactId>mimepull</artifactId>
+                <version>1.9.10</version>
+            </dependency>
+
+            <!-- sikrer samme versjon - siden felles-biblioteker mikser -->
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-core</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-tree</artifactId>
+                <version>${ow2.asm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-analysis</artifactId>
+                <version>${ow2.asm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-compat-spec-parser</artifactId>
+                <version>1.0.28</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.ehcache</groupId>
+                <artifactId>ehcache</artifactId>
+                <version>2.10.6</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.ws</groupId>
+            <artifactId>jaxws-api</artifactId>
+        </dependency>
+
+        <!-- Test deps som blir brukt flere steder -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>buildnumber-maven-plugin</artifactId>
+                    <version>1.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.0.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>1.4.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.6.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-remote-resources-plugin</artifactId>
+                    <version>1.5</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <version>1.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>1.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.2</version>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration>
+                    <flattenMode>bom</flattenMode>
+                    <flattenedPomFilename>.flattened</flattenedPomFilename>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[10,)</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[3.5.3,)</version>
+                                </requireMavenVersion>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>commons-logging:commons-logging</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                                <dependencyConvergence/>
+                                <!-- Ikke kommenter inn denne. Det brekker
+                                    muligheten til å bygge bare deler av prosjektet https://issues.apache.org/jira/browse/MENFORCER-189
+                                    -> "ReactorModuleConvergence is not compatible with 'advanced' reactor options:
+                                    -pl, -rf" <reactorModuleConvergence /> -->
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>runSonar</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <!-- maven.root bør overstyres fra cmdline -->
+                <maven.root>${project.basedir}</maven.root>
+
+                <sonar.language/>
+                <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+                <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+                <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
+                <sonar.java.source>10</sonar.java.source>
+                <sonar.sources>.</sonar.sources>
+                <sonar.inclusions>src/main/java/**,src/client/**</sonar.inclusions>
+                <sonar.exclusions>
+                    **/test/**,
+                    **/testutilities/**,
+                    **/fitnesse/**,
+                    **/swagger/**,
+                    **/node_modules/**,
+                    **/node/**,
+                    **/coverage/**,
+                    **/_scripts/*,
+                    **/webpack.*,
+                    **/eslint/*,
+                    **/bin/**,
+                    **/target/**,
+                    **/*.spec.jsx,
+                    **/*.spec.js,
+                    **/test-helpers/**,
+                    **/app/kodeverk/**,
+                    **/jetty/**
+                </sonar.exclusions>
+                <sonar.coverage.exclusions>${sonar.exclusions}</sonar.coverage.exclusions>
+                <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+                <sonar.jacoco.reportPaths>${maven.root}/target/jacoco.exec</sonar.jacoco.reportPaths>
+                <sonar.javascript.file.suffixes>.js,.jsx</sonar.javascript.file.suffixes>
+                <sonar.leak.period>previous_analysis</sonar.leak.period>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                                <configuration>
+                                    <propertyName>jacoco.agent.argLine</propertyName>
+                                    <destFile>${sonar.jacoco.reportPaths}</destFile>
+                                    <append>true</append>
+                                    <excludes>${sonar.coverage.exclusions}</excludes>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>agent-it</id>
+                                <goals>
+                                    <goal>prepare-agent-integration</goal>
+                                </goals>
+                                <configuration>
+                                    <propertyName>jacoco.agent.argLine</propertyName>
+                                    <destFile>${sonar.jacoco.reportPaths}</destFile>
+                                    <append>true</append>
+                                    <excludes>${sonar.coverage.exclusions}</excludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <useFile>true</useFile>
+                            <argLine>${jacoco.agent.argLine} -Xms256m -Dfile.encoding=UTF-8 -Dlog.level.no.nav=WARN
+                            </argLine>
+                        </configuration>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+
+
+    </profiles>
+
+    <scm>
+        <connection>scm:git:ssh://git@stash.devillo.no:7999/vedfp/vl-fpoppdrag.git</connection>
+        <developerConnection>scm:git:ssh://git@stash.devillo.no:7999/vedfp/vl-fpoppdrag.git
+        </developerConnection>
+        <url>http://stash.devillo.no/projects/VEDFP/repos/vl-fpoppdrag/browse</url>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>m2internal</id>
+            <name>NAV Maven2 Internal Repository</name>
+            <url>http://maven.adeo.no/nexus/content/repositories/m2internal</url>
+        </repository>
+        <snapshotRepository>
+            <id>m2snapshot</id>
+            <name>NAV Maven2 Snapshot Repository</name>
+            <url>http://maven.adeo.no/nexus/content/repositories/m2snapshot</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

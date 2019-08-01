@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>domenetjenester</artifactId>
+        <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+        <version>${revision}${sha1}${changelist}</version>
+    </parent>
+
+    <artifactId>domenetjenester-simulering</artifactId>
+    <packaging>jar</packaging>
+    <name>FP Oppdrag :: Domenetjeneste simulering</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>felles-integrasjon-webservice</artifactId>
+        </dependency>
+        <dependency>
+            <!-- denne må komme før oppdrag-klient, siden klienten tilbyr samme klasser (uten nødvendige modifikasjoner) -->
+            <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+            <artifactId>fpoppdrag-v1</artifactId>
+            <classifier>jaxb</classifier>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+            <artifactId>oppdrag-klient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+            <artifactId>okonomistotte-v1</artifactId>
+            <classifier>jaxb</classifier>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+            <artifactId>domenetjenester-person</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+            <artifactId>migreringer</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-testutilities</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>unleash-klient</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
