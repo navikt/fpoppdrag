@@ -6,7 +6,6 @@ import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.finn.unleash.Unleash;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.BeregningResultat;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.FeilutbetalingTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.Oppsummering;
@@ -23,22 +22,19 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.Simulering
 @ApplicationScoped
 public class SimuleringResultatTjenesteImpl implements SimuleringResultatTjeneste {
 
-    private static final String FEATURE_TOGGLE_SLÅ_AV_INNTREKK = "fpsak.slaa-av-inntrekk";
     private SimuleringRepository simuleringRepository;
     private HentNavnTjeneste hentNavnTjeneste;
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste;
-    private Unleash unleash;
 
     SimuleringResultatTjenesteImpl() {
         // For CDI
     }
 
     @Inject
-    public SimuleringResultatTjenesteImpl(SimuleringRepository simuleringRepository, HentNavnTjeneste hentNavnTjeneste, SimuleringBeregningTjeneste simuleringBeregningTjeneste, Unleash unleash) {
+    public SimuleringResultatTjenesteImpl(SimuleringRepository simuleringRepository, HentNavnTjeneste hentNavnTjeneste, SimuleringBeregningTjeneste simuleringBeregningTjeneste) {
         this.simuleringRepository = simuleringRepository;
         this.hentNavnTjeneste = hentNavnTjeneste;
         this.simuleringBeregningTjeneste = simuleringBeregningTjeneste;
-        this.unleash = unleash;
     }
 
     @Override
@@ -71,8 +67,8 @@ public class SimuleringResultatTjenesteImpl implements SimuleringResultatTjenest
     }
 
     private boolean skalKunViseResultatUtenInntrekk(Optional<SimulertBeregningResultat> simulertBeregningResultat) {
-        return unleash.isEnabled(FEATURE_TOGGLE_SLÅ_AV_INNTREKK)
-                && simulertBeregningResultat.isPresent() && erBådeInntrekkOgFeilutbetaling(simulertBeregningResultat.get())
+        return simulertBeregningResultat.isPresent()
+                && erBådeInntrekkOgFeilutbetaling(simulertBeregningResultat.get())
                 && simulertBeregningResultat.get().getBeregningResultatUtenInntrekk().isPresent();
     }
 

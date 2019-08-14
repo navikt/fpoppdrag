@@ -66,7 +66,7 @@ public class SimuleringRestTjenesteTest {
 
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste(fakeUnleash);
     private StartSimuleringTjeneste startSimuleringTjeneste = new StartSimuleringTjenesteImpl(simuleringXmlRepository, simuleringRepository, oppdragConsumerMock, resultatTransformer, simuleringBeregningTjeneste);
-    private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjenesteImpl(simuleringRepository, hentNavnTjeneste, simuleringBeregningTjeneste, fakeUnleash);
+    private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjenesteImpl(simuleringRepository, hentNavnTjeneste, simuleringBeregningTjeneste);
     private SimuleringRestTjeneste restTjeneste = new SimuleringRestTjeneste(simuleringResultatTjeneste, startSimuleringTjeneste);
 
 

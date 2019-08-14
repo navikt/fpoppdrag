@@ -70,10 +70,6 @@
         </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-            <artifactId>domenetjenester-simulering</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
             <artifactId>domenetjenester-person</artifactId>
         </dependency>
         <dependency>
@@ -131,6 +127,18 @@
         <dependency>
             <groupId>org.picketbox</groupId>
             <artifactId>picketbox</artifactId>
+            <exclusions>
+                <exclusion>
+                    <!--- ekskluderer siden JDK tilbyr denne uansett-->
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <!-- må unntas for å velge riktig EntityManagerFactoryBuilder ved oppstart av Jetty -->
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-entitymanager</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

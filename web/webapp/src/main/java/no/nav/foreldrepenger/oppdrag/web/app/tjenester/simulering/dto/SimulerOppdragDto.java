@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.util.InputValideringRegex;
 
 public class SimulerOppdragDto implements AbacDto {
@@ -82,7 +83,6 @@ public class SimulerOppdragDto implements AbacDto {
 
     @Override
     public AbacDataAttributter abacAttributter() {
-        AbacDataAttributter abacDataAttributter = AbacDataAttributter.opprett();
-        return abacDataAttributter.leggTilBehandlingsId(behandlingId);
+        return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.BEHANDLING_ID, behandlingId);
     }
 }

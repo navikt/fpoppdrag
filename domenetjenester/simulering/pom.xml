@@ -27,7 +27,7 @@
         </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-            <artifactId>oppdrag-klient</artifactId>
+            <artifactId>integrasjon</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.kontrakter</groupId>

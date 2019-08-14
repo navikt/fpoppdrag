@@ -6,11 +6,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.pip.PipRepository;
+import no.nav.foreldrepenger.oppdrag.web.server.jetty.abac.PdpRequestBuilderImpl;
+import no.nav.vedtak.felles.testutilities.db.RepositoryRule;
 import no.nav.vedtak.sikkerhet.abac.AbacAttributtSamling;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt;
 import no.nav.vedtak.sikkerhet.abac.PdpRequest;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 
 public class PdpRequestBuilderImplTest {
 
@@ -18,17 +23,20 @@ public class PdpRequestBuilderImplTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+    @Rule
+    public RepositoryRule repositoryRule = new UnittestRepositoryRule();
 
-    private PdpRequestBuilderImpl pdpRequestBuilder = new PdpRequestBuilderImpl();
+    private PipRepository pipRepository = new PipRepository(repositoryRule.getEntityManager());
+    private PdpRequestBuilderImpl pdpRequestBuilder = new PdpRequestBuilderImpl(pipRepository);
 
     @Test
     public void skal_feil_lagPdpRequest_med_ugyldig_attributter() {
         AbacAttributtSamling abacAttributtSamling = byggAbacAttributtSamling(BeskyttetRessursActionAttributt.READ);
-        AbacDataAttributter aktørIdAttribute = AbacDataAttributter.opprett().leggTilDokumentDataId(23432545634L);
+        AbacDataAttributter aktørIdAttribute = AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.DOKUMENT_DATA_ID, "foo");
         abacAttributtSamling.leggTil(aktørIdAttribute);
 
         expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("Utvikler-feil: Attributten dokumentDataID er ikke støttet p.t. Bruker du riktig attributt? Hvis ja, legg til støtte");
+        expectedException.expectMessage("Utvikler-feil: ikke-implementert støtte for minst en av typene: [DOKUMENT_DATA_ID]");
 
         pdpRequestBuilder.lagPdpRequest(abacAttributtSamling);
     }
@@ -36,7 +44,8 @@ public class PdpRequestBuilderImplTest {
     @Test
     public void skal_lagPdpRequest_med_gyldig_attributter() {
         AbacAttributtSamling abacAttributtSamling = byggAbacAttributtSamling(BeskyttetRessursActionAttributt.READ);
-        AbacDataAttributter behandlingIdAttribute = AbacDataAttributter.opprett().leggTilAktørId("000123");
+        AbacDataAttributter behandlingIdAttribute = AbacDataAttributter.opprett()
+                .leggTil(StandardAbacAttributtType.BEHANDLING_ID, 000123L);
         abacAttributtSamling.leggTil(behandlingIdAttribute);
 
         PdpRequest pdpRequest = pdpRequestBuilder.lagPdpRequest(abacAttributtSamling);

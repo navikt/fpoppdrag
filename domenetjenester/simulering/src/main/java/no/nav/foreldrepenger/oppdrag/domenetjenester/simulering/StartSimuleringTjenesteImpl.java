@@ -38,6 +38,8 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.økonomioppdrag.ØkonomiKodeE
 import no.nav.foreldrepenger.økonomi.simulering.v1.SimuleringConstants;
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling;
 import no.nav.system.os.entiteter.beregningskjema.Beregning;
+import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaa;
+import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode;
 import no.nav.system.os.entiteter.oppdragskjema.Ompostering;
 import no.nav.system.os.tjenester.simulerfpservice.feil.FeilUnderBehandling;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.ObjectFactory;
@@ -51,6 +53,7 @@ import no.nav.vedtak.util.FPDateUtil;
 @ApplicationScoped
 public class StartSimuleringTjenesteImpl implements StartSimuleringTjeneste {
 
+    private static final Logger logger = LoggerFactory.getLogger(StartSimuleringTjenesteImpl.class);
     private static final String DEAKTIVER_SIMULERING_DEAKTIVERING = "testing.deaktiver.simulering.deaktivering";
 
     private static final Logger LOG = LoggerFactory.getLogger(StartSimuleringTjenesteImpl.class);
@@ -322,7 +325,23 @@ public class StartSimuleringTjenesteImpl implements StartSimuleringTjeneste {
         for (int i = 0; i < builderList.size(); i++) {
             SimulerBeregningResponse respons = simuleringResponse.get(i);
             SimuleringXml.Builder builder = builderList.get(i);
+            korrigerForEvtManglendeFagsystemId(behandlingId, respons);
             builder.medResponse(marshalResponse(behandlingId, respons));
+        }
+    }
+
+    private static void korrigerForEvtManglendeFagsystemId(long behandlingId, SimulerBeregningResponse respons) {
+        if (respons == null || respons.getResponse() == null || respons.getResponse().getSimulering() == null) {
+            return;
+        }
+        Beregning simulering = respons.getResponse().getSimulering();
+        for (BeregningsPeriode periode : simulering.getBeregningsPeriode()) {
+            for (BeregningStoppnivaa stoppnivå : periode.getBeregningStoppnivaa()) {
+                if (stoppnivå.getFagsystemId() == null || stoppnivå.getFagsystemId().isEmpty()) {
+                    stoppnivå.setFagsystemId("FEIL-MANGLET"); //setter fagsystemId til for å kunne marshalle
+                    StartSimuleringTjenesteFeil.FACTORY.mangletFagsystemId(behandlingId, periode.getPeriodeFom(), periode.getPeriodeTom()).log(logger);
+                }
+            }
         }
     }
 

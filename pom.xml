@@ -14,13 +14,14 @@
         <module>web</module>
         <module>kodeverk</module>
         <module>migreringer</module>
+        <module>integrasjon</module>
     </modules>
 
     <properties>
         <revision>1.0</revision>
         <sha1></sha1>
         <changelist>-SNAPSHOT</changelist>
-        <java.version>10</java.version>
+        <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,8 +29,7 @@
 
         <!-- Felles avhengigheter i prosjektet Disse skal ALLTID være en
             RELEASE-avhengighet UNNTAK: feature-brancher og lokalt -->
-        <felles.version>1.1.0_20190320153313_e079c6a</felles.version>
-        <vl-fpoppdrag-integrasjon.version>1.0_20190307170717_6420aad</vl-fpoppdrag-integrasjon.version>
+        <felles.version>1.1.0_20190523160217_423c87f</felles.version>
 
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e </fpoppdrag-kontrakt.version>
@@ -87,6 +87,11 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.oppdrag</groupId>
                 <artifactId>kodeverk</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+                <artifactId>integrasjon</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -175,11 +180,6 @@
                 <artifactId>kafka-clients</artifactId>
                 <version>2.2.0</version>
             </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-                <artifactId>oppdrag-klient</artifactId>
-                <version>${vl-fpoppdrag-integrasjon.version}</version>
-            </dependency>
 
             <!-- Kontrakter -->
             <dependency>
@@ -212,6 +212,15 @@
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
                 <artifactId>fp-tilkjent-ytelse-v1</artifactId>
                 <version>${foreldrepenger-kontrakter.version}</version>
+            </dependency>
+
+            <!-- nav -->
+
+            <dependency>
+                <groupId>no.nav.oppdrag.tjenester</groupId>
+                <artifactId>nav-system-os-simuler-fp-service-tjenestespesifikasjon</artifactId>
+                <version>1.0.5</version>
+                <classifier>jaxws</classifier>
             </dependency>
 
             <!-- Annet -->
