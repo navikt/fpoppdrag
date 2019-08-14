@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.oppdrag.web.server.jetty;
+package no.nav.foreldrepenger.oppdrag.web.server.jetty.abac;
 
 import java.util.Collection;
 
@@ -13,6 +13,6 @@ interface PdpRequestBuilderFeil extends DeklarerteFeil {
     PdpRequestBuilderFeil FACTORY = FeilFactory.create(PdpRequestBuilderFeil.class);
 
     @TekniskFeil(feilkode = "FPO-49016", feilmelding = "Ugyldig input. Støtter bare 0 eller 1 behandling, men har %s", logLevel = LogLevel.WARN)
-    Feil ugyldigInputFlereBehandlingIder(Collection<Long> behandlingId);
+    Feil ugyldigInputFlereBehandlingIder(Collection<?> behandlingId);
 
 }

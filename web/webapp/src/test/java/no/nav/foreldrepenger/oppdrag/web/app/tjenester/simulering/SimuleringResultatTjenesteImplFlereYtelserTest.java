@@ -50,7 +50,7 @@ public class SimuleringResultatTjenesteImplFlereYtelserTest {
 
     private FakeUnleash fakeUnleash = new FakeUnleash();
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste(fakeUnleash);
-    private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjenesteImpl(simuleringRepository, mock(HentNavnTjeneste.class), simuleringBeregningTjeneste, fakeUnleash);
+    private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjenesteImpl(simuleringRepository, mock(HentNavnTjeneste.class), simuleringBeregningTjeneste);
 
     private String aktørId = "0";
 

@@ -56,7 +56,7 @@ public class SimuleringResultatTjenesteImplInntrekkTest {
     private HentNavnTjeneste hentNavnTjeneste = Mockito.mock(HentNavnTjeneste.class);
     private FakeUnleash fakeUnleash = new FakeUnleash();
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste(fakeUnleash);
-    private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjenesteImpl(simuleringRepository, hentNavnTjeneste, simuleringBeregningTjeneste, fakeUnleash);
+    private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjenesteImpl(simuleringRepository, hentNavnTjeneste, simuleringBeregningTjeneste);
 
     private String aktørId = "0";
 
