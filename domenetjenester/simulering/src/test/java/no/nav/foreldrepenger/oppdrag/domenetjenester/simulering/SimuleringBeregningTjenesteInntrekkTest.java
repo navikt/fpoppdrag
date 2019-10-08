@@ -147,7 +147,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     @Test
     public void skal_beregne_posteringer_pr_måned_og_fagområde_scenario_med_etterbetaling() {
         // Act
-        List<SimulertBeregningPeriode> simulertBeregningPerioder = SimuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
+        List<SimulertBeregningPeriode> simulertBeregningPerioder = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 postering("16.09.2018-30.09.2018", FORELDREPENGER, YTELSE, KREDIT, 2000),
                 postering("16.09.2018-30.09.2018", FORELDREPENGER, YTELSE, DEBIT, 1500),
                 postering("01.09.2018-15.09.2018", FORELDREPENGER, YTELSE, DEBIT, 1000),
@@ -174,7 +174,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     @Test
     public void skal_beregne_posteringer_pr_måned_og_fagområde_scenario_med_feilutbetaling() {
         // Act
-        List<SimulertBeregningPeriode> simulertBeregningPerioder = SimuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
+        List<SimulertBeregningPeriode> simulertBeregningPerioder = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 postering("01.09.2017-30.09.2017", FORELDREPENGER, YTELSE, DEBIT, 8928),
                 postering("06.09.2017-30.09.2017", FORELDREPENGER, YTELSE, DEBIT, 5958),
                 postering("06.09.2017-30.09.2017", FORELDREPENGER, YTELSE, KREDIT, 14886),
@@ -200,7 +200,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     @Test
     public void skal_beregne_posteringer_pr_måned_og_fagområde_scenario_med_sykepenger_og_foreldrepenger() {
         // Act
-        List<SimulertBeregningPeriode> simulertBeregningPerioder = SimuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
+        List<SimulertBeregningPeriode> simulertBeregningPerioder = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 postering("01.09.2018-30.09.2018", SYKEPENGER, YTELSE, DEBIT, 4000),
                 postering("01.09.2018-30.09.2018", SYKEPENGER, YTELSE, KREDIT, 3000),
                 postering("16.09.2018-30.09.2018", FORELDREPENGER, YTELSE, KREDIT, 2000),
@@ -325,7 +325,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     @Test
     public void skal_beregne_inntrekk_og_feilutbetaling_scenario_over_to_måneder() {
         // Act
-        List<SimulertBeregningPeriode> resultat = SimuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
+        List<SimulertBeregningPeriode> resultat = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 // Posteringer for juni, feilutbetaling og inntrekk fra neste måned
                 postering("01.06.2017-19.06.2017", FORELDREPENGER, YTELSE, DEBIT, 14952),
                 postering("01.06.2017-30.06.2017", FORELDREPENGER, JUSTERING, DEBIT, 10680),
@@ -378,7 +378,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     @Test
     public void skal_beregne_motregning_mellom_to_ytelser_innenfor_samme_måned() {
         // Act
-        List<SimulertBeregningPeriode> resultat = SimuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
+        List<SimulertBeregningPeriode> resultat = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 // Posteringer for foreldrepenger
                 postering("01.09.2017-30.09.2017", FORELDREPENGER, FORSKUDSSKATT, KREDIT, 5029),
                 postering("01.09.2017-30.09.2017", FORELDREPENGER, JUSTERING, KREDIT, 517),
@@ -524,29 +524,28 @@ public class SimuleringBeregningTjenesteInntrekkTest {
                 .findFirst();
     }
 
-    private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType, BetalingType betalingType, int beløp) {
+    private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType,
+                                        BetalingType betalingType, int beløp) {
         return postering(periode, fagOmrådeKode, posteringType, betalingType, beløp, false, FPDateUtil.iDag());
     }
 
-    private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType, BetalingType betalingType, int beløp, LocalDate forfallsdato) {
+    private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType,
+                                        BetalingType betalingType, int beløp, LocalDate forfallsdato) {
         return postering(periode, fagOmrådeKode, posteringType, betalingType, beløp, false, forfallsdato);
     }
 
-    private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode,
-                                        PosteringType posteringType, BetalingType betalingType,
-                                        int beløp, boolean utenInntrekk) {
+    private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType,
+                                        BetalingType betalingType, int beløp, boolean utenInntrekk) {
         return postering(periode, fagOmrådeKode, posteringType, betalingType, beløp, utenInntrekk, FPDateUtil.iDag());
     }
 
 
-    private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode,
-                                        PosteringType posteringType, BetalingType betalingType,
-                                        int beløp, boolean utenInntrekk, LocalDate forfallsdato) {
-
+    private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType,
+                                        BetalingType betalingType, int beløp, boolean utenInntrekk,
+                                        LocalDate forfallsdato) {
         DateTimeFormatter datoformat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         LocalDate fom = LocalDate.parse(periode.split("-")[0], datoformat);
         LocalDate tom = LocalDate.parse(periode.split("-")[1], datoformat);
-
         return SimulertPostering.builder()
                 .medPosteringType(posteringType)
                 .medBetalingType(betalingType)
@@ -558,6 +557,4 @@ public class SimuleringBeregningTjenesteInntrekkTest {
                 .medForfallsdato(forfallsdato)
                 .build();
     }
-
-
 }

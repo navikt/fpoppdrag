@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -99,7 +98,7 @@ public class SimuleringBeregningTjeneste {
                 .anyMatch(m -> !m.getSimulertePosteringerUtenInntrekk().isEmpty());
     }
 
-    static List<SimulertBeregningPeriode> beregnPosteringerPerMånedOgFagområde(Collection<SimulertPostering> posteringer) {
+    List<SimulertBeregningPeriode> beregnPosteringerPerMånedOgFagområde(Collection<SimulertPostering> posteringer) {
         Objects.requireNonNull(posteringer, "posteringer"); //NOSONAR
 
         List<SimulertBeregningPeriode> simulerteBeregninger = new ArrayList<>();
@@ -250,11 +249,41 @@ public class SimuleringBeregningTjeneste {
         );
     }
 
-    private static SimulertBeregning beregnPosteringerPerFagområde(List<SimulertPostering> posteringer) {
+    private SimulertBeregning beregnPosteringerPerFagområde(List<SimulertPostering> posteringer) {
+        if (unleash.isEnabled("fpoppdrag.eksisterende.kravgrunnlag")) {
+            return beregn(posteringer);
+        }
         if (erFeilutbetalingIPeriode(posteringer)) {
             return beregnFeilutbetaling(posteringer);
         }
         return beregnEtterbetaling(posteringer);
+    }
+
+    static SimulertBeregning beregn(List<SimulertPostering> posteringer) {
+        BigDecimal feilutbetaltBeløp = beregnFeilutbetaltBeløp2(posteringer);
+        BigDecimal tidligereUtbetaltBeløp = beregnTidligereUtbetaltBeløp(posteringer);
+        BigDecimal nyttBeløp = beregnNyttBeløp(posteringer).subtract(feilutbetaltBeløp);
+        BigDecimal differanse = nyttBeløp.subtract(tidligereUtbetaltBeløp);
+        BigDecimal motregning = beregnMotregning(posteringer);
+        BigDecimal resultat = feilutbetaltBeløp.signum() == 1 ? feilutbetaltBeløp.negate() : differanse.add(motregning);
+        BigDecimal etterbetaling = feilutbetaltBeløp.signum() == 0 ? differanse.add(motregning) : BigDecimal.ZERO;
+        return SimulertBeregning.builder()
+                .medTidligereUtbetaltBeløp(tidligereUtbetaltBeløp)
+                .medNyttBeregnetBeløp(nyttBeløp)
+                .medDifferanse(differanse)
+                .medFeilutbetaltBeløp(feilutbetaltBeløp.negate()) //for at positive feilutbetalinger vises med negativt fortegn i GUI
+                .medMotregning(motregning)
+                .medEtterbetaling(etterbetaling)
+                .medResultat(resultat)
+                .build();
+    }
+
+    private static BigDecimal beregnFeilutbetaltBeløp2(List<SimulertPostering> posteringer) {
+        return posteringer.stream()
+                .filter(p -> PosteringType.FEILUTBETALING.equals(p.getPosteringType()))
+                .map(SimulertPostering::getBeløp)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
     }
 
     private static SimulertBeregning beregnEtterbetaling(List<SimulertPostering> posteringer) {
@@ -317,17 +346,12 @@ public class SimuleringBeregningTjeneste {
     }
 
     static BigDecimal beregnNyttBeløp(List<SimulertPostering> posteringer) {
-        return finnNyeYtelsesPosteringer(posteringer)
+        return posteringer.stream()
+                .filter(p -> PosteringType.YTELSE.equals(p.getPosteringType()))
+                .filter(p -> BetalingType.DEBIT.equals(p.getBetalingType()))
                 .map(SimulertPostering::getBeløp)
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
-
-    }
-
-    private static Stream<SimulertPostering> finnNyeYtelsesPosteringer(List<SimulertPostering> posteringer) {
-        return posteringer.stream()
-                .filter(p -> PosteringType.YTELSE.equals(p.getPosteringType()))
-                .filter(p -> BetalingType.DEBIT.equals(p.getBetalingType()));
     }
 
     private static Map<FagOmrådeKode, List<SimulertPostering>> grupperPerFagområde(Map.Entry<YearMonth, List<SimulertPostering>> entry) {
