@@ -476,20 +476,20 @@ public class SimuleringBeregningTjenesteTest {
         // Assert
         assertThat(resultat).hasSize(1);
         SimulertBeregningPeriode periode = resultat.get(0);
-        assertThat(periode.getResultatEtterMotregning()).isEqualTo(BigDecimal.valueOf(-9300));
+        assertThat(periode.getResultatEtterMotregning()).isEqualTo(BigDecimal.valueOf(9300));
         assertThat(periode.getInntrekkNesteMåned()).isEqualTo(BigDecimal.ZERO);
-        assertThat(periode.getResultat()).isEqualTo(BigDecimal.valueOf(-9300));
+        assertThat(periode.getResultat()).isEqualTo(BigDecimal.valueOf(9300));
 
         assertThat(periode.getBeregningPerFagområde().keySet()).hasSize(1);
 
         SimulertBeregning foreldrepenger = periode.getBeregningPerFagområde().get(FORELDREPENGER);
-        assertThat(foreldrepenger.getNyttBeregnetBeløp()).isEqualTo(BigDecimal.valueOf(13960));
-        assertThat(foreldrepenger.getTidligereUtbetaltBeløp()).isEqualTo(BigDecimal.valueOf(23260));
+        assertThat(foreldrepenger.getNyttBeregnetBeløp()).isEqualTo(BigDecimal.valueOf(23260));
+        assertThat(foreldrepenger.getTidligereUtbetaltBeløp()).isEqualTo(BigDecimal.valueOf(13960));
 
-        assertThat(foreldrepenger.getDifferanse()).isEqualTo(BigDecimal.valueOf(-9300));
+        assertThat(foreldrepenger.getDifferanse()).isEqualTo(BigDecimal.valueOf(9300));
         assertThat(foreldrepenger.getMotregning()).isEqualTo(BigDecimal.valueOf(0));
-        assertThat(foreldrepenger.getResultat()).isEqualTo(BigDecimal.valueOf(-9300));
-        assertThat(foreldrepenger.getFeilutbetaltBeløp()).isEqualTo(BigDecimal.valueOf(-9300));
+        assertThat(foreldrepenger.getResultat()).isEqualTo(BigDecimal.valueOf(9300));
+        assertThat(foreldrepenger.getFeilutbetaltBeløp()).isEqualTo(BigDecimal.valueOf(9300));
         assertThat(foreldrepenger.getEtterbetaling()).isEqualTo(BigDecimal.valueOf(0));
     }
 

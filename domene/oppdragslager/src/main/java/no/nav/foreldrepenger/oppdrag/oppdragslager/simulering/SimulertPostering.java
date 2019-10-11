@@ -151,15 +151,13 @@ public class SimulertPostering extends BaseEntitet {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "<id=" + id //$NON-NLS-1$
-                + ", fagOmrådeKode=" + fagOmrådeKode //$NON-NLS-1$
-                + ", konto=" + konto //$NON-NLS-1$
+                + (fagOmrådeKode != null ? ", fagOmrådeKode=" + fagOmrådeKode.getKode() : "")//$NON-NLS-1$
                 + ", fom=" + fom //$NON-NLS-1$
                 + ", tom=" + tom //$NON-NLS-1$
-                + ", betalingType=" + betalingType //$NON-NLS-1$
+                + (betalingType != null ? ", betalingType=" + betalingType.getKode() : "") //$NON-NLS-1$
                 + ", beløp=" + beløp //$NON-NLS-1$
-                + ", posteringType=" + posteringType //$NON-NLS-1$
-                + ", klasseKode=" + klasseKode //$NON-NLS-1$
-                + ", forfallsdato=" + forfallsdato //$NON-NLS-1$
+                + (posteringType != null ? ", posteringType=" + posteringType.getKode() : "") //$NON-NLS-1$
+                + (klasseKode != null ? ", klasseKode=" + klasseKode.getKode() : "") //$NON-NLS-1$
                 + ", utenInntrekk=" + utenInntrekk //$NON-NLS-1$
                 + ">"; //$NON-NLS-1$
 
