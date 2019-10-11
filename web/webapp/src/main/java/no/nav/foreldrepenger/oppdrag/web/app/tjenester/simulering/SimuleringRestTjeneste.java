@@ -4,6 +4,8 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -58,6 +60,13 @@ public class SimuleringRestTjeneste {
     @ApiOperation(value = "Hent resultat av simulering mot økonomi", notes = ("Returnerer simuleringsresultat."))
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     public SimuleringResultatDto hentSimuleringResultat(@Valid BehandlingIdDto behandlingIdDto) {
+        if (1 == 1) {
+            return new SimuleringResultatDto.Builder()
+                    .medSumFeilutbetaling(BigDecimal.valueOf(1000))
+                    .medSumInntrekk(BigDecimal.ZERO)
+                    .medSlåttAvInntrekk(false)
+                    .build();
+        }
         Optional<SimuleringResultatDto> optionalSimuleringResultatDto = simuleringResultatTjeneste.hentResultatFraSimulering(behandlingIdDto.getBehandlingId());
         return optionalSimuleringResultatDto.orElse(null);
     }
@@ -99,6 +108,9 @@ public class SimuleringRestTjeneste {
     @ApiOperation(value = "Hent sum feilutbetaling og simulerte perioder som er feilutbetalte og kan kreves tilbake fra brukeren.", notes = ("Returnerer perioder som er feilutbetalt."))
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     public FeilutbetaltePerioderDto hentFeilutbetaltePerioderForTilbakekreving(@Valid BehandlingIdDto behandlingIdDto) {
+        if (1 == 1) {
+            return new FeilutbetaltePerioderDto(1000L, new ArrayList<>());
+        }
         return simuleringResultatTjeneste.hentFeilutbetaltePerioder(behandlingIdDto.getBehandlingId());
     }
 }
