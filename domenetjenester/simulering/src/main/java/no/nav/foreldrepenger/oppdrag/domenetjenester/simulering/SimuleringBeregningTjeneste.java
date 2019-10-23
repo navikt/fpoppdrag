@@ -147,10 +147,14 @@ public class SimuleringBeregningTjeneste {
                 fagOmrådeKode,
                 beregningsresultat);
 
-        for (SimulertBeregning beregning : beregninger) {
-            oppsummering.leggTilPåFeilutbetaling(beregning.getFeilutbetaltBeløp());
-            oppsummering.leggTilPåEtterbetaling(beregning.getEtterbetaling());
-        }
+        //En netto reduksjon i feilutbetaling skal ikke vises som en feilutbetaling.
+        //Derfor settes feilutbetaling til 0 i dette tilfellet
+        BigDecimal feilutbetaling = beregninger.stream().map(SimulertBeregning::getFeilutbetaltBeløp).reduce(BigDecimal.ZERO, BigDecimal::add);
+        boolean erReduksjonIFeilutbetaling = feilutbetaling.signum() == 1;
+        oppsummering.setFeilutbetaling(erReduksjonIFeilutbetaling ? BigDecimal.ZERO : feilutbetaling);
+
+        BigDecimal etterbetaling = beregninger.stream().map(SimulertBeregning::getEtterbetaling).reduce(BigDecimal.ZERO, BigDecimal::add);
+        oppsummering.setEtterbetaling(etterbetaling);
         return oppsummering;
     }
 

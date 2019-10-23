@@ -515,6 +515,28 @@ public class SimuleringBeregningTjenesteTest {
         assertThat(foreldrepenger.getEtterbetaling()).isEqualTo(BigDecimal.valueOf(0));
     }
 
+    @Test
+    public void skal_ha_at_sum_feilutbetaling_er_0_når_det_summert_er_reduksjon_i_feilutbetaling() {
+        unleash.enable("fpoppdrag.eksisterende.kravgrunnlag");
+        List<SimulertBeregningPeriode> resultat = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
+                // Posteringer for foreldrepenger
+                postering("01.06.2019-30.06.2019", FORELDREPENGER, YTELSE, KREDIT, 9300),
+                postering("01.06.2019-30.06.2019", FORELDREPENGER, YTELSE, KREDIT, 13960),
+                postering("01.06.2019-30.06.2019", FORELDREPENGER, YTELSE, DEBIT, 23260),
+                postering("01.06.2019-30.06.2019", FORELDREPENGER, FEILUTBETALING, KREDIT, 9300)
+        ));
+
+        Mottaker mottaker = new Mottaker(MottakerType.BRUKER, "1");
+        mottaker.setNesteUtbetalingsperiode(new Periode(LocalDate.of(2019, 12, 1), LocalDate.of(2019, 12, 31)));
+        Map<Mottaker, List<SimulertBeregningPeriode>> resultatForBruker = Map.of(mottaker, resultat);
+
+        //act
+        Oppsummering oppsummering = simuleringBeregningTjeneste.opprettOppsummering(resultatForBruker, YtelseType.FORELDREPENGER);
+
+        //assert
+        assertThat(oppsummering.getFeilutbetaling()).isZero();
+    }
+
     private Optional<SimulertBeregningPeriode> finnPeriode(List<SimulertBeregningPeriode> perioder, LocalDate fom) {
         return perioder.stream()
                 .filter(p -> p.getPeriode().getPeriodeFom().isEqual(fom))
