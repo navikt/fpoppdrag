@@ -11,12 +11,12 @@ public class Oppsummering {
     private BigDecimal feilutbetaling = BigDecimal.ZERO;
     private BigDecimal inntrekkNesteUtbetaling;
 
-    void leggTilPåEtterbetaling(BigDecimal beløp) {
-        etterbetaling = etterbetaling.add(beløp);
+    public void setEtterbetaling(BigDecimal etterbetaling) {
+        this.etterbetaling = etterbetaling;
     }
 
-    void leggTilPåFeilutbetaling(BigDecimal beløp) {
-        feilutbetaling = feilutbetaling.add(beløp);
+    public void setFeilutbetaling(BigDecimal feilutbetaling) {
+        this.feilutbetaling = feilutbetaling;
     }
 
     void setInntrekkNesteUtbetaling(BigDecimal beløp) {
