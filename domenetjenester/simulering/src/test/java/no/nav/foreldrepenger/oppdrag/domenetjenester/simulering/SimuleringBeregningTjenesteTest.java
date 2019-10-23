@@ -7,6 +7,7 @@ import static no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode.SYKEPENGER;
 import static no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType.FEILUTBETALING;
 import static no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType.FORSKUDSSKATT;
 import static no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType.JUSTERING;
+import static no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType.UDEFINERT;
 import static no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType.YTELSE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -490,6 +491,27 @@ public class SimuleringBeregningTjenesteTest {
         assertThat(foreldrepenger.getMotregning()).isEqualTo(BigDecimal.valueOf(0));
         assertThat(foreldrepenger.getResultat()).isEqualTo(BigDecimal.valueOf(9300));
         assertThat(foreldrepenger.getFeilutbetaltBeløp()).isEqualTo(BigDecimal.valueOf(9300));
+        assertThat(foreldrepenger.getEtterbetaling()).isEqualTo(BigDecimal.valueOf(0));
+    }
+
+    @Test
+    public void skal_ha_at_etterbetaling_er_0_når_tilbakeførte_trekk_dekker_opp_feilutbetaling() {
+        unleash.enable("fpoppdrag.eksisterende.kravgrunnlag");
+        // Act
+        List<SimulertBeregningPeriode> resultat = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
+                postering("01.06.2019-30.06.2019", FORELDREPENGER, YTELSE, KREDIT, 10000),
+                postering("01.06.2019-30.06.2019", FORELDREPENGER, YTELSE, DEBIT, 5000),
+
+                //TREKK-posteringen blir ignorert, men tar med i enhetstesten for å understreke poenget
+                postering("01.06.2019-30.06.2019", FORELDREPENGER, UDEFINERT, DEBIT, 5000)
+        ));
+
+        assertThat(resultat).hasSize(1);
+        SimulertBeregningPeriode periode = resultat.get(0);
+        assertThat(periode.getBeregningPerFagområde().keySet()).hasSize(1);
+        SimulertBeregning foreldrepenger = periode.getBeregningPerFagområde().get(FORELDREPENGER);
+
+        // Assert
         assertThat(foreldrepenger.getEtterbetaling()).isEqualTo(BigDecimal.valueOf(0));
     }
 

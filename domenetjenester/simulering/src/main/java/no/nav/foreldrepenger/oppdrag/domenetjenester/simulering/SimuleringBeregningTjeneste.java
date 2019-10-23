@@ -182,12 +182,12 @@ public class SimuleringBeregningTjeneste {
         if (mottakerBrukerOpt.isPresent()) {
             Mottaker mottaker = mottakerBrukerOpt.get();
             List<SimulertBeregningPeriode> perioder = beregningsresultat.get(mottaker);
-            return finnInntrekkSum(mottaker, perioder, fagOmrådeKode);
+            return finnInntrekkSum(perioder, fagOmrådeKode);
         }
         return BigDecimal.ZERO;
     }
 
-    private static BigDecimal finnInntrekkSum(Mottaker mottaker, List<SimulertBeregningPeriode> perioder, FagOmrådeKode fagOmrådeKode) {
+    private static BigDecimal finnInntrekkSum(List<SimulertBeregningPeriode> perioder, FagOmrådeKode fagOmrådeKode) {
         return perioder.stream()
                 .map(p -> p.getBeregningPerFagområde().get(fagOmrådeKode))
                 .filter(Objects::nonNull)
@@ -280,7 +280,8 @@ public class SimuleringBeregningTjeneste {
         BigDecimal motregning = beregnMotregning(posteringer);
         BigDecimal resultatUtenFeilutbetaling = nyttMinusUtbetalt.add(motregning);
         BigDecimal resultat = feilutbetalingPosteringer.isEmpty() ? resultatUtenFeilutbetaling : feilutbetaltBeløp.negate();
-        BigDecimal etterbetaling = feilutbetalingPosteringer.isEmpty() ? resultatUtenFeilutbetaling : BigDecimal.ZERO;
+        BigDecimal etterbetaling = utledEtterbetaling(feilutbetalingPosteringer, resultatUtenFeilutbetaling);
+
         sanityCheckResultater(feilutbetalingPosteringer, feilutbetaltBeløp.negate(), resultatUtenFeilutbetaling);
         return SimulertBeregning.builder()
                 .medTidligereUtbetaltBeløp(tidligereUtbetaltBeløp)
@@ -291,6 +292,17 @@ public class SimuleringBeregningTjeneste {
                 .medEtterbetaling(etterbetaling)
                 .medResultat(resultat)
                 .build();
+    }
+
+    private static BigDecimal utledEtterbetaling(List<SimulertPostering> feilutbetalingPosteringer, BigDecimal resultatUtenFeilutbetaling) {
+        BigDecimal etterbetaling = feilutbetalingPosteringer.isEmpty() && resultatUtenFeilutbetaling.signum() == 1 ? resultatUtenFeilutbetaling : BigDecimal.ZERO;
+        if (etterbetaling.signum() == -1) {
+            //Dersom tilbakeførte trekk dekker opp en feilutbetaling vil det ikke finnes en postering for feilutbetaling.
+            //Men ny ytelse vil da være mindre enn utbetalt. Etterbetalingen blir da negativ. Man skal da sette etterbetalingen til 0.
+            return BigDecimal.ZERO;
+        } else {
+            return etterbetaling;
+        }
     }
 
     private static void sanityCheckResultater(List<SimulertPostering> feilutbetalingPosteringer, BigDecimal feilutbetaltBeløp, BigDecimal resultatUtenFeilutbetaling) {
