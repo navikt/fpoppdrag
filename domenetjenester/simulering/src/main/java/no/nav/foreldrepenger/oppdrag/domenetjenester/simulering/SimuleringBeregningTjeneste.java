@@ -286,7 +286,8 @@ public class SimuleringBeregningTjeneste {
         BigDecimal resultat = feilutbetalingPosteringer.isEmpty() ? resultatUtenFeilutbetaling : feilutbetaltBeløp.negate();
         BigDecimal etterbetaling = utledEtterbetaling(feilutbetalingPosteringer, resultatUtenFeilutbetaling);
 
-        sanityCheckResultater(feilutbetalingPosteringer, feilutbetaltBeløp.negate(), resultatUtenFeilutbetaling);
+        sanityCheckResultater(feilutbetalingPosteringer, feilutbetaltBeløp);
+
         return SimulertBeregning.builder()
                 .medTidligereUtbetaltBeløp(tidligereUtbetaltBeløp)
                 .medNyttBeregnetBeløp(nyttBeløp)
@@ -309,15 +310,9 @@ public class SimuleringBeregningTjeneste {
         }
     }
 
-    private static void sanityCheckResultater(List<SimulertPostering> feilutbetalingPosteringer, BigDecimal feilutbetaltBeløp, BigDecimal resultatUtenFeilutbetaling) {
-        if (!feilutbetalingPosteringer.isEmpty()) {
-            if (feilutbetaltBeløp.signum() == 0) {
-                SimuleringBeregningTjenesteFeil.FACTORY.uforventetDataFeilposteringerSummererTil0InnenforMåned().log(logger);
-            }
-            BigDecimal diff = feilutbetaltBeløp.subtract(resultatUtenFeilutbetaling);
-            if (diff.signum() != 0) {
-                SimuleringBeregningTjenesteFeil.FACTORY.uforventetDataSumFeilposteringerVsAlternativUtregning(diff).log(logger);
-            }
+    private static void sanityCheckResultater(List<SimulertPostering> feilutbetalingPosteringer, BigDecimal feilutbetaltBeløp) {
+        if (!feilutbetalingPosteringer.isEmpty() && feilutbetaltBeløp.signum() == 0) {
+            SimuleringBeregningTjenesteFeil.FACTORY.uforventetDataFeilposteringerSummererTil0InnenforMåned().log(logger);
         }
     }
 
@@ -441,9 +436,6 @@ public class SimuleringBeregningTjeneste {
 
         @TekniskFeil(feilkode = "FPO-723664", feilmelding = "Har FEIL-posteringer i en måned og summen var 0. Dette er ikke forventet at skjer, bør analyseres", logLevel = LogLevel.WARN)
         Feil uforventetDataFeilposteringerSummererTil0InnenforMåned();
-
-        @TekniskFeil(feilkode = "FPO-523588", feilmelding = "Forventer at differenase mellom FEIL-posteringer og alternativ utregning av resultat er 0, men var %s i en måned. Dette er ikke forventet at skjer, bør analyseres", logLevel = LogLevel.WARN)
-        Feil uforventetDataSumFeilposteringerVsAlternativUtregning(BigDecimal differanse);
     }
 
 }
