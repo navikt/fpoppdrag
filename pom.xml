@@ -44,7 +44,7 @@
         <woodstox.version>5.1.0</woodstox.version>
         <surefire.version>2.21.0</surefire.version>
         <asm.version>6.2.1</asm.version>
-        <metrics.version>3.2.5</metrics.version>
+        <metrics.version>4.1.1</metrics.version>
 
         <geronimo.jaspi.version>2.0.0</geronimo.jaspi.version>
         <geronimo.osgi.version>1.1</geronimo.osgi.version>
