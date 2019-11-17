@@ -70,7 +70,7 @@
         <ow2.asm.version>6.2</ow2.asm.version>
         <swagger.spec-parser.version>1.0.28</swagger.spec-parser.version>
 
-        <owaspencoder.version>1.2.1</owaspencoder.version>
+        <owaspencoder.version>1.2.2</owaspencoder.version>
 
         <!-- Dupliserte properties fra vl-felles. Pass på å oppdatere begge steder. Disse trengs for definisjon av videre plugins -->
         <!-- <flyway.version>5.1.4</flyway.version> FIXME: støtter ikke oracle 11, se på hva som skal til for å kjøre på 12 -->
