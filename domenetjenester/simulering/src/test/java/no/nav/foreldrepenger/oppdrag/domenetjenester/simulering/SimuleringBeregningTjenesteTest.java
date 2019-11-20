@@ -40,8 +40,7 @@ import no.nav.vedtak.util.FPDateUtil;
 
 public class SimuleringBeregningTjenesteTest {
 
-    private FakeUnleash unleash = new FakeUnleash();
-    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste(unleash);
+    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
 
     @Test
     public void skal_ha_at_tidligere_utbetalt_beløp_er_sum_av_kreditposter_for_ytelse() {
@@ -464,7 +463,6 @@ public class SimuleringBeregningTjenesteTest {
 
     @Test
     public void skal_ta_hensyn_til_eksisterende_kravgrunnlag_når_sum_av_FEIL_posteringer_er_negativ_skal_nytt_beløp_reduseres() {
-        unleash.enable("fpoppdrag.eksisterende.kravgrunnlag");
         // Act
         List<SimulertBeregningPeriode> resultat = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 // Posteringer for foreldrepenger
@@ -496,7 +494,6 @@ public class SimuleringBeregningTjenesteTest {
 
     @Test
     public void skal_ha_at_etterbetaling_er_0_når_tilbakeførte_trekk_dekker_opp_feilutbetaling() {
-        unleash.enable("fpoppdrag.eksisterende.kravgrunnlag");
         // Act
         List<SimulertBeregningPeriode> resultat = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 postering("01.06.2019-30.06.2019", FORELDREPENGER, YTELSE, KREDIT, 10000),
@@ -517,7 +514,6 @@ public class SimuleringBeregningTjenesteTest {
 
     @Test
     public void skal_ha_at_sum_feilutbetaling_er_0_når_det_summert_er_reduksjon_i_feilutbetaling() {
-        unleash.enable("fpoppdrag.eksisterende.kravgrunnlag");
         List<SimulertBeregningPeriode> resultat = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 // Posteringer for foreldrepenger
                 postering("01.06.2019-30.06.2019", FORELDREPENGER, YTELSE, KREDIT, 9300),

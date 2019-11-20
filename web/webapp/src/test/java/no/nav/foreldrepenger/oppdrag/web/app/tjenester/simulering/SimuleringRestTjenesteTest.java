@@ -51,7 +51,6 @@ public class SimuleringRestTjenesteTest {
     private static final Long BEHANDLING_ID = 123456789L;
     private static final String AKTØR_ID = "1234567890135";
 
-    private FakeUnleash fakeUnleash = new FakeUnleash();
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
     @Rule
@@ -64,7 +63,7 @@ public class SimuleringRestTjenesteTest {
     private TpsTjeneste tpsTjenesteMock = mock(TpsTjeneste.class);
     private SimuleringResultatTransformer resultatTransformer = new SimuleringResultatTransformer(tpsTjenesteMock);
 
-    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste(fakeUnleash);
+    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
     private StartSimuleringTjeneste startSimuleringTjeneste = new StartSimuleringTjenesteImpl(simuleringXmlRepository, simuleringRepository, oppdragConsumerMock, resultatTransformer, simuleringBeregningTjeneste);
     private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjenesteImpl(simuleringRepository, hentNavnTjeneste, simuleringBeregningTjeneste);
     private SimuleringRestTjeneste restTjeneste = new SimuleringRestTjeneste(simuleringResultatTjeneste, startSimuleringTjeneste);

@@ -48,8 +48,7 @@ public class SimuleringResultatTjenesteImplFlereYtelserTest {
 
     private SimuleringRepository simuleringRepository = new SimuleringRepositoryImpl(repoRule.getEntityManager());
 
-    private FakeUnleash fakeUnleash = new FakeUnleash();
-    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste(fakeUnleash);
+    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
     private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjenesteImpl(simuleringRepository, mock(HentNavnTjeneste.class), simuleringBeregningTjeneste);
 
     private String aktørId = "0";

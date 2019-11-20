@@ -54,8 +54,7 @@ public class SimuleringResultatTjenesteImplTest {
     private SimuleringRepository simuleringRepository = new SimuleringRepositoryImpl(repoRule.getEntityManager());
 
     private HentNavnTjeneste hentNavnTjeneste = Mockito.mock(HentNavnTjeneste.class);
-    private FakeUnleash fakeUnleash = new FakeUnleash();
-    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste(fakeUnleash);
+    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
     private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjenesteImpl(simuleringRepository, hentNavnTjeneste, simuleringBeregningTjeneste);
 
     private String aktørId = "0";
