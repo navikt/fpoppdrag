@@ -62,7 +62,6 @@ public class StartSimuleringTjenesteImplTest {
     private static final Long BEHANDLING_ID_1 = 42345L;
     private static final Long BEHANDLING_ID_2 = 87890L;
     private static final String AKTØR_ID = "12345678901";
-    private FakeUnleash unleash = new FakeUnleash();
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -77,7 +76,7 @@ public class StartSimuleringTjenesteImplTest {
     private SimuleringResultatTransformer resultatTransformer = new SimuleringResultatTransformer(tpsTjenesteMock);
 
     private StartSimuleringTjeneste simuleringTjeneste;
-    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste(unleash);
+    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
 
     @Before
     public void setup() {

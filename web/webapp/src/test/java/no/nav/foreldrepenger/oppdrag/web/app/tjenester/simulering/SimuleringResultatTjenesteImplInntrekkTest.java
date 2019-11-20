@@ -54,8 +54,7 @@ public class SimuleringResultatTjenesteImplInntrekkTest {
     private SimuleringRepository simuleringRepository = new SimuleringRepositoryImpl(repoRule.getEntityManager());
 
     private HentNavnTjeneste hentNavnTjeneste = Mockito.mock(HentNavnTjeneste.class);
-    private FakeUnleash fakeUnleash = new FakeUnleash();
-    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste(fakeUnleash);
+    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
     private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjenesteImpl(simuleringRepository, hentNavnTjeneste, simuleringBeregningTjeneste);
 
     private String aktørId = "0";
@@ -63,7 +62,6 @@ public class SimuleringResultatTjenesteImplInntrekkTest {
     @Test
     public void henterBareDetaljertResultatUtenInntrekkDersomFørsteResultatHarBådeFeilutbetalingOgInntrekkNesteUtbetalingsperiode() {
         Long behandlingId = 7654L;
-        fakeUnleash.enable("fpsak.slaa-av-inntrekk");
 
         LocalDate nesteForfallsdato = finnNesteForfallsdatoBasertPåDagensDato();
         LocalDate førsteMånedStart = nesteForfallsdato.minusMonths(1).withDayOfMonth(1);
@@ -173,7 +171,6 @@ public class SimuleringResultatTjenesteImplInntrekkTest {
     @Test
     public void henterBareResultatUtenInntrekkDersomFørsteResultatHarBådeFeilutbetalingOgInntrekkNesteUtbetalingsperiode() {
         Long behandlingId = 7654L;
-        fakeUnleash.enable("fpsak.slaa-av-inntrekk");
 
         LocalDate nesteForfallsdato = finnNesteForfallsdatoBasertPåDagensDato();
         LocalDate førsteMånedStart = nesteForfallsdato.minusMonths(1).withDayOfMonth(1);
@@ -227,7 +224,6 @@ public class SimuleringResultatTjenesteImplInntrekkTest {
         assertThat(resultatDto.get().getSumFeilutbetaling()).isEqualTo(-21360);
     }
 
-
     @Test
     public void henterResultatMedMotregningMellomYtelser() {
         Long behandlingId = 8564L;
@@ -266,7 +262,7 @@ public class SimuleringResultatTjenesteImplInntrekkTest {
         DetaljertSimuleringResultatDto simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
         assertThat(simuleringResultatDto.isIngenPerioderMedAvvik()).isFalse();
         assertThat(simuleringResultatDto.getSumEtterbetaling()).isEqualTo(14369);
-        assertThat(simuleringResultatDto.getSumInntrekk()).isEqualTo(0);
+        assertThat(simuleringResultatDto.getSumInntrekk()).isEqualTo(-517);
         assertThat(simuleringResultatDto.getPerioderPerMottaker()).hasSize(1);
 
         SimuleringForMottakerDto mottakerDto = simuleringResultatDto.getPerioderPerMottaker().get(0);

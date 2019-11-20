@@ -16,12 +16,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.finn.unleash.Unleash;
 import no.nav.foreldrepenger.oppdrag.kodeverk.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode;
 import no.nav.foreldrepenger.oppdrag.kodeverk.MottakerType;
@@ -41,17 +39,6 @@ import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
 public class SimuleringBeregningTjeneste {
 
     private static final Logger logger = LoggerFactory.getLogger(SimuleringBeregningTjeneste.class);
-
-    private Unleash unleash;
-
-    SimuleringBeregningTjeneste() {
-        //for CDI proxy
-    }
-
-    @Inject
-    public SimuleringBeregningTjeneste(Unleash unleash) {
-        this.unleash = unleash;
-    }
 
     BeregningResultat hentBeregningsresultat(SimuleringGrunnlag simuleringGrunnlag) {
         return beregnResultat(simuleringGrunnlag, false)
@@ -159,26 +146,7 @@ public class SimuleringBeregningTjeneste {
     }
 
     BigDecimal finnInntrekk(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, FagOmrådeKode fagOmrådeKode) {
-        if (unleash.isEnabled("fpoppdrag.inntrekk.fiks.sum")) {
-            return finnInntrekkSum(beregningsresultat, fagOmrådeKode);
-        } else {
-            return finnInntrekkForNesteUtbetaling(beregningsresultat, fagOmrådeKode);
-        }
-    }
-
-    private static BigDecimal finnInntrekkForNesteUtbetaling(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, FagOmrådeKode fagOmrådeKode) {
-        Optional<Mottaker> mottakerBrukerOpt = beregningsresultat.keySet().stream().filter(m -> m.getMottakerType().equals(MottakerType.BRUKER)).findFirst();
-        if (mottakerBrukerOpt.isPresent()) {
-            Mottaker mottakerBruker = mottakerBrukerOpt.get();
-            List<SimulertBeregningPeriode> resultatForBruker = beregningsresultat.get(mottakerBruker);
-            Optional<SimulertBeregningPeriode> nesteBeregningPeriode = resultatForBruker.stream()
-                    .filter(p -> erNesteUtbetalingsperiode(p.getPeriode(), YearMonth.from(mottakerBruker.getNesteUtbetalingsperiodeFom()))).findFirst();
-            if (nesteBeregningPeriode.isPresent()) {
-                SimulertBeregning simulertBeregning = nesteBeregningPeriode.get().getBeregningPerFagområde().get(fagOmrådeKode);
-                return simulertBeregning != null ? simulertBeregning.getMotregning() : BigDecimal.ZERO;
-            }
-        }
-        return BigDecimal.ZERO;
+        return finnInntrekkSum(beregningsresultat, fagOmrådeKode);
     }
 
     private static BigDecimal finnInntrekkSum(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, FagOmrådeKode fagOmrådeKode) {
@@ -264,13 +232,7 @@ public class SimuleringBeregningTjeneste {
     }
 
     private SimulertBeregning beregnPosteringerPerFagområde(List<SimulertPostering> posteringer) {
-        if (unleash.isEnabled("fpoppdrag.eksisterende.kravgrunnlag")) {
-            return beregn(posteringer);
-        }
-        if (erFeilutbetalingIPeriode(posteringer)) {
-            return beregnFeilutbetaling(posteringer);
-        }
-        return beregnEtterbetaling(posteringer);
+        return beregn(posteringer);
     }
 
     private static SimulertBeregning beregn(List<SimulertPostering> posteringer) {
@@ -329,45 +291,10 @@ public class SimuleringBeregningTjeneste {
                 .collect(Collectors.toList());
     }
 
-    private static SimulertBeregning beregnEtterbetaling(List<SimulertPostering> posteringer) {
-        BigDecimal tidligereUtbetaltBeløp = beregnTidligereUtbetaltBeløp(posteringer);
-        BigDecimal nyttBeløp = beregnNyttBeløp(posteringer);
-        BigDecimal differanse = nyttBeløp.subtract(tidligereUtbetaltBeløp);
-        BigDecimal motregning = beregnMotregning(posteringer);
-        BigDecimal resultat = differanse.add(motregning);
-        return SimulertBeregning.builder()
-                .medTidligereUtbetaltBeløp(tidligereUtbetaltBeløp)
-                .medNyttBeregnetBeløp(nyttBeløp)
-                .medDifferanse(differanse)
-                .medEtterbetaling(resultat)
-                .medResultat(resultat)
-                .medMotregning(motregning)
-                .build();
-    }
-
-    private static SimulertBeregning beregnFeilutbetaling(List<SimulertPostering> posteringer) {
-        BigDecimal tidligereUtbetaltBeløp = beregnTidligereUtbetaltBeløp(posteringer);
-        BigDecimal feilutbetaltBeløp = beregnFeilutbetaltBeløp(posteringer);
-        BigDecimal nyttBeløp = beregnNyttBeløp(posteringer).subtract(feilutbetaltBeløp);
-        return SimulertBeregning.builder()
-                .medTidligereUtbetaltBeløp(tidligereUtbetaltBeløp)
-                .medNyttBeregnetBeløp(nyttBeløp)
-                .medDifferanse(nyttBeløp.subtract(tidligereUtbetaltBeløp))
-                .medFeilutbetaltBeløp(feilutbetaltBeløp.negate())
-                .medMotregning(beregnMotregning(posteringer))
-                .medResultat(feilutbetaltBeløp.negate())
-                .build();
-    }
-
     static BigDecimal beregnMotregning(List<SimulertPostering> posteringer) {
         return posteringer.stream().filter(p -> PosteringType.JUSTERING.equals(p.getPosteringType()))
                 .map(p -> BetalingType.DEBIT.equals(p.getBetalingType()) ? p.getBeløp() : p.getBeløp().negate())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    private static boolean erFeilutbetalingIPeriode(List<SimulertPostering> posteringer) {
-        return posteringer.stream()
-                .anyMatch(p -> PosteringType.FEILUTBETALING.equals(p.getPosteringType()) && BetalingType.DEBIT.equals(p.getBetalingType()));
     }
 
     static BigDecimal beregnFeilutbetaltBeløp(List<SimulertPostering> posteringer) {

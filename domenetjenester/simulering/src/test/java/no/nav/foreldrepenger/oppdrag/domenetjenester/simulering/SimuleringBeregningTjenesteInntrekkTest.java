@@ -39,37 +39,14 @@ import no.nav.vedtak.util.FPDateUtil;
 
 public class SimuleringBeregningTjenesteInntrekkTest {
 
-    private FakeUnleash unleash = new FakeUnleash();
-    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste(unleash);
+    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
 
-
-    Periode april = new Periode(LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 30));
-    Periode mai = new Periode(LocalDate.of(2019, 5, 1), LocalDate.of(2019, 5, 31));
-    Periode juni = new Periode(LocalDate.of(2019, 6, 1), LocalDate.of(2019, 6, 30));
-
-    @Test
-    public void skal_bare_regne_inntrekk_på_neste_utbetalingsperiode_når_toggle_er_av() {
-        unleash.disable("fpoppdrag.inntrekk.fiks.sum");
-
-        Mottaker mottaker = new Mottaker(MottakerType.BRUKER, null);
-        mottaker.setNesteUtbetalingsperiode(juni);
-
-        List<SimulertBeregningPeriode> inntrekkJuni = Arrays.asList(
-                lagPeriodeMedMotregning(juni, -10000),
-                lagPeriodeMedMotregning(mai, 10000)
-        );
-        List<SimulertBeregningPeriode> inntrekkMai = Arrays.asList(
-                lagPeriodeMedMotregning(mai, -10000),
-                lagPeriodeMedMotregning(april, 10000)
-        );
-
-        assertThat(beregnInntrekk(mottaker, inntrekkJuni)).isEqualByComparingTo(BigDecimal.valueOf(-10000));
-        assertThat(beregnInntrekk(mottaker, inntrekkMai)).isEqualByComparingTo(BigDecimal.valueOf(0));
-    }
+    private Periode april = new Periode(LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 30));
+    private Periode mai = new Periode(LocalDate.of(2019, 5, 1), LocalDate.of(2019, 5, 31));
+    private Periode juni = new Periode(LocalDate.of(2019, 6, 1), LocalDate.of(2019, 6, 30));
 
     @Test
     public void skal_regne_inntrekk_over_alle_utbetalingsperioder_når_toggle_er_på() {
-        unleash.enable("fpoppdrag.inntrekk.fiks.sum");
 
         Mottaker mottaker = new Mottaker(MottakerType.BRUKER, null);
         mottaker.setNesteUtbetalingsperiode(juni);
