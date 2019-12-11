@@ -33,7 +33,7 @@
 
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e </fpoppdrag-kontrakt.version>
-        <foreldrepenger-kontrakter.version>5.0_201904100151808_88fce8d</foreldrepenger-kontrakter.version>
+        <fp-kontrakter.version>5.1_20191210141010_6a7f399</fp-kontrakter.version>
 
         <!-- NAV -->
 
@@ -203,15 +203,15 @@
             </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
-                <artifactId>foreldrepenger-kontrakter-root</artifactId>
-                <version>${foreldrepenger-kontrakter.version}</version>
+                <artifactId>fp-kontrakter-root</artifactId>
+                <version>${fp-kontrakter.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
                 <artifactId>fp-tilkjent-ytelse-v1</artifactId>
-                <version>${foreldrepenger-kontrakter.version}</version>
+                <version>${fp-kontrakter.version}</version>
             </dependency>
 
             <!-- nav -->
