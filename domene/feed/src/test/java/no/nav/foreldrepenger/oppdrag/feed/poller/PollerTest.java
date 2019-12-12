@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 
 import ch.qos.logback.classic.Level;
 import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
-import no.nav.modig.core.test.LogSniffer;
+import no.nav.foreldrepenger.oppdrag.test.LogSniffer;
 import no.nav.vedtak.felles.testutilities.cdi.CdiRunner;
 
 @RunWith(CdiRunner.class)

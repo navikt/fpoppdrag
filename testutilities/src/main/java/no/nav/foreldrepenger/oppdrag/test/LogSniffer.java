@@ -1,17 +1,9 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
-package no.nav.modig.core.test;
+package no.nav.foreldrepenger.oppdrag.test;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -21,21 +13,31 @@ import org.slf4j.Marker;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.classic.turbo.TurboFilter;
 import ch.qos.logback.core.spi.FilterReply;
 
+/**
+ * Testutility for å verifiser at meldinger logges, med mulighet å hindre at texten kommer i logfilen
+ */
 public class LogSniffer implements TestRule {
-    private final Map<ILoggingEvent, Boolean> logbackAppender;
+
+    private final Map<ILoggingEvent, Boolean> logbackAppender = new LinkedHashMap<>();
     private final Level minimumLevel;
     private final boolean denyOthersWhenMatched;
 
+    static {
+        initLogSystem();
+    }
+
     static void initLogSystem() {
+        // java.util.logging demands a little extra for SLF4J to pick it up
         LogManager.getLogManager().reset();
         SLF4JBridgeHandler.install();
-        Logger.getLogger("global").setLevel(java.util.logging.Level.FINEST);
+        java.util.logging.Logger.getLogger("global").setLevel(java.util.logging.Level.FINEST);
     }
 
     public LogSniffer() {
@@ -47,162 +49,144 @@ public class LogSniffer implements TestRule {
     }
 
     public LogSniffer(Level minimumLevel, boolean denyOthersWhenMatched) {
-        this.logbackAppender = new LinkedHashMap();
         this.minimumLevel = minimumLevel;
         this.denyOthersWhenMatched = denyOthersWhenMatched;
-        this.installTurboFilter(this.getLoggerContext());
+        installTurboFilter(getLoggerContext());
     }
 
     private LoggerContext getLoggerContext() {
-        return (LoggerContext)LoggerFactory.getILoggerFactory();
+        return (LoggerContext) LoggerFactory.getILoggerFactory();
     }
 
     private void installTurboFilter(LoggerContext lc) {
         lc.addTurboFilter(new TurboFilter() {
-            public FilterReply decide(Marker marker, ch.qos.logback.classic.Logger logger, Level level, String format, Object[] argArray, Throwable t) {
-                if (format != null && level != null && level.isGreaterOrEqual(LogSniffer.this.minimumLevel)) {
-                    LoggingEvent loggingEvent = new LoggingEvent(ch.qos.logback.classic.Logger.FQCN, logger, level, format, t, argArray);
-                    LogSniffer.this.logbackAppender.put(loggingEvent, Boolean.FALSE);
-                    return LogSniffer.this.denyOthersWhenMatched ? FilterReply.DENY : FilterReply.NEUTRAL;
-                } else {
-                    return FilterReply.NEUTRAL;
+
+            @Override
+            public FilterReply decide(Marker marker, Logger logger, Level level, String format, Object[] argArray, Throwable t) {
+                if (format != null && level != null && level.isGreaterOrEqual(minimumLevel)) {
+                    LoggingEvent loggingEvent = new LoggingEvent(Logger.FQCN, logger, level, format, t, argArray);
+                    logbackAppender.put(loggingEvent, Boolean.FALSE);
+                    return denyOthersWhenMatched ? FilterReply.DENY : FilterReply.NEUTRAL;
                 }
+                return FilterReply.NEUTRAL;
             }
         });
     }
 
     public void assertHasErrorMessage(String substring) {
-        if (!this.hasLogEntry(substring, (Class)null, Level.ERROR)) {
+        if (!hasLogEntry(substring, null, Level.ERROR)) {
             throw new AssertionError(String.format("Could not find log message matching [%s], with level ERROR.  Has [%s]", substring, this));
-        } else {
-            this.markEntryAsserted(substring, (Class)null, Level.ERROR);
         }
+        markEntryAsserted(substring, null, Level.ERROR);
     }
 
     public void assertHasErrorMessage(String substring, Class<? extends Throwable> t) {
-        if (!this.hasLogEntry(substring, t, Level.ERROR)) {
+        if (!hasLogEntry(substring, t, Level.ERROR)) {
             throw new AssertionError(String.format("Could not find log message matching [%s], for exception [%s], with level ERROR.  Has [%s]", substring, t, this));
-        } else {
-            this.markEntryAsserted(substring, t, Level.ERROR);
         }
+        markEntryAsserted(substring, t, Level.ERROR);
     }
 
     public void assertHasWarnMessage(String substring) {
-        if (!this.hasLogEntry(substring, (Class)null, Level.WARN)) {
+        if (!hasLogEntry(substring, null, Level.WARN)) {
             throw new AssertionError(String.format("Could not find log message matching [%s], with level WARN.  Has [%s]", substring, this));
-        } else {
-            this.markEntryAsserted(substring, (Class)null, Level.WARN);
         }
+        markEntryAsserted(substring, null, Level.WARN);
     }
 
     public void assertHasWarnMessage(String substring, Class<? extends Throwable> t) {
-        if (!this.hasLogEntry(substring, t, Level.WARN)) {
+        if (!hasLogEntry(substring, t, Level.WARN)) {
             throw new AssertionError(String.format("Could not find log message matching [%s], for exception [%s], with level WARN.  Has [%s]", substring, t, this));
-        } else {
-            this.markEntryAsserted(substring, t, Level.WARN);
         }
+        markEntryAsserted(substring, t, Level.WARN);
     }
 
     public void assertHasInfoMessage(String substring) {
-        if (!this.hasLogEntry(substring, (Class)null, Level.INFO)) {
+        if (!hasLogEntry(substring, null, Level.INFO)) {
             throw new AssertionError(String.format("Could not find log message matching [%s], with level INFO.  Has [%s]", substring, this));
-        } else {
-            this.markEntryAsserted(substring, (Class)null, Level.INFO);
         }
+        markEntryAsserted(substring, null, Level.INFO);
     }
 
     public void assertNoErrors() {
-        if (this.countErrors() > 0) {
+        if (countErrors() > 0) {
             throw new AssertionError("No errors expected, but has " + this);
         }
     }
 
     public void assertNoWarnings() {
-        if (this.countWarnings() > 0) {
+        if (countWarnings() > 0) {
             throw new AssertionError("No warnings expected, but has " + this);
         }
     }
 
     public void assertNoErrorsOrWarnings() {
-        this.assertNoErrors();
-        this.assertNoWarnings();
+        assertNoErrors();
+        assertNoWarnings();
     }
 
     public void assertNoLogEntries() {
-        if (!this.logbackAppender.isEmpty()) {
+        if (!logbackAppender.isEmpty()) {
             throw new AssertionError("No log entries expected, but has " + this);
         }
     }
 
     private void markEntryAsserted(String substring, Class<? extends Throwable> t, Level level) {
-        Iterator i$ = (new ArrayList(this.logbackAppender.keySet())).iterator();
-
-        while(i$.hasNext()) {
-            ILoggingEvent loggingEvent = (ILoggingEvent)i$.next();
-            if (this.eventMatches(loggingEvent, substring, t, level)) {
-                this.logbackAppender.put(loggingEvent, Boolean.TRUE);
+        for (ILoggingEvent loggingEvent : new ArrayList<ILoggingEvent>(logbackAppender.keySet())) {
+            if (eventMatches(loggingEvent, substring, t, level)) {
+                logbackAppender.put(loggingEvent, Boolean.TRUE);
             }
         }
-
     }
 
     private boolean eventMatches(ILoggingEvent loggingEvent, String substring, Class<? extends Throwable> t, Level level) {
         if (substring != null && !loggingEvent.getFormattedMessage().contains(substring)) {
             return false;
-        } else if (t != null && (loggingEvent.getThrowableProxy() == null || loggingEvent.getThrowableProxy().getClassName() == null || !loggingEvent.getThrowableProxy().getClassName().equals(t.getName()))) {
-            return false;
-        } else {
-            return level == null || level == loggingEvent.getLevel();
         }
+        if (t != null
+                && (loggingEvent.getThrowableProxy() == null
+                || loggingEvent.getThrowableProxy().getClassName() == null
+                || !loggingEvent.getThrowableProxy().getClassName().equals(t.getName()))) {
+            return false;
+        }
+        return level == null || (level == loggingEvent.getLevel());
     }
 
     private int countErrors() {
         int logErrors = 0;
-        Iterator i$ = this.logbackAppender.entrySet().iterator();
-
-        while(i$.hasNext()) {
-            Entry<ILoggingEvent, Boolean> entry = (Entry)i$.next();
-            if (((ILoggingEvent)entry.getKey()).getLevel().equals(Level.ERROR) && entry.getValue() != Boolean.TRUE) {
-                ++logErrors;
+        for (Map.Entry<ILoggingEvent, Boolean> entry : logbackAppender.entrySet()) {
+            if (entry.getKey().getLevel().equals(Level.ERROR) && entry.getValue() != Boolean.TRUE) {
+                logErrors++;
             }
         }
-
         return logErrors;
     }
 
     private int countWarnings() {
         int logWarnings = 0;
-        Iterator i$ = this.logbackAppender.entrySet().iterator();
-
-        while(i$.hasNext()) {
-            Entry<ILoggingEvent, Boolean> entry = (Entry)i$.next();
-            if (((ILoggingEvent)entry.getKey()).getLevel().equals(Level.WARN) && entry.getValue() != Boolean.TRUE) {
-                ++logWarnings;
+        for (Map.Entry<ILoggingEvent, Boolean> entry : logbackAppender.entrySet()) {
+            if (entry.getKey().getLevel().equals(Level.WARN) && entry.getValue() != Boolean.TRUE) {
+                logWarnings++;
             }
         }
-
         return logWarnings;
     }
 
     public int countEntries(String substring) {
-        return this.countLogbackEntries(substring, (Class)null, (Level)null);
+        return countLogbackEntries(substring, null, null);
     }
 
     private boolean hasLogEntry(String substring, Class<? extends Throwable> t, Level level) {
-        return this.countLogbackEntries(substring, t, level) > 0;
+        return countLogbackEntries(substring, t, level) > 0;
     }
 
     private int countLogbackEntries(String substring, Class<? extends Throwable> t, Level level) {
         int count = 0;
-        Iterator i$ = this.logbackAppender.keySet().iterator();
-
-        while(i$.hasNext()) {
-            ILoggingEvent loggingEvent = (ILoggingEvent)i$.next();
-            if (this.eventMatches(loggingEvent, substring, t, level)) {
-                ++count;
+        for (ILoggingEvent loggingEvent : logbackAppender.keySet()) {
+            if (eventMatches(loggingEvent, substring, t, level)) {
+                count++;
             }
         }
-
         return count;
     }
 
@@ -210,33 +194,33 @@ public class LogSniffer implements TestRule {
         this.logbackAppender.clear();
     }
 
-    public Statement apply(final Statement base, Description description) {
+    @Override
+    public Statement apply(final Statement base, final Description description) {
         return new Statement() {
+            @Override
+            // throws Throwable is necessary as the base class is defined that way...
             public void evaluate() throws Throwable {
                 try {
                     base.evaluate();
-                    LogSniffer.this.assertNoErrorsOrWarnings();
+                    assertNoErrorsOrWarnings();
                 } finally {
-                    LogSniffer.this.getLoggerContext().resetTurboFilterList();
+                    getLoggerContext().resetTurboFilterList();
                 }
-
             }
         };
     }
 
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        Iterator i$ = this.logbackAppender.keySet().iterator();
-
-        while(i$.hasNext()) {
-            ILoggingEvent event = (ILoggingEvent)i$.next();
-            buf.append(event.getLevel() + ":" + event.getFormattedMessage()).append('\n');
+        for (ILoggingEvent event : logbackAppender.keySet()) {
+            buf
+                    .append(event.getLevel())
+                    .append(":")
+                    .append(event.getFormattedMessage())
+                    .append('\n');
         }
-
         return buf.toString();
     }
 
-    static {
-        initLogSystem();
-    }
 }
