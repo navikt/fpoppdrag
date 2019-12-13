@@ -64,9 +64,8 @@
             <artifactId>metrics-annotation</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.nav.modig</groupId>
-            <artifactId>modig-core-test</artifactId>
-            <version>1.0.0</version>
+            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+            <artifactId>testutilities</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

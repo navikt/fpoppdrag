@@ -15,6 +15,7 @@
         <module>kodeverk</module>
         <module>migreringer</module>
         <module>integrasjon</module>
+        <module>testutilities</module>
     </modules>
 
     <properties>
@@ -135,6 +136,12 @@
                 <artifactId>migreringer</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+                <artifactId>testutilities</artifactId>
+                <version>${project.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -263,6 +270,11 @@
                 <groupId>com.papertrailapp</groupId>
                 <artifactId>logback-syslog4j</artifactId>
                 <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-to-slf4j</artifactId>
+                <version>1.7.5</version>
             </dependency>
 
             <!-- Java 10 -->
