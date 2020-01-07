@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-if test -f /var/run/secrets/nais.io/defaultDS/jdbc_url;
+if test -f /var/run/secrets/nais.io/defaultDSconfig/jdbc_url;
 then
-  export DEFAULTDS_URL=$(cat /var/run/secrets/nais.io/defaultDS/jdbc_url)
+  export DEFAULTDS_URL=$(cat /var/run/secrets/nais.io/defaultDSconfig/jdbc_url)
   echo "Setting DEFAULTDS_URL to $DEFAULTDS_URL"
 fi
 
