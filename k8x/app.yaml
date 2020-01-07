@@ -48,11 +48,11 @@ spec:
   vault:
     enabled: true
     paths:
-        - mountPath: /var/run/secrets/nais.io/vault/oracle/config
+        - mountPath: /var/run/secrets/nais.io/oracle/config
           kvPath: oracle.config.kv
-        - mountPath: /var/run/secrets/nais.io/vault/oracle/cred
+        - mountPath: /var/run/secrets/nais.io/oracle/cred
           kvPath:  oracle.secret.kv
-        - mountPath: /var/run/secrets/nais.io/vault/serviceuser
+        - mountPath: /var/run/secrets/nais.io/serviceuser
           kvPath: serviceuser.kv
         - mountPath: /var/run/secrets/nais.io/vault
           kvPath: app.secret.kv
