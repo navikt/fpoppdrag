@@ -36,9 +36,9 @@ spec:
     limits:
       cpu: 1000m
       memory: "1024Mi"
-  requests:
-    cpu: 200m
-    memory: "256Mi"
+    requests:
+      cpu: 200m
+      memory: "256Mi"
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
     - "ingress_url1"
     - "ingress_url2"
