@@ -6,7 +6,7 @@ metadata:
   labels:
     team: teamforeldrepenger
 spec:
-  image: "repo.adeo.no:5443/fpoppdrag:RELEASE_VERSION"
+  image: repo.adeo.no:5443/fpoppdrag:RELEASE_VERSION
   port: 8080
   team: teamforeldrepenger
   liveness:
@@ -34,10 +34,10 @@ spec:
     enabled: false # Optional. When true, envoy-proxy sidecar will be injected into pod and https urls envvars will be rewritten
   resources:
     limits:
-      cpu: 1000m
+      cpu: "1000m"
       memory: "1024Mi"
     requests:
-      cpu: 200m
+      cpu: "200m"
       memory: "256Mi"
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
     - "ingress_url1"
@@ -53,9 +53,11 @@ spec:
         - mountPath: /var/run/secrets/nais.io/defaultDS
           kvPath:  oracle.secret.kv
         - mountPath: /var/run/secrets/nais.io/serviceuser
-          kvPath: serviceuser.kv
+          kvPath: fpoppdrag.serviceuser.kv
         - mountPath: /var/run/secrets/nais.io/vault
           kvPath: app.secret.kv
+        - mountPath: /var/run/secrets/nais.io/ldap
+          kvPath: ldap.serviceuser.kv
   sidecar: true # refresh token
   env:
     - name: APP_NAME
@@ -80,6 +82,17 @@ spec:
       value: oidc_openam_agentname
     - name: OIDC_OPENAM_HOSTURL
       value: oidc_openam.hosturl
+    # LDAP
+    - name: LDAP_URL
+      value: ldap.url
+    - name: LDAP_BASEDN
+      value: ldap.basedn
+    - name: LDAP_DOMAIN
+      value: ldap.domain
+    - name: LDAP_USER_BASEDN
+      value: ldap_user.basedn
+    - name: LDAP_SERVICEUSER_BASEDN
+      value: ldap_serviceuser.basedn
     #Database konfigurasjoner hentes fra vault.
     # Eksterne systemer
     - name: PERSON_V3_URL
