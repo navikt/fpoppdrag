@@ -198,12 +198,6 @@
             </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
-                <artifactId>fpoppdrag-v1</artifactId>
-                <version>${fpoppdrag-kontrakt.version}</version>
-                <classifier>jaxb</classifier>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
                 <artifactId>okonomistotte-v1</artifactId>
                 <version>${fpoppdrag-kontrakt.version}</version>
                 <classifier>jaxb</classifier>
