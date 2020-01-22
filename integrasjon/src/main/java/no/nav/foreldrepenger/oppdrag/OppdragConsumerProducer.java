@@ -27,13 +27,11 @@ public class OppdragConsumerProducer {
 
     public OppdragConsumer oppdragConsumer() {
         SimulerFpService port = wrapWithSts(consumerConfig.getPort(), SECURITYCONTEXT_TIL_SAML);
-        disableCnCheck(port);
         return new OppdragConsumerImpl(port);
     }
 
     public OppdragSelftestConsumer oppdragSelftestConsumer() {
         SimulerFpService port = wrapWithSts(consumerConfig.getPort(), SYSTEM_SAML);
-        disableCnCheck(port);
         return new OppdragSelftestConsumerImpl(port, consumerConfig.getEndpointUrl());
     }
 
@@ -41,14 +39,4 @@ public class OppdragConsumerProducer {
         return StsConfigurationUtil.wrapWithSts(port, samlTokenType);
     }
 
-
-    private void disableCnCheck(SimulerFpService port) {
-        Client client = ClientProxy.getClient(port);
-        HTTPConduit conduit = (HTTPConduit) client.getConduit();
-
-        TLSClientParameters tlsParams = new TLSClientParameters();
-        tlsParams.setDisableCNCheck(true);
-
-        conduit.setTlsClientParameters(tlsParams);
-    }
 }
