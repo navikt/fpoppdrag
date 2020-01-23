@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
 
 public class SimuleringResultatPerFagområdeDto {
 

@@ -1,14 +1,6 @@
 package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.PeriodeDto;
-import no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverk.MottakerType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
-import org.threeten.extra.Days;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.FEILUTBETALING;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,7 +15,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType.FEILUTBETALING;
+import org.threeten.extra.Days;
+
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.PeriodeDto;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
 
 public class FeilutbetalingTjeneste {
 

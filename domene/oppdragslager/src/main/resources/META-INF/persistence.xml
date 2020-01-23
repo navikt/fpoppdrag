@@ -8,13 +8,7 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <non-jta-data-source>jdbc/defaultDS</non-jta-data-source>
 
-        <mapping-file>META-INF/kodeliste-entiteter-orm.xml</mapping-file>
-        <mapping-file>META-INF/kodeverk-orm.xml</mapping-file>
-        <mapping-file>META-INF/konfigverdi-orm.xml</mapping-file>
         <mapping-file>META-INF/oppdragslager-orm.xml</mapping-file>
-
-        <!-- Ligger i felles-behandlingsprosess-prosesstask -->
-        <mapping-file>META-INF/pu-default.prosesstask.orm.xml</mapping-file>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle12cDialect"/>

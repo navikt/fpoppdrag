@@ -1,20 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
 
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.PeriodeDto;
-import no.nav.foreldrepenger.oppdrag.kodeverk.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverk.MottakerType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.SatsType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.YtelseType;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.BehandlingRef;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,7 +12,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.PeriodeDto;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.SatsType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.BehandlingRef;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
 
 public class FeilutbetalingTjenesteTest {
 

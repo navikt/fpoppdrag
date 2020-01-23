@@ -9,11 +9,10 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
-import no.nav.foreldrepenger.oppdrag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.BehandlingRef;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepositoryImpl;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.vedtak.felles.testutilities.db.RepositoryRule;
 
@@ -22,7 +21,7 @@ public class PipRepositoryTest {
     @Rule
     public final RepositoryRule repoRule = new UnittestRepositoryRule();
     private PipRepository pipRepository = new PipRepository(repoRule.getEntityManager());
-    private SimuleringRepository simuleringRepository = new SimuleringRepositoryImpl(repoRule.getEntityManager());
+    private SimuleringRepository simuleringRepository = new SimuleringRepository(repoRule.getEntityManager());
 
     @Test
     public void henterAktørIdForBehandlingId() {

@@ -10,22 +10,22 @@ spec:
   port: 8080
   team: teamforeldrepenger
   liveness:
-    path: /fpoppdrag/internal/isAlive
+    path: /fpoppdrag/internal/health/isAlive
     initialDelay: 30
     timeout: 5
     periodSeconds: 10
     failureThreshold: 27
   readiness:
-    path: /fpoppdrag/internal/isReady
+    path: /fpoppdrag/internal/health/isReady
     initialDelay: 30
     timeout: 5
     periodSeconds: 10
     failureThreshold: 27
   replicas:
-    min: 3
+    min: 2
     max: 3
     cpuThresholdPercentage: 80
-  preStopHookPath: /fpoppdrag/internal/preStop # Optional. A HTTP GET will be issued to this endpoint at least once before the pod is terminated.
+  preStopHookPath: /fpoppdrag/internal/health/preStop # Optional. A HTTP GET will be issued to this endpoint at least once before the pod is terminated.
   # See https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
   prometheus: # Optional.
     enabled: true # if true the pod will be scraped for metrics by prometheus

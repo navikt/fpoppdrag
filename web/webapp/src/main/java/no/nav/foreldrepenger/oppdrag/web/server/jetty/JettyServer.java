@@ -63,7 +63,7 @@ public class JettyServer extends AbstractJettyServer {
 
     private void wsMedLTPAmåIgjennomServiceGateway() {
         if (System.getenv("SERVICEGATEWAY_URL") != null) {
-            System.setProperty("Oppgave_v3.url", System.getenv("SERVICEGATEWAY_URL"));
+            System.setProperty("Oppgave.v3.url", System.getenv("SERVICEGATEWAY_URL"));
         }
     }
 
@@ -119,6 +119,7 @@ public class JettyServer extends AbstractJettyServer {
     @Override
     protected ResourceCollection createResourceCollection() throws IOException {
         return new ResourceCollection(
+                Resource.newClassPathResource("META-INF/resources/webjars/"),
                 Resource.newClassPathResource("/web"),
                 Resource.newClassPathResource("/META-INF/resources")/** i18n */);
     }

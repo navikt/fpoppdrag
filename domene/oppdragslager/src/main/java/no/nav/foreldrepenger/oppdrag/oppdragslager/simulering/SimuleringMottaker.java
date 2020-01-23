@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,11 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinFormula;
-
-import no.nav.foreldrepenger.oppdrag.kodeverk.MottakerType;
-import no.nav.vedtak.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
 
 @Entity(name = "SimuleringMottaker")
 @Table(name = "SIMULERING_MOTTAKER")
@@ -37,10 +35,9 @@ public class SimuleringMottaker extends BaseEntitet {
     @Column(name = "mottaker_nummer")
     private String mottakerNummer;
 
-    @ManyToOne(optional = false)
-    @JoinColumnOrFormula(column = @JoinColumn(name = "mottaker_type", referencedColumnName = "kode", nullable = false))
-    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + MottakerType.DISCRIMINATOR + "'"))
-    private MottakerType mottakerType;
+    @Convert(converter = MottakerType.KodeverdiConverter.class)
+    @Column(name = "mottaker_type", nullable = false)
+    private MottakerType mottakerType = MottakerType.UDEFINERT;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "simuleringMottaker")
     private List<SimulertPostering> simulertePosteringer = new ArrayList<>();

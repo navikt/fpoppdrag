@@ -26,8 +26,8 @@
             <artifactId>felles-db</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-prosesstask</artifactId>
+            <groupId>no.nav.foreldrepenger.felles.sikkerhet</groupId>
+            <artifactId>felles-sikkerhet</artifactId>
         </dependency>
 
         <!-- NAV -->
@@ -37,6 +37,11 @@
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
             <artifactId>migreringer</artifactId>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

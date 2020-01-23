@@ -14,7 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import no.nav.vedtak.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
+
 
 /**
  * Denne klassen er en ren avbildning fra Oppdragsløsningens meldingsformater.
@@ -22,7 +23,7 @@ import no.nav.vedtak.felles.jpa.BaseEntitet;
  */
 @Entity(name = "Oppdragsenhet120")
 @Table(name = "OKO_OPPDRAG_ENHET_120")
-public class Oppdragsenhet120 extends BaseEntitet{
+public class Oppdragsenhet120 extends BaseEntitet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_OKO_OPPDRAG_ENHET_120")

@@ -10,11 +10,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 
-import no.nav.abac.xacml.NavAttributter;
-import no.nav.abac.xacml.StandardAttributter;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.pip.PipRepository;
 import no.nav.vedtak.sikkerhet.abac.AbacAttributtSamling;
 import no.nav.vedtak.sikkerhet.abac.AbacAttributtType;
+import no.nav.vedtak.sikkerhet.abac.NavAbacCommonAttributter;
 import no.nav.vedtak.sikkerhet.abac.PdpKlient;
 import no.nav.vedtak.sikkerhet.abac.PdpRequest;
 import no.nav.vedtak.sikkerhet.abac.PdpRequestBuilder;
@@ -50,7 +49,7 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
     public PdpRequest lagPdpRequest(AbacAttributtSamling attributter) {
         validerTyper(attributter);
 
-        var aktørIder = new HashSet<>(attributter.getVerdier(StandardAbacAttributtType.AKTØR_ID));
+        Set<String>  aktørIder = new HashSet<>(attributter.getVerdier(StandardAbacAttributtType.AKTØR_ID));
         Optional<Long> behandlingIdOpt = utledBehandlingId(attributter);
         if (behandlingIdOpt.isPresent()) {
             Long behandlingId = behandlingIdOpt.get();
@@ -59,11 +58,11 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
         }
 
         PdpRequest pdpRequest = new PdpRequest();
-        pdpRequest.put(NavAttributter.RESOURCE_FELLES_DOMENE, ABAC_DOMAIN);
         pdpRequest.put(PdpKlient.ENVIRONMENT_AUTH_TOKEN, attributter.getIdToken());
-        pdpRequest.put(StandardAttributter.ACTION_ID, attributter.getActionType().getEksternKode());
-        pdpRequest.put(NavAttributter.RESOURCE_FELLES_RESOURCE_TYPE, attributter.getResource().getEksternKode());
-        pdpRequest.put(NavAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, aktørIder);
+        pdpRequest.put(NavAbacCommonAttributter.RESOURCE_FELLES_DOMENE, ABAC_DOMAIN);
+        pdpRequest.put(NavAbacCommonAttributter.XACML10_ACTION_ACTION_ID, attributter.getActionType().getEksternKode());
+        pdpRequest.put(NavAbacCommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE, attributter.getResource().getEksternKode());
+        pdpRequest.put(NavAbacCommonAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, aktørIder);
 
         return pdpRequest;
     }

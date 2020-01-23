@@ -20,11 +20,11 @@ import javax.enterprise.context.ApplicationScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.oppdrag.kodeverk.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverk.MottakerType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;

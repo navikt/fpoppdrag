@@ -10,7 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import no.nav.vedtak.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
+
 
 /**
  * Denne klassen er en ren avbildning fra Oppdragsløsningens meldingsformater.
@@ -18,7 +19,7 @@ import no.nav.vedtak.felles.jpa.BaseEntitet;
  */
 @Entity(name = "Avstemming115")
 @Table(name = "OKO_AVSTEMMING_115")
-public class Avstemming115 extends BaseEntitet{
+public class Avstemming115 extends BaseEntitet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_OKO_AVSTEMMING_115")

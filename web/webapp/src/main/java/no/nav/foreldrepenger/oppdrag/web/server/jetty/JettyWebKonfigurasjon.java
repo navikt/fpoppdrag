@@ -2,7 +2,7 @@ package no.nav.foreldrepenger.oppdrag.web.server.jetty;
 
 public class JettyWebKonfigurasjon implements AppKonfigurasjon {
     private static final String CONTEXT_PATH = "/fpoppdrag";
-    private static final String SWAGGER_HASH = "sha256-jZ9Y3HJCuOrdIL95F0ngZyJyP3DaGenAOpFYW3rvs5E=";
+    private static final String SWAGGER_HASH = "sha256-DeBqOBe/Aji7pvm5ANTejTZ3M/dg/PSAD3r0TQJ/buE=";
 
     private Integer serverPort;
 

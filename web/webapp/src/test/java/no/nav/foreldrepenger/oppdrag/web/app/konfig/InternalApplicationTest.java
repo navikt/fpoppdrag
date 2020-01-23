@@ -14,6 +14,6 @@ public class InternalApplicationTest {
     public void getClasses() {
         InternalApplication app = new InternalApplication();
         Set<Class<?>> classes = app.getClasses();
-        assertEquals(classes.size(), 2);
+        assertEquals(classes.size(), 3);
     }
 }

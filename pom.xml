@@ -30,53 +30,57 @@
 
         <!-- Felles avhengigheter i prosjektet Disse skal ALLTID være en
             RELEASE-avhengighet UNNTAK: feature-brancher og lokalt -->
-        <felles.version>1.1.0_20190523160217_423c87f</felles.version>
+        <felles.version>1.5.0-20200116143541-6449112</felles.version>
+        <prosesstask.version>2.0.0-20200118083448-d87fd6d</prosesstask.version>
+
 
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e </fpoppdrag-kontrakt.version>
-        <fp-kontrakter.version>5.1_20191210141010_6a7f399</fp-kontrakter.version>
+        <fp-kontrakter.version>5.1_20200117132228_47cdf2f</fp-kontrakter.version>
 
         <!-- NAV -->
 
         <!-- Eksterne -->
-        <assertj.version>3.7.0</assertj.version>
-
+        <assertj.version>3.14.0</assertj.version>
+        <resteasy-validator-provider.version>3.10.0.Final</resteasy-validator-provider.version>
+        <weld-web.version>3.1.3.Final</weld-web.version>
+        <javax.el.version>3.0.1-b11</javax.el.version>
         <cxf.version>3.2.6</cxf.version>
         <woodstox.version>5.1.0</woodstox.version>
-        <surefire.version>2.21.0</surefire.version>
+        <surefire.version>2.22.2</surefire.version>
         <asm.version>6.2.1</asm.version>
-        <metrics.version>3.2.5</metrics.version>
+        <metrics.version>4.1.2</metrics.version>
+        <prometheus.version>0.8.0</prometheus.version>
 
         <geronimo.jaspi.version>2.0.0</geronimo.jaspi.version>
         <geronimo.osgi.version>1.1</geronimo.osgi.version>
         <hamcrest.version>1.3</hamcrest.version>
         <jandex.version>2.0.4.Final</jandex.version>
-        <junit.version>5.2.0</junit.version>
-        <logstash.version>4.10</logstash.version>
-        <mockito.version>2.12.0</mockito.version>
-        <swagger.version>1.5.17</swagger.version>
+        <junit.version>5.5.2</junit.version>
+        <logstash.version>6.3</logstash.version>
+        <mockito.version>3.2.4</mockito.version>
+        <swagger.version>2.1.1</swagger.version>
+        <swagger.spec-parser.version>1.0.49</swagger.spec-parser.version>
+
 
         <!-- Transitive avh. versjoner for å sikre unikhet (enforcer dependencyConvergence).
             Skal ikke benyttes direkte av vår egen kode. -->
         <apache.ws.xmlschema.version>2.2.2</apache.ws.xmlschema.version>
-        <joda-time.version>2.9.9</joda-time.version>
         <javaslang.version>2.0.6</javaslang.version>
         <plexus.version>3.0.8</plexus.version>
 
         <!-- Transitive avh. versjoner for å sikre unikhet (enforcer dependencyConvergence). Skal ikke benyttes direkte av vår egen kode. -->
         <jasypt.version>1.9.2</jasypt.version>
-        <javaslang.version>2.0.6</javaslang.version>
 
-        <joda-time.version>2.9.9</joda-time.version>
-        <ow2.asm.version>6.2</ow2.asm.version>
-        <swagger.spec-parser.version>1.0.28</swagger.spec-parser.version>
+        <joda-time.version>2.10.5</joda-time.version>
+        <ow2.asm.version>7.3.1</ow2.asm.version>
+        <owaspencoder.version>1.2.2</owaspencoder.version>
 
-        <owaspencoder.version>1.2.1</owaspencoder.version>
 
         <!-- Dupliserte properties fra vl-felles. Pass på å oppdatere begge steder. Disse trengs for definisjon av videre plugins -->
         <!-- <flyway.version>5.1.4</flyway.version> FIXME: støtter ikke oracle 11, se på hva som skal til for å kjøre på 12 -->
         <flyway.version>4.2.0</flyway.version>
-        <ojdbc.version>12.2.0.1</ojdbc.version>
+        <ojdbc.version>19.3.0.0</ojdbc.version>
         <abac-attribute-constants.version>2.0.0</abac-attribute-constants.version>
 
         <jetty.version>9.4.17.v20190418</jetty.version>
@@ -154,16 +158,11 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>no.nav.foreldrepenger.felles</groupId>
-                <artifactId>felles-prosesstask</artifactId>
-                <version>${felles.version}</version>
+                <groupId>no.nav.vedtak.prosesstask</groupId>
+                <artifactId>prosesstask-root</artifactId>
+                <version>${prosesstask.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.felles</groupId>
-                <artifactId>felles-prosesstask</artifactId>
-                <version>${felles.version}</version>
             </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles</groupId>
@@ -181,6 +180,11 @@
                 <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
                 <artifactId>felles-integrasjon-bom</artifactId>
                 <version>${felles.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.oracle.ojdbc</groupId>
+                <artifactId>ojdbc8</artifactId>
+                <version>${ojdbc.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.kafka</groupId>
@@ -238,18 +242,33 @@
             </dependency>
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-servlets</artifactId>
-                <version>${metrics.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-healthchecks</artifactId>
                 <version>${metrics.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-annotation</artifactId>
-                <version>${metrics.version}</version>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient_dropwizard</artifactId>
+                <version>${prometheus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient_servlet</artifactId>
+                <version>${prometheus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient</artifactId>
+                <version>${prometheus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient_hotspot</artifactId>
+                <version>${prometheus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient_common</artifactId>
+                <version>${prometheus.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.owasp.encoder</groupId>
@@ -276,6 +295,21 @@
                 <artifactId>jul-to-slf4j</artifactId>
                 <version>1.7.5</version>
             </dependency>
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-validator-provider</artifactId>
+                <version>${resteasy-validator-provider.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.weld.module</groupId>
+                <artifactId>weld-web</artifactId>
+                <version>${weld-web.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.el</artifactId>
+                <version>${javax.el.version}</version>
+            </dependency>
 
             <!-- Java 10 -->
             <dependency>
@@ -301,11 +335,6 @@
 
             <!-- sikrer samme versjon - siden felles-biblioteker mikser -->
             <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-core</artifactId>
-                <version>${metrics.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm-tree</artifactId>
                 <version>${ow2.asm.version}</version>
@@ -323,7 +352,22 @@
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-compat-spec-parser</artifactId>
-                <version>1.0.28</version>
+                <version>${swagger.spec-parser.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-jaxrs2</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-core</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
@@ -401,7 +445,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.0.2</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -436,7 +480,7 @@
                 <plugin>
                     <groupId>com.github.eirslett</groupId>
                     <artifactId>frontend-maven-plugin</artifactId>
-                    <version>1.6</version>
+                    <version>1.9.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

@@ -13,11 +13,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
-import no.nav.foreldrepenger.oppdrag.kodeverk.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverk.KlasseKode;
-import no.nav.foreldrepenger.oppdrag.kodeverk.MottakerType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.dto.SimuleringDetaljerDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.dto.SimuleringDto;

@@ -13,7 +13,6 @@ public abstract class KodeverkValidator<T> implements ConstraintValidator<ValidK
     static final String invNavn = "kodeverks navn feilet validering"; // NOSONAR
 
     Pattern kodeverkPattern = Pattern.compile(InputValideringRegex.KODEVERK);
-    Pattern navnPattern = Pattern.compile(InputValideringRegex.NAVN);
 
     @Override
     public void initialize(ValidKodeverk validKodeverk) {
@@ -30,10 +29,6 @@ public abstract class KodeverkValidator<T> implements ConstraintValidator<ValidK
 
     boolean gyldigKodeverk(String kodeverk) {
         return (!erTomEllerNull(kodeverk) && gyldigLengde(kodeverk, 0, 256) && kodeverkPattern.matcher(kodeverk).matches());
-    }
-
-    boolean gyldigNavn(String str) {
-        return (!erTomEllerNull(str) && gyldigLengde(str, 0, 256) && navnPattern.matcher(str).matches());
     }
 
     boolean gyldigLengde(String str, int min, int max) {

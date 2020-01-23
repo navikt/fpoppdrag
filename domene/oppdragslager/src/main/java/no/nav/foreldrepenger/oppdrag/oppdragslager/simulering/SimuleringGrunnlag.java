@@ -11,18 +11,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinFormula;
-
-import no.nav.foreldrepenger.oppdrag.kodeverk.YtelseType;
-import no.nav.vedtak.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
-import no.nav.vedtak.util.FPDateUtil;
 
 
 @Entity(name = "SimuleringGrunnlag")
@@ -52,12 +47,11 @@ public class SimuleringGrunnlag extends BaseEntitet {
     private Long versjon;
 
     @Column(name = "simulering_kjoert_dato", nullable = false, updatable = false)
-    private LocalDateTime simuleringKjørtDato = FPDateUtil.nå();
+    private LocalDateTime simuleringKjørtDato = LocalDateTime.now();
 
-    @ManyToOne(optional = false)
-    @JoinColumnOrFormula(column = @JoinColumn(name = "ytelse_type", referencedColumnName = "kode", nullable = false))
-    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + YtelseType.DISCRIMINATOR + "'"))
-    private YtelseType ytelseType;
+    @Convert(converter = YtelseType.KodeverdiConverter.class)
+    @Column(name = "ytelse_type", nullable = false)
+    private YtelseType ytelseType = YtelseType.UDEFINERT;
 
     private SimuleringGrunnlag() {
         // Hibernate

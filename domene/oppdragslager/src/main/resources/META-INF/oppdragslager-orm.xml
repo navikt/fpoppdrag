@@ -48,14 +48,6 @@
     <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker"/>
     <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering"/>
     <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXml"/>
-    <entity class="no.nav.foreldrepenger.oppdrag.kodeverk.MottakerType"/>
-    <entity class="no.nav.foreldrepenger.oppdrag.kodeverk.BetalingType"/>
-    <entity class="no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType"/>
-    <entity class="no.nav.foreldrepenger.oppdrag.kodeverk.KlasseKode"/>
-    <entity class="no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode"/>
-    <entity class="no.nav.foreldrepenger.oppdrag.kodeverk.SatsType"/>
-    <entity class="no.nav.foreldrepenger.oppdrag.kodeverk.Inntektskategori"/>
-    <entity class="no.nav.foreldrepenger.oppdrag.kodeverk.YtelseType"/>
 
     <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.tilkjentytelse.TilkjentYtelseEntitet"/>
     <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.tilkjentytelse.TilkjentYtelseBehandlingInfo"/>

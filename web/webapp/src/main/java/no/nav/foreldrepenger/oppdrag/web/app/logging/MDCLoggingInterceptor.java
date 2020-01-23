@@ -12,14 +12,15 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
+import no.nav.vedtak.log.mdc.MdcExtendedLogContext;
 import no.nav.vedtak.sikkerhet.abac.AbacAttributtSamling;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
-import no.nav.vedtak.util.MdcExtendedLogContext;
 
 @BeskyttetRessurs(action = BeskyttetRessursActionAttributt.DUMMY, ressurs = BeskyttetRessursResourceAttributt.DUMMY)
 @Interceptor
@@ -36,8 +37,8 @@ public class MDCLoggingInterceptor {
     public Object wrapTransaction(final InvocationContext invocationContext) throws Exception {
         AbacAttributtSamling abacAttributtSamling = hentAbacAttributter(invocationContext);
 
-        leggTilMDC("behandling", abacAttributtSamling.getBehandlingsIder());
-        leggTilMDC("fagsak", abacAttributtSamling.getFagsakIder());
+        leggTilMDC("behandling", abacAttributtSamling.getVerdier(StandardAbacAttributtType.BEHANDLING_ID));
+        leggTilMDC("fagsak", abacAttributtSamling.getVerdier(StandardAbacAttributtType.FAGSAK_ID));
 
         return invocationContext.proceed();
 

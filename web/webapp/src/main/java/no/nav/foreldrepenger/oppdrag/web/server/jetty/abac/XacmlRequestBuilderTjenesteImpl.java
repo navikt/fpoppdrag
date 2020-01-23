@@ -1,9 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.web.server.jetty.abac;
 
-import static no.nav.abac.xacml.NavAttributter.RESOURCE_ARKIV_GSAK_SAKSID;
-import static no.nav.abac.xacml.NavAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
-import static no.nav.abac.xacml.NavAttributter.RESOURCE_FELLES_PERSON_FNR;
-import static no.nav.abac.xacml.NavAttributter.RESOURCE_FORELDREPENGER_SAK_AKSJONSPUNKT_TYPE;
+import static no.nav.vedtak.sikkerhet.abac.NavAbacCommonAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
+import static no.nav.vedtak.sikkerhet.abac.NavAbacCommonAttributter.RESOURCE_FELLES_PERSON_FNR;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +10,7 @@ import javax.annotation.Priority;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Alternative;
 
-import no.nav.abac.foreldrepenger.xacml.ForeldrepengerAttributter;
-import no.nav.abac.xacml.NavAttributter;
-import no.nav.abac.xacml.StandardAttributter;
+import no.nav.vedtak.sikkerhet.abac.NavAbacCommonAttributter;
 import no.nav.vedtak.sikkerhet.abac.PdpRequest;
 import no.nav.vedtak.sikkerhet.pdp.XacmlRequestBuilderTjeneste;
 import no.nav.vedtak.sikkerhet.pdp.xacml.XacmlAttributeSet;
@@ -34,7 +30,7 @@ public class XacmlRequestBuilderTjenesteImpl implements XacmlRequestBuilderTjene
         XacmlRequestBuilder xacmlBuilder = new XacmlRequestBuilder();
 
         XacmlAttributeSet actionAttributeSet = new XacmlAttributeSet();
-        actionAttributeSet.addAttribute(StandardAttributter.ACTION_ID, pdpRequest.getString(StandardAttributter.ACTION_ID));
+        actionAttributeSet.addAttribute(NavAbacCommonAttributter.XACML10_ACTION_ACTION_ID, pdpRequest.getString(NavAbacCommonAttributter.XACML10_ACTION_ACTION_ID));
         xacmlBuilder.addActionAttributeSet(actionAttributeSet);
 
         int antall = antallResources(pdpRequest);
@@ -55,8 +51,8 @@ public class XacmlRequestBuilderTjenesteImpl implements XacmlRequestBuilderTjene
 
     private XacmlAttributeSet byggXacmlResourceAttrSet(PdpRequest pdpRequest, int index) {
         XacmlAttributeSet resourceAttributeSet = new XacmlAttributeSet();
-        resourceAttributeSet.addAttribute(NavAttributter.RESOURCE_FELLES_DOMENE, pdpRequest.getString(NavAttributter.RESOURCE_FELLES_DOMENE));
-        resourceAttributeSet.addAttribute(NavAttributter.RESOURCE_FELLES_RESOURCE_TYPE, pdpRequest.getString(NavAttributter.RESOURCE_FELLES_RESOURCE_TYPE));
+        resourceAttributeSet.addAttribute(NavAbacCommonAttributter.RESOURCE_FELLES_DOMENE, pdpRequest.getString(NavAbacCommonAttributter.RESOURCE_FELLES_DOMENE));
+        resourceAttributeSet.addAttribute(NavAbacCommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE, pdpRequest.getString(NavAbacCommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE));
 
         int antallFnrPåRequest = pdpRequest.getAntall(RESOURCE_FELLES_PERSON_FNR);
         if (index < antallFnrPåRequest) {
@@ -65,19 +61,8 @@ public class XacmlRequestBuilderTjenesteImpl implements XacmlRequestBuilderTjene
             int kalkulertIndex = index - antallFnrPåRequest;
             setOptionalListValueinAttributeSet(resourceAttributeSet, pdpRequest, RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, kalkulertIndex);
         }
-        setOptionalListValueinAttributeSet(resourceAttributeSet, pdpRequest, RESOURCE_FORELDREPENGER_SAK_AKSJONSPUNKT_TYPE, (index / Math.max(antallIdenter(pdpRequest), 1)));
-        setOptionalValueinAttributeSet(resourceAttributeSet, pdpRequest, NavAttributter.RESOURCE_FORELDREPENGER_SAK_SAKSSTATUS);
-        setOptionalValueinAttributeSet(resourceAttributeSet, pdpRequest, NavAttributter.RESOURCE_FORELDREPENGER_SAK_BEHANDLINGSSTATUS);
-        setOptionalValueinAttributeSet(resourceAttributeSet, pdpRequest, NavAttributter.RESOURCE_FORELDREPENGER_SAK_ANSVARLIG_SAKSBEHANDLER);
-        setOptionalListValueinAttributeSet(resourceAttributeSet, pdpRequest, RESOURCE_ARKIV_GSAK_SAKSID, index);
-        int kalkulertOppgaveIndex = index % Math.max(pdpRequest.getAntall(ForeldrepengerAttributter.FORELDREPENGER_OPPGAVESTYRING_AVDELINGSENHET), 1);
-        setOptionalListValueinAttributeSet(resourceAttributeSet, pdpRequest, ForeldrepengerAttributter.FORELDREPENGER_OPPGAVESTYRING_AVDELINGSENHET, kalkulertOppgaveIndex);
 
         return resourceAttributeSet;
-    }
-
-    private void setOptionalValueinAttributeSet(XacmlAttributeSet resourceAttributeSet, PdpRequest pdpRequest, String key) {
-        pdpRequest.getOptional(key).ifPresent(s -> resourceAttributeSet.addAttribute(key, s));
     }
 
     private void setOptionalListValueinAttributeSet(XacmlAttributeSet resourceAttributeSet, PdpRequest pdpRequest, String key, int index) {

@@ -12,7 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import no.nav.vedtak.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
+
 
 @Entity(name = "OppdragKvittering")
 @Table(name = "OPPDRAG_KVITTERING")
