@@ -13,15 +13,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinFormula;
-
-import no.nav.foreldrepenger.oppdrag.kodeverk.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverk.KlasseKode;
-import no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.SatsType;
-import no.nav.vedtak.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.SatsType;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 @Entity(name = "SimulertPostering")
@@ -32,10 +29,9 @@ public class SimulertPostering extends BaseEntitet {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SIMULERT_POSTERING")
     private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumnOrFormula(column = @JoinColumn(name = "fag_omraade_kode", referencedColumnName = "kode", nullable = false))
-    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + FagOmrådeKode.DISCRIMINATOR + "'"))
-    private FagOmrådeKode fagOmrådeKode;
+    @Convert(converter = FagOmrådeKode.KodeverdiConverter.class)
+    @Column(name = "fag_omraade_kode", nullable = false)
+    private FagOmrådeKode fagOmrådeKode = FagOmrådeKode.UDEFINERT;
 
     @Column(name = "konto", nullable = false)
     private String konto;
@@ -46,24 +42,20 @@ public class SimulertPostering extends BaseEntitet {
     @Column(name = "tom", nullable = false)
     private LocalDate tom;
 
-    @ManyToOne(optional = false)
-    @JoinColumnOrFormula(column = @JoinColumn(name = "betaling_type", referencedColumnName = "kode", nullable = false))
-    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + BetalingType.DISCRIMINATOR + "'"))
-    private BetalingType betalingType;
+    @Convert(converter = BetalingType.KodeverdiConverter.class)
+    @Column(name = "betaling_type", nullable = false)
+    private BetalingType betalingType = BetalingType.UDEFINERT;
 
     @Column(name = "beloep", nullable = false)
     private BigDecimal beløp;
 
-    @ManyToOne(optional = false)
-    @JoinColumnOrFormula(column = @JoinColumn(name = "postering_type", referencedColumnName = "kode", nullable = false))
-    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + PosteringType.DISCRIMINATOR + "'"))
-    private PosteringType posteringType;
+    @Convert(converter = PosteringType.KodeverdiConverter.class)
+    @Column(name = "postering_type", nullable = false)
+    private PosteringType posteringType = PosteringType.UDEFINERT;
 
-    @ManyToOne(optional = false)
-    @JoinColumnOrFormula(column = @JoinColumn(name = "klasse_kode", referencedColumnName = "kode", nullable = false))
-    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + KlasseKode.DISCRIMINATOR + "'"))
-    private KlasseKode klasseKode;
-
+    @Convert(converter = KlasseKode.KodeverdiConverter.class)
+    @Column(name = "klasse_kode", nullable = false)
+    private KlasseKode klasseKode = KlasseKode.UDEFINERT;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "simulering_mottaker_id", nullable = false)
@@ -76,9 +68,8 @@ public class SimulertPostering extends BaseEntitet {
     @Column(name = "uten_inntrekk", nullable = false)
     private boolean utenInntrekk;
 
-    @ManyToOne
-    @JoinColumnOrFormula(column = @JoinColumn(name = "sats_type", referencedColumnName = "kode", nullable = false))
-    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + SatsType.DISCRIMINATOR + "'"))
+    @Convert(converter = SatsType.KodeverdiConverter.class)
+    @Column(name = "sats_type", nullable = false)
     private SatsType satsType = SatsType.UDEFINERT;
 
     @Column(name = "sats")

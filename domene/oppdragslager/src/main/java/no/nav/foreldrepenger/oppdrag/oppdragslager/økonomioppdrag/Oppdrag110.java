@@ -21,7 +21,8 @@ import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import no.nav.vedtak.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
+
 
 /**
  * Denne klassen er en ren avbildning fra Oppdragsløsningens meldingsformater.

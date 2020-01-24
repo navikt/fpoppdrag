@@ -5,7 +5,7 @@ import static java.util.Map.entry;
 import java.util.Map;
 
 import no.nav.foreldrepenger.kontrakter.tilkjentytelse.v1.TilkjentYtelseV1;
-import no.nav.foreldrepenger.oppdrag.kodeverk.Inntektskategori;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Inntektskategori;
 
 class InntektskategoriMapper {
 

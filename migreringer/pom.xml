@@ -18,6 +18,15 @@
         <!-- Test avhengigheter -->
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-db</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-testutilities</artifactId>
             <scope>test</scope>
         </dependency>
@@ -65,11 +74,6 @@
                         <groupId>org.flywaydb</groupId>
                         <artifactId>flyway-core</artifactId>
                         <version>${flyway.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.oracle</groupId>
-                        <artifactId>ojdbc8</artifactId>
-                        <version>${ojdbc.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>

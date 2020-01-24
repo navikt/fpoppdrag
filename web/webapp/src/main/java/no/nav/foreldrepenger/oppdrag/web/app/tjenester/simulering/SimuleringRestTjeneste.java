@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -16,26 +17,21 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.codahale.metrics.annotation.Timed;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.BehandlingIdDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimulerOppdragDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatDto;
-import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 
 
-@Api(tags = {"simulering"})
 @RequestScoped
 @Path("simulering")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Transaction
+@Transactional
 public class SimuleringRestTjeneste {
 
     private SimuleringResultatTjeneste simuleringResultatTjeneste;
@@ -51,11 +47,9 @@ public class SimuleringRestTjeneste {
         this.startSimuleringTjeneste = startSimuleringTjeneste;
     }
 
-
     @POST
     @Path("resultat")
-    @Timed
-    @ApiOperation(value = "Hent resultat av simulering mot økonomi", notes = ("Returnerer simuleringsresultat."))
+    @Operation(description = "Hent resultat av simulering mot økonomi", summary = ("Returnerer simuleringsresultat."), tags = "simulering")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     public SimuleringResultatDto hentSimuleringResultat(@Valid BehandlingIdDto behandlingIdDto) {
         Optional<SimuleringResultatDto> optionalSimuleringResultatDto = simuleringResultatTjeneste.hentResultatFraSimulering(behandlingIdDto.getBehandlingId());
@@ -64,8 +58,7 @@ public class SimuleringRestTjeneste {
 
     @POST
     @Path("resultat-uten-inntrekk")
-    @Timed
-    @ApiOperation(value = "Hent detaljert resultat av simulering mot økonomi med og uten inntrekk", notes = ("Returnerer simuleringsresultat."))
+    @Operation(description = "Hent detaljert resultat av simulering mot økonomi med og uten inntrekk", summary = ("Returnerer simuleringsresultat."), tags = "simulering")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     public SimuleringDto hentSimuleringResultatMedOgUtenInntrekk(@Valid BehandlingIdDto behandlingIdDto) {
         Optional<SimuleringDto> optionalSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingIdDto.getBehandlingId());
@@ -74,8 +67,7 @@ public class SimuleringRestTjeneste {
 
     @POST
     @Path("start")
-    @Timed
-    @ApiOperation(value = "Start simulering for behandling med oppdrag", notes = "Returnerer status på om oppdrag er gyldig")
+    @Operation(description = "Start simulering for behandling med oppdrag", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
     @BeskyttetRessurs(action = UPDATE, ressurs = FAGSAK)
     public Response startSimulering(@Valid SimulerOppdragDto simulerOppdragDto) {
         final Long behandlingId = simulerOppdragDto.getBehandlingId();
@@ -85,8 +77,7 @@ public class SimuleringRestTjeneste {
 
     @POST
     @Path("kanseller")
-    @Timed
-    @ApiOperation(value = "Kanseller simulering for behandling", notes = "Deaktiverer simuleringgrunnlag for behandling")
+    @Operation(description = "Kanseller simulering for behandling", summary = ("Deaktiverer simuleringgrunnlag for behandling"), tags = "simulering")
     @BeskyttetRessurs(action = UPDATE, ressurs = FAGSAK)
     public Response kansellerSimulering(@Valid BehandlingIdDto behandlingIdDto) {
         startSimuleringTjeneste.kansellerSimulering(behandlingIdDto.getBehandlingId());
@@ -95,8 +86,7 @@ public class SimuleringRestTjeneste {
 
     @POST
     @Path("feilutbetalte-perioder")
-    @Timed
-    @ApiOperation(value = "Hent sum feilutbetaling og simulerte perioder som er feilutbetalte og kan kreves tilbake fra brukeren.", notes = ("Returnerer perioder som er feilutbetalt."))
+    @Operation(description = "Hent sum feilutbetaling og simulerte perioder som er feilutbetalte og kan kreves tilbake fra brukeren.", summary = ("Returnerer perioder som er feilutbetalt."), tags = "simulering")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     public FeilutbetaltePerioderDto hentFeilutbetaltePerioderForTilbakekreving(@Valid BehandlingIdDto behandlingIdDto) {
         return simuleringResultatTjeneste.hentFeilutbetaltePerioder(behandlingIdDto.getBehandlingId());

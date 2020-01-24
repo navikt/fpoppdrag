@@ -17,22 +17,18 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import no.finn.unleash.FakeUnleash;
 import no.nav.foreldrepenger.oppdrag.OppdragConsumer;
 import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjenesteImpl;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.SimuleringResultatTransformer;
-import no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverk.Fagsystem;
-import no.nav.foreldrepenger.oppdrag.kodeverk.KlasseKode;
-import no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagsystem;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepositoryImpl;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXmlRepository;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXmlRepositoryImpl;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.BehandlingIdDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimulerOppdragDto;
@@ -56,16 +52,16 @@ public class SimuleringRestTjenesteTest {
     @Rule
     public UnittestRepositoryRule repositoryRule = new UnittestRepositoryRule();
 
-    private SimuleringRepository simuleringRepository = new SimuleringRepositoryImpl(repositoryRule.getEntityManager());
-    private SimuleringXmlRepository simuleringXmlRepository = new SimuleringXmlRepositoryImpl(repositoryRule.getEntityManager());
+    private SimuleringRepository simuleringRepository = new SimuleringRepository(repositoryRule.getEntityManager());
+    private SimuleringXmlRepository simuleringXmlRepository = new SimuleringXmlRepository(repositoryRule.getEntityManager());
     private OppdragConsumer oppdragConsumerMock = mock(OppdragConsumer.class);
     private HentNavnTjeneste hentNavnTjeneste = mock(HentNavnTjeneste.class);
     private TpsTjeneste tpsTjenesteMock = mock(TpsTjeneste.class);
     private SimuleringResultatTransformer resultatTransformer = new SimuleringResultatTransformer(tpsTjenesteMock);
 
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
-    private StartSimuleringTjeneste startSimuleringTjeneste = new StartSimuleringTjenesteImpl(simuleringXmlRepository, simuleringRepository, oppdragConsumerMock, resultatTransformer, simuleringBeregningTjeneste);
-    private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjenesteImpl(simuleringRepository, hentNavnTjeneste, simuleringBeregningTjeneste);
+    private StartSimuleringTjeneste startSimuleringTjeneste = new StartSimuleringTjeneste(simuleringXmlRepository, simuleringRepository, oppdragConsumerMock, resultatTransformer, simuleringBeregningTjeneste);
+    private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjeneste(simuleringRepository, hentNavnTjeneste, simuleringBeregningTjeneste);
     private SimuleringRestTjeneste restTjeneste = new SimuleringRestTjeneste(simuleringResultatTjeneste, startSimuleringTjeneste);
 
 

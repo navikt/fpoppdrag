@@ -16,14 +16,18 @@
     <dependencies>
         <!-- Reaktor -->
 
-        <!-- Foreldrepengeprosjektet -->
+
+        <!-- NAV -->
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-db</artifactId>
         </dependency>
 
-        <!-- NAV -->
         <!-- Eksterne -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
@@ -39,23 +43,11 @@
 
         <!-- Test avhengigheter -->
         <dependency>
-            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-            <artifactId>migreringer</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-testutilities</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <!--- bibliotek som brukes for å finne alle instanser av interface med deklarerte feil -->
-            <groupId>io.github.lukehutch</groupId>
-            <artifactId>fast-classpath-scanner</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>

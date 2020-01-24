@@ -3,7 +3,7 @@ package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 import java.util.Objects;
 import java.util.Optional;
 
-import no.nav.foreldrepenger.oppdrag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 
 public class SimulertBeregningResultat {
     private YtelseType gjelderYtelseType;

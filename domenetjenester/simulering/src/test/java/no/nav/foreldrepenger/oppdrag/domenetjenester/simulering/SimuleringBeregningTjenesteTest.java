@@ -1,14 +1,14 @@
 package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
-import static no.nav.foreldrepenger.oppdrag.kodeverk.BetalingType.DEBIT;
-import static no.nav.foreldrepenger.oppdrag.kodeverk.BetalingType.KREDIT;
-import static no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode.FORELDREPENGER;
-import static no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode.SYKEPENGER;
-import static no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType.FEILUTBETALING;
-import static no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType.FORSKUDSSKATT;
-import static no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType.JUSTERING;
-import static no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType.UDEFINERT;
-import static no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType.YTELSE;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.DEBIT;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.KREDIT;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode.FORELDREPENGER;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode.SYKEPENGER;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.FEILUTBETALING;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.FORSKUDSSKATT;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.JUSTERING;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.UDEFINERT;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.YTELSE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
@@ -25,18 +25,16 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import no.finn.unleash.FakeUnleash;
-import no.nav.foreldrepenger.oppdrag.kodeverk.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverk.MottakerType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.PosteringType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.BehandlingRef;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
-import no.nav.vedtak.util.FPDateUtil;
 
 public class SimuleringBeregningTjenesteTest {
 
@@ -420,10 +418,10 @@ public class SimuleringBeregningTjenesteTest {
     @Test
     public void finnerNesteUtbetalingsperiodeForMottakere() {
         // Arrange
-        LocalDate idag = FPDateUtil.iDag();
+        LocalDate idag = LocalDate.now();
 
         SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
-                .medSimuleringKjørtDato(FPDateUtil.nå())
+                .medSimuleringKjørtDato(LocalDateTime.now())
                 .medEksternReferanse(new BehandlingRef(345L))
                 .medYtelseType(YtelseType.FORELDREPENGER)
                 .medAktørId("12345")
@@ -541,7 +539,7 @@ public class SimuleringBeregningTjenesteTest {
 
     private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType,
                                         BetalingType betalingType, int beløp) {
-        return postering(periode, fagOmrådeKode, posteringType, betalingType, beløp, false, FPDateUtil.iDag());
+        return postering(periode, fagOmrådeKode, posteringType, betalingType, beløp, false, LocalDate.now());
     }
 
     private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType,
@@ -551,7 +549,7 @@ public class SimuleringBeregningTjenesteTest {
 
     private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType,
                                         BetalingType betalingType, int beløp, boolean utenInntrekk) {
-        return postering(periode, fagOmrådeKode, posteringType, betalingType, beløp, utenInntrekk, FPDateUtil.iDag());
+        return postering(periode, fagOmrådeKode, posteringType, betalingType, beløp, utenInntrekk, LocalDate.now());
     }
 
     private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType,

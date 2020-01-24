@@ -13,8 +13,8 @@ import org.mockito.Mockito;
 
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl.PersonIdent;
-import no.nav.foreldrepenger.oppdrag.kodeverk.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.MottakerType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 
 public class SimuleringResultatTransformerTest {

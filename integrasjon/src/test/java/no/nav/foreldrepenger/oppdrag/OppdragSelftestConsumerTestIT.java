@@ -22,7 +22,7 @@ public class OppdragSelftestConsumerTestIT {
         UnitTestConfiguration.loadToSystemProperties(unitTestProperties, false);
         MDCOperations.putCallId();
         OppdragConsumerProducer oppdragConsumerProducer = new OppdragConsumerProducer();
-        OppdragConsumerConfig oppdragConsumerConfig = new OppdragConsumerConfig(unitTestProperties.getProperty("Oppdrag_service.url"));
+        OppdragConsumerConfig oppdragConsumerConfig = new OppdragConsumerConfig(unitTestProperties.getProperty("Oppdrag.service.url"));
         oppdragConsumerProducer.setConfig(oppdragConsumerConfig);
         oppdragSelftestConsumer = oppdragConsumerProducer.oppdragSelftestConsumer();
     }

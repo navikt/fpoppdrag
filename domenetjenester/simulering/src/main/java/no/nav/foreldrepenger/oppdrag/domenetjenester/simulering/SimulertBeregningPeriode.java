@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
 
 public class SimulertBeregningPeriode {
     private Periode periode;

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -17,23 +18,18 @@ import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
 
-import com.codahale.metrics.annotation.Timed;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import no.finn.unleash.Unleash;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.dto.SimuleringGjelderDto;
 import no.nav.vedtak.felles.integrasjon.unleash.EnvironmentProperty;
-import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 
 /**
  * Dette class er for test tjeneste og må fjernes før lansering
  */
-@Api(tags = {"simulering"})
 @RequestScoped
 @Path("simulering")
-@Transaction
+@Transactional
 public class SimuleringTestRestTjeneste {
 
     private SimuleringTestTjeneste simuleringTestTjeneste;
@@ -51,9 +47,8 @@ public class SimuleringTestRestTjeneste {
 
     @POST
     @Path("/testdata")
-    @Timed
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Lagre simulering test data", notes = ("Brukes til intern testing"))
+    @Operation(description = "Lagre simulering test data", summary = ("Brukes til intern testing"), tags = "simtest")
     @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
     public Response lagreSimuleringTestData(@NotNull @Valid SimuleringGjelderDto simuleringGjelderDto) {
         if (unleash.isEnabled("fpoppdrag.testgrensesnitt")) {

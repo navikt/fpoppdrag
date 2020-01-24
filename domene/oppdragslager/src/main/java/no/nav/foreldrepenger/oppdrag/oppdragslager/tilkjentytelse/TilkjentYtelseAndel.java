@@ -18,10 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinFormula;
-
-import no.nav.foreldrepenger.oppdrag.kodeverk.Inntektskategori;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Inntektskategori;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 @Entity(name = "TilkjentYtelseAndel")
@@ -46,10 +43,9 @@ public class TilkjentYtelseAndel {
     @Column(name = "arbeidsgiver_aktoer_id")
     private String arbeidsgiverAktørId;
 
-    @ManyToOne(optional = false)
-    @JoinColumnOrFormula(column = @JoinColumn(name = "inntektskategori", referencedColumnName = "kode", nullable = false))
-    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + Inntektskategori.DISCRIMINATOR + "'"))
-    private Inntektskategori inntektskategori;
+    @Convert(converter = Inntektskategori.KodeverdiConverter.class)
+    @Column(name = "inntektskategori", nullable = false)
+    private Inntektskategori inntektskategori = Inntektskategori.UDEFINERT;
 
     @Column(name = "utbetalingsgrad", nullable = false)
     private BigDecimal utbetalingsgrad;

@@ -36,7 +36,7 @@ public class OppdragConsumerTestIT {
         Properties unitTestProperties = UnitTestConfiguration.getUnitTestProperties(OppdragConsumerTestIT.class.getResource("/oppdrag.properties").toURI());
         UnitTestConfiguration.loadToSystemProperties(unitTestProperties, false);
         MDCOperations.putCallId();
-        OppdragConsumerConfig oppdragConsumerConfig = new OppdragConsumerConfig(unitTestProperties.getProperty("Oppdrag_service.url"));
+        OppdragConsumerConfig oppdragConsumerConfig = new OppdragConsumerConfig(unitTestProperties.getProperty("Oppdrag.service.url"));
         OppdragConsumerProducer oppdragConsumerProducer = new OppdragConsumerProducer();
         oppdragConsumerProducer.setConfig(oppdragConsumerConfig);
         oppdragConsumer = oppdragConsumerProducer.oppdragConsumer();

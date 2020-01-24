@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.Periode;
-import no.nav.foreldrepenger.oppdrag.kodeverk.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverk.MottakerType;
-import no.nav.foreldrepenger.oppdrag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 
 public class SimuleringForMottakerDto {
 

@@ -12,7 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import no.nav.vedtak.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
+
 
 @Table(name = "OKO_OMPOSTERING_116")
 @Entity(name = "Ompostering116")

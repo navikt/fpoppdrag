@@ -3,7 +3,7 @@ package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import no.nav.foreldrepenger.oppdrag.kodeverk.MottakerType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 
 public class Mottaker {
     private MottakerType mottakerType;

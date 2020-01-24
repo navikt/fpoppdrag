@@ -28,7 +28,6 @@ import no.nav.system.os.entiteter.typer.simpletypes.KodeStatusLinje;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.ObjectFactory;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.Oppdrag;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.Oppdragslinje;
-import no.nav.vedtak.util.FPDateUtil;
 
 public class OppdragMapper {
 
@@ -70,7 +69,7 @@ public class OppdragMapper {
         Ompostering op = new Ompostering();
         op.setOmPostering(ompostering);
         op.setSaksbehId(saksbehId);
-        op.setTidspktReg(tilSpesialkodetDatoOgKlokkeslett(FPDateUtil.nå()));
+        op.setTidspktReg(tilSpesialkodetDatoOgKlokkeslett(LocalDateTime.now()));
         return op;
     }
 
