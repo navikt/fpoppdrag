@@ -658,10 +658,9 @@
     </profiles>
 
     <scm>
-        <connection>scm:git:ssh://git@stash.devillo.no:7999/vedfp/vl-fpoppdrag.git</connection>
-        <developerConnection>scm:git:ssh://git@stash.devillo.no:7999/vedfp/vl-fpoppdrag.git
-        </developerConnection>
-        <url>http://stash.devillo.no/projects/VEDFP/repos/vl-fpoppdrag/browse</url>
+        <connection>scm:git:ssh://git@github.com:navikt/fpoppdrag.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:navikt/fpoppdrag.git</developerConnection>
+        <url>https://github.com/navikt/fpoppdrag</url>
     </scm>
 
     <distributionManagement>
