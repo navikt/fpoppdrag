@@ -8,8 +8,6 @@
         <provider>no.nav.vedtak.felles.jpa.VLPersistenceUnitProvider</provider>
         <non-jta-data-source>jdbc/defaultDS</non-jta-data-source>
 
-        <mapping-file>META-INF/oppdragslager-orm.xml</mapping-file>
-
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle12cDialect"/>
             <property name="hibernate.connection.autocommit" value="false"/>
@@ -18,5 +16,5 @@
         </properties>
     </persistence-unit>
 
-</persistence>
 
+</persistence>
