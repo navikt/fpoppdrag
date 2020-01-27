@@ -80,11 +80,11 @@ public class SimuleringResultatTransformer {
                 .medKlasseKode(KlasseKode.fraKodeDefaultUdefinert(detaljer.getKlassekode()))
                 .medBetalingType(utledBetalingType(detaljer.getBelop()))
                 .medBeløp(detaljer.getBelop())
-                .medFagOmraadeKode(FagOmrådeKode.fraKode(stoppnivaa.getKodeFagomraade()))
+                .medFagOmraadeKode(FagOmrådeKode.fraKodeDefaultUdefinert(stoppnivaa.getKodeFagomraade()))
                 .medFom(parseDato(detaljer.getFaktiskFom()))
                 .medTom(parseDato(detaljer.getFaktiskTom()))
                 .medForfallsdato(parseDato(stoppnivaa.getForfall()))
-                .medPosteringType(PosteringType.fraKode(detaljer.getTypeKlasse()))
+                .medPosteringType(PosteringType.fraKodeDefaultUdefinert(detaljer.getTypeKlasse()))
                 .utenInntrekk(utenInntrekk);
 
         if (detaljer.getSats() != null && detaljer.getTypeSats() != null) {

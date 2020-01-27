@@ -21,7 +21,6 @@ public enum PosteringType implements Kodeverdi {
     FEILUTBETALING("FEIL"),
     FORSKUDSSKATT("SKAT"),
     JUSTERING("JUST"),
-    MOTP("MOTP"),
 
     /**
      * Alle kodeverk må ha en verdi, det kan ikke være null i databasen. Denne koden
