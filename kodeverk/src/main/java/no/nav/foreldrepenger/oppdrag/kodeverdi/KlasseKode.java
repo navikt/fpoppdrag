@@ -16,8 +16,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonFormat(shape = Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum KlasseKode implements Kodeverdi {
-    
 
+    FPADATORD("FPADATORD"),
+    FAGFKRED("FAGFKRED"),
+    FPADREFAG_IOP("FPADREFAG-IOP"),
     FPATAL("FPATAL"),
     FPATFER("FPATFER"),
     FPATFRI("FPATFRI"),
@@ -31,7 +33,14 @@ public enum KlasseKode implements Kodeverdi {
     FPSNDJB_OP("FPSNDJB-OP"),
     FPSND_OP("FPSND-OP"),
     FSKTSKAT("FSKTSKAT"),
+    FPSVATORD("FPSVATORD"),
+    FPSVREFAG_IOP("FPSVREFAG-IOP"),
+    FPSVSND_OP("FPSVSND-OP"),
     KL_KODE_FEIL_KORTTID("KL_KODE_FEIL_KORTTID"),
+    KL_KODE_JUST_KORTTID("KL_KODE_JUST_KORTTID"),
+    KL_KODE_FEIL_REFARBG("KL_KODE_FEIL_REFARBG"),
+    KL_KODE_JUST_REFARBG("KL_KODE_JUST_REFARBG"),
+    SPATORD("SPATORD"),
     TBMOTOBS("TBMOTOBS"),
     SPSND100D1DAGPFI("SPSND100D1DAGPFI"),
     SPSND100D1DTRPFI("SPSND100D1DTRPFI"),
@@ -64,7 +73,7 @@ public enum KlasseKode implements Kodeverdi {
         }
         var ad = KODER.get(kode);
         if (ad == null) {
-            throw new IllegalArgumentException("Ukjent Fagsystem: " + kode);
+            throw new IllegalArgumentException("Ukjent Klassekode: " + kode);
         }
         return ad;
     }

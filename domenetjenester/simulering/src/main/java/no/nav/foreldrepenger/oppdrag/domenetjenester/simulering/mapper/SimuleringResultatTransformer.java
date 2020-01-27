@@ -77,7 +77,7 @@ public class SimuleringResultatTransformer {
     private SimulertPostering mapPostering(boolean utenInntrekk, BeregningStoppnivaa stoppnivaa, BeregningStoppnivaaDetaljer detaljer) {
         SimulertPostering.Builder posteringBuilder = SimulertPostering.builder()
                 .medKonto(detaljer.getKontoStreng())
-                .medKlasseKode(KlasseKode.fraKode(detaljer.getKlassekode()))
+                .medKlasseKode(KlasseKode.fraKodeDefaultUdefinert(detaljer.getKlassekode()))
                 .medBetalingType(utledBetalingType(detaljer.getBelop()))
                 .medBeløp(detaljer.getBelop())
                 .medFagOmraadeKode(FagOmrådeKode.fraKode(stoppnivaa.getKodeFagomraade()))

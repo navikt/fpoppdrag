@@ -21,6 +21,7 @@ public enum PosteringType implements Kodeverdi {
     FEILUTBETALING("FEIL"),
     FORSKUDSSKATT("SKAT"),
     JUSTERING("JUST"),
+    MOTP("MOTP"),
 
     /**
      * Alle kodeverk må ha en verdi, det kan ikke være null i databasen. Denne koden
@@ -50,7 +51,7 @@ public enum PosteringType implements Kodeverdi {
         }
         var ad = KODER.get(kode);
         if (ad == null) {
-            throw new IllegalArgumentException("Ukjent Fagsystem: " + kode);
+            throw new IllegalArgumentException("Ukjent Posteringtype: " + kode);
         }
         return ad;
     }
