@@ -50,7 +50,7 @@ public enum PosteringType implements Kodeverdi {
         }
         var ad = KODER.get(kode);
         if (ad == null) {
-            throw new IllegalArgumentException("Ukjent Fagsystem: " + kode);
+            throw new IllegalArgumentException("Ukjent Posteringtype: " + kode);
         }
         return ad;
     }

@@ -16,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonFormat(shape = Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum KlasseKode implements Kodeverdi {
-    
 
     FPATAL("FPATAL"),
     FPATFER("FPATFER"),
@@ -64,7 +63,7 @@ public enum KlasseKode implements Kodeverdi {
         }
         var ad = KODER.get(kode);
         if (ad == null) {
-            throw new IllegalArgumentException("Ukjent Fagsystem: " + kode);
+            throw new IllegalArgumentException("Ukjent Klassekode: " + kode);
         }
         return ad;
     }
