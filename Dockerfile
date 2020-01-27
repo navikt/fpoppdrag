@@ -1,12 +1,8 @@
-FROM navikt/java:11
+FROM navikt/java:11-appdynamics
 
 RUN mkdir /app/lib
 RUN mkdir /app/webapp
 RUN mkdir /app/conf
-
-# AppDynamics config
-#COPY appdynamics.sh /init-scripts/
-#COPY appdynamics/ /app/klient/appdynamics/
 
 # Config
 COPY web/webapp/target/classes/logback.xml /app/conf/
