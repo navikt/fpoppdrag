@@ -88,8 +88,9 @@ public class SimuleringResultatTransformer {
                 .utenInntrekk(utenInntrekk);
 
         if (detaljer.getSats() != null && detaljer.getTypeSats() != null) {
-            posteringBuilder.medSats(detaljer.getSats())
-                    .medSatsType(SatsType.fraKode(detaljer.getTypeSats()));
+            posteringBuilder
+                    .medSats(detaljer.getSats())
+                    .medSatsType(SatsType.fraKodeDefaultUdefinert(detaljer.getTypeSats()));
         }
         return posteringBuilder.build();
     }
