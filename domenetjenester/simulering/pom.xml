@@ -20,6 +20,12 @@
             <artifactId>felles-integrasjon-webservice</artifactId>
         </dependency>
         <dependency>
+            <!-- denne må komme før oppdrag-klient, siden klienten tilbyr samme klasser (uten nødvendige modifikasjoner) -->
+            <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+            <artifactId>fpoppdrag-v1</artifactId>
+            <classifier>jaxb</classifier>
+        </dependency>
+        <dependency>
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
             <artifactId>integrasjon</artifactId>
         </dependency>

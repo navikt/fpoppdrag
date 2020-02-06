@@ -17,6 +17,12 @@ public interface StartSimuleringTjenesteFeil extends DeklarerteFeil {
     @TekniskFeil(feilkode = "FPO-832562", feilmelding = "Kunne ikke tolke mottatt oppdrag XML", logLevel = LogLevel.WARN)
     Feil kunneIkkeUnmarshalleOppdragXml(Exception e);
 
+    @TekniskFeil(feilkode = "FPO-852524", feilmelding = "Kunne ikke marshalle simulering request til simulering. behandlingId=%s", logLevel = LogLevel.WARN)
+    Feil kunneIkkeMarshalleSimuleringRequest(Long behandlingId, Exception e);
+
+    @TekniskFeil(feilkode = "FPO-852523", feilmelding = "Kunne ikke marshalle simuleringresultatet til XML. behandlingId=%s", logLevel = LogLevel.WARN)
+    Feil kunneIkkeMarshalleSimuleringResultat(Long behandlingId, Exception e);
+
     @TekniskFeil(feilkode = "FPO-845125", feilmelding = "Simulering feilet. Mottok feilmelding fra oppdragsystemet: source='%s' type='%s' message='%s' rootcause='%s' timestamp='%s'", logLevel = LogLevel.WARN)
     Feil feilUnderBehandlingAvSimulering(String source, String errorType, String errorMessage, String rootCause, String dateTimeStamp, Exception e);
 
