@@ -36,7 +36,6 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXml;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXmlRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.økonomioppdrag.ØkonomiKodeEndringLinje;
-import no.nav.foreldrepenger.økonomi.simulering.v1.SimuleringConstants;
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling;
 import no.nav.system.os.entiteter.beregningskjema.Beregning;
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaa;
@@ -263,7 +262,7 @@ public class StartSimuleringTjeneste {
     }
 
     private List<SimulerBeregningResponse> utførSimulering(List<SimulerBeregningRequest> simuleringRequestListe) {
-        return simuleringRequestListe.stream()
+           return simuleringRequestListe.stream()
                 .map(this::utførSimulering)
                 .collect(Collectors.toList());
     }
@@ -301,7 +300,7 @@ public class StartSimuleringTjeneste {
     private List<SimuleringXml.Builder> lagSimuleringXmlEntitetBuilder(long behandlingId, List<SimulerBeregningRequest> beregningRequestListe) {
         List<SimuleringXml.Builder> builders = new ArrayList<>();
         beregningRequestListe.forEach(request -> {
-            String marshalled = marshalRequest(behandlingId, request);
+            String marshalled = SimuleringMarshaller.marshall(behandlingId, request);
             builders.add(SimuleringXml.builder().medEksternReferanse(behandlingId).medRequest(marshalled));
         });
         return builders;
@@ -324,7 +323,7 @@ public class StartSimuleringTjeneste {
             SimulerBeregningResponse respons = simuleringResponse.get(i);
             SimuleringXml.Builder builder = builderList.get(i);
             korrigerForEvtManglendeFagsystemId(behandlingId, respons);
-            builder.medResponse(marshalResponse(behandlingId, respons));
+            builder.medResponse(SimuleringMarshaller.marshall(behandlingId, respons));
         }
     }
 
@@ -340,22 +339,6 @@ public class StartSimuleringTjeneste {
                     StartSimuleringTjenesteFeil.FACTORY.mangletFagsystemId(behandlingId, periode.getPeriodeFom(), periode.getPeriodeTom()).log(logger);
                 }
             }
-        }
-    }
-
-    private String marshalRequest(long behandlingId, SimulerBeregningRequest simulerBeregningRequest) {
-        try {
-            return JaxbHelper.marshalAndValidateJaxb(SimuleringConstants.JAXB_CLASS_REQUEST, simulerBeregningRequest, SimuleringConstants.XSD_LOCATION);
-        } catch (JAXBException | SAXException e) {
-            throw StartSimuleringTjenesteFeil.FACTORY.kunneIkkeMarshalleSimuleringRequest(behandlingId, e).toException();
-        }
-    }
-
-    private String marshalResponse(long behandlingId, SimulerBeregningResponse simuleringResponse) {
-        try {
-            return JaxbHelper.marshalAndValidateJaxb(SimuleringConstants.JAXB_CLASS_RESPONSE, simuleringResponse, SimuleringConstants.XSD_LOCATION);
-        } catch (JAXBException | SAXException e) {
-            throw StartSimuleringTjenesteFeil.FACTORY.kunneIkkeMarshalleSimuleringResultat(behandlingId, e).toException();
         }
     }
 
