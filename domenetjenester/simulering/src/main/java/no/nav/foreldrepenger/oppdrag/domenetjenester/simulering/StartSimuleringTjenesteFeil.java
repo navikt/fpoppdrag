@@ -26,6 +26,9 @@ public interface StartSimuleringTjenesteFeil extends DeklarerteFeil {
     @TekniskFeil(feilkode = "FPO-852146", feilmelding = "Utvikler-feil: Mangler mapping mellom fagområdekode og ytelsetype for behandlingId=%s fagområdekode=%s", logLevel = WARN)
     Feil manglerMappingMellomFagområdeKodeOgYtleseType(Long behandlingId, List<String> fagområdeKode);
 
+    @TekniskFeil(feilkode = "FPO-810466", feilmelding = "Utvikler-feil: Klarer ikke utlede unik ytelsetype for behandlingId=%s fagområdekode=%s", logLevel = WARN)
+    Feil ikkeUnikYtelseType(Long behandlingId, List<String> fagområdeKode);
+
     @TekniskFeil(feilkode = "FPO-811943", feilmelding = "Manglet fagsystemId i mottat respons for behandlingId=%s periode=%s-%s", logLevel = WARN)
     Feil mangletFagsystemId(Long behandlingId, String periodeFom, String periodeTom);
 

@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -34,7 +35,6 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.dto.Simul
 public class SimuleringTestTjeneste {
 
     private SimuleringRepository simuleringRepository;
-
     private TpsTjeneste tpsTjeneste;
 
     SimuleringTestTjeneste() {
@@ -98,16 +98,18 @@ public class SimuleringTestTjeneste {
                 .map(SimuleringDetaljerDto::getFagomraadeKode).distinct()
                 .collect(Collectors.toList());
 
-        if (fagområdekoder.stream().anyMatch(FagOmrådeKode::gjelderEngangsstønad)) {
-            return YtelseType.ENGANGSTØNAD;
+        Set<YtelseType> ytelsetyper = fagområdekoder.stream()
+                .map(FagOmrådeKode::fraKode)
+                .map(FagOmrådeKode::getYtelseType)
+                .collect(Collectors.toSet());
+
+        if (ytelsetyper.isEmpty()) {
+            return YtelseType.UDEFINERT;
         }
-        if (fagområdekoder.stream().anyMatch(FagOmrådeKode::gjelderForeldrepenger)) {
-            return YtelseType.FORELDREPENGER;
+        if (ytelsetyper.size() == 1) {
+            return ytelsetyper.iterator().next();
         }
-        if (fagområdekoder.stream().anyMatch(FagOmrådeKode::gjelderSvangerskapspenger)) {
-            return YtelseType.SVANGERSKAPSPENGER;
-        }
-        return YtelseType.UDEFINERT;
+        throw new IllegalArgumentException("Kan ikke finne unik ytelsetype fra fagområdekoder: " + fagområdekoder);
     }
 
     private String finnMottakerId(SimuleringMottakerDto simuleringMottakerDto) {

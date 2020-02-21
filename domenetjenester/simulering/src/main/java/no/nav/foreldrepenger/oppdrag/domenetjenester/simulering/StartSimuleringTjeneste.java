@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -249,16 +250,18 @@ public class StartSimuleringTjeneste {
             LOG.warn("Fant ingen fagområdeKoder for behandlingId={}", behandlingId);
             return YtelseType.UDEFINERT;
         }
-        if (fagOmrådeKoder.stream().anyMatch(FagOmrådeKode::gjelderEngangsstønad)) {
-            return YtelseType.ENGANGSTØNAD;
+        Set<YtelseType> ytelsetyper = fagOmrådeKoder.stream()
+                .map(FagOmrådeKode::fraKode)
+                .map(FagOmrådeKode::getYtelseType)
+                .collect(Collectors.toSet());
+        if (ytelsetyper.size() > 1){
+            throw StartSimuleringTjenesteFeil.FACTORY.ikkeUnikYtelseType(behandlingId, fagOmrådeKoder).toException();
         }
-        if (fagOmrådeKoder.stream().anyMatch(FagOmrådeKode::gjelderForeldrepenger)) {
-            return YtelseType.FORELDREPENGER;
+        YtelseType ytelseType = ytelsetyper.iterator().next();
+        if (ytelseType == YtelseType.UDEFINERT){
+            throw StartSimuleringTjenesteFeil.FACTORY.manglerMappingMellomFagområdeKodeOgYtleseType(behandlingId, fagOmrådeKoder).toException();
         }
-        if (fagOmrådeKoder.stream().anyMatch(FagOmrådeKode::gjelderSvangerskapspenger)) {
-            return YtelseType.SVANGERSKAPSPENGER;
-        }
-        throw StartSimuleringTjenesteFeil.FACTORY.manglerMappingMellomFagområdeKodeOgYtleseType(behandlingId, fagOmrådeKoder).toException();
+        return ytelseType;
     }
 
     private List<SimulerBeregningResponse> utførSimulering(List<SimulerBeregningRequest> simuleringRequestListe) {
