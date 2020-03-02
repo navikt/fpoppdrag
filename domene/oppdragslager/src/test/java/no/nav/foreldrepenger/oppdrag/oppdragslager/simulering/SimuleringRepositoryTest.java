@@ -14,7 +14,6 @@ import org.junit.Test;
 import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
@@ -105,8 +104,6 @@ public class SimuleringRepositoryTest {
                                         .medBetalingType(BetalingType.DEBIT)
                                         .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
                                         .medPosteringType(PosteringType.YTELSE)
-                                        .medKonto("konto")
-                                        .medKlasseKode(KlasseKode.FPATAL)
                                         .medForfallsdato(forfallsdato)
                                         .build())
                                 .build())

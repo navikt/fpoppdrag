@@ -15,7 +15,6 @@ import org.junit.runner.RunWith;
 import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
@@ -37,9 +36,9 @@ public class SimuleringTestTjenesteImplTest {
     @Test
     public void skal_lagreSimuleringTestData_medGyldigInput() {
         // Arrange
-        SimuleringDetaljerDto simuleringDetaljerDto = new SimuleringDetaljerDto(LocalDate.now(), LocalDate.now(), FagOmrådeKode.FORELDREPENGER.getKode(), "100000",
+        SimuleringDetaljerDto simuleringDetaljerDto = new SimuleringDetaljerDto(LocalDate.now(), LocalDate.now(), FagOmrådeKode.FORELDREPENGER.getKode(),
                 new BigDecimal("100.00"), BetalingType.DEBIT.getKode(), PosteringType.FEILUTBETALING.getKode(),
-                KlasseKode.FPATFER.getKode(), LocalDate.now().plusDays(14), false, false);
+                LocalDate.now().plusDays(14), false);
 
         SimuleringMottakerDto simuleringMottakerDto = new SimuleringMottakerDto("213242", MottakerType.BRUKER.getKode(), Lists.newArrayList(simuleringDetaljerDto));
         SimuleringDto simuleringDto = new SimuleringDto(123L, "0", Lists.newArrayList(simuleringMottakerDto));

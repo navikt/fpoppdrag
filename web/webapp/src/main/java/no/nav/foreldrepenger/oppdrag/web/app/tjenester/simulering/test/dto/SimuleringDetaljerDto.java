@@ -28,10 +28,6 @@ public class SimuleringDetaljerDto {
     private String fagomraadeKode;
 
     @NotNull
-    @Digits(integer = 19, fraction = 0, message = "ugyldig konto")
-    private String konto;
-
-    @NotNull
     @Min(-999999999)
     @Max(Long.MAX_VALUE)
     @DecimalMin("-999999999.00")
@@ -50,42 +46,27 @@ public class SimuleringDetaljerDto {
     private String posteringType;
 
     @NotNull
-    @Size(max = 100, message = "klasseKode er for høyt")
-    @Pattern(regexp = InputValideringRegex.FRITEKST)
-    private String klasseKode;
-
-    @NotNull
     private LocalDate forfallsdato;
 
     private boolean utenInntrekk;
-
-    /**
-     * Skal være true kun for reelle debetposteringer. Ellers false.
-     */
-    @NotNull
-    private Boolean harDagsats;
 
     private SimuleringDetaljerDto() {
         // resteasy
     }
 
     public SimuleringDetaljerDto(LocalDate fom, LocalDate tom,
-                                 String fagomraadeKode, String konto,
+                                 String fagomraadeKode,
                                  BigDecimal beløp, String betalingType,
-                                 String posteringType, String klasseKode,
-                                 LocalDate forfallsdato, boolean utenInntrekk,
-                                 Boolean harDagsats) {
+                                 String posteringType,
+                                 LocalDate forfallsdato, boolean utenInntrekk) {
         this.fom = fom;
         this.tom = tom;
         this.fagomraadeKode = fagomraadeKode;
-        this.konto = konto;
         this.beløp = beløp;
         this.betalingType = betalingType;
         this.posteringType = posteringType;
-        this.klasseKode = klasseKode;
         this.forfallsdato = forfallsdato;
         this.utenInntrekk = utenInntrekk;
-        this.harDagsats = harDagsats;
     }
 
     public LocalDate getFom() {
@@ -100,10 +81,6 @@ public class SimuleringDetaljerDto {
         return fagomraadeKode;
     }
 
-    public String getKonto() {
-        return konto;
-    }
-
     public BigDecimal getBeløp() {
         return beløp;
     }
@@ -116,20 +93,12 @@ public class SimuleringDetaljerDto {
         return posteringType;
     }
 
-    public String getKlasseKode() {
-        return klasseKode;
-    }
-
     public LocalDate getForfallsdato() {
         return forfallsdato;
     }
 
     public boolean isUtenInntrekk() {
         return utenInntrekk;
-    }
-
-    public Boolean getHarDagsats() {
-        return harDagsats;
     }
 }
 

@@ -15,9 +15,7 @@ import javax.persistence.Table;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.SatsType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
@@ -32,9 +30,6 @@ public class SimulertPostering extends BaseEntitet {
     @Convert(converter = FagOmrådeKode.KodeverdiConverter.class)
     @Column(name = "fag_omraade_kode", nullable = false)
     private FagOmrådeKode fagOmrådeKode = FagOmrådeKode.UDEFINERT;
-
-    @Column(name = "konto", nullable = false)
-    private String konto;
 
     @Column(name = "fom", nullable = false)
     private LocalDate fom;
@@ -53,10 +48,6 @@ public class SimulertPostering extends BaseEntitet {
     @Column(name = "postering_type", nullable = false)
     private PosteringType posteringType = PosteringType.UDEFINERT;
 
-    @Convert(converter = KlasseKode.KodeverdiConverter.class)
-    @Column(name = "klasse_kode", nullable = false)
-    private KlasseKode klasseKode = KlasseKode.UDEFINERT;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "simulering_mottaker_id", nullable = false)
     private SimuleringMottaker simuleringMottaker;
@@ -67,13 +58,6 @@ public class SimulertPostering extends BaseEntitet {
     @Convert(converter = BooleanToStringConverter.class)
     @Column(name = "uten_inntrekk", nullable = false)
     private boolean utenInntrekk;
-
-    @Convert(converter = SatsType.KodeverdiConverter.class)
-    @Column(name = "sats_type", nullable = false)
-    private SatsType satsType = SatsType.UDEFINERT;
-
-    @Column(name = "sats")
-    private BigDecimal sats;
 
     private SimulertPostering() {
         // Hibernate
@@ -89,10 +73,6 @@ public class SimulertPostering extends BaseEntitet {
 
     public FagOmrådeKode getFagOmrådeKode() {
         return fagOmrådeKode;
-    }
-
-    public String getKonto() {
-        return konto;
     }
 
     public LocalDate getFom() {
@@ -115,10 +95,6 @@ public class SimulertPostering extends BaseEntitet {
         return posteringType;
     }
 
-    public KlasseKode getKlasseKode() {
-        return klasseKode;
-    }
-
     public SimuleringMottaker getSimuleringMottaker() {
         return simuleringMottaker;
     }
@@ -135,10 +111,6 @@ public class SimulertPostering extends BaseEntitet {
         return utenInntrekk;
     }
 
-    public boolean harSats() {
-        return sats != null && sats.compareTo(BigDecimal.ZERO) > 0;
-    }
-
     @Override
     public String toString() {
         return getClass().getSimpleName() + "<id=" + id //$NON-NLS-1$
@@ -148,33 +120,23 @@ public class SimulertPostering extends BaseEntitet {
                 + (betalingType != null ? ", betalingType=" + betalingType.getKode() : "") //$NON-NLS-1$
                 + ", beløp=" + beløp //$NON-NLS-1$
                 + (posteringType != null ? ", posteringType=" + posteringType.getKode() : "") //$NON-NLS-1$
-                + (klasseKode != null ? ", klasseKode=" + klasseKode.getKode() : "") //$NON-NLS-1$
                 + ", utenInntrekk=" + utenInntrekk //$NON-NLS-1$
                 + ">"; //$NON-NLS-1$
 
     }
 
     public static class Builder {
-        private String konto;
         private FagOmrådeKode fagOmrådeKode;
         private LocalDate fom;
         private LocalDate tom;
         private BetalingType betalingType;
         private BigDecimal beløp;
         private PosteringType posteringType;
-        private KlasseKode klasseKode;
         private LocalDate forfallsdato;
         private boolean utenInntrekk;
-        private SatsType satsType = SatsType.UDEFINERT;
-        private BigDecimal sats;
 
         public Builder medFagOmraadeKode(FagOmrådeKode fagOmrådeKode) {
             this.fagOmrådeKode = fagOmrådeKode;
-            return this;
-        }
-
-        public Builder medKonto(String konto) {
-            this.konto = konto;
             return this;
         }
 
@@ -203,11 +165,6 @@ public class SimulertPostering extends BaseEntitet {
             return this;
         }
 
-        public Builder medKlasseKode(KlasseKode klasseKode) {
-            this.klasseKode = klasseKode;
-            return this;
-        }
-
         public Builder medForfallsdato(LocalDate forfallsdato) {
             this.forfallsdato = forfallsdato;
             return this;
@@ -218,30 +175,16 @@ public class SimulertPostering extends BaseEntitet {
             return this;
         }
 
-        public Builder medSatsType(SatsType satsType) {
-            this.satsType = satsType;
-            return this;
-        }
-
-        public Builder medSats(BigDecimal sats) {
-            this.sats = sats;
-            return this;
-        }
-
         public SimulertPostering build() {
             SimulertPostering simulertPostering = new SimulertPostering();
             simulertPostering.fagOmrådeKode = fagOmrådeKode;
-            simulertPostering.konto = konto;
             simulertPostering.fom = fom;
             simulertPostering.tom = tom;
             simulertPostering.betalingType = betalingType;
             simulertPostering.beløp = beløp;
             simulertPostering.posteringType = posteringType;
-            simulertPostering.klasseKode = klasseKode;
             simulertPostering.forfallsdato = forfallsdato;
             simulertPostering.utenInntrekk = utenInntrekk;
-            simulertPostering.satsType = satsType;
-            simulertPostering.sats = sats;
             return simulertPostering;
         }
     }

@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -12,13 +10,10 @@ import javax.inject.Inject;
 
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl.PersonIdent;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.FeilutbetalingTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.SatsType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.BehandlingRef;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
@@ -87,23 +82,12 @@ public class SimuleringTestTjeneste {
         SimulertPostering.Builder simPostbuilder = SimulertPostering.builder().medFom(simuleringDetaljerDto.getFom())
                 .medTom(simuleringDetaljerDto.getTom())
                 .medFagOmraadeKode(FagOmrådeKode.fraKodeDefaultUdefinert(simuleringDetaljerDto.getFagomraadeKode()))
-                .medKonto(simuleringDetaljerDto.getKonto())
                 .medBeløp(simuleringDetaljerDto.getBeløp())
                 .medBetalingType(BetalingType.fraKodeDefaultUdefinert(simuleringDetaljerDto.getBetalingType()))
                 .medPosteringType(PosteringType.fraKodeDefaultUdefinert(simuleringDetaljerDto.getPosteringType()))
-                .medKlasseKode(KlasseKode.fraKodeDefaultUdefinert(simuleringDetaljerDto.getKlasseKode()))
                 .medForfallsdato(simuleringDetaljerDto.getForfallsdato())
                 .utenInntrekk(simuleringDetaljerDto.isUtenInntrekk());
-        if (simuleringDetaljerDto.getHarDagsats()) {
-            simPostbuilder.medSatsType(SatsType.fraKodeDefaultUdefinert(SatsType.DAG.getKode()));
-            int antallVirkedager = FeilutbetalingTjeneste.finnAntallVirkedager(simuleringDetaljerDto.getFom(), simuleringDetaljerDto.getTom());
-            if (antallVirkedager > 0) {
-                BigDecimal beløp = simuleringDetaljerDto.getBeløp();
-                simPostbuilder.medSats(beløp.divide(BigDecimal.valueOf(antallVirkedager), RoundingMode.HALF_UP));
-            } else {
-                simPostbuilder.medSats(BigDecimal.ZERO);
-            }
-        }
+
         return simPostbuilder.build();
     }
 

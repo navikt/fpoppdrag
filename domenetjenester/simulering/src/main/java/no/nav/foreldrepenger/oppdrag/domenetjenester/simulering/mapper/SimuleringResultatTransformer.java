@@ -13,10 +13,8 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.SatsType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
@@ -76,8 +74,6 @@ public class SimuleringResultatTransformer {
 
     private SimulertPostering mapPostering(boolean utenInntrekk, BeregningStoppnivaa stoppnivaa, BeregningStoppnivaaDetaljer detaljer) {
         SimulertPostering.Builder posteringBuilder = SimulertPostering.builder()
-                .medKonto(detaljer.getKontoStreng())
-                .medKlasseKode(KlasseKode.fraKodeDefaultUdefinert(detaljer.getKlassekode()))
                 .medBetalingType(utledBetalingType(detaljer.getBelop()))
                 .medBeløp(detaljer.getBelop())
                 .medFagOmraadeKode(FagOmrådeKode.fraKodeDefaultUdefinert(stoppnivaa.getKodeFagomraade()))
@@ -87,11 +83,6 @@ public class SimuleringResultatTransformer {
                 .medPosteringType(PosteringType.fraKodeDefaultUdefinert(detaljer.getTypeKlasse()))
                 .utenInntrekk(utenInntrekk);
 
-        if (detaljer.getSats() != null && detaljer.getTypeSats() != null) {
-            posteringBuilder
-                    .medSats(detaljer.getSats())
-                    .medSatsType(SatsType.fraKodeDefaultUdefinert(detaljer.getTypeSats()));
-        }
         return posteringBuilder.build();
     }
 
