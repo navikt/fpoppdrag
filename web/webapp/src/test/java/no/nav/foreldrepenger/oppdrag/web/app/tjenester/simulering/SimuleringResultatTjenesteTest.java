@@ -26,7 +26,6 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregn
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
@@ -569,8 +568,6 @@ public class SimuleringResultatTjenesteTest {
                 .medBetalingType(betalingType)
                 .medPosteringType(posteringType)
                 .medBeløp(BigDecimal.valueOf(beløp))
-                .medKlasseKode(KlasseKode.FPATAL)
-                .medKonto("88888")
                 .medForfallsdato(forfallsdato)
                 .build();
     }

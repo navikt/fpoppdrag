@@ -20,7 +20,6 @@ import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.SatsType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.BehandlingRef;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
@@ -186,7 +185,6 @@ public class FeilutbetalingTjenesteTest {
         return new SimulertPostering.Builder()
                 .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
                 .medBetalingType(BetalingType.DEBIT)
-                .medKonto(kontonr)
                 .medBeløp(BigDecimal.valueOf(beløp))
                 .medPosteringType(PosteringType.YTELSE)
                 .medFom(fom)
@@ -197,7 +195,6 @@ public class FeilutbetalingTjenesteTest {
         return new SimulertPostering.Builder()
                 .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
                 .medBetalingType(BetalingType.DEBIT)
-                .medKonto(kontonr)
                 .medBeløp(BigDecimal.valueOf(beløp))
                 .medPosteringType(PosteringType.FEILUTBETALING)
                 .medFom(fom)
@@ -209,7 +206,6 @@ public class FeilutbetalingTjenesteTest {
         return new SimulertPostering.Builder()
                 .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
                 .medBetalingType(BetalingType.KREDIT)
-                .medKonto(kontonr)
                 .medBeløp(BigDecimal.valueOf(beløp))
                 .medPosteringType(PosteringType.YTELSE)
                 .medFom(fom)
@@ -221,13 +217,10 @@ public class FeilutbetalingTjenesteTest {
         return new SimulertPostering.Builder()
                 .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
                 .medBetalingType(BetalingType.DEBIT)
-                .medKonto(kontonr)
                 .medBeløp(BigDecimal.valueOf(beløp))
                 .medPosteringType(PosteringType.YTELSE)
                 .medFom(fom)
                 .medTom(tom)
-                .medSats(BigDecimal.valueOf(beløp / (FeilutbetalingTjeneste.finnAntallVirkedager(fom, tom))))
-                .medSatsType(SatsType.DAG)
                 .build();
     }
 }

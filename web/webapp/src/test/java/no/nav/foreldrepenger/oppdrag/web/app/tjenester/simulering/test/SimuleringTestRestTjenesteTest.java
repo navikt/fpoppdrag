@@ -16,7 +16,6 @@ import org.mockito.Mockito;
 import no.finn.unleash.FakeUnleash;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.dto.SimuleringDetaljerDto;
@@ -26,11 +25,9 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.dto.Simul
 
 public class SimuleringTestRestTjenesteTest {
 
-    private static final String KONTO = "100000";
     private static final BigDecimal BELØP = BigDecimal.valueOf(100.00);
     private static final String DEBIT_TYPE = BetalingType.DEBIT.getKode();
     private static final String POSTERINGTYPE = PosteringType.YTELSE.getKode();
-    private static final String KLASSEKODE = KlasseKode.FPATORD.getKode();
     private static LocalDate FOM = LocalDate.of(2018, 11, 1);
     private static LocalDate TOM = LocalDate.of(2018, 11, 30);
     private static LocalDate FORFALL = TOM.plusDays(14);
@@ -50,7 +47,7 @@ public class SimuleringTestRestTjenesteTest {
     @Test
     public void skal_lagreSimuleringTestData_med_gyldig_data() {
         fakeUnleash.enable("fpoppdrag.testgrensesnitt");
-        SimuleringDetaljerDto simuleringDetaljerDto = new SimuleringDetaljerDto(FOM, TOM, FAGOMRÅDEKODE, KONTO, BELØP, DEBIT_TYPE, POSTERINGTYPE, KLASSEKODE, FORFALL, false, true);
+        SimuleringDetaljerDto simuleringDetaljerDto = new SimuleringDetaljerDto(FOM, TOM, FAGOMRÅDEKODE, BELØP, DEBIT_TYPE, POSTERINGTYPE, FORFALL, false);
         SimuleringMottakerDto simuleringMottakerDto = new SimuleringMottakerDto("213242", MottakerType.BRUKER.getKode(), Lists.newArrayList(simuleringDetaljerDto));
         SimuleringDto simuleringDto = new SimuleringDto(123L, "0", Lists.newArrayList(simuleringMottakerDto));
         SimuleringGjelderDto simuleringGjelderDto = new SimuleringGjelderDto(Lists.newArrayList(simuleringDto));
@@ -63,7 +60,7 @@ public class SimuleringTestRestTjenesteTest {
     public void skal_ikke_gjøre_noe_og_returnere_404_når_feature_er_skrudd_av() {
         fakeUnleash.disableAll();
 
-        SimuleringDetaljerDto simuleringDetaljerDto = new SimuleringDetaljerDto(FOM, TOM, FAGOMRÅDEKODE, KONTO, BELØP, DEBIT_TYPE, POSTERINGTYPE, KLASSEKODE, FORFALL, false, true);
+        SimuleringDetaljerDto simuleringDetaljerDto = new SimuleringDetaljerDto(FOM, TOM, FAGOMRÅDEKODE, BELØP, DEBIT_TYPE, POSTERINGTYPE, FORFALL, false);
         SimuleringMottakerDto simuleringMottakerDto = new SimuleringMottakerDto("213242", MottakerType.BRUKER.getKode(), Lists.newArrayList(simuleringDetaljerDto));
         SimuleringDto simuleringDto = new SimuleringDto(123L, "0", Lists.newArrayList(simuleringMottakerDto));
         SimuleringGjelderDto simuleringGjelderDto = new SimuleringGjelderDto(Lists.newArrayList(simuleringDto));

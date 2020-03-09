@@ -24,7 +24,6 @@ import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
@@ -510,8 +509,6 @@ public class SimuleringResultatTjenesteInntrekkTest {
                 .medBetalingType(betalingType)
                 .medPosteringType(posteringType)
                 .medBeløp(BigDecimal.valueOf(beløp))
-                .medKlasseKode(KlasseKode.FPSND_OP)
-                .medKonto("56897")
                 .medForfallsdato(forfallsdato)
                 .utenInntrekk(utenInntrekk)
                 .build();
