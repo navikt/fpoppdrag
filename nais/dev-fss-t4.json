@@ -1,0 +1,35 @@
+{
+  "cluster": "preprod",
+  "namespace": "t4",
+  "oracleconfig": "oracle/data/dev/config/fpoppdrag_t4",
+  "oraclefpoppdragsecret":"oracle/data/dev/creds/fpoppdrag_t4-user",
+  "fpoppdragserviceuser": "serviceuser/data/test/srvfpoppdrag",
+  "ldapserviceuser": "serviceuser/data/test/srvssolinux",
+  "minReplicas": "1",
+  "maxReplicas": "3",
+  "ingresses": [
+    "https://fpoppdrag-t4.nais.preprod.local/",
+    "https://app-t4.adeo.no/fpoppdrag"
+  ],
+  "env": {
+    "LOADBALANCER_FQDN": "app-t4.adeo.no",
+    "ABAC_PDP_ENDPOINT_URL": "https://wasapp-t4.adeo.no/asm-pdp/authorize",
+    "SECURITYTOKENSERVICE_URL": "https://sts-t4.test.local/SecurityTokenServiceProvider/",
+    "FPSAK_PIP_AKTOER_FOR_SAK_URL": "https://fpsak-t4.nais.preprod.local/fpsak/api/pip/aktoer-for-sak",
+    "OIDC_OPENAM_JWKSURL": "https://isso-t.adeo.no:443/isso/oauth2/connect/jwk_uri",
+    "OIDC_OPENAM_ISSUERURL": "https://isso-t.adeo.no:443/isso/oauth2",
+    "OIDC_OPENAM_AGENTNAME": "fpoppdrag-t4",
+    "OIDC_OPENAM_HOSTURL": "https://isso-t.adeo.no:443/isso/oauth2",
+    "LDAP_URL": "ldaps://ldapgw.test.local",
+    "LDAP_BASEDN": "dc=test,dc=local",
+    "LDAP_DOMAIN": "TEST.LOCAL",
+    "LDAP_USER_BASEDN": "ou=NAV,ou=BusinessUnits,dc=test,dc=local",
+    "LDAP_SERVICEUSER_BASEDN": "ou=ServiceAccounts,dc=test,dc=local",
+    "PERSON_V3_URL": "https://wasapp-t4.adeo.no/tpsws/ws/Person/v3",
+    "AKTOER_V2_URL": "https://app-t4.adeo.no/aktoerregister/ws/Aktoer/v2",
+    "ORGANISASJON_V4_URL": "https://modapp-t4.adeo.no/ereg/ws/OrganisasjonService/v4",
+    "OPPDRAG_SERVICE_URL": "https://cics-t4.adeo.no/oppdrag/simulerFpServiceWSBinding",
+    "BOOTSTRAP_SERVERS": "d26apvl00159.test.local:8443,d26apvl00160.test.local:8443,d26apvl00161.test.local:8443",
+    "FP_TILKJENTYTELSE_V1_TOPIC_URL": "privat-foreldrepenger-tilkjentytelse-v1-t4"
+  }
+}

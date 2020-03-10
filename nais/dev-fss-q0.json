@@ -1,0 +1,35 @@
+{
+  "cluster": "preprod",
+  "namespace": "q0",
+  "oracleconfig": "oracle/data/dev/config/fpoppdrag_q0",
+  "oraclefpoppdragsecret":"oracle/data/dev/creds/fpoppdrag_q0-user",
+  "fpoppdragserviceuser": "serviceuser/data/dev/srvfpoppdrag",
+  "ldapserviceuser": "serviceuser/data/dev/srvssolinux",
+  "minReplicas": "1",
+  "maxReplicas": "3",
+  "ingresses": [
+    "https://fpoppdrag-q0.nais.preprod.local",
+    "https://app-q0.adeo.no/fpoppdrag"
+  ],
+  "env": {
+    "LOADBALANCER_FQDN": "app-q0.adeo.no",
+    "ABAC_PDP_ENDPOINT_URL": "https://wasapp-q0.adeo.no/asm-pdp/authorize",
+    "SECURITYTOKENSERVICE_URL": "https://sts-q0.preprod.local/SecurityTokenServiceProvider/",
+    "FPSAK_PIP_AKTOER_FOR_SAK_URL": "https://fpsak-q0.nais.preprod.local/fpsak/api/pip/aktoer-for-sak",
+    "OIDC_OPENAM_JWKSURL": "https://isso-q.adeo.no:443/isso/oauth2/connect/jwk_uri",
+    "OIDC_OPENAM_ISSUERURL": "https://isso-q.adeo.no:443/isso/oauth2",
+    "OIDC_OPENAM_AGENTNAME": "fpoppdrag-q0",
+    "OIDC_OPENAM_HOSTURL": "https://isso-q.adeo.no/isso/oauth2",
+    "LDAP_URL": "ldaps://ldapgw.preprod.local",
+    "LDAP_BASEDN": "dc=preprod,dc=local",
+    "LDAP_DOMAIN": "PREPROD.LOCAL",
+    "LDAP_USER_BASEDN": "ou=NAV,ou=BusinessUnits,dc=preprod,dc=local",
+    "LDAP_SERVICEUSER_BASEDN": "ou=ServiceAccounts,dc=preprod,dc=local",
+    "PERSON_V3_URL": "https://wasapp-q0.adeo.no/tpsws/ws/Person/v3",
+    "AKTOER_V2_URL": "https://app-q0.adeo.no/aktoerregister/ws/Aktoer/v2",
+    "ORGANISASJON_V4_URL": "https://modapp-q0.adeo.no/ereg/ws/OrganisasjonService/v4",
+    "OPPDRAG_SERVICE_URL": "https://ztest.test.local:9132/cics/services/simulerFpService",
+    "BOOTSTRAP_SERVERS": "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443",
+    "FP_TILKJENTYTELSE_V1_TOPIC_URL": "privat-foreldrepenger-tilkjentytelse-v1-q0"
+  }
+}
