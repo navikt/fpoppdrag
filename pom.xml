@@ -49,7 +49,7 @@
         <surefire.version>2.22.2</surefire.version>
         <asm.version>6.2.1</asm.version>
         <metrics.version>4.1.2</metrics.version>
-        <prometheus.version>0.8.0</prometheus.version>
+        <prometheus.version>0.8.1</prometheus.version>
 
         <logstash.version>6.3</logstash.version>
         <swagger.version>2.1.1</swagger.version>
