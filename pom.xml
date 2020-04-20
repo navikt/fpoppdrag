@@ -52,7 +52,7 @@
         <prometheus.version>0.8.1</prometheus.version>
 
         <logstash.version>6.3</logstash.version>
-        <swagger.version>2.1.1</swagger.version>
+        <swagger.version>2.1.2</swagger.version>
         <swagger.spec-parser.version>1.0.50</swagger.spec-parser.version>
 
         <joda-time.version>2.10.5</joda-time.version>
