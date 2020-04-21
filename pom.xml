@@ -304,7 +304,7 @@
             <dependency>
                 <groupId>org.jvnet.mimepull</groupId>
                 <artifactId>mimepull</artifactId>
-                <version>1.9.10</version>
+                <version>1.9.13</version>
             </dependency>
 
             <!-- sikrer samme versjon - siden felles-biblioteker mikser -->
