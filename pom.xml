@@ -55,7 +55,7 @@
         <swagger.version>2.1.2</swagger.version>
         <swagger.spec-parser.version>1.0.50</swagger.spec-parser.version>
 
-        <joda-time.version>2.10.5</joda-time.version>
+        <joda-time.version>2.10.6</joda-time.version>
         <ow2.asm.version>7.3.1</ow2.asm.version>
         <owaspencoder.version>1.2.2</owaspencoder.version>
 
