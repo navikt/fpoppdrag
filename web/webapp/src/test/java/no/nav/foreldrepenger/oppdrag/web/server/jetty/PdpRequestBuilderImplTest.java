@@ -55,7 +55,7 @@ public class PdpRequestBuilderImplTest {
     private AbacAttributtSamling byggAbacAttributtSamling(BeskyttetRessursActionAttributt actionType) {
         AbacAttributtSamling attributtSamling = AbacAttributtSamling.medJwtToken(DUMMY_ID_TOKEN);
         attributtSamling.setActionType(actionType);
-        attributtSamling.setResource(BeskyttetRessursResourceAttributt.FAGSAK);
+        attributtSamling.setResource(BeskyttetRessursResourceAttributt.FAGSAK.getEksternKode());
         return attributtSamling;
     }
 }
