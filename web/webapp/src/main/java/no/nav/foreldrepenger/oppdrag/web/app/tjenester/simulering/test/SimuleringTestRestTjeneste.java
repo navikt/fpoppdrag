@@ -51,7 +51,7 @@ public class SimuleringTestRestTjeneste {
     @Operation(description = "Lagre simulering test data", summary = ("Brukes til intern testing"), tags = "simtest")
     @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
     public Response lagreSimuleringTestData(@NotNull @Valid SimuleringGjelderDto simuleringGjelderDto) {
-        if (unleash.isEnabled("fpoppdrag.testgrensesnitt")) {
+        if (true) {
             if (erProduksjonsmiljøet()) {
                 throw new IllegalStateException("fpoppdrag.testgrenesesnitt kan ikke aktiveres i produksjonsmijøet");
             }
