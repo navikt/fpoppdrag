@@ -17,15 +17,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum YtelseType implements Kodeverdi {
 
-    ENGANGSTØNAD("ES"),
-    FORELDREPENGER("FP"),
-    SVANGERSKAPSPENGER("SVP"),
+    ENGANGSTØNAD("ES", "Engangsstønad"),
+    FORELDREPENGER("FP", "Foreldrepenger"),
+    SVANGERSKAPSPENGER("SVP", "Svangerskapspenger"),
+    SYKEPENGER("SP", "Sykepenger"),
+
+    PLEIEPENGER_SYKT_BARN("PSB", "Pleiepenger sykt barn"),
+    PLEIEPENGER_NÆRSTÅENDE("PPN", "Pleiepenger nærstående"),
+    OMSORGSPENGER("OMP", "Omsorgspenger"),
+    OPPLÆRINGSPENGER("OLP", "Opplæringspenger"),
 
     /**
      * Alle kodeverk må ha en verdi, det kan ikke være null i databasen. Denne koden
      * gjør samme nytten.
      */
-    UDEFINERT("-"),
+    UDEFINERT("-", "Ikke definert"),
     ;
 
     public static final String KODEVERK = "YTELSE_TYPE";
@@ -33,13 +39,15 @@ public enum YtelseType implements Kodeverdi {
     private static final Map<String, YtelseType> KODER = new LinkedHashMap<>();
 
     private String kode;
+    private String navn;
 
     YtelseType() {
         // Hibernate trenger den
     }
 
-    private YtelseType(String kode) {
+    private YtelseType(String kode, String navn) {
         this.kode = kode;
+        this.navn = navn;
     }
 
     @JsonCreator

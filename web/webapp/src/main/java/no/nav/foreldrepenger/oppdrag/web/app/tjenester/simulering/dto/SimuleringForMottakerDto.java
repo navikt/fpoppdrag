@@ -98,22 +98,30 @@ public class SimuleringForMottakerDto {
         }
 
         private void initSortering(YtelseType gjelderYtelsetype) {
-            SORTERING.put(FagOmrådeKode.ENGANGSSTØNAD, 3);
-            SORTERING.put(FagOmrådeKode.SVANGERSKAPSPENGER, 4);
-            SORTERING.put(FagOmrådeKode.SVANGERSKAPSPENGER_ARBEIDSGIVER, 5);
-            SORTERING.put(FagOmrådeKode.FORELDREPENGER, 6);
-            SORTERING.put(FagOmrådeKode.FORELDREPENGER_ARBEIDSGIVER, 7);
-            SORTERING.put(FagOmrådeKode.SYKEPENGER, 8);
-            SORTERING.put(FagOmrådeKode.SYKEPENGER_ARBEIDSGIVER, 9);
-            SORTERING.put(FagOmrådeKode.PLEIEPENGER, 10);
-            SORTERING.put(FagOmrådeKode.PLEIEPENGER_ARBEIDSGIVER, 11);
+            //default sortering
+            SORTERING.put(FagOmrådeKode.ENGANGSSTØNAD, 101);
+            SORTERING.put(FagOmrådeKode.SVANGERSKAPSPENGER, 101);
+            SORTERING.put(FagOmrådeKode.SVANGERSKAPSPENGER_ARBEIDSGIVER, 102);
+            SORTERING.put(FagOmrådeKode.FORELDREPENGER, 103);
+            SORTERING.put(FagOmrådeKode.FORELDREPENGER_ARBEIDSGIVER, 104);
+            SORTERING.put(FagOmrådeKode.SYKEPENGER, 105);
+            SORTERING.put(FagOmrådeKode.SYKEPENGER_ARBEIDSGIVER, 106);
+            SORTERING.put(FagOmrådeKode.PLEIEPENGER_V1, 107);
+            SORTERING.put(FagOmrådeKode.PLEIEPENGER_V1_ARBEIDSGIVER, 108);
+            SORTERING.put(FagOmrådeKode.PLEIEPENGER_SYKT_BARN, 109);
+            SORTERING.put(FagOmrådeKode.PLEIEPENGER_SYKT_BARN_ARBEIDSGIVER, 110);
+            SORTERING.put(FagOmrådeKode.PLEIEPENGER_NÆRSTÅENDE, 111);
+            SORTERING.put(FagOmrådeKode.PLEIEPENGER_NÆRSTÅENDE_ARBEIDSGIVER, 112);
+            SORTERING.put(FagOmrådeKode.OMSORGSPENGER, 113);
+            SORTERING.put(FagOmrådeKode.OMSORGSPENGER_ARBEIDSGIVER, 114);
+            SORTERING.put(FagOmrådeKode.OPPLÆRINGSPENGER, 115);
+            SORTERING.put(FagOmrådeKode.OPPLÆRINGSPENGER_ARBEIDSGIVER, 116);
 
-            if (YtelseType.SVANGERSKAPSPENGER.equals(gjelderYtelsetype)) {
-                SORTERING.replace(FagOmrådeKode.SVANGERSKAPSPENGER, 1);
-                SORTERING.replace(FagOmrådeKode.SVANGERSKAPSPENGER_ARBEIDSGIVER, 2);
-            } else if (YtelseType.FORELDREPENGER.equals(gjelderYtelsetype)) {
-                SORTERING.replace(FagOmrådeKode.FORELDREPENGER, 1);
-                SORTERING.replace(FagOmrådeKode.FORELDREPENGER_ARBEIDSGIVER, 2);
+            //flytter gjeldende ytelsetype først i sorteringen
+            for (FagOmrådeKode fagOmrådeKode : SORTERING.keySet()) {
+                if (fagOmrådeKode.getYtelseType().equals(gjelderYtelsetype)) {
+                    SORTERING.put(fagOmrådeKode, SORTERING.get(fagOmrådeKode) - 100);
+                }
             }
         }
 
