@@ -14,17 +14,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Sjekk ut kode
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
 
       - name: Sett opp m2-repo cache
-      - uses: actions/cache@v1.1.2
+        uses: actions/cache@v1.1.2
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
 
       - name: Sett opp Java
-      - uses: actions/setup-java@v1
+        uses: actions/setup-java@v1
         with:
           java-version: 1.11
 
