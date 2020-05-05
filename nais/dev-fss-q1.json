@@ -5,7 +5,7 @@
   "oraclefpoppdragsecret":"oracle/data/dev/creds/fpoppdrag_q1-user",
   "fpoppdragserviceuser": "serviceuser/data/dev/srvfpoppdrag",
   "ldapserviceuser": "serviceuser/data/dev/srvssolinux",
-  "minReplicas": "1",
+  "minReplicas": "2",
   "maxReplicas": "3",
   "ingresses": [
     "https://fpoppdrag-q1.nais.preprod.local",

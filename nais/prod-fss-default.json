@@ -5,7 +5,7 @@
   "oraclefpoppdragsecret":"oracle/data/prod/creds/fpoppdrag_p-fpoppdrag_p",
   "fpoppdragserviceuser": "serviceuser/data/prod/srvfpoppdrag",
   "ldapserviceuser": "serviceuser/data/prod/srvssolinux",
-  "minReplicas": "1",
+  "minReplicas": "2",
   "maxReplicas": "3",
   "ingresses": [
     "https://fpoppdrag.nais.adeo.no",
