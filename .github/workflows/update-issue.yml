@@ -35,7 +35,7 @@ jobs:
           token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
           issue-number: ${{ github.event.client_payload.issue-number }}
           body: |
-            Testene kjørt av veridkjedetestene feilet!
+            Verdikjedetestene kjørt av fpsak-autotest feilet!
 
             Det er 4 kjente årsaker til at disse feiler:
             1) Det er en feil i FPOPPDRAG.
