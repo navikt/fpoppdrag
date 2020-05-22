@@ -84,10 +84,11 @@ jobs:
             <tr><td>prod-fss</td><td>default</td></tr>
             </table>
 
-      - name: Trigg deploy til dev
+      - name: Trigger verdikjedetestene i fpsak-autotest prosjektet
         if: success()
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-          issue-number: ${{ steps.createdeployissue.outputs.number }}
-          body: /promote dev-fss t4
+          repository: navikt/fpsak-autotest
+          event-type: fpoppdrag-verdikjede
+          client-payload: '{ "trigger": "${{ github.repository }}", "version": "${{ env.TAG }}", "issue-number": "${{ steps.createdeployissue.outputs.number }}" }'
