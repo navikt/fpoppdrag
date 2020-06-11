@@ -99,8 +99,8 @@ spec:
       value: person_v3.url
     - name: AKTOER_V2_URL
       value: aktoer_v2.url
-    - name: ORGANISASJON_V4_URL
-      value: organisasjon_v4.url
+    - name: ORGANISASJON_RS_URL
+      value: organisasjon_rs.url
     - name: OPPDRAG_SERVICE_URL
       value: oppdrag_service.url
     - name: BOOTSTRAP_SERVERS

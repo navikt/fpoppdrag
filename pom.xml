@@ -31,7 +31,7 @@
 
         <!-- Felles avhengigheter i prosjektet Disse skal ALLTID være en
             RELEASE-avhengighet UNNTAK: feature-brancher og lokalt -->
-        <felles.version>1.6-20200413054738-70a4093</felles.version>
+        <felles.version>1.9-20200611133813-b2fa736</felles.version>
         <prosesstask.version>2.3-20200423194250-5dcdce6</prosesstask.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
@@ -336,11 +336,13 @@
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.8.2</version>
                 </plugin>
+                <!--
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>1.4.1</version>
                 </plugin>
+                -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
@@ -420,7 +422,7 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -444,16 +446,16 @@
                                     </excludes>
                                 </bannedDependencies>
                                 <dependencyConvergence/>
-                                <!-- Ikke kommenter inn denne. Det brekker
+                                <- Ikke kommenter inn denne. Det brekker
                                     muligheten til å bygge bare deler av prosjektet https://issues.apache.org/jira/browse/MENFORCER-189
                                     -> "ReactorModuleConvergence is not compatible with 'advanced' reactor options:
-                                    -pl, -rf" <reactorModuleConvergence /> -->
+                                    -pl, -rf" <reactorModuleConvergence /> ->
                             </rules>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
+            -->
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <configuration>
@@ -462,7 +464,6 @@
             </plugin>
         </plugins>
     </build>
-
     <profiles>
         <profile>
             <id>runSonar</id>

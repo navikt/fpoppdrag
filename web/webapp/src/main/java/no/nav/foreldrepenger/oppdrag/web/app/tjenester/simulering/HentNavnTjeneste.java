@@ -47,11 +47,8 @@ class HentNavnTjeneste {
     }
 
     public String hentNavnGittOrgnummer(String orgnummer) {
-        Optional<OrganisasjonInfo> organisasjonInfo = organisasjonTjeneste.hentOrganisasjonInfo(orgnummer);
-        if (!organisasjonInfo.isPresent()) {
-            throw HentNavnTjenesteFeil.FACTORY.kanIkkeFinneOrganisasjoninfo().toException();
-        }
-        return organisasjonInfo.get().getNavn();
+        return organisasjonTjeneste.hentOrganisasjonInfo(orgnummer).map(OrganisasjonInfo::getNavn)
+                .orElseThrow(() -> HentNavnTjenesteFeil.FACTORY.kanIkkeFinneOrganisasjoninfo().toException());
     }
 
     interface HentNavnTjenesteFeil extends DeklarerteFeil {
