@@ -17,14 +17,17 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.Operation;
+import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
+import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 
 @ApplicationScoped
@@ -52,7 +55,7 @@ public class SimuleringVedlikeholdRestTjeneste {
     @Produces(APPLICATION_JSON)
     @Operation(description = "Sletter gamle simulering-xml-er", tags = "FORVALTNING")
     @BeskyttetRessurs(action = CREATE, ressurs = DRIFT, sporingslogg = false)
-    public Response slettGamleSimuleringXml(@Valid @NotNull @Min(0) @Max(10000) @QueryParam("antall") Integer antall) {
+    public Response slettGamleSimuleringXml(@Valid @NotNull AntallAbacDto antall) {
         long antallNyesteDagerSomIkkeSkalSlettes = 90;
 
         Query query = entityManager.createNativeQuery("delete from simulering_xml" +
@@ -66,10 +69,33 @@ public class SimuleringVedlikeholdRestTjeneste {
                 "    where rownum <= :antall" +
                 "  )")
                 .setParameter("uslettbareDager", antallNyesteDagerSomIkkeSkalSlettes)
-                .setParameter("antall", antall);
+                .setParameter("antall", antall.getAntall());
         int resultat = query.executeUpdate();
 
-        logger.info("Slettet inntil {} gamle simulering-xml-er. {}", antall, resultat);
+        logger.info("Slettet inntil {} gamle simulering-xml-er. {}", antall.getAntall(), resultat);
         return Response.ok().build();
+    }
+
+    static class AntallAbacDto implements AbacDto {
+
+        @Min(0)
+        @Max(100000)
+        @NotNull
+        @JsonProperty("antall")
+        private Integer antall;
+
+        public Integer getAntall() {
+            return antall;
+        }
+
+        public void setAntall(Integer antall) {
+            this.antall = antall;
+        }
+
+        @Override
+        public AbacDataAttributter abacAttributter() {
+            return AbacDataAttributter.opprett();
+        }
+
     }
 }
