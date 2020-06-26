@@ -20,6 +20,7 @@ import no.nav.foreldrepenger.oppdrag.web.app.exceptions.ConstraintViolationMappe
 import no.nav.foreldrepenger.oppdrag.web.app.exceptions.JsonMappingExceptionMapper;
 import no.nav.foreldrepenger.oppdrag.web.app.exceptions.JsonParseExceptionMapper;
 import no.nav.foreldrepenger.oppdrag.web.app.konfig.FellesKlasserForRest;
+import no.nav.foreldrepenger.oppdrag.web.app.tjenester.SimuleringVedlikeholdRestTjeneste;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.kodeverk.KodeverkRestTjeneste;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.SimuleringRestTjeneste;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.SimuleringTestRestTjeneste;
@@ -71,6 +72,8 @@ public class ApplicationConfig extends Application {
         classes.add(KodeverkRestTjeneste.class);
         classes.add(SimuleringRestTjeneste.class);
         classes.add(SimuleringTestRestTjeneste.class);
+
+        classes.add(SimuleringVedlikeholdRestTjeneste.class);
 
         return Collections.unmodifiableSet(classes);
     }
