@@ -21,6 +21,9 @@ public class OppdragConsumerImpl implements OppdragConsumer {
 
     public static final String SERVICE_IDENTIFIER = "OppdragService";
 
+    /** oppdragssytemet (OS) har offisiell åpningstid mandag-fredag 0700-1900, men det er ofte åpent utenom de offisielle åpningstidene.
+     *  utenom åpningstid styrer vi logging slik at feilmeldinger fra OS som vanligvis forekommer ved nedetid logges som Info, for å ikke skape støy i loggene
+     */
     private static final Set<DayOfWeek> OPPDRAG_ÅPNE_DAGER = EnumSet.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
     private static final LocalTime OPPDRAG_ÅPNINGSTID_START = LocalTime.of(7, 0);
     private static final LocalTime OPPDRAG_ÅPNINGSTID_SLUTT = LocalTime.of(19, 0);
