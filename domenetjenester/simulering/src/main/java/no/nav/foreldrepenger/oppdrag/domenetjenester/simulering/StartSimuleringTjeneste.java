@@ -17,7 +17,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.ws.WebServiceException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,12 +36,10 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXml;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXmlRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.økonomioppdrag.ØkonomiKodeEndringLinje;
-import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling;
 import no.nav.system.os.entiteter.beregningskjema.Beregning;
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaa;
 import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode;
 import no.nav.system.os.entiteter.oppdragskjema.Ompostering;
-import no.nav.system.os.tjenester.simulerfpservice.feil.FeilUnderBehandling;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.ObjectFactory;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse;
@@ -271,14 +268,7 @@ public class StartSimuleringTjeneste {
     }
 
     private SimulerBeregningResponse utførSimulering(SimulerBeregningRequest simuleringOppdrag) {
-        try {
             return oppdragConsumer.hentSimulerBeregningResponse(simuleringOppdrag);
-        } catch (SimulerBeregningFeilUnderBehandling e) {
-            FeilUnderBehandling fault = e.getFaultInfo();
-            throw StartSimuleringTjenesteFeil.FACTORY.feilUnderBehandlingAvSimulering(fault.getErrorSource(), fault.getErrorType(), fault.getErrorMessage(), fault.getRootCause(), fault.getDateTimeStamp(), e).toException();
-        } catch (WebServiceException e) {
-            throw StartSimuleringTjenesteFeil.FACTORY.feilUnderKallTilSimuleringtjeneste(e).toException();
-        }
     }
 
     private List<SimulerBeregningRequest> opprettBeregningRequestListe(List<Oppdrag> simuleringOppdragListe) {

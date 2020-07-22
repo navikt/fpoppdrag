@@ -8,18 +8,16 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.ws.soap.SOAPFaultException;
+import javax.xml.ws.WebServiceException;
 
 import no.nav.foreldrepenger.oppdrag.util.XmlStringFieldFikser;
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling;
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerFpService;
+import no.nav.system.os.tjenester.simulerfpservice.feil.FeilUnderBehandling;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse;
-import no.nav.vedtak.felles.integrasjon.felles.ws.SoapWebServiceFeil;
 
 public class OppdragConsumerImpl implements OppdragConsumer {
-
-    public static final String SERVICE_IDENTIFIER = "OppdragService";
 
     /** oppdragssytemet (OS) har offisiell åpningstid mandag-fredag 0700-1900, men det er ofte åpent utenom de offisielle åpningstidene.
      *  utenom åpningstid styrer vi logging slik at feilmeldinger fra OS som vanligvis forekommer ved nedetid logges som Info, for å ikke skape støy i loggene
@@ -36,20 +34,23 @@ public class OppdragConsumerImpl implements OppdragConsumer {
     }
 
     @Override
-    public SimulerBeregningResponse hentSimulerBeregningResponse(SimulerBeregningRequest simulerBeregningRequest) throws SimulerBeregningFeilUnderBehandling {
+    public SimulerBeregningResponse hentSimulerBeregningResponse(SimulerBeregningRequest simulerBeregningRequest) {
         try {
             SimulerBeregningResponse response = port.simulerBeregning(simulerBeregningRequest);
             XmlStringFieldFikser.stripTrailingSpacesFromStrings(response);
             return response;
-        } catch (SOAPFaultException e) {
+        } catch (SimulerBeregningFeilUnderBehandling e) {
+            FeilUnderBehandling fault = e.getFaultInfo();
+            throw OppdragConsumerFeil.FACTORY.feilUnderBehandlingAvSimulering(fault.getErrorSource(), fault.getErrorType(), fault.getErrorMessage(), fault.getRootCause(), fault.getDateTimeStamp(), e).toException();
+        } catch (WebServiceException e) {
             if (feiletPgaOppdragsystemetUtenforÅpningstid(e)) {
-                throw OppdragConsumerFeil.FACTORY.oppdragsystemetHarNedeteid(e).toException();
+                throw OppdragConsumerFeil.FACTORY.oppdragsystemetHarNedetid(e).toException();
             }
-            throw SoapWebServiceFeil.FACTORY.soapFaultIwebserviceKall(SERVICE_IDENTIFIER, e).toException();
+            throw OppdragConsumerFeil.FACTORY.feilUnderKallTilSimuleringtjenesten(e).toException();
         }
     }
 
-    private boolean feiletPgaOppdragsystemetUtenforÅpningstid(SOAPFaultException e) {
+    private boolean feiletPgaOppdragsystemetUtenforÅpningstid(WebServiceException e) {
         return !innenforÅpningstid() && TYPISKE_FEILMELDING_NÅR_OPPDRAG_ER_NEDE.stream().anyMatch(typisk -> e.getMessage().contains(typisk));
     }
 
