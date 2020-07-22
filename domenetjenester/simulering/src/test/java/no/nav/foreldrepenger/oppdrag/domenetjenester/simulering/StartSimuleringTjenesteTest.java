@@ -10,15 +10,12 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import javax.xml.ws.WebServiceException;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -43,12 +40,10 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXml;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXmlRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.økonomioppdrag.ØkonomiKodeEndring;
-import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling;
 import no.nav.system.os.entiteter.beregningskjema.Beregning;
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaa;
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaaDetaljer;
 import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode;
-import no.nav.system.os.tjenester.simulerfpservice.feil.FeilUnderBehandling;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse;
 import no.nav.vedtak.exception.TekniskException;
@@ -138,44 +133,6 @@ public class StartSimuleringTjenesteTest {
         assertThat(resultat).hasSize(2);
         assertThat(resultat.get(0).getResponseXml()).isNotNull();
         assertThat(resultat.get(1).getResponseXml()).isNotNull();
-    }
-
-    @Test
-    public void test_skal_kaste_exception_ved_FeilUnderBehandling_error_fra_simuleringtjeneste() throws Exception {
-        if (erPåJenkins()) {
-            return;
-        }
-        FeilUnderBehandling fault = new FeilUnderBehandling();
-        fault.setErrorMessage("error");
-        fault.setDateTimeStamp(LocalDateTime.now().toString());
-        fault.setErrorType("error");
-        fault.setRootCause("Rootcause");
-
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(any()))
-                .thenThrow(new SimulerBeregningFeilUnderBehandling("ERROR", fault));
-
-        expectedException.expect(TekniskException.class);
-        expectedException.expectMessage("FPO-845125");
-
-        String xml = TestResourceLoader.loadXml("/xml/oppdrag_mottaker_2.xml");
-
-        simuleringTjeneste.startSimulering(BEHANDLING_ID_2, Collections.singletonList(xml));
-    }
-
-    @Test
-    public void test_skal_kaste_exception_ved_WebServiceException_ved_kall_til_simuleringtjeneste() throws Exception {
-        if (erPåJenkins()) {
-            return;
-        }
-        WebServiceException fault = new WebServiceException("Error", null);
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(any())).thenThrow(fault);
-
-        expectedException.expect(TekniskException.class);
-        expectedException.expectMessage("FPO-852145");
-
-        String xml = TestResourceLoader.loadXml("/xml/oppdrag_mottaker_2.xml");
-
-        simuleringTjeneste.startSimulering(BEHANDLING_ID_2, Collections.singletonList(xml));
     }
 
     @Test
