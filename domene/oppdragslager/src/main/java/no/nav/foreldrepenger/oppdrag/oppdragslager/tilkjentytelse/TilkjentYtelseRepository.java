@@ -11,8 +11,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
-
 @ApplicationScoped
 public class TilkjentYtelseRepository {
 
@@ -23,7 +21,7 @@ public class TilkjentYtelseRepository {
     }
 
     @Inject
-    public TilkjentYtelseRepository(@VLPersistenceUnit EntityManager entityManager) {
+    public TilkjentYtelseRepository(EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
         this.entityManager = entityManager;
     }

@@ -13,8 +13,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.TypedQuery;
 
-import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
-
 @ApplicationScoped
 public class ØkonomioppdragRepositoryImpl implements ØkonomioppdragRepository {
 
@@ -27,7 +25,7 @@ public class ØkonomioppdragRepositoryImpl implements ØkonomioppdragRepository 
     }
 
     @Inject
-    public ØkonomioppdragRepositoryImpl(@VLPersistenceUnit EntityManager entityManager) {
+    public ØkonomioppdragRepositoryImpl(EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
         this.entityManager = entityManager;
     }

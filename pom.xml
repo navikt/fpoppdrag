@@ -31,8 +31,8 @@
 
         <!-- Felles avhengigheter i prosjektet Disse skal ALLTID være en
             RELEASE-avhengighet UNNTAK: feature-brancher og lokalt -->
-        <felles.version>1.9-20200611133813-b2fa736</felles.version>
-        <prosesstask.version>2.3-20200423194250-5dcdce6</prosesstask.version>
+        <felles.version>2.0.0-20200702160706-bb063e2</felles.version>
+        <prosesstask.version>2.4.2-20200703105213-95d753a</prosesstask.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
         <fp-kontrakter.version>5.1_20200117132228_47cdf2f</fp-kontrakter.version>
@@ -43,6 +43,7 @@
         <prometheus.version>0.9.0</prometheus.version>
         <logstash.version>6.4</logstash.version>
         <swagger.version>2.1.3</swagger.version>
+        <woodstox.version>6.2.1</woodstox.version>
 
         <!-- Dupliserte properties fra vl-felles. Pass på å oppdatere begge steder. Disse trengs for definisjon av videre plugins -->
         <!-- <flyway.version>5.1.4</flyway.version> FIXME: støtter ikke oracle 11, se på hva som skal til for å kjøre på 12 -->
@@ -276,6 +277,12 @@
             </dependency>
 
             <dependency>
+                <!-- Transitive avhengighet resolution for å sikre bestemt versjon -->
+                <groupId>com.fasterxml.woodstox</groupId>
+                <artifactId>woodstox-core</artifactId>
+                <version>${woodstox.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>2.10.6</version>
@@ -422,7 +429,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -446,16 +452,15 @@
                                     </excludes>
                                 </bannedDependencies>
                                 <dependencyConvergence/>
-                                <- Ikke kommenter inn denne. Det brekker
+                                <!-- Ikke kommenter inn denne. Det brekker
                                     muligheten til å bygge bare deler av prosjektet https://issues.apache.org/jira/browse/MENFORCER-189
                                     -> "ReactorModuleConvergence is not compatible with 'advanced' reactor options:
-                                    -pl, -rf" <reactorModuleConvergence /> ->
+                                    -pl, -rf" <reactorModuleConvergence /> -->
                             </rules>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            -->
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <configuration>

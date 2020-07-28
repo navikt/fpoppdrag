@@ -9,8 +9,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
-
 @ApplicationScoped
 public class PipRepository {
 
@@ -21,7 +19,7 @@ public class PipRepository {
     }
 
     @Inject
-    public PipRepository(@VLPersistenceUnit EntityManager entityManager) {
+    public PipRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 

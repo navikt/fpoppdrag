@@ -9,8 +9,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
-
 @ApplicationScoped
 public class SimuleringRepository {
 
@@ -21,7 +19,7 @@ public class SimuleringRepository {
     }
 
     @Inject
-    public SimuleringRepository(@VLPersistenceUnit EntityManager entityManager) {
+    public SimuleringRepository(EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
         this.entityManager = entityManager;
     }

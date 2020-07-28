@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.vedtak.apptjeneste.AppServiceHandler;
-import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
 import no.nav.vedtak.util.Tuple;
 
 
@@ -61,7 +60,7 @@ public class FeedPollerManager implements AppServiceHandler {
     }
 
     @Inject
-    public FeedPollerManager(@VLPersistenceUnit EntityManager entityManager, @Any Instance<FeedPoller> feedPollers) {
+    public FeedPollerManager(EntityManager entityManager, @Any Instance<FeedPoller> feedPollers) {
         Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
         Objects.requireNonNull(feedPollers, "feedPollers"); //$NON-NLS-1$
         this.entityManager = entityManager;
