@@ -8,8 +8,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
-
 /**
  * @deprecated lagring av request XML og response XML skal fjernes i fremtiden
  * @since 30.11.2018
@@ -25,7 +23,7 @@ public class SimuleringXmlRepository {
     }
 
     @Inject
-    public SimuleringXmlRepository(@VLPersistenceUnit EntityManager entityManager) {
+    public SimuleringXmlRepository(EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
         this.entityManager = entityManager;
     }

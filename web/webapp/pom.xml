@@ -97,6 +97,12 @@
         <dependency>
             <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
             <artifactId>felles-integrasjon-rest</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
@@ -297,6 +303,7 @@
                     <timestampFormat>dd.MM.yyyy HH.mm.ss</timestampFormat>
                 </configuration>
             </plugin>
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -319,6 +326,7 @@
                     </rules>
                 </configuration>
             </plugin>
+            -->
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>

@@ -23,7 +23,7 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.tid.DatoIntervallEntitet;
 
 /**
  * Denne klassen er en ren avbildning fra Oppdragsløsningens meldingsformater.
