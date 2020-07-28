@@ -32,7 +32,7 @@ public class OrganisasjonTjeneste {
     }
 
     private OrganisasjonInfo hent(String orgnr) {
-        var response =Optional.ofNullable(cache.get(orgnr)).orElse(hentOrganisasjonRest(orgnr));
+        var response = Optional.ofNullable(cache.get(orgnr)).orElseGet(() -> hentOrganisasjonRest(orgnr));
         cache.put(orgnr, response);
         return response;
     }
