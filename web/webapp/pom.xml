@@ -303,7 +303,6 @@
                     <timestampFormat>dd.MM.yyyy HH.mm.ss</timestampFormat>
                 </configuration>
             </plugin>
-            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -326,7 +325,6 @@
                     </rules>
                 </configuration>
             </plugin>
-            -->
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
