@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import no.nav.foreldrepenger.oppdrag.OppdragNedetidException;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.exception.VLException;
 import no.nav.vedtak.feil.Feil;
@@ -72,6 +73,8 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
         Feil feil = vlException.getFeil();
         if (vlException instanceof ManglerTilgangException) {
             return ikkeTilgang(feil);
+        } else if (vlException instanceof OppdragNedetidException) {
+            return ikkeTilgjengelig(callId, feil);
         } else {
             return serverError(callId, feil);
         }
@@ -81,6 +84,15 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
         String feilmelding = getVLExceptionFeilmelding(callId, feil);
         FeilType feilType = FeilType.GENERELL_FEIL;
         return Response.serverError()
+                .entity(new FeilDto(feilType, feilmelding))
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+    private Response ikkeTilgjengelig(String callId, Feil feil) {
+        String feilmelding = getVLExceptionFeilmelding(callId, feil);
+        FeilType feilType = FeilType.GENERELL_FEIL;
+        return Response.status(Response.Status.SERVICE_UNAVAILABLE)
                 .entity(new FeilDto(feilType, feilmelding))
                 .type(MediaType.APPLICATION_JSON)
                 .build();
