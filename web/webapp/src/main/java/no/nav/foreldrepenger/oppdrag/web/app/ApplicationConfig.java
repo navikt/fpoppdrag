@@ -6,8 +6,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.CDI;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+
+import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
 
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
@@ -71,9 +75,17 @@ public class ApplicationConfig extends Application {
         classes.add(ProsessTaskRestTjeneste.class);
         classes.add(KodeverkRestTjeneste.class);
         classes.add(SimuleringRestTjeneste.class);
-        classes.add(SimuleringTestRestTjeneste.class);
 
         classes.add(SimuleringVedlikeholdRestTjeneste.class);
+
+        //HAXX SimuleringTestRestTjeneste skal bare være tilgjengelig for lokal utvikling, brukes for å sette opp test
+        //hvis denne legges til i en egen Application isdf i denne, kan man ikke bruke swagger for å nå tjenesten
+        //bruker derfor CDI for å slå opp klassen
+        Instance<SimuleringTestRestTjeneste> grunnlagTestTjeneste = CDI.current().select(SimuleringTestRestTjeneste.class);
+        if (!grunnlagTestTjeneste.isUnsatisfied()) {
+            TargetInstanceProxy proxy = (TargetInstanceProxy) grunnlagTestTjeneste.get();
+            classes.add(proxy.weld_getTargetClass());
+        }
 
         return Collections.unmodifiableSet(classes);
     }
