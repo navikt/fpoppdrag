@@ -81,9 +81,9 @@ public class ApplicationConfig extends Application {
         //HAXX SimuleringTestRestTjeneste skal bare være tilgjengelig for lokal utvikling, brukes for å sette opp test
         //hvis denne legges til i en egen Application isdf i denne, kan man ikke bruke swagger for å nå tjenesten
         //bruker derfor CDI for å slå opp klassen
-        Instance<SimuleringTestRestTjeneste> grunnlagTestTjeneste = CDI.current().select(SimuleringTestRestTjeneste.class);
-        if (!grunnlagTestTjeneste.isUnsatisfied()) {
-            TargetInstanceProxy proxy = (TargetInstanceProxy) grunnlagTestTjeneste.get();
+        Instance<SimuleringTestRestTjeneste> simuleringTestRestTjeneste = CDI.current().select(SimuleringTestRestTjeneste.class);
+        if (!simuleringTestRestTjeneste.isUnsatisfied()) {
+            TargetInstanceProxy proxy = (TargetInstanceProxy) simuleringTestRestTjeneste.get();
             classes.add(proxy.weld_getTargetClass());
         }
 
