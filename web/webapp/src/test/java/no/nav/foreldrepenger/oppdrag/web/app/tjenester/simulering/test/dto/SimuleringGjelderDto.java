@@ -10,7 +10,6 @@ import no.nav.vedtak.sikkerhet.abac.AbacDto;
 
 public class SimuleringGjelderDto implements AbacDto {
 
-
     //TODO slå sammen SimuleringGjelderDto og SimuleringDto
     @Valid
     @Size(min = 1)
