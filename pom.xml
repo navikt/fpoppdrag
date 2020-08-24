@@ -32,7 +32,7 @@
         <!-- Felles avhengigheter i prosjektet Disse skal ALLTID være en
             RELEASE-avhengighet UNNTAK: feature-brancher og lokalt -->
         <felles.version>2.0.0-20200810080647-d5c4f94</felles.version>
-        <prosesstask.version>2.4.3-20200813074943-2d62114</prosesstask.version>
+        <prosesstask.version>2.4.3-20200821080802-12519de</prosesstask.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
         <fp-kontrakter.version>5.1-20200810151031-853914b</fp-kontrakter.version>
