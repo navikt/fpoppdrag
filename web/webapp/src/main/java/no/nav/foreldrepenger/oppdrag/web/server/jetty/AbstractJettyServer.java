@@ -83,15 +83,8 @@ abstract class AbstractJettyServer {
         }
         System.setProperty("org.apache.geronimo.jaspic.configurationFile", jaspiConf.getAbsolutePath());
 
-        konfigurerSwaggerHash();
     }
 
-    /**
-     * @see SecurityFilter#getSwaggerHash()
-     */
-    protected void konfigurerSwaggerHash() {
-        System.setProperty(SecurityFilter.SWAGGER_HASH_KEY, appKonfigurasjon.getSwaggerHash());
-    }
 
     protected abstract void konfigurerJndi() throws Exception;
 
