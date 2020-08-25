@@ -10,7 +10,9 @@
     <packaging>pom</packaging>
     <artifactId>web</artifactId>
     <name>FP Oppdrag ::  Web</name>
-
+    <properties>
+        <swagger-ui.version>3.32.3</swagger-ui.version>
+    </properties>
     <modules>
         <module>webapp</module>
     </modules>
