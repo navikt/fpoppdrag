@@ -5,8 +5,8 @@
   "oraclefpoppdragsecret":"oracle/data/dev/creds/fpoppdrag_t4-user",
   "fpoppdragserviceuser": "serviceuser/data/test/srvfpoppdrag",
   "ldapserviceuser": "serviceuser/data/test/srvssolinux",
-  "minReplicas": "1",
-  "maxReplicas": "3",
+  "minReplicas": "0",
+  "maxReplicas": "0",
   "ingresses": [
     "https://fpoppdrag-t4.nais.preprod.local/",
     "https://app-t4.adeo.no/fpoppdrag"

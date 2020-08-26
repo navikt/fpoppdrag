@@ -18,15 +18,15 @@ jobs:
           issue-number: ${{ github.event.client_payload.issue-number }}
           body: |
             Alle verdikjedetestene i autotest gikk grønne!
-            Deployer fpoppdrag til t4!
+            Deployer fpoppdrag til q1!
 
-      - name: Trigger deploy til t4
+      - name: Trigger deploy til q1
         if: steps.success.outcome == 'success'
         uses: peter-evans/create-or-update-comment@v1
         with:
           token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
           issue-number: ${{ github.event.client_payload.issue-number }}
-          body: /promote dev-fss t4
+          body: /promote dev-fss q1
 
       - name: Test failure
         if: steps.success.outcome != 'success'
