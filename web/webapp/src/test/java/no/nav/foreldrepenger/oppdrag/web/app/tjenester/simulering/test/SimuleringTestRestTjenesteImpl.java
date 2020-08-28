@@ -27,7 +27,7 @@ import no.nav.vedtak.util.env.Environment;
 @RequestScoped
 @Path("simulering")
 @Transactional
-public class SimuleringTestRestTjenesteImpl {
+public class SimuleringTestRestTjenesteImpl implements SimuleringTestRestTjeneste{
 
     private SimuleringTestTjeneste simuleringTestTjeneste;
 
