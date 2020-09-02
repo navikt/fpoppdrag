@@ -11,7 +11,7 @@
     "https://fpoppdrag.nais.adeo.no"
   ],
   "env": {
-    "LOADBALANCER_URL" : "https://fpoppdrag.nais.adeo.no",
+    "LOADBALANCER_FQDN": "app.adeo.no",
     "ABAC_PDP_ENDPOINT_URL": "https://wasapp.adeo.no/asm-pdp/authorize",
     "ABAC_ATTRIBUTT_DRIFT": "no.nav.abac.attributter.foreldrepenger.drift",
     "SECURITYTOKENSERVICE_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
