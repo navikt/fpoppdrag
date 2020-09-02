@@ -5,7 +5,7 @@ then
   export DEFAULTDS_URL=$(cat /var/run/secrets/nais.io/defaultDSconfig/jdbc_url)
   echo "Setting DEFAULTDS_URL to $DEFAULTDS_URL"
 else
-  >&2 echo "Kunne ikke sette DEFAULTDS_URL"
+  >&2 echo "Kunne ikke sette nødvendig property DEFAULTDS_URL"
   exit 1
 fi
 
