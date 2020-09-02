@@ -49,9 +49,9 @@ spec:
     enabled: true
     paths:
         - mountPath: /var/run/secrets/nais.io/defaultDSconfig
-          kvPath: oracle.config.kv
+          kvPath: {{oracleconfig}}
         - mountPath: /var/run/secrets/nais.io/defaultDS
-          kvPath:  oracle.secret.kv
+          kvPath: {{oraclesecret}}
         - mountPath: /var/run/secrets/nais.io/serviceuser
           kvPath: fpoppdrag.serviceuser.kv
         - mountPath: /var/run/secrets/nais.io/vault
