@@ -6,6 +6,7 @@ then
   echo "Setting DEFAULTDS_URL to $DEFAULTDS_URL"
 else
   >&2 echo "Kunne ikke sette nødvendig property DEFAULTDS_URL"
+  ls -R /var/run/secrets/nais.io
   exit 1
 fi
 
@@ -15,6 +16,7 @@ then
   echo "Setting DEFAULTDS_USERNAME"
 else
   >&2 echo "Kunne ikke sette nødvendig property DEFAULTDS_USERNAME"
+  ls -R /var/run/secrets/nais.io
   exit 1
 fi
 
@@ -24,6 +26,7 @@ then
   echo "Setting DEFAULTDS_PASSWORD"
 else
   >&2 echo "Kunne ikke sette nødvendig property DEFAULTDS_PASSWORD"
+  ls -R /var/run/secrets/nais.io
   exit 1
 fi
 
@@ -33,6 +36,7 @@ then
   echo "Setting SYSTEMBRUKER_USERNAME"
 else
   >&2 echo "Kunne ikke sette nødvendig property SYSTEMBRUKER_USERNAME"
+  ls -R /var/run/secrets/nais.io
   exit 1
 fi
 
@@ -42,6 +46,7 @@ then
   echo "Setting SYSTEMBRUKER_PASSWORD"
 else
   >&2 echo "Kunne ikke sette nødvendig property SYSTEMBRUKER_PASSWORD"
+  ls -R /var/run/secrets/nais.io
   exit 1
 fi
 
