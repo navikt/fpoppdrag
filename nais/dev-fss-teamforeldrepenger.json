@@ -1,6 +1,6 @@
 {
   "cluster": "preprod",
-  "namespace": "q1",
+  "namespace": "teamforeldrepenger",
   "oracleconfig": "oracle/data/dev/config/fpoppdrag_q1",
   "oraclefpoppdragsecret":"oracle/data/dev/creds/fpoppdrag_q1-user",
   "fpoppdragserviceuser": "serviceuser/data/dev/srvfpoppdrag",
