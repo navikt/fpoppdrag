@@ -1,5 +1,6 @@
 {
   "cluster": "prod",
+  "namespace": "teamforeldrepenger",
   "oracleconfig": "oracle/data/prod/config/fpoppdrag_p",
   "oraclefpoppdragsecret":"oracle/data/prod/creds/fpoppdrag_p-fpoppdrag_p",
   "fpoppdragserviceuser": "serviceuser/data/prod/srvfpoppdrag",
