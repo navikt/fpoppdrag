@@ -31,11 +31,11 @@
 
         <!-- Felles avhengigheter i prosjektet Disse skal ALLTID være en
             RELEASE-avhengighet UNNTAK: feature-brancher og lokalt -->
-        <felles.version>2.0.0-20200810080647-d5c4f94</felles.version>
-        <prosesstask.version>2.4.3-20200813074943-2d62114</prosesstask.version>
+        <felles.version>2.1.0-20200911062117-9337798</felles.version>
+        <prosesstask.version>2.4.3-20200821080802-12519de</prosesstask.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
-        <fp-kontrakter.version>5.1-20200810151031-853914b</fp-kontrakter.version>
+        <fp-kontrakter.version>5.1-20200907082654-6365c08</fp-kontrakter.version>
 
         <!-- NAV -->
 
@@ -281,6 +281,12 @@
                 <groupId>com.fasterxml.woodstox</groupId>
                 <artifactId>woodstox-core</artifactId>
                 <version>${woodstox.version}</version>
+            </dependency>
+            <dependency>
+                <!-- velger en transitiv avhengighet - felles ikke enig med seg selv, velger den som blir brukt i prod-scope i felles -->
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker-qual</artifactId>
+                <version>2.10.0</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>

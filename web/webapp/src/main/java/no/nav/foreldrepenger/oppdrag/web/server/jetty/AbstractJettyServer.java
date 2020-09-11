@@ -31,7 +31,6 @@ import org.eclipse.jetty.webapp.WebXmlConfiguration;
 
 import no.nav.vedtak.sikkerhet.context.JettySubjectHandler;
 import no.nav.vedtak.sikkerhet.context.SubjectHandler;
-import no.nav.vedtak.sikkerhetsfilter.SecurityFilter;
 
 abstract class AbstractJettyServer {
 

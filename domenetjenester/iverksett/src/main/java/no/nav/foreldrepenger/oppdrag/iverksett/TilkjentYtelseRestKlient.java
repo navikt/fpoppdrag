@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.kontrakter.tilkjentytelse.TilkjentYtelse;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
-import no.nav.vedtak.konfig.PropertyUtil;
+import no.nav.vedtak.util.env.Environment;
 
 @ApplicationScoped
 public class TilkjentYtelseRestKlient {
@@ -40,7 +40,7 @@ public class TilkjentYtelseRestKlient {
     }
 
     static String getFpsakBaseUrl() {
-        String overrideUrl = PropertyUtil.getProperty(FPSAK_OVERRIDE_URL);
+        String overrideUrl = Environment.current().getProperty(FPSAK_OVERRIDE_URL);
         if (overrideUrl != null && !overrideUrl.isEmpty()) {
             logger.info("Overstyrte URL til fpsak til {}", overrideUrl);
             return overrideUrl;

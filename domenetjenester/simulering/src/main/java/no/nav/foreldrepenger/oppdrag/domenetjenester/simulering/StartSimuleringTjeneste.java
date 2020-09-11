@@ -45,7 +45,7 @@ import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.S
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.Oppdrag;
 import no.nav.vedtak.felles.integrasjon.felles.ws.JaxbHelper;
-import no.nav.vedtak.konfig.PropertyUtil;
+import no.nav.vedtak.util.env.Environment;
 
 @ApplicationScoped
 public class StartSimuleringTjeneste {
@@ -196,7 +196,7 @@ public class StartSimuleringTjeneste {
     }
 
     private void deaktiverBehandling(long behandlingId) {
-        String deaktiverForLokalTesting = PropertyUtil.getProperty(DEAKTIVER_SIMULERING_DEAKTIVERING);
+        String deaktiverForLokalTesting = Environment.current().getProperty(DEAKTIVER_SIMULERING_DEAKTIVERING);
         if (deaktiverForLokalTesting == null || "false".equalsIgnoreCase(deaktiverForLokalTesting)) {
             Optional<SimuleringGrunnlag> eksisterende = simuleringRepository.hentSimulertOppdragForBehandling(behandlingId);
             eksisterende.ifPresent(grunnlag -> {
@@ -251,24 +251,24 @@ public class StartSimuleringTjeneste {
                 .map(FagOmrådeKode::fraKode)
                 .map(FagOmrådeKode::getYtelseType)
                 .collect(Collectors.toSet());
-        if (ytelsetyper.size() > 1){
+        if (ytelsetyper.size() > 1) {
             throw StartSimuleringTjenesteFeil.FACTORY.ikkeUnikYtelseType(behandlingId, fagOmrådeKoder).toException();
         }
         YtelseType ytelseType = ytelsetyper.iterator().next();
-        if (ytelseType == YtelseType.UDEFINERT){
+        if (ytelseType == YtelseType.UDEFINERT) {
             throw StartSimuleringTjenesteFeil.FACTORY.manglerMappingMellomFagområdeKodeOgYtleseType(behandlingId, fagOmrådeKoder).toException();
         }
         return ytelseType;
     }
 
     private List<SimulerBeregningResponse> utførSimulering(List<SimulerBeregningRequest> simuleringRequestListe) {
-           return simuleringRequestListe.stream()
+        return simuleringRequestListe.stream()
                 .map(this::utførSimulering)
                 .collect(Collectors.toList());
     }
 
     private SimulerBeregningResponse utførSimulering(SimulerBeregningRequest simuleringOppdrag) {
-            return oppdragConsumer.hentSimulerBeregningResponse(simuleringOppdrag);
+        return oppdragConsumer.hentSimulerBeregningResponse(simuleringOppdrag);
     }
 
     private List<SimulerBeregningRequest> opprettBeregningRequestListe(List<Oppdrag> simuleringOppdragListe) {
