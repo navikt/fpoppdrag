@@ -6,6 +6,10 @@ ENV APPDYNAMICS_CONTROLLER_PORT=443
 ENV APPDYNAMICS_CONTROLLER_SSL_ENABLED=true
 ENV TZ=Europe/Oslo
 
+# lag en gruppe og en sysembruker (-r) uten passord, uten hjemme-katalog, uten shell.
+RUN groupadd -r applikasjon && useradd -r -s /bin/false -g applikasjon applikasjon
+
+
 RUN mkdir /app/lib
 RUN mkdir /app/webapp
 RUN mkdir /app/conf
@@ -24,3 +28,5 @@ RUN chmod +x /run-java.sh
 
 # Export vault properties
 COPY export-vault.sh /init-scripts/export-vault.sh
+
+USER applikasjon
