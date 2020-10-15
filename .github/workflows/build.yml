@@ -43,7 +43,7 @@ jobs:
 
       - name: Set build version
         run: |
-          echo "::set-env name=BUILD_VERSION::$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)"
+          echo "BUILD_VERSION=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
 
       - name: Build artifacts & deploy
         env:
@@ -55,7 +55,7 @@ jobs:
           echo "Building artifacts $BUILD_VERSION"
           mvn jacoco:prepare-agent install --quiet -e --batch-mode --settings ./.m2/settings.xml -Dchangelist= -Dsha1=-${BUILD_VERSION} -Dfile.encoding=UTF-8 -Djacoco.destFile=$(pwd)/target/jacoco.exec -Pgithub
           echo "Build artifacts"
-          echo "::set-env name=TAG::$(mvn help:evaluate --batch-mode --settings ./.m2/settings.xml --file .flattened -Dexpression=project.version -q -DforceStdout)"
+          echo "TAG=$(mvn help:evaluate --batch-mode --settings ./.m2/settings.xml --file .flattened -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
 
       - name: Bygg og push docker-image for distribuering
         env:
