@@ -116,12 +116,14 @@ class SimuleringResultatMapper {
             return builder
                     .medMottakerNavn(navn)
                     .medMottakerNummer(mottakerNummer)
+                    .medMottakerIdentifikator(hentNavnTjeneste.hentAktørIdGittFnr(mottakerNummer).getId())
                     .build();
         }
         if (MottakerType.ARBG_ORG.equals(mottakerType)) {
             String orgNavn = hentNavnTjeneste.hentNavnGittOrgnummer(mottakerNummer);
             return builder.medMottakerNummer(mottakerNummer)
                     .medMottakerNavn(orgNavn)
+                    .medMottakerIdentifikator(mottakerNummer)
                     .build();
         }
 
