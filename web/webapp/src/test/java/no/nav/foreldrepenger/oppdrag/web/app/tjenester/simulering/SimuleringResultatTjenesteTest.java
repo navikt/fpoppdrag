@@ -200,8 +200,6 @@ public class SimuleringResultatTjenesteTest {
         String orgnr = "973861778";
         String orgName = "STATOIL ASA AVD STATOIL SOKKELVIRKSOMHET";
         when(hentNavnTjeneste.hentAktørIdGittFnr(fnrArbgiv)).thenReturn(aktørIdArbgiver);
-        when(hentNavnTjeneste.hentNavnGittFnr(fnrArbgiv)).thenReturn(navn);
-        when(hentNavnTjeneste.hentNavnGittOrgnummer(orgnr)).thenReturn(orgName);
 
         SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
@@ -278,8 +276,6 @@ public class SimuleringResultatTjenesteTest {
                         .equals(MottakerType.ARBG_PRIV)).findFirst();
         assertThat(arbgivPrivOptional).isPresent();
         SimuleringForMottakerDto arbgivPriv = arbgivPrivOptional.get();
-        assertThat(arbgivPriv.getMottakerNavn()).isEqualTo(navn);
-        assertThat(arbgivPriv.getMottakerNummer()).isEqualTo(fnrArbgiv);
         assertThat(arbgivPriv.getMottakerIdentifikator()).isEqualTo(aktørIdArbgiver.getId());
         assertThat(arbgivPriv.getResultatPerFagområde()).hasSize(1);
         SimuleringResultatPerFagområdeDto perFagområdeDto1 = arbgivPriv.getResultatPerFagområde().get(0);
@@ -295,8 +291,6 @@ public class SimuleringResultatTjenesteTest {
                         .equals(MottakerType.ARBG_ORG)).findFirst();
         assertThat(arbgivOrgnrOptional).isPresent();
         SimuleringForMottakerDto arbgivOrgnr = arbgivOrgnrOptional.get();
-        assertThat(arbgivOrgnr.getMottakerNavn()).isEqualToIgnoringCase(orgName);
-        assertThat(arbgivOrgnr.getMottakerNummer()).isEqualTo(orgnr);
         assertThat(arbgivOrgnr.getMottakerIdentifikator()).isEqualTo(orgnr);
         assertThat(arbgivOrgnr.getResultatPerFagområde()).hasSize(1);
         SimuleringResultatPerFagområdeDto perFagområdeDto2 = arbgivOrgnr.getResultatPerFagområde().get(0);
@@ -321,7 +315,6 @@ public class SimuleringResultatTjenesteTest {
         String orgnr = "973861778";
 
         when(hentNavnTjeneste.hentAktørIdGittFnr(fnrArbgiv)).thenReturn(aktørIdArbgiver);
-        when(hentNavnTjeneste.hentNavnGittFnr(fnrArbgiv)).thenReturn(navn);
 
         SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))

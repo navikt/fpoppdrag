@@ -17,12 +17,6 @@
         <!-- Reaktor -->
 
 
-        <!-- NAV -->
-        <dependency>
-            <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-db</artifactId>
-        </dependency>
-
         <!-- Eksterne -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -42,11 +36,6 @@
         </dependency>
 
         <!-- Test avhengigheter -->
-        <dependency>
-            <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-testutilities</artifactId>
-            <scope>test</scope>
-        </dependency>
 
     </dependencies>
 

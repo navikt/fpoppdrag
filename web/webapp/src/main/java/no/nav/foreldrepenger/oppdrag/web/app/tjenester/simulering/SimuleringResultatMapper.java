@@ -112,19 +112,10 @@ class SimuleringResultatMapper {
             return builder.build();
         }
         if (MottakerType.ARBG_PRIV.equals(mottakerType)) {
-            String navn = hentNavnTjeneste.hentNavnGittFnr(mottakerNummer);
-            return builder
-                    .medMottakerNavn(navn)
-                    .medMottakerNummer(mottakerNummer)
-                    .medMottakerIdentifikator(hentNavnTjeneste.hentAktørIdGittFnr(mottakerNummer).getId())
-                    .build();
+            return builder.medMottakerIdentifikator(hentNavnTjeneste.hentAktørIdGittFnr(mottakerNummer).getId()).build();
         }
         if (MottakerType.ARBG_ORG.equals(mottakerType)) {
-            String orgNavn = hentNavnTjeneste.hentNavnGittOrgnummer(mottakerNummer);
-            return builder.medMottakerNummer(mottakerNummer)
-                    .medMottakerNavn(orgNavn)
-                    .medMottakerIdentifikator(mottakerNummer)
-                    .build();
+            return builder.medMottakerIdentifikator(mottakerNummer).build();
         }
 
         throw new IllegalArgumentException("Ukjent mottaker-mottakerType: " + mottakerType);

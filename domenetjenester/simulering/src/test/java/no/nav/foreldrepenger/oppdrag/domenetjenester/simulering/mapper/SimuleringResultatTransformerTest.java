@@ -11,8 +11,8 @@ import java.util.Optional;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
@@ -73,7 +73,7 @@ public class SimuleringResultatTransformerTest {
         String fnr = "30048949955";
         AktørId aktørId = new AktørId("12345");
 
-        when(tpsTjeneste.hentAktørForFnr(Mockito.eq(new PersonIdent(fnr)))).thenReturn(Optional.of(aktørId));
+        when(tpsTjeneste.hentAktørIdForPersonIdent(Mockito.eq(new PersonIdent(fnr)))).thenReturn(Optional.of(aktørId));
 
         String resultat = simuleringResultatTransformer.hentAktørIdHvisFnr(fnr);
         assertThat(resultat).isEqualTo(aktørId.getId());

@@ -67,7 +67,7 @@ public class SimuleringRestTjenesteTest {
 
     @Before
     public void setup() {
-        when(tpsTjenesteMock.hentAktørForFnr(any())).thenReturn(Optional.of(new AktørId(AKTØR_ID)));
+        when(tpsTjenesteMock.hentAktørIdForPersonIdent(any())).thenReturn(Optional.of(new AktørId(AKTØR_ID)));
     }
 
     @Test

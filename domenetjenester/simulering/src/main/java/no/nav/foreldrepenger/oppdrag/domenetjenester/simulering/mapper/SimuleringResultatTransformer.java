@@ -9,8 +9,8 @@ import java.util.Objects;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
@@ -108,7 +108,7 @@ public class SimuleringResultatTransformer {
         if (erOrgNr(orgNrOrFnr)) {
             return orgNrOrFnr.substring(2);
         } else {
-            AktørId aktørId = tpsTjeneste.hentAktørForFnr(new PersonIdent(orgNrOrFnr))
+            AktørId aktørId = tpsTjeneste.hentAktørIdForPersonIdent(new PersonIdent(orgNrOrFnr))
                     .orElseThrow(() -> SimuleringResultatTransformerFeil.FACTORY.fantIkkeAktørIdForFnr().toException());
             return aktørId.getId();
         }

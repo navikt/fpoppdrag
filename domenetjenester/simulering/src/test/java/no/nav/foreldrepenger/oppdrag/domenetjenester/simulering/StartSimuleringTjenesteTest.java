@@ -73,7 +73,7 @@ public class StartSimuleringTjenesteTest {
     public void setup() {
 
         simuleringTjeneste = new StartSimuleringTjeneste(simuleringXmlRepository, simuleringRepository, oppdragConsumerMock, resultatTransformer, simuleringBeregningTjeneste);
-        when(tpsTjenesteMock.hentAktørForFnr(any())).thenReturn(Optional.of(new AktørId(AKTØR_ID)));
+        when(tpsTjenesteMock.hentAktørIdForPersonIdent(any())).thenReturn(Optional.of(new AktørId(AKTØR_ID)));
 
         repositoryRule.getEntityManager().createQuery("DELETE from SimuleringXml s WHERE s.eksternReferanse.behandlingId IN (:behandlingId1, :behandlingId2)")
                 .setParameter("behandlingId1", BEHANDLING_ID_1)

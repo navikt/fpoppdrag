@@ -16,8 +16,6 @@ import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 public class SimuleringForMottakerDto {
 
     private MottakerType mottakerType;
-    private String mottakerNummer;
-    private String mottakerNavn;
     private String mottakerIdentifikator;
     private List<SimuleringResultatPerFagområdeDto> resultatPerFagområde = new ArrayList<>();
     private List<SimuleringResultatRadDto> resultatOgMotregningRader = new ArrayList<>();
@@ -27,14 +25,6 @@ public class SimuleringForMottakerDto {
 
     public MottakerType getMottakerType() {
         return mottakerType;
-    }
-
-    public String getMottakerNummer() {
-        return mottakerNummer;
-    }
-
-    public String getMottakerNavn() {
-        return mottakerNavn;
     }
 
     public String getMottakerIdentifikator() {
@@ -81,16 +71,6 @@ public class SimuleringForMottakerDto {
 
         public Builder medMottakerIdentifikator(String mottakerIdentifikator) {
             kladd.mottakerIdentifikator = mottakerIdentifikator;
-            return this;
-        }
-
-        public Builder medMottakerNummer(String mottakerNummer) {
-            kladd.mottakerNummer = mottakerNummer;
-            return this;
-        }
-
-        public Builder medMottakerNavn(String mottakerNavn) {
-            kladd.mottakerNavn = mottakerNavn;
             return this;
         }
 

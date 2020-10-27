@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
@@ -119,7 +119,7 @@ public class SimuleringTestTjeneste {
             if (!PersonIdent.erGyldigFnr(mottakerId)) {
                 throw new IllegalArgumentException("Mottaker av type " + mottakerType + " har ikke et gyldig fødselsnummer");
             }
-            Optional<AktørId> funnetAktørId = tpsTjeneste.hentAktørForFnr(PersonIdent.fra(mottakerId));
+            Optional<AktørId> funnetAktørId = tpsTjeneste.hentAktørIdForPersonIdent(PersonIdent.fra(mottakerId));
             return funnetAktørId.map(AktørId::getId).orElseThrow(() -> new IllegalArgumentException("Fant ikke aktørId for mottaker av type " + mottakerType));
         }
         if (MottakerType.BRUKER.getKode().equals(mottakerType)) {

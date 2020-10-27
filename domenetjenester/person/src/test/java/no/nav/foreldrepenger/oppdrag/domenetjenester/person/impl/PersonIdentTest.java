@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
+
 public class PersonIdentTest {
 
     @Test
