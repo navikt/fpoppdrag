@@ -34,6 +34,10 @@ class HentNavnTjeneste {
         this.organisasjonTjeneste = organisasjonTjeneste;
     }
 
+    public AktørId hentAktørIdGittFnr(String fnr) {
+        return tpsTjeneste.hentAktørForFnr(new PersonIdent(fnr)).orElseThrow(() -> HentNavnTjenesteFeil.FACTORY.kanIkkeFinneAktørId().toException());
+    }
+
     public String hentNavnGittFnr(String fnr) {
         Optional<AktørId> aktørId = tpsTjeneste.hentAktørForFnr(new PersonIdent(fnr));
         if (!aktørId.isPresent()) {

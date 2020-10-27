@@ -18,6 +18,7 @@ public class SimuleringForMottakerDto {
     private MottakerType mottakerType;
     private String mottakerNummer;
     private String mottakerNavn;
+    private String mottakerIdentifikator;
     private List<SimuleringResultatPerFagområdeDto> resultatPerFagområde = new ArrayList<>();
     private List<SimuleringResultatRadDto> resultatOgMotregningRader = new ArrayList<>();
     private LocalDate nesteUtbPeriodeFom;
@@ -34,6 +35,10 @@ public class SimuleringForMottakerDto {
 
     public String getMottakerNavn() {
         return mottakerNavn;
+    }
+
+    public String getMottakerIdentifikator() {
+        return mottakerIdentifikator;
     }
 
     public LocalDate getNesteUtbPeriodeFom() {
@@ -71,6 +76,11 @@ public class SimuleringForMottakerDto {
 
         public Builder medMottakerType(MottakerType mottakerType) {
             kladd.mottakerType = mottakerType;
+            return this;
+        }
+
+        public Builder medMottakerIdentifikator(String mottakerIdentifikator) {
+            kladd.mottakerIdentifikator = mottakerIdentifikator;
             return this;
         }
 

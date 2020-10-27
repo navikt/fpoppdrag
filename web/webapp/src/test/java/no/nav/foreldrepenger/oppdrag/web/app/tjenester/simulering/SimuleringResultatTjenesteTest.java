@@ -35,6 +35,7 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.DetaljertSimuleringResultatDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.RadId;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
@@ -194,9 +195,11 @@ public class SimuleringResultatTjenesteTest {
 
         String fnrArbgiv = "24069305608";
         String navn = "Onkel Skrue";
+        AktørId aktørIdArbgiver = new AktørId("1111111111111");
 
         String orgnr = "973861778";
         String orgName = "STATOIL ASA AVD STATOIL SOKKELVIRKSOMHET";
+        when(hentNavnTjeneste.hentAktørIdGittFnr(fnrArbgiv)).thenReturn(aktørIdArbgiver);
         when(hentNavnTjeneste.hentNavnGittFnr(fnrArbgiv)).thenReturn(navn);
         when(hentNavnTjeneste.hentNavnGittOrgnummer(orgnr)).thenReturn(orgName);
 
@@ -277,6 +280,7 @@ public class SimuleringResultatTjenesteTest {
         SimuleringForMottakerDto arbgivPriv = arbgivPrivOptional.get();
         assertThat(arbgivPriv.getMottakerNavn()).isEqualTo(navn);
         assertThat(arbgivPriv.getMottakerNummer()).isEqualTo(fnrArbgiv);
+        assertThat(arbgivPriv.getMottakerIdentifikator()).isEqualTo(aktørIdArbgiver.getId());
         assertThat(arbgivPriv.getResultatPerFagområde()).hasSize(1);
         SimuleringResultatPerFagområdeDto perFagområdeDto1 = arbgivPriv.getResultatPerFagområde().get(0);
 
@@ -293,6 +297,7 @@ public class SimuleringResultatTjenesteTest {
         SimuleringForMottakerDto arbgivOrgnr = arbgivOrgnrOptional.get();
         assertThat(arbgivOrgnr.getMottakerNavn()).isEqualToIgnoringCase(orgName);
         assertThat(arbgivOrgnr.getMottakerNummer()).isEqualTo(orgnr);
+        assertThat(arbgivOrgnr.getMottakerIdentifikator()).isEqualTo(orgnr);
         assertThat(arbgivOrgnr.getResultatPerFagområde()).hasSize(1);
         SimuleringResultatPerFagområdeDto perFagområdeDto2 = arbgivOrgnr.getResultatPerFagområde().get(0);
 
@@ -311,9 +316,11 @@ public class SimuleringResultatTjenesteTest {
 
         String fnrArbgiv = "24069305608";
         String navn = "Onkel Skrue";
+        AktørId aktørIdArbgiver = new AktørId("1111111111111");
 
         String orgnr = "973861778";
 
+        when(hentNavnTjeneste.hentAktørIdGittFnr(fnrArbgiv)).thenReturn(aktørIdArbgiver);
         when(hentNavnTjeneste.hentNavnGittFnr(fnrArbgiv)).thenReturn(navn);
 
         SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
