@@ -57,7 +57,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl.PersonIdent;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.web.app.IndexClasses;
 import no.nav.foreldrepenger.oppdrag.web.app.validering.ValidKodeverk;
 import no.nav.vedtak.felles.db.doc.model.Kodeliste;

@@ -1,20 +1,20 @@
-package no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl;
+package no.nav.foreldrepenger.oppdrag.domenetjenester.person;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsAdapter;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 import no.nav.tjeneste.virksomhet.person.v3.binding.HentPersonPersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.person.v3.binding.HentPersonSikkerhetsbegrensning;
@@ -27,6 +27,7 @@ import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonResponse;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumerMedCache;
+import no.nav.vedtak.felles.integrasjon.pdl.PdlKlient;
 import no.nav.vedtak.felles.integrasjon.person.PersonConsumer;
 
 public class TpsTjenesteImplTest {
@@ -37,8 +38,8 @@ public class TpsTjenesteImplTest {
     private PersonConsumer personConsumer = Mockito.mock(PersonConsumer.class);
     private AktørConsumerMedCache aktørConsumer = Mockito.mock(AktørConsumerMedCache.class);
 
-    private TpsAdapter tpsAdapter = new TpsAdapterImpl(aktørConsumer, personConsumer);
-    private TpsTjeneste tpsTjeneste = new TpsTjenesteImpl(tpsAdapter);
+    private PdlKlient tpsAdapter = mock(PdlKlient.class);
+    private TpsTjeneste tpsTjeneste = new TpsTjeneste(tpsAdapter, aktørConsumer, personConsumer);
 
     @Test
     public void finnerAktørIdForFnr() {
@@ -67,7 +68,7 @@ public class TpsTjenesteImplTest {
         Optional<PersonIdent> funnetPersonIdent = tpsTjeneste.hentFnr(aktørId);
 
         // Assert
-        assertThat(funnetPersonIdent).isPresent();
+        Assertions.assertThat(funnetPersonIdent).isPresent();
         assertThat(funnetPersonIdent.get().getIdent()).isEqualTo(fnr);
     }
 
@@ -95,7 +96,7 @@ public class TpsTjenesteImplTest {
         Optional<Personinfo> personinfo = tpsTjeneste.hentPersoninfoForAktør(aktørId);
 
         // Assert
-        assertThat(personinfo).isPresent();
+        Assertions.assertThat(personinfo).isPresent();
         assertThat(personinfo.get().getPersonIdent()).isEqualTo(PersonIdent.fra(fnr));
         assertThat(personinfo.get().getNavn()).isEqualTo(navn);
     }

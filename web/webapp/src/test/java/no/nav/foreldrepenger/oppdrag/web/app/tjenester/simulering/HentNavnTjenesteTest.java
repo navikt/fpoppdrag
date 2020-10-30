@@ -12,9 +12,9 @@ import org.junit.Test;
 
 import no.nav.foreldrepenger.oppdrag.domene.organisasjon.OrganisasjonInfo;
 import no.nav.foreldrepenger.oppdrag.domene.organisasjon.OrganisasjonTjeneste;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.Personinfo;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl.PersonIdent;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl.Personinfo;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 import no.nav.vedtak.exception.IntegrasjonException;
 

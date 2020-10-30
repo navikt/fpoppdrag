@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl;
+package no.nav.foreldrepenger.oppdrag.domenetjenester.person;
 
 import java.util.Objects;
 

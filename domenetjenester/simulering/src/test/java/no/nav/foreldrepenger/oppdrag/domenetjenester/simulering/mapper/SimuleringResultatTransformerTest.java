@@ -11,8 +11,8 @@ import java.util.Optional;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
