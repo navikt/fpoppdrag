@@ -97,7 +97,7 @@ public class TpsTjeneste {
             request.setGrupper(List.of(IdentGruppe.AKTORID));
             request.setHistorikk(Boolean.FALSE);
             var projection = new IdentlisteResponseProjection()
-                    .identer(new IdentInformasjonResponseProjection().ident());
+                    .identer(new IdentInformasjonResponseProjection().ident().gruppe());
             var identliste = pdlKlient.hentIdenter(request, projection, Tema.FOR);
             int antall = identliste.getIdenter().size();
             var aktørId = identliste.getIdenter().stream().findFirst().map(IdentInformasjon::getIdent).orElse(null);
@@ -106,7 +106,7 @@ public class TpsTjeneste {
             } else if (antall != 1 && Objects.equals(aktørFraConsumer, aktørId)) {
                 LOG.info("FPOPPDRAG PDL AKTØRID: ulikt antall aktørid {}", antall);
             } else {
-                LOG.info("FPOPPDRAG PDL AKTØRID: ulike aktørid TPS {} og PDL {} antall {}", aktørFraConsumer, aktørId, antall);
+                LOG.info("FPOPPDRAG PDL AKTØRID: ulike aktørid TPS og PDL, antall {}", antall);
             }
         } catch (Exception e) {
             LOG.info("FPOPPDRAG PDL AKTØRID hentaktørid error", e);
@@ -120,7 +120,7 @@ public class TpsTjeneste {
             request.setGrupper(List.of(IdentGruppe.FOLKEREGISTERIDENT));
             request.setHistorikk(Boolean.FALSE);
             var projection = new IdentlisteResponseProjection()
-                    .identer(new IdentInformasjonResponseProjection().ident());
+                    .identer(new IdentInformasjonResponseProjection().ident().gruppe());
             var identliste = pdlKlient.hentIdenter(request, projection, Tema.FOR);
             int antall = identliste.getIdenter().size();
             var fnr = identliste.getIdenter().stream().findFirst().map(IdentInformasjon::getIdent).orElse(null);
@@ -129,7 +129,7 @@ public class TpsTjeneste {
             } else if (antall != 1 && Objects.equals(identFraConsumer, fnr)) {
                 LOG.info("FPOPPDRAG PDL AKTØRID: ulikt antall identer {}", antall);
             } else {
-                LOG.info("FPOPPDRAG PDL AKTØRID: ulike identer TPS {} og PDL {} antall {}", identFraConsumer, fnr, antall);
+                LOG.info("FPOPPDRAG PDL AKTØRID: ulike identer TPS og PDL antall {}", antall);
             }
         } catch (Exception e) {
             LOG.info("FPOPPDRAG PDL AKTØRID hentident error", e);
@@ -150,7 +150,7 @@ public class TpsTjeneste {
             if (Objects.equals(fraTps.getNavn(), navn)) {
                 LOG.info("FPOPPDRAG PDL AKTØRID: like navn");
             } else {
-                LOG.info("FPOPPDRAG PDL AKTØRID: ulike navn TPS {} og PDL {}", fraTps.getNavn(), navn);
+                LOG.info("FPOPPDRAG PDL AKTØRID: ulike navn TPS og PDL");
             }
         } catch (Exception e) {
             LOG.info("FPOPPDRAG PDL AKTØRID hentident error", e);
