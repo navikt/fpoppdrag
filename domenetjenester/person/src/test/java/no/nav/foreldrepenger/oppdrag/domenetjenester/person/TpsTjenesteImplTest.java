@@ -93,12 +93,11 @@ public class TpsTjenesteImplTest {
         when(aktørConsumer.hentPersonIdentForAktørId(eq(aktørId.getId()))).thenReturn(Optional.of(fnr));
 
         // Act
-        Optional<Personinfo> personinfo = tpsTjeneste.hentPersoninfoForAktør(aktørId);
+        Personinfo personinfo = tpsTjeneste.hentPersoninfoFor(new PersonIdent(fnr));
 
         // Assert
-        Assertions.assertThat(personinfo).isPresent();
-        assertThat(personinfo.get().getPersonIdent()).isEqualTo(PersonIdent.fra(fnr));
-        assertThat(personinfo.get().getNavn()).isEqualTo(navn);
+        assertThat(personinfo.getPersonIdent()).isEqualTo(PersonIdent.fra(fnr));
+        assertThat(personinfo.getNavn()).isEqualTo(navn);
     }
 
     @Test
@@ -116,7 +115,7 @@ public class TpsTjenesteImplTest {
         expectedException.expect(TekniskException.class);
 
         // Act
-        tpsTjeneste.hentPersoninfoForAktør(aktørId);
+        tpsTjeneste.hentPersoninfoFor(new PersonIdent(fnr));
     }
 
     @Test
@@ -134,7 +133,7 @@ public class TpsTjenesteImplTest {
         expectedException.expect(ManglerTilgangException.class);
 
         // Act
-        tpsTjeneste.hentPersoninfoForAktør(aktørId);
+        tpsTjeneste.hentPersoninfoFor(new PersonIdent(fnr));
     }
 
 
