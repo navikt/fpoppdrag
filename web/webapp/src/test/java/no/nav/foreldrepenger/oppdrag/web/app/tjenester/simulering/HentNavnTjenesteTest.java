@@ -2,13 +2,14 @@ package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import no.nav.foreldrepenger.oppdrag.domene.organisasjon.OrganisasjonInfo;
 import no.nav.foreldrepenger.oppdrag.domene.organisasjon.OrganisasjonTjeneste;
@@ -34,7 +35,7 @@ public class HentNavnTjenesteTest {
         Personinfo personinfo = new Personinfo(personIdent, navn);
 
         when(tpsTjeneste.hentAktørForFnr(eq(personIdent))).thenReturn(Optional.of(aktørId));
-        when(tpsTjeneste.hentPersoninfoForAktør(eq(aktørId))).thenReturn(Optional.of(personinfo));
+        when(tpsTjeneste.hentPersoninfoFor(eq(personIdent))).thenReturn(personinfo);
 
         // Act
         String hentetNavn = hentNavnTjeneste.hentNavnGittFnr(fnr);
@@ -43,7 +44,7 @@ public class HentNavnTjenesteTest {
         assertThat(hentetNavn).isEqualTo(navn);
     }
 
-    @Test(expected = IntegrasjonException.class)
+    @Test
     public void kasterFeilHvisAktørIkkeFinnes() {
         // Arrange
         String fnr = "08069649719";
@@ -51,10 +52,10 @@ public class HentNavnTjenesteTest {
         when(tpsTjeneste.hentAktørForFnr(eq(personIdent))).thenReturn(Optional.empty());
 
         // Act
-        hentNavnTjeneste.hentNavnGittFnr(fnr);
+        assertThrows(Exception.class, () -> hentNavnTjeneste.hentNavnGittFnr(fnr));
     }
 
-    @Test(expected = IntegrasjonException.class)
+    @Test
     public void kasterFeilHvisPersoninfoIkkeFinnes() {
         // Arrange
         String fnr = "08069649719";
@@ -62,10 +63,10 @@ public class HentNavnTjenesteTest {
         PersonIdent personIdent = new PersonIdent(fnr);
 
         when(tpsTjeneste.hentAktørForFnr(eq(personIdent))).thenReturn(Optional.of(aktørId));
-        when(tpsTjeneste.hentPersoninfoForAktør(eq(aktørId))).thenReturn(Optional.empty());
+        when(tpsTjeneste.hentPersoninfoFor(eq(personIdent))).thenReturn(null);
 
         // Act
-        hentNavnTjeneste.hentNavnGittFnr(fnr);
+        assertThrows(Exception.class, () -> hentNavnTjeneste.hentNavnGittFnr(fnr));
     }
 
     @Test
@@ -84,7 +85,7 @@ public class HentNavnTjenesteTest {
         assertThat(hentetNavn).isEqualTo(navn);
     }
 
-    @Test(expected = IntegrasjonException.class)
+    @Test
     public void kasterFeilHvisOrganisasjonsinfoIkkeFinnes() {
         // Arrange
         String orgnr = "956321487";
@@ -92,7 +93,7 @@ public class HentNavnTjenesteTest {
         when(organisasjonTjeneste.hentOrganisasjonInfo(eq(orgnr))).thenReturn(Optional.empty());
 
         // Act
-        hentNavnTjeneste.hentNavnGittOrgnummer(orgnr);
+        assertThrows(IntegrasjonException.class, () -> hentNavnTjeneste.hentNavnGittOrgnummer(orgnr));
     }
 
 
