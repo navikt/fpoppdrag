@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl;
+package no.nav.foreldrepenger.oppdrag.domenetjenester.person;
 
 public class Personinfo {
     private PersonIdent personIdent;

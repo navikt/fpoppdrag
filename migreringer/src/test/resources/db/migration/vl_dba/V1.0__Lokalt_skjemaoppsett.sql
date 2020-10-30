@@ -6,15 +6,15 @@ BEGIN
   SELECT count(*)
   INTO userexists
   FROM SYS.ALL_USERS
-  WHERE USERNAME = upper('${fpoppdrag_schema_unit}');
+  WHERE USERNAME = upper('fpoppdrag_unit');
   IF (userexists = 0)
   THEN
-    EXECUTE IMMEDIATE ('CREATE USER ${fpoppdrag_schema_unit} IDENTIFIED BY ${fpoppdrag_schema_unit}');
+    EXECUTE IMMEDIATE ('CREATE USER fpoppdrag_unit IDENTIFIED BY fpoppdrag_unit');
   END IF;
 END;
 /
 
-GRANT CONNECT, RESOURCE, CREATE JOB, CREATE TABLE, CREATE SYNONYM, CREATE VIEW, CREATE MATERIALIZED VIEW TO ${fpoppdrag_schema_unit};
+GRANT CONNECT, RESOURCE, CREATE JOB, CREATE TABLE, CREATE SYNONYM, CREATE VIEW, CREATE MATERIALIZED VIEW TO fpoppdrag_unit;
 
 -- ###############################
 -- ### Opplegg for lokal jetty ###

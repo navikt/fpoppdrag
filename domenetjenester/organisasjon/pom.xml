@@ -8,6 +8,7 @@
         <groupId>no.nav.foreldrepenger.oppdrag</groupId>
         <version>${revision}${sha1}${changelist}</version>
     </parent>
+
     <artifactId>domenetjenester-organisasjon</artifactId>
     <packaging>jar</packaging>
     <name>FP Oppdrag :: Domenetjenester - Organisasjon</name>

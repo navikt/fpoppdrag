@@ -31,8 +31,8 @@
 
         <!-- Felles avhengigheter i prosjektet Disse skal ALLTID være en
             RELEASE-avhengighet UNNTAK: feature-brancher og lokalt -->
-        <felles.version>2.1.0-20200911062117-9337798</felles.version>
-        <prosesstask.version>2.4.3-20200821080802-12519de</prosesstask.version>
+        <felles.version>2.4.0-20201029203920-60c4646</felles.version>
+        <prosesstask.version>2.4.4-20201029071156-ebb43cc</prosesstask.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
         <fp-kontrakter.version>5.1-20200907082654-6365c08</fp-kontrakter.version>
@@ -277,10 +277,22 @@
             </dependency>
 
             <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>5.7.0</version>
+            </dependency>
+
+            <dependency>
                 <!-- Transitive avhengighet resolution for å sikre bestemt versjon -->
                 <groupId>com.fasterxml.woodstox</groupId>
                 <artifactId>woodstox-core</artifactId>
                 <version>${woodstox.version}</version>
+            </dependency>
+            <dependency>
+                <!-- velger en transitiv avhengighet - felles ikke enig med seg selv -->
+                <groupId>com.sun.activation</groupId>
+                <artifactId>jakarta.activation</artifactId>
+                <version>1.2.2</version>
             </dependency>
             <dependency>
                 <!-- velger en transitiv avhengighet - felles ikke enig med seg selv, velger den som blir brukt i prod-scope i felles -->

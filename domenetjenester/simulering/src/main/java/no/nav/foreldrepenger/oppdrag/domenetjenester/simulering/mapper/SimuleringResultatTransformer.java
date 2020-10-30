@@ -9,8 +9,8 @@ import java.util.Objects;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;

@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.oppdrag.domenetjenester.person.impl;
+package no.nav.foreldrepenger.oppdrag.domenetjenester.person;
 
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent;
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent;
