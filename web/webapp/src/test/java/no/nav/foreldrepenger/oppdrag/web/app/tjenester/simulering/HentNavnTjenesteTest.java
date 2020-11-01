@@ -14,14 +14,13 @@ import org.junit.jupiter.api.Test;
 import no.nav.foreldrepenger.oppdrag.domene.organisasjon.OrganisasjonInfo;
 import no.nav.foreldrepenger.oppdrag.domene.organisasjon.OrganisasjonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.Personinfo;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 import no.nav.vedtak.exception.IntegrasjonException;
 
 public class HentNavnTjenesteTest {
 
-    private TpsTjeneste tpsTjeneste = mock(TpsTjeneste.class);
+    private PersonTjeneste tpsTjeneste = mock(PersonTjeneste.class);
     private OrganisasjonTjeneste organisasjonTjeneste = mock(OrganisasjonTjeneste.class);
     private HentNavnTjeneste hentNavnTjeneste = new HentNavnTjeneste(tpsTjeneste, organisasjonTjeneste);
 
@@ -32,10 +31,9 @@ public class HentNavnTjenesteTest {
         AktørId aktørId = new AktørId("998877");
         String navn = "Dolly Duck";
         PersonIdent personIdent = new PersonIdent(fnr);
-        Personinfo personinfo = new Personinfo(personIdent, navn);
 
         when(tpsTjeneste.hentAktørForFnr(eq(personIdent))).thenReturn(Optional.of(aktørId));
-        when(tpsTjeneste.hentPersoninfoFor(eq(personIdent))).thenReturn(personinfo);
+        when(tpsTjeneste.hentNavnFor(eq(personIdent))).thenReturn(Optional.of(navn));
 
         // Act
         String hentetNavn = hentNavnTjeneste.hentNavnGittFnr(fnr);
@@ -52,7 +50,7 @@ public class HentNavnTjenesteTest {
         when(tpsTjeneste.hentAktørForFnr(eq(personIdent))).thenReturn(Optional.empty());
 
         // Act
-        assertThrows(Exception.class, () -> hentNavnTjeneste.hentNavnGittFnr(fnr));
+        assertThat(hentNavnTjeneste.hentNavnGittFnr(fnr)).isEqualTo("Ukjent navn");
     }
 
     @Test
@@ -63,7 +61,7 @@ public class HentNavnTjenesteTest {
         PersonIdent personIdent = new PersonIdent(fnr);
 
         when(tpsTjeneste.hentAktørForFnr(eq(personIdent))).thenReturn(Optional.of(aktørId));
-        when(tpsTjeneste.hentPersoninfoFor(eq(personIdent))).thenReturn(null);
+        when(tpsTjeneste.hentNavnFor(eq(personIdent))).thenReturn(null);
 
         // Act
         assertThrows(Exception.class, () -> hentNavnTjeneste.hentNavnGittFnr(fnr));

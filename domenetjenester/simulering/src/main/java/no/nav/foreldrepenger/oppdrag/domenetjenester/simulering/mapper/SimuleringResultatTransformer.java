@@ -10,7 +10,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
@@ -34,14 +34,14 @@ public class SimuleringResultatTransformer {
 
     private static final String DATO_PATTERN = "yyyy-MM-dd";
 
-    private TpsTjeneste tpsTjeneste;
+    private PersonTjeneste tpsTjeneste;
 
     public SimuleringResultatTransformer() {
         // CDI
     }
 
     @Inject
-    public SimuleringResultatTransformer(TpsTjeneste tpsTjeneste) {
+    public SimuleringResultatTransformer(PersonTjeneste tpsTjeneste) {
         Objects.requireNonNull(tpsTjeneste, "Mangler tpstjeneste");
         this.tpsTjeneste = tpsTjeneste;
     }

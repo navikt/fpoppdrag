@@ -10,7 +10,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
@@ -35,7 +35,7 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.dto.Simul
 public class SimuleringTestTjeneste {
 
     private SimuleringRepository simuleringRepository;
-    private TpsTjeneste tpsTjeneste;
+    private PersonTjeneste tpsTjeneste;
 
     SimuleringTestTjeneste() {
         // for CDI
@@ -43,7 +43,7 @@ public class SimuleringTestTjeneste {
 
     @Inject
     public SimuleringTestTjeneste(SimuleringRepository simuleringRepository,
-                                  TpsTjeneste tpsTjeneste) {
+                                  PersonTjeneste tpsTjeneste) {
         this.simuleringRepository = simuleringRepository;
         this.tpsTjeneste = tpsTjeneste;
     }

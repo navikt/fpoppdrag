@@ -6,8 +6,7 @@ import javax.inject.Inject;
 import no.nav.foreldrepenger.oppdrag.domene.organisasjon.OrganisasjonInfo;
 import no.nav.foreldrepenger.oppdrag.domene.organisasjon.OrganisasjonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.Personinfo;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 import no.nav.vedtak.feil.Feil;
 import no.nav.vedtak.feil.FeilFactory;
@@ -18,7 +17,7 @@ import no.nav.vedtak.feil.deklarasjon.IntegrasjonFeil;
 @ApplicationScoped
 class HentNavnTjeneste {
 
-    private TpsTjeneste tpsTjeneste;
+    private PersonTjeneste tpsTjeneste;
 
     private OrganisasjonTjeneste organisasjonTjeneste;
 
@@ -27,7 +26,7 @@ class HentNavnTjeneste {
     }
 
     @Inject
-    public HentNavnTjeneste(TpsTjeneste tpsTjeneste, OrganisasjonTjeneste organisasjonTjeneste) {
+    public HentNavnTjeneste(PersonTjeneste tpsTjeneste, OrganisasjonTjeneste organisasjonTjeneste) {
         this.tpsTjeneste = tpsTjeneste;
         this.organisasjonTjeneste = organisasjonTjeneste;
     }
@@ -37,8 +36,7 @@ class HentNavnTjeneste {
     }
 
     public String hentNavnGittFnr(String fnr) {
-        Personinfo funnetPersoninfo = tpsTjeneste.hentPersoninfoFor(new PersonIdent(fnr));
-        return funnetPersoninfo.getNavn();
+        return tpsTjeneste.hentNavnFor(new PersonIdent(fnr)).orElse("Ukjent navn");
     }
 
     public String hentNavnGittOrgnummer(String orgnummer) {

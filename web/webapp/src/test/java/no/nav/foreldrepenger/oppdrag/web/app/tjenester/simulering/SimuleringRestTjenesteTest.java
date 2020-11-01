@@ -19,7 +19,7 @@ import org.junit.rules.ExpectedException;
 
 import no.nav.foreldrepenger.oppdrag.OppdragConsumer;
 import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.SimuleringResultatTransformer;
@@ -56,7 +56,7 @@ public class SimuleringRestTjenesteTest {
     private SimuleringXmlRepository simuleringXmlRepository = new SimuleringXmlRepository(repositoryRule.getEntityManager());
     private OppdragConsumer oppdragConsumerMock = mock(OppdragConsumer.class);
     private HentNavnTjeneste hentNavnTjeneste = mock(HentNavnTjeneste.class);
-    private TpsTjeneste tpsTjenesteMock = mock(TpsTjeneste.class);
+    private PersonTjeneste tpsTjenesteMock = mock(PersonTjeneste.class);
     private SimuleringResultatTransformer resultatTransformer = new SimuleringResultatTransformer(tpsTjenesteMock);
 
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();

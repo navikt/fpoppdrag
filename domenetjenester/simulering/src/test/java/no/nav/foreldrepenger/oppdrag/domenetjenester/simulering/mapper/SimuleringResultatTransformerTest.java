@@ -12,14 +12,14 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 
 public class SimuleringResultatTransformerTest {
 
-    TpsTjeneste tpsTjeneste = mock(TpsTjeneste.class);
+    PersonTjeneste tpsTjeneste = mock(PersonTjeneste.class);
     SimuleringResultatTransformer simuleringResultatTransformer = new SimuleringResultatTransformer(tpsTjeneste);
 
     @Test
