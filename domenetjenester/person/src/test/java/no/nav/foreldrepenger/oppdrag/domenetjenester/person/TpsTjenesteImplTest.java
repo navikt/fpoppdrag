@@ -2,44 +2,41 @@ package no.nav.foreldrepenger.oppdrag.domenetjenester.person;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
-import no.nav.tjeneste.virksomhet.person.v3.binding.HentPersonPersonIkkeFunnet;
-import no.nav.tjeneste.virksomhet.person.v3.binding.HentPersonSikkerhetsbegrensning;
-import no.nav.tjeneste.virksomhet.person.v3.feil.PersonIkkeFunnet;
-import no.nav.tjeneste.virksomhet.person.v3.feil.Sikkerhetsbegrensning;
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.Bruker;
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.Personnavn;
-import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonRequest;
-import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonResponse;
-import no.nav.vedtak.exception.ManglerTilgangException;
+import no.nav.pdl.IdentGruppe;
+import no.nav.pdl.IdentInformasjon;
+import no.nav.pdl.Identliste;
+import no.nav.pdl.Navn;
+import no.nav.pdl.Person;
 import no.nav.vedtak.exception.TekniskException;
-import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumerMedCache;
 import no.nav.vedtak.felles.integrasjon.pdl.PdlKlient;
-import no.nav.vedtak.felles.integrasjon.person.PersonConsumer;
 
+@ExtendWith(MockitoExtension.class)
 public class TpsTjenesteImplTest {
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+    @Mock
+    private PdlKlient pdlKlient;
+    private PersonTjeneste tpsTjeneste;
 
-    private PersonConsumer personConsumer = Mockito.mock(PersonConsumer.class);
-    private AktørConsumerMedCache aktørConsumer = Mockito.mock(AktørConsumerMedCache.class);
-
-    private PdlKlient tpsAdapter = mock(PdlKlient.class);
-    private TpsTjeneste tpsTjeneste = new TpsTjeneste(tpsAdapter, aktørConsumer, personConsumer);
+    @BeforeEach
+    public void setup() {
+        tpsTjeneste = new PersonTjeneste(pdlKlient);
+    }
 
     @Test
     public void finnerAktørIdForFnr() {
@@ -47,7 +44,7 @@ public class TpsTjenesteImplTest {
         AktørId aktørId = new AktørId("12345");
         String fnr = "24069305608";
 
-        when(aktørConsumer.hentAktørIdForPersonIdent(eq(fnr))).thenReturn(Optional.of(aktørId.getId()));
+        when(pdlKlient.hentIdenter(any(), any(), any())).thenReturn(new Identliste(List.of(new IdentInformasjon(aktørId.getId(), IdentGruppe.AKTORID, false))));;
 
         // Act
         Optional<AktørId> funnetAktørId = tpsTjeneste.hentAktørForFnr(PersonIdent.fra(fnr));
@@ -62,7 +59,7 @@ public class TpsTjenesteImplTest {
         // Arrange
         AktørId aktørId = new AktørId("12345");
         String fnr = "24069305608";
-        when(aktørConsumer.hentPersonIdentForAktørId(eq(aktørId.getId()))).thenReturn(Optional.of(fnr));
+        when(pdlKlient.hentIdenter(any(), any(), any())).thenReturn(new Identliste(List.of(new IdentInformasjon(fnr, IdentGruppe.FOLKEREGISTERIDENT, false))));;
 
         // Act
         Optional<PersonIdent> funnetPersonIdent = tpsTjeneste.hentFnr(aktørId);
@@ -73,68 +70,49 @@ public class TpsTjenesteImplTest {
     }
 
     @Test
-    public void finnerPersonInfoForAktørId() throws HentPersonSikkerhetsbegrensning, HentPersonPersonIkkeFunnet {
+    public void finnerPersonInfoForAktørId()  {
         // Arrange
-        AktørId aktørId = new AktørId("12345");
         String fnr = "24069305608";
         String navn = "Nasse Nøff";
 
-        Bruker person = new Bruker();
-        Personnavn personnavn = new Personnavn();
-        personnavn.setSammensattNavn(navn);
-        person.setPersonnavn(personnavn);
-        HentPersonResponse response = new HentPersonResponse();
-        response.setPerson(person);
+        Person person = new Person();
+        Navn navnPdl  = new Navn("Nøff", null, "Nasse", "Nasse Nøff", null, null, null, null);
+        person.setNavn(List.of(navnPdl));
 
-        HentPersonRequest request = new HentPersonRequest();
-        request.setAktoer(TpsUtil.lagPersonIdent(fnr));
-
-        when(personConsumer.hentPersonResponse(any(HentPersonRequest.class))).thenReturn(response);
-        when(aktørConsumer.hentPersonIdentForAktørId(eq(aktørId.getId()))).thenReturn(Optional.of(fnr));
+        when(pdlKlient.hentPerson(any(), any(), any())).thenReturn(person);
 
         // Act
-        Personinfo personinfo = tpsTjeneste.hentPersoninfoFor(new PersonIdent(fnr));
+        String personinfo = tpsTjeneste.hentNavnFor(new PersonIdent(fnr)).orElse(null);
 
         // Assert
-        assertThat(personinfo.getPersonIdent()).isEqualTo(PersonIdent.fra(fnr));
-        assertThat(personinfo.getNavn()).isEqualTo(navn);
+        assertThat(personinfo).isEqualTo(navn);
     }
 
     @Test
-    public void kasterExceptionDersomPersonIkkeFinnes() throws HentPersonSikkerhetsbegrensning, HentPersonPersonIkkeFunnet {
+    public void kasterExceptionPersonIkkeFunnetSomHåndteres()  {
         // Arrange
-        AktørId aktørId = new AktørId("12345");
         String fnr = "24069305608";
+        var unntak = Mockito.mock(TekniskException.class);
+        when(unntak.getKode()).thenReturn(PdlKlient.PDL_KLIENT_NOT_FOUND_KODE);
 
-        HentPersonRequest request = new HentPersonRequest();
-        request.setAktoer(TpsUtil.lagPersonIdent(fnr));
 
-        when(aktørConsumer.hentPersonIdentForAktørId(eq(aktørId.getId()))).thenReturn(Optional.of(fnr));
-        when(personConsumer.hentPersonResponse(any(HentPersonRequest.class))).thenThrow(new HentPersonPersonIkkeFunnet("", new PersonIkkeFunnet()));
-
-        expectedException.expect(TekniskException.class);
+        when(pdlKlient.hentIdenter(any(), any(), any())).thenThrow(unntak);
 
         // Act
-        tpsTjeneste.hentPersoninfoFor(new PersonIdent(fnr));
+        assertThat(tpsTjeneste.hentAktørForFnr(new PersonIdent(fnr))).isEmpty();
     }
 
     @Test
-    public void kasterExceptionDersomSikkerhetsbegrensningPåPerson() throws HentPersonSikkerhetsbegrensning, HentPersonPersonIkkeFunnet {
+    public void kasterExceptionSomIkkeHåndteresForAndreTilfelle()  {
         // Arrange
-        AktørId aktørId = new AktørId("12345");
-        String fnr = "24069305608";
+        PersonIdent fnr = new PersonIdent("24069305608");
+        var unntak = Mockito.mock(TekniskException.class);
+        when(unntak.getKode()).thenReturn("Ukjent");
 
-        HentPersonRequest request = new HentPersonRequest();
-        request.setAktoer(TpsUtil.lagPersonIdent(fnr));
 
-        when(aktørConsumer.hentPersonIdentForAktørId(eq(aktørId.getId()))).thenReturn(Optional.of(fnr));
-        when(personConsumer.hentPersonResponse(any(HentPersonRequest.class))).thenThrow(new HentPersonSikkerhetsbegrensning("", new Sikkerhetsbegrensning()));
-
-        expectedException.expect(ManglerTilgangException.class);
+        when(pdlKlient.hentPerson(any(), any(), any())).thenThrow(unntak);
 
         // Act
-        tpsTjeneste.hentPersoninfoFor(new PersonIdent(fnr));
+        assertThrows(TekniskException.class, () -> tpsTjeneste.hentNavnFor(fnr));
     }
-
-
 }

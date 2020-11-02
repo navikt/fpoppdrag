@@ -26,7 +26,7 @@ import org.mockito.ArgumentCaptor;
 
 import no.nav.foreldrepenger.oppdrag.OppdragConsumer;
 import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.TpsTjeneste;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.OppdragMapper;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.SimuleringResultatTransformer;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
@@ -63,7 +63,7 @@ public class StartSimuleringTjenesteTest {
     private SimuleringXmlRepository simuleringXmlRepository = new SimuleringXmlRepository(repositoryRule.getEntityManager());
     private SimuleringRepository simuleringRepository = new SimuleringRepository(repositoryRule.getEntityManager());
     private OppdragConsumer oppdragConsumerMock = mock(OppdragConsumer.class);
-    private TpsTjeneste tpsTjenesteMock = mock(TpsTjeneste.class);
+    private PersonTjeneste tpsTjenesteMock = mock(PersonTjeneste.class);
     private SimuleringResultatTransformer resultatTransformer = new SimuleringResultatTransformer(tpsTjenesteMock);
 
     private StartSimuleringTjeneste simuleringTjeneste;

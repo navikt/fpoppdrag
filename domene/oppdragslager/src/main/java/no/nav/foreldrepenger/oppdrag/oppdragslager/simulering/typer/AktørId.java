@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * DNR til FNR i Folkeregisteret. Tilsvarende vil den kunne referere personer som har ident fra et utenlandsk system.
  */
 @Embeddable
-public class AktørId implements Serializable {
+public class AktørId implements Serializable, Comparable<AktørId> {
     private static final String CHARS = "a-z0-9_:-";
 
     private static final String VALID_REGEXP = "^(-?[1-9]|[a-z0])[" + CHARS + "]*$";
@@ -55,6 +55,12 @@ public class AktørId implements Serializable {
         }
         AktørId other = (AktørId) obj;
         return Objects.equals(aktørId, other.aktørId);
+    }
+
+    @Override
+    public int compareTo(AktørId o) {
+        // TODO: Burde ikke finnes
+        return aktørId.compareTo(o.aktørId);
     }
 
     @Override
