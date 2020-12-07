@@ -13,9 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import no.nav.foreldrepenger.kontrakter.tilkjentytelse.v1.TilkjentYtelseV1;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Inntektskategori;
@@ -25,9 +23,6 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.tilkjentytelse.TilkjentYtelse
 import no.nav.foreldrepenger.oppdrag.oppdragslager.tilkjentytelse.TilkjentYtelsePeriode;
 
 public class TilkjentYtelseV1MapperTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void skal_map_fra_tilkjent_ytelse_V1_til_tilkjent_ytelse_entitet() {

@@ -1,18 +1,19 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaQuery;
 
-import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Lists;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.oppdrag.dbstoette.CdiDbAwareTest;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
@@ -22,16 +23,14 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.dto.Simul
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.dto.SimuleringDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.dto.SimuleringGjelderDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.dto.SimuleringMottakerDto;
-import no.nav.vedtak.felles.testutilities.cdi.CdiRunner;
 
-@RunWith(CdiRunner.class)
+@CdiDbAwareTest
 public class SimuleringTestTjenesteImplTest {
-
-    @Rule
-    public UnittestRepositoryRule repoRule = new UnittestRepositoryRule();
 
     @Inject
     private SimuleringTestTjeneste simuleringTestTjeneste;
+    @Inject
+    private EntityManager entityManager;
 
     @Test
     public void skal_lagreSimuleringTestData_medGyldigInput() {
@@ -48,7 +47,13 @@ public class SimuleringTestTjenesteImplTest {
         simuleringTestTjeneste.lagreSimuleringTestData(simuleringGjelderDto);
 
         // Assert
-        List<SimuleringResultat> simuleringResultatData = repoRule.getRepository().hentAlle(SimuleringResultat.class);
-        Assertions.assertThat(simuleringResultatData.size()).isGreaterThan(0);
+        List<SimuleringResultat> simuleringResultatData = hentAlle();
+        assertThat(simuleringResultatData.size()).isGreaterThan(0);
+    }
+
+    private List<SimuleringResultat> hentAlle() {
+        CriteriaQuery<SimuleringResultat> criteria = entityManager.getCriteriaBuilder().createQuery(SimuleringResultat.class);
+        criteria.select(criteria.from(SimuleringResultat.class));
+        return entityManager.createQuery(criteria).getResultList();
     }
 }

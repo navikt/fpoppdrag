@@ -1,42 +1,33 @@
 package no.nav.foreldrepenger.oppdrag.feed.poller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import ch.qos.logback.classic.Level;
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
-import no.nav.foreldrepenger.oppdrag.test.LogSniffer;
-import no.nav.vedtak.felles.testutilities.cdi.CdiRunner;
+import no.nav.vedtak.log.util.MemoryAppender;
 
-@RunWith(CdiRunner.class)
 public class PollerTest {
 
-    @Rule
-    public LogSniffer logSniffer = new LogSniffer(Level.ALL);
-
-    @Rule
-    public UnittestRepositoryRule repoRule = new UnittestRepositoryRule();
+    public MemoryAppender logSniffer = MemoryAppender.sniff(Poller.class);
 
     private Poller poller;
     private FeedPoller feedPoller;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         feedPoller = mock(FeedPoller.class);
         when(feedPoller.getName()).thenReturn("UnitTestPoller");
         poller = new Poller();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
-        logSniffer.clearLog();
+        logSniffer.reset();
     }
 
     @Test
@@ -44,7 +35,7 @@ public class PollerTest {
         Poller pollerSomFårNPE = new Poller(null, null);
 
         pollerSomFårNPE.run();
-        logSniffer.assertHasWarnMessage("FPO-852160:Kunne ikke polle kafka hendelser, venter til neste runde(runde=1)");
+        assertThat(logSniffer.countEntries("FPO-852160")).isEqualTo(1);
     }
 
     @Test
@@ -52,6 +43,6 @@ public class PollerTest {
         doThrow(new RuntimeException()).when(feedPoller).poll();
         poller.run();
 
-        logSniffer.assertHasWarnMessage("FPO-852160:Kunne ikke polle kafka hendelser, venter til neste runde(runde=1)");
+        assertThat(logSniffer.countEntries("FPO-852160")).isEqualTo(1);
     }
 }

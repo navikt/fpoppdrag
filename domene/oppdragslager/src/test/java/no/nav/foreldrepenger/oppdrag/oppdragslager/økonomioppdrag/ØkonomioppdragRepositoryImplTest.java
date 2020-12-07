@@ -8,22 +8,25 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
 import no.nav.vedtak.exception.TekniskException;
-import no.nav.vedtak.felles.testutilities.db.Repository;
 
+@ExtendWith(EntityManagerAwareExtension.class)
 public class ØkonomioppdragRepositoryImplTest {
 
-    @Rule
-    public final UnittestRepositoryRule repoRule = new UnittestRepositoryRule();
-    private final Repository repository = repoRule.getRepository();
+    private ØkonomioppdragRepository økonomioppdragRepository;
+    private EntityManager entityManager;
 
-    private final EntityManager entityManager = repoRule.getEntityManager();
-    private final ØkonomioppdragRepository økonomioppdragRepository = new ØkonomioppdragRepositoryImpl(entityManager);
 
+    @BeforeEach
+    void setUp(EntityManager entityManager) {
+        økonomioppdragRepository = new ØkonomioppdragRepositoryImpl(entityManager);
+        this.entityManager = entityManager;
+    }
 
     @Test
     public void lagreOgHenteOppdragskontroll() {
@@ -37,7 +40,6 @@ public class ØkonomioppdragRepositoryImplTest {
         Long id = oppdrkontroll.getId();
         assertThat(id).isNotNull();
 
-        repository.flushAndClear();
         Oppdragskontroll oppdrkontrollLest = økonomioppdragRepository.hentOppdragskontroll(id);
 
         assertThat(oppdrkontrollLest).isNotNull();
@@ -56,7 +58,6 @@ public class ØkonomioppdragRepositoryImplTest {
         Long id = oppdrkontroll.getId();
         assertThat(id).isNotNull();
 
-        repository.flushAndClear();
         Oppdragskontroll oppdrkontrollLest = økonomioppdragRepository.finnVentendeOppdrag(behandlingId);
 
         assertThat(oppdrkontrollLest).isNotNull();
@@ -71,7 +72,6 @@ public class ØkonomioppdragRepositoryImplTest {
 
         // Act
         økonomioppdragRepository.lagre(oppdrkontroll);
-        repository.flushAndClear();
 
         // Assert
 
@@ -87,7 +87,6 @@ public class ØkonomioppdragRepositoryImplTest {
 
         // Act
         økonomioppdragRepository.lagre(oppdrkontroll);
-        repository.flushAndClear();
 
         // Assert
 
@@ -109,7 +108,6 @@ public class ØkonomioppdragRepositoryImplTest {
         Long id = oppdrkontroll.getId();
         assertThat(id).isNotNull();
 
-        repository.flushAndClear();
         try {
             økonomioppdragRepository.finnVentendeOppdrag(behandlingId);
             fail("Ventet exception");
@@ -129,7 +127,6 @@ public class ØkonomioppdragRepositoryImplTest {
 
         // Assert
 
-        repository.flushAndClear();
         Oppdragskontroll oppdrkontrollLest = økonomioppdragRepository.hentOppdragskontroll(id);
         assertThat(oppdrkontrollLest.getOppdrag110Liste()).hasSize(1);
         Oppdrag110 oppdr110Lest = oppdrkontrollLest.getOppdrag110Liste().get(0);
@@ -149,7 +146,6 @@ public class ØkonomioppdragRepositoryImplTest {
 
         // Assert
 
-        repository.flushAndClear();
         Oppdragskontroll oppdrkontrollLest = økonomioppdragRepository.hentOppdragskontroll(id);
         assertThat(oppdrkontrollLest.getOppdrag110Liste()).hasSize(1);
         Oppdrag110 oppdr110Lest = oppdrkontrollLest.getOppdrag110Liste().get(0);
@@ -173,7 +169,6 @@ public class ØkonomioppdragRepositoryImplTest {
         OppdragTestDataHelper.buildOppdrag110ES(nyesteOppdragskontroll, nyesteFagsystemId);
         økonomioppdragRepository.lagre(nyesteOppdragskontroll);
 
-        repository.flushAndClear();
 
         List<Oppdragskontroll> oppdragListe = økonomioppdragRepository.finnAlleOppdragForSak(saksnr);
         assertThat(oppdragListe).hasSize(2);
@@ -197,8 +192,7 @@ public class ØkonomioppdragRepositoryImplTest {
         Long id = avstemming115.getId();
         assertThat(id).isNotNull();
 
-        repository.flushAndClear();
-        Avstemming115 avst115Lest = repository.hent(Avstemming115.class, id);
+        Avstemming115 avst115Lest = entityManager.find(Avstemming115.class, id);
         assertThat(avst115Lest).isNotNull();
     }
 
@@ -216,8 +210,7 @@ public class ØkonomioppdragRepositoryImplTest {
         Long id = oppdrsEnhet120.getId();
         assertThat(id).isNotNull();
 
-        repository.flushAndClear();
-        Oppdragsenhet120 oppdrsEnhet120Lest = repository.hent(Oppdragsenhet120.class, id);
+        Oppdragsenhet120 oppdrsEnhet120Lest = entityManager.find(Oppdragsenhet120.class, id);
         assertThat(oppdrsEnhet120Lest).isNotNull();
     }
 
@@ -235,8 +228,7 @@ public class ØkonomioppdragRepositoryImplTest {
         Long id = oppdrLinje150.getId();
         assertThat(id).isNotNull();
 
-        repository.flushAndClear();
-        Oppdragslinje150 oppdrLinje150Lest = repository.hent(Oppdragslinje150.class, id);
+        Oppdragslinje150 oppdrLinje150Lest = entityManager.find(Oppdragslinje150.class, id);
         assertThat(oppdrLinje150Lest).isNotNull();
     }
 
@@ -256,8 +248,7 @@ public class ØkonomioppdragRepositoryImplTest {
         Long id = oppdrLinje150.getId();
         assertThat(id).isNotNull();
 
-        repository.flushAndClear();
-        Oppdragslinje150 oppdrLinje150Lest = repository.hent(Oppdragslinje150.class, id);
+        Oppdragslinje150 oppdrLinje150Lest = entityManager.find(Oppdragslinje150.class, id);
         assertThat(oppdrLinje150Lest).isNotNull();
         Grad170 grad170Lest = oppdrLinje150Lest.getGrad170Liste().get(0);
         assertThat(grad170Lest).isNotNull();
@@ -280,8 +271,7 @@ public class ØkonomioppdragRepositoryImplTest {
         Long id = oppdrLinje150.getId();
         assertThat(id).isNotNull();
 
-        repository.flushAndClear();
-        Oppdragslinje150 oppdrLinje150Lest = repository.hent(Oppdragslinje150.class, id);
+        Oppdragslinje150 oppdrLinje150Lest = entityManager.find(Oppdragslinje150.class, id);
         assertThat(oppdrLinje150Lest).isNotNull();
         Refusjonsinfo156 refusjonsinfo156Lest = oppdrLinje150Lest.getRefusjonsinfo156();
         assertThat(refusjonsinfo156Lest).isNotNull();
@@ -308,8 +298,7 @@ public class ØkonomioppdragRepositoryImplTest {
         Long id = attestant180.getId();
         assertThat(id).isNotNull();
 
-        repository.flushAndClear();
-        Attestant180 attestant180Lest = repository.hent(Attestant180.class, id);
+        Attestant180 attestant180Lest = entityManager.find(Attestant180.class, id);
         assertThat(attestant180Lest).isNotNull();
     }
 }

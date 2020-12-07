@@ -1,37 +1,34 @@
 package no.nav.foreldrepenger.oppdrag.feed.poller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Iterator;
 
 import javax.enterprise.inject.Instance;
+import javax.persistence.EntityManager;
 
-import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import ch.qos.logback.classic.Level;
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
-import no.nav.foreldrepenger.oppdrag.test.LogSniffer;
-import no.nav.vedtak.felles.testutilities.cdi.CdiRunner;
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
+import no.nav.vedtak.log.util.MemoryAppender;
 
-@RunWith(CdiRunner.class)
+@Execution(ExecutionMode.SAME_THREAD)
+@ExtendWith(EntityManagerAwareExtension.class)
 public class FeedPollerManagerTest {
 
-    @Rule
-    public LogSniffer logSniffer = new LogSniffer(Level.ALL);
-
-    @Rule
-    public final UnittestRepositoryRule repoRule = new UnittestRepositoryRule();
-
+    private static MemoryAppender logSniffer;
     private FeedPollerManager manager;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    public void setUp(EntityManager entityManager) {
+        logSniffer = MemoryAppender.sniff(FeedPollerManager.class);
         @SuppressWarnings("unchecked")
         Instance<FeedPoller> feedPollers = mock(Instance.class);
         @SuppressWarnings("unchecked")
@@ -41,22 +38,21 @@ public class FeedPollerManagerTest {
         when(feedPollers.iterator()).thenReturn(iterator);
         when(iterator.hasNext()).thenReturn(true, false);
         when(iterator.next()).thenReturn(new TestFeedPoller());
-        manager = new FeedPollerManager(repoRule.getEntityManager(), feedPollers);
+        manager = new FeedPollerManager(entityManager, feedPollers);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
-        logSniffer.clearLog();
+        logSniffer.reset();
     }
 
     @Test
     public void skal_legge_til_poller() {
         manager.start();
-        logSniffer.assertHasInfoMessage("Created thread for feed polling FeedPollerManager-UnitTestPoller-poller");
-        Assertions.assertThat(logSniffer.countEntries("Lagt til ny poller til pollingtjeneste. poller=UnitTestPoller, delayBetweenPollingMillis=50")).isEqualTo(1);
+        assertThat(logSniffer.countEntries("Created thread for feed polling FeedPollerManager-UnitTestPoller-poller")).isEqualTo(1);
     }
 
-    private class TestFeedPoller implements FeedPoller {
+    private static class TestFeedPoller implements FeedPoller {
 
         @Override
         public String getName() {

@@ -8,25 +8,31 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.junit.Rule;
-import org.junit.Test;
+import javax.persistence.EntityManager;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
+import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
-import no.nav.vedtak.felles.testutilities.db.RepositoryRule;
 
+@ExtendWith(EntityManagerAwareExtension.class)
 public class SimuleringRepositoryTest {
 
-    @Rule
-    public final RepositoryRule repoRule = new UnittestRepositoryRule();
+    private SimuleringRepository simuleringRepository;
 
-    private SimuleringRepository simuleringRepository = new SimuleringRepository(repoRule.getEntityManager());
+    private final String aktørId = "000134";
 
-    private String aktørId = "000134";
+    @BeforeEach
+    void setUp(EntityManager entityManager) {
+        simuleringRepository = new SimuleringRepository(entityManager);
+    }
 
     @Test
     public void lagrer_simulering_grunnlag() {
@@ -37,7 +43,6 @@ public class SimuleringRepositoryTest {
 
         // Act
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Assert
         Optional<SimuleringGrunnlag> funnetGrunnlag = simuleringRepository.hentSimulertOppdragForBehandling(behandlingId);
@@ -51,14 +56,13 @@ public class SimuleringRepositoryTest {
 
 
     @Test
-    public void setter_forrige_grunnlag_til_inaktivt_ved_lagring_av_nytt_grunnlag_på_samme_behandling() {
+    public void setter_forrige_grunnlag_til_inaktivt_ved_lagring_av_nytt_grunnlag_på_samme_behandling(EntityManager entityManager) {
         Long behandlingId = 1234L;
 
         // Oppretter første simuleringsgrunnlag for behandling
         LocalDate førsteForfallsdato = LocalDate.of(2018, 11, 20);
         SimuleringGrunnlag simuleringGrunnlag = opprettGrunnlag(behandlingId, aktørId, førsteForfallsdato);
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         Optional<SimuleringGrunnlag> førstelagretGrunnlag = simuleringRepository.hentSimulertOppdragForBehandling(behandlingId);
         assertThat(førstelagretGrunnlag).isPresent();
@@ -66,7 +70,6 @@ public class SimuleringRepositoryTest {
         // Oppretter neste simuleringsgrunnlag for behandling
         LocalDate andreForfallsDato = LocalDate.of(2018, 12, 15);
         simuleringRepository.lagreSimuleringGrunnlag(opprettGrunnlag(behandlingId, aktørId, andreForfallsDato));
-        repoRule.getRepository().flushAndClear();
 
         Optional<SimuleringGrunnlag> andreLagretGrunnlag = simuleringRepository.hentSimulertOppdragForBehandling(behandlingId);
         assertThat(andreLagretGrunnlag).isPresent();
@@ -75,7 +78,7 @@ public class SimuleringRepositoryTest {
         assertThat(simuleringMottakere.iterator().next().getSimulertePosteringer()).hasSize(1);
         assertThat(simuleringMottakere.iterator().next().getSimulertePosteringer().iterator().next().getForfallsdato()).isEqualTo(andreForfallsDato);
 
-        List<SimuleringGrunnlag> inaktiveGrunnlag = repoRule.getEntityManager().createQuery(
+        List<SimuleringGrunnlag> inaktiveGrunnlag = entityManager.createQuery(
                 "from SimuleringGrunnlag s" +
                         " where s.eksternReferanse.behandlingId = :behandlingId" +
                         " and s.aktiv = :aktiv", SimuleringGrunnlag.class)

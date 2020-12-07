@@ -16,11 +16,14 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Rule;
-import org.junit.Test;
+import javax.persistence.EntityManager;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
@@ -41,19 +44,23 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.Simulering
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatPerFagområdeDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatRadDto;
 
+@ExtendWith({EntityManagerAwareExtension.class})
 public class SimuleringResultatTjenesteInntrekkTest {
 
-
-    @Rule
-    public UnittestRepositoryRule repoRule = new UnittestRepositoryRule();
-
-    private SimuleringRepository simuleringRepository = new SimuleringRepository(repoRule.getEntityManager());
+    private SimuleringRepository simuleringRepository;
 
     private HentNavnTjeneste hentNavnTjeneste = Mockito.mock(HentNavnTjeneste.class);
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
-    private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjeneste(simuleringRepository, hentNavnTjeneste, simuleringBeregningTjeneste);
+    private SimuleringResultatTjeneste simuleringResultatTjeneste;
 
     private String aktørId = "0";
+
+    @BeforeEach
+    void setUp(EntityManager entityManager) {
+        simuleringRepository = new SimuleringRepository(entityManager);
+        simuleringResultatTjeneste = new SimuleringResultatTjeneste(simuleringRepository,
+                hentNavnTjeneste, simuleringBeregningTjeneste);
+    }
 
     @Test
     public void henterBareDetaljertResultatUtenInntrekkDersomFørsteResultatHarBådeFeilutbetalingOgInntrekkNesteUtbetalingsperiode() {
@@ -99,7 +106,6 @@ public class SimuleringResultatTjenesteInntrekkTest {
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
         Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
@@ -208,7 +214,6 @@ public class SimuleringResultatTjenesteInntrekkTest {
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
         Optional<SimuleringResultatDto> resultatDto = simuleringResultatTjeneste.hentResultatFraSimulering(behandlingId);
@@ -248,7 +253,6 @@ public class SimuleringResultatTjenesteInntrekkTest {
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
         Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
@@ -352,7 +356,6 @@ public class SimuleringResultatTjenesteInntrekkTest {
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
         Optional<SimuleringResultatDto> simuleringResultatDto = simuleringResultatTjeneste.hentResultatFraSimulering(behandlingId);
@@ -412,7 +415,6 @@ public class SimuleringResultatTjenesteInntrekkTest {
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
         Optional<SimuleringDto> optSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
@@ -466,7 +468,6 @@ public class SimuleringResultatTjenesteInntrekkTest {
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
         Optional<SimuleringDto> optSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);

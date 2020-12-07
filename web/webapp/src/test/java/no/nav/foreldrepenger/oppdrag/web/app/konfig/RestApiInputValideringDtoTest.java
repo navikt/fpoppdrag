@@ -48,10 +48,8 @@ import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -63,33 +61,19 @@ import no.nav.foreldrepenger.oppdrag.web.app.validering.ValidKodeverk;
 import no.nav.vedtak.felles.db.doc.model.Kodeliste;
 import no.nav.vedtak.felles.testutilities.cdi.WeldContext;
 
-@RunWith(Parameterized.class)
 public class RestApiInputValideringDtoTest extends RestApiTester {
 
-    private Class<?> dto;
-
-    @Parameterized.Parameters(name = "Validerer Dto - {0}")
-    public static Collection<Object[]> getDtos() {
-        System.setProperty("loadbalancer.url", "http://localhost:8070");
-        return WeldContext.getInstance().doWithScope(() -> finnAlleDtoTyper().stream().map(c -> new Object[]{c.getName(), c}).collect(Collectors.toSet()));
-    }
-
-    public RestApiInputValideringDtoTest(@SuppressWarnings("unused") String name, Class<?> dto) {
-        this.dto = dto;
-    }
-
-    @After
-    public void cleanup() {
-        System.clearProperty("loadbalancer.url");
+    static {
+        WeldContext.getInstance(); // init cdi container
     }
 
     /**
      * IKKE ignorer eller fjern denne testen, den sørger for at inputvalidering er i orden for REST-grensesnittene
      * <p>
-     * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her
      */
-    @Test
-    public void alle_felter_i_objekter_som_brukes_som_inputDTO_skal_enten_ha_valideringsannotering_eller_være_av_godkjent_type() throws Exception {
+    @ParameterizedTest
+    @MethodSource("finnAlleDtoTyper")
+    public void alle_felter_i_objekter_som_brukes_som_inputDTO_skal_enten_ha_valideringsannotering_eller_være_av_godkjent_type(Class<?> dto) throws Exception {
         Set<Class<?>> validerteKlasser = new HashSet<>(); // trengs for å unngå løkker og unngå å validere samme klasse flere multipliser dobbelt
         validerRekursivt(validerteKlasser, dto, null);
     }
@@ -98,7 +82,7 @@ public class RestApiInputValideringDtoTest extends RestApiTester {
             Valid.class, Null.class, NotNull.class);
 
     @SuppressWarnings("rawtypes")
-    private static final Map<Class, List<List<Class<? extends Annotation>>>> UNNTATT_FRA_VALIDERING = new HashMap<Class, List<List<Class<? extends Annotation>>>>() {
+    private static final Map<Class, List<List<Class<? extends Annotation>>>> UNNTATT_FRA_VALIDERING = new HashMap<>() {
         {
 
             put(PersonIdent.class, singletonList(emptyList()));
@@ -116,24 +100,14 @@ public class RestApiInputValideringDtoTest extends RestApiTester {
     };
 
     @SuppressWarnings("rawtypes")
-    private static final Map<Class, List<List<Class<? extends Annotation>>>> VALIDERINGSALTERNATIVER = new HashMap<Class, List<List<Class<? extends Annotation>>>>() {
+    private static final Map<Class, List<List<Class<? extends Annotation>>>> VALIDERINGSALTERNATIVER = new HashMap<>() {
         {
-            put(String.class, asList(
-                    asList(Pattern.class, Size.class),
-                    asList(Pattern.class),
-                    singletonList(Digits.class)));
-            put(Long.class, asList(
-                    asList(Min.class, Max.class),
-                    asList(Digits.class)));
-            put(long.class, asList(
-                    asList(Min.class, Max.class),
-                    asList(Digits.class)));
-            put(Integer.class, singletonList(
-                    asList(Min.class, Max.class)));
-            put(int.class, singletonList(
-                    asList(Min.class, Max.class)));
-            put(BigDecimal.class, asList(
-                    asList(Min.class, Max.class, Digits.class),
+            put(String.class, asList(asList(Pattern.class, Size.class), asList(Pattern.class), singletonList(Digits.class)));
+            put(Long.class, asList(asList(Min.class, Max.class), asList(Digits.class)));
+            put(long.class, asList(asList(Min.class, Max.class), asList(Digits.class)));
+            put(Integer.class, singletonList(asList(Min.class, Max.class)));
+            put(int.class, singletonList(asList(Min.class, Max.class)));
+            put(BigDecimal.class, asList(asList(Min.class, Max.class, Digits.class),
                     asList(DecimalMin.class, DecimalMax.class, Digits.class)));
 
             putAll(UNNTATT_FRA_VALIDERING);

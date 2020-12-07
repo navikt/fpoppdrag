@@ -8,23 +8,26 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Rule;
-import org.junit.Test;
+import javax.persistence.EntityManager;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Inntektskategori;
-import no.nav.vedtak.felles.testutilities.db.Repository;
-import no.nav.vedtak.felles.testutilities.db.RepositoryRule;
 
+@ExtendWith(EntityManagerAwareExtension.class)
 public class TilkjentYtelseRepositoryTest {
 
     private static final LocalDate DAGENSDATO = LocalDate.now();
 
-    @Rule
-    public final RepositoryRule repoRule = new UnittestRepositoryRule();
-    private final Repository repository = repoRule.getRepository();
-    private final TilkjentYtelseRepository tilkjentYtelseRepository = new TilkjentYtelseRepository(repoRule.getEntityManager());
+    private TilkjentYtelseRepository tilkjentYtelseRepository;
 
+    @BeforeEach
+    void setUp(EntityManager entityManager) {
+        tilkjentYtelseRepository = new TilkjentYtelseRepository(entityManager);
+    }
 
     @Test
     public void lagreOgHentTilkjentYtelse() {
@@ -38,7 +41,6 @@ public class TilkjentYtelseRepositoryTest {
         Long id = tilkjentYtelseOpprettet.getId();
         assertThat(id).isNotNull();
 
-        repository.flushAndClear();
         Optional<TilkjentYtelseEntitet> tilkjentYtelseLestOpt = tilkjentYtelseRepository.hentTilkjentYtelse(1L);
         assertThat(tilkjentYtelseLestOpt).isPresent();
 
@@ -67,7 +69,7 @@ public class TilkjentYtelseRepositoryTest {
     private void verifiserPerioder(TilkjentYtelseEntitet tilkjentYtelseOpprettet, TilkjentYtelseEntitet tilkjentYtelseLest) {
         List<TilkjentYtelsePeriode> perioderOpprettet = tilkjentYtelseOpprettet.getTilkjentYtelsePeriodeListe();
         List<TilkjentYtelsePeriode> perioderLest = tilkjentYtelseLest.getTilkjentYtelsePeriodeListe();
-        assertThat(perioderOpprettet.size()).isEqualTo(perioderLest.size());
+        assertThat(perioderOpprettet).hasSize(perioderLest.size());
         for (int i = 0; i < perioderLest.size(); i++) {
             assertThat(perioderOpprettet.get(i)).isEqualTo(perioderLest.get(i));
             verifiserAndeler(perioderOpprettet.get(i), perioderLest.get(i));

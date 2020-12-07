@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -10,15 +11,15 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
 import javax.ws.rs.core.Response;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import no.nav.foreldrepenger.oppdrag.OppdragConsumer;
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
@@ -42,37 +43,38 @@ import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.S
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse;
 import no.nav.vedtak.exception.TekniskException;
 
+@ExtendWith(EntityManagerAwareExtension.class)
 public class SimuleringRestTjenesteTest {
 
     private static final Long BEHANDLING_ID = 123456789L;
     private static final String AKTØR_ID = "1234567890135";
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-    @Rule
-    public UnittestRepositoryRule repositoryRule = new UnittestRepositoryRule();
+    private OppdragConsumer oppdragConsumerMock;
 
-    private SimuleringRepository simuleringRepository = new SimuleringRepository(repositoryRule.getEntityManager());
-    private SimuleringXmlRepository simuleringXmlRepository = new SimuleringXmlRepository(repositoryRule.getEntityManager());
-    private OppdragConsumer oppdragConsumerMock = mock(OppdragConsumer.class);
-    private HentNavnTjeneste hentNavnTjeneste = mock(HentNavnTjeneste.class);
-    private PersonTjeneste tpsTjenesteMock = mock(PersonTjeneste.class);
-    private SimuleringResultatTransformer resultatTransformer = new SimuleringResultatTransformer(tpsTjenesteMock);
-
-    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
-    private StartSimuleringTjeneste startSimuleringTjeneste = new StartSimuleringTjeneste(simuleringXmlRepository, simuleringRepository, oppdragConsumerMock, resultatTransformer, simuleringBeregningTjeneste);
-    private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjeneste(simuleringRepository, hentNavnTjeneste, simuleringBeregningTjeneste);
-    private SimuleringRestTjeneste restTjeneste = new SimuleringRestTjeneste(simuleringResultatTjeneste, startSimuleringTjeneste);
+    private SimuleringRestTjeneste restTjeneste;
 
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    public void setup(EntityManager entityManager) {
+        PersonTjeneste tpsTjenesteMock = mock(PersonTjeneste.class);
         when(tpsTjenesteMock.hentAktørForFnr(any())).thenReturn(Optional.of(new AktørId(AKTØR_ID)));
+        SimuleringRepository simuleringRepository = new SimuleringRepository(entityManager);
+        SimuleringXmlRepository simuleringXmlRepository = new SimuleringXmlRepository(entityManager);
+        oppdragConsumerMock = mock(OppdragConsumer.class);
+        SimuleringResultatTransformer resultatTransformer = new SimuleringResultatTransformer(tpsTjenesteMock);
+        SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
+        StartSimuleringTjeneste startSimuleringTjeneste = new StartSimuleringTjeneste(simuleringXmlRepository,
+                simuleringRepository, oppdragConsumerMock, resultatTransformer, simuleringBeregningTjeneste);
+        HentNavnTjeneste hentNavnTjeneste = mock(HentNavnTjeneste.class);
+        SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjeneste(simuleringRepository,
+                hentNavnTjeneste, simuleringBeregningTjeneste);
+        restTjeneste = new SimuleringRestTjeneste(simuleringResultatTjeneste, startSimuleringTjeneste);
     }
 
     @Test
     public void returnererNullDersomSimuleringForBehandlingIkkeFinnes() {
-        SimuleringDto simuleringDto = restTjeneste.hentSimuleringResultatMedOgUtenInntrekk(new BehandlingIdDto("12345"));
+        SimuleringDto simuleringDto = restTjeneste.hentSimuleringResultatMedOgUtenInntrekk(
+                new BehandlingIdDto("12345"));
         assertThat(simuleringDto).isNull();
 
         SimuleringResultatDto simuleringResultatDto = restTjeneste.hentSimuleringResultat(new BehandlingIdDto("12345"));
@@ -83,9 +85,7 @@ public class SimuleringRestTjenesteTest {
     public void test_skalReturnereFeilVedUgyldigOppdragXml() {
         SimulerOppdragDto oppdragDto = SimulerOppdragDto.lagDto(BEHANDLING_ID, Collections.singletonList("ugyldigXML"));
 
-        expectedException.expect(TekniskException.class);
-
-        restTjeneste.startSimulering(oppdragDto);
+        assertThrows(TekniskException.class, () -> restTjeneste.startSimulering(oppdragDto));
     }
 
     @Test
@@ -93,7 +93,8 @@ public class SimuleringRestTjenesteTest {
         String xml = TestResourceLoader.loadXml("/xml/oppdrag_mottaker.xml");
         SimulerOppdragDto oppdragDto = SimulerOppdragDto.lagDto(BEHANDLING_ID, Collections.singletonList(xml));
 
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(any(SimulerBeregningRequest.class))).thenReturn(lagRespons());
+        when(oppdragConsumerMock.hentSimulerBeregningResponse(any(SimulerBeregningRequest.class))).thenReturn(
+                lagRespons());
 
 
         Response response = restTjeneste.startSimulering(oppdragDto);

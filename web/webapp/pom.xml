@@ -259,8 +259,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-            <artifactId>testutilities</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${jupiter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -320,12 +321,6 @@
                 <groupId>org.webjars</groupId>
                 <artifactId>swagger-ui</artifactId>
                 <version>${swagger-ui.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>no.nav.foreldrepenger.felles</groupId>
-                <artifactId>felles-sikkerhet-testutilities</artifactId>
-                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

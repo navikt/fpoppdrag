@@ -4,22 +4,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import javax.persistence.EntityManager;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
-import no.nav.vedtak.felles.testutilities.db.RepositoryRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
+
+@ExtendWith(EntityManagerAwareExtension.class)
 public class SimuleringXmlRepositoryTest {
 
     private static final Long BEHANDLING_ID = 123456L;
     private static final String REQ_XML = "<xml></xml>";
     private static final String RES_XML = "<xml></xml>";
 
-    @Rule
-    public final RepositoryRule repoRule = new UnittestRepositoryRule();
+    private SimuleringXmlRepository simuleringXmlRepository;
 
-    private SimuleringXmlRepository simuleringXmlRepository = new SimuleringXmlRepository(repoRule.getEntityManager());
+    @BeforeEach
+    void setUp(EntityManager entityManager) {
+        simuleringXmlRepository = new SimuleringXmlRepository(entityManager);
+    }
 
     @Test
     public void test_lagrer_simulering_xml() {
@@ -30,7 +35,6 @@ public class SimuleringXmlRepositoryTest {
                 .build();
 
         simuleringXmlRepository.lagre(simuleringXml);
-        repoRule.getRepository().flushAndClear();
 
         List<SimuleringXml> funnet = simuleringXmlRepository.hentSimuleringXml(BEHANDLING_ID);
         assertThat(funnet).contains(simuleringXml);
@@ -44,7 +48,6 @@ public class SimuleringXmlRepositoryTest {
                 .build();
 
         simuleringXmlRepository.lagre(simuleringXml1);
-        repoRule.getRepository().flushAndClear();
 
         List<SimuleringXml> funnet1 = simuleringXmlRepository.hentSimuleringXml(BEHANDLING_ID);
         assertThat(funnet1).hasSize(1);
@@ -58,8 +61,6 @@ public class SimuleringXmlRepositoryTest {
                 .build();
 
         simuleringXmlRepository.lagre(simuleringXml2);
-        repoRule.getRepository().flushAndClear();
-
         List<SimuleringXml> funnet2 = simuleringXmlRepository.hentSimuleringXml(BEHANDLING_ID);
         assertThat(funnet2).hasSize(1);
         assertThat(funnet2).contains(simuleringXml2);

@@ -9,8 +9,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
 import org.assertj.core.util.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
@@ -35,7 +35,7 @@ public class SimuleringTestRestTjenesteImplTest {
 
     private SimuleringTestRestTjenesteImpl simuleringRestTjeneste;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         simuleringTestTjeneste = Mockito.mock(SimuleringTestTjeneste.class);
         simuleringRestTjeneste = new SimuleringTestRestTjenesteImpl(simuleringTestTjeneste);

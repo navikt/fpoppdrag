@@ -10,13 +10,13 @@ import java.time.LocalDateTime;
 
 import javax.ws.rs.core.Response;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.codahale.metrics.health.HealthCheck;
 
-import no.nav.foreldrepenger.oppdrag.test.LogSniffer;
+import ch.qos.logback.classic.Level;
+import no.nav.vedtak.log.util.MemoryAppender;
 
 public class SelftestServiceTest {
 
@@ -27,10 +27,9 @@ public class SelftestServiceTest {
     private static final String MSG_KRITISK_FEIL = "kritisk feil";
     private static final String MSG_IKKEKRITISK_FEIL = "ikke-kritisk feil";
 
-    @Rule
-    public final LogSniffer logSniffer = new LogSniffer();
+    public final MemoryAppender logSniffer = MemoryAppender.sniff(SelftestService.class);
 
-    @Before
+    @BeforeEach
     public void setup() {
         mockSelftests = mock(Selftests.class);
         service = new SelftestService(mockSelftests);
@@ -44,8 +43,7 @@ public class SelftestServiceTest {
         Response response = service.doSelftest(APPLICATION_JSON, false);
 
         assertThat(response).isNotNull();
-        logSniffer.assertNoErrors();
-        logSniffer.assertNoWarnings();
+        assertThat(logSniffer.getLoggedEvents().stream().anyMatch(e -> e.getLevel().isGreaterOrEqual(Level.WARN))).isFalse();
     }
 
     @Test
@@ -56,8 +54,8 @@ public class SelftestServiceTest {
         Response response = service.doSelftest(APPLICATION_JSON, false);
 
         assertThat(response).isNotNull();
-        logSniffer.assertNoErrors();
-        logSniffer.assertHasWarnMessage(MSG_IKKEKRITISK_FEIL);
+        assertThat(logSniffer.getLoggedEvents().stream().anyMatch(e -> e.getLevel().isGreaterOrEqual(Level.ERROR))).isFalse();
+        assertThat(logSniffer.contains(MSG_IKKEKRITISK_FEIL, Level.WARN)).isTrue();
     }
 
     @Test
@@ -68,8 +66,8 @@ public class SelftestServiceTest {
         Response response = service.doSelftest(APPLICATION_JSON, false);
 
         assertThat(response).isNotNull();
-        logSniffer.assertHasErrorMessage(MSG_KRITISK_FEIL);
-        logSniffer.assertNoWarnings();
+        assertThat(logSniffer.contains(MSG_KRITISK_FEIL, Level.ERROR)).isTrue();
+        assertThat(logSniffer.getLoggedEvents().stream().anyMatch(e -> e.getLevel() == Level.WARN)).isFalse();
     }
 
     @Test
@@ -80,8 +78,8 @@ public class SelftestServiceTest {
         Response response = service.doSelftest(APPLICATION_JSON, false);
 
         assertThat(response).isNotNull();
-        logSniffer.assertHasErrorMessage(MSG_KRITISK_FEIL);
-        logSniffer.assertHasWarnMessage(MSG_IKKEKRITISK_FEIL);
+        assertThat(logSniffer.contains(MSG_KRITISK_FEIL, Level.ERROR)).isTrue();
+        assertThat(logSniffer.contains(MSG_IKKEKRITISK_FEIL, Level.WARN)).isTrue();
     }
 
     @Test

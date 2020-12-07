@@ -1,11 +1,11 @@
 package no.nav.foreldrepenger.oppdrag.web.app.konfig;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 public class InternalApplicationTest {
@@ -14,6 +14,6 @@ public class InternalApplicationTest {
     public void getClasses() {
         InternalApplication app = new InternalApplication();
         Set<Class<?>> classes = app.getClasses();
-        assertEquals(classes.size(), 3);
+        assertThat(classes).hasSize(3);
     }
 }

@@ -41,13 +41,6 @@
             <artifactId>validation-api</artifactId>
         </dependency>
 
-        <!-- Test avhengigheter -->
-        <dependency>
-            <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-testutilities</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <build>

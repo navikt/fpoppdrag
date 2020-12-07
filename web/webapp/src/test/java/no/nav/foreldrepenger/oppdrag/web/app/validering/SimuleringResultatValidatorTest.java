@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.oppdrag.web.app.validering;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,8 +13,8 @@ import javax.validation.ValidatorFactory;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.util.Lists;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
@@ -37,7 +36,7 @@ public class SimuleringResultatValidatorTest {
     private static String FAGOMRÅDEKODE = FagOmrådeKode.SYKEPENGER.getKode();
     private static Validator validator;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
@@ -50,14 +49,14 @@ public class SimuleringResultatValidatorTest {
         SimuleringDto simuleringDto = new SimuleringDto(123L, "0", Lists.newArrayList(simuleringMottakerDto));
         SimuleringGjelderDto simuleringGjelderDto = new SimuleringGjelderDto(Lists.newArrayList(simuleringDto));
         Set<ConstraintViolation<SimuleringGjelderDto>> violations = validator.validate(simuleringGjelderDto);
-        assertTrue(violations.isEmpty());
+        assertThat(violations).isEmpty();
     }
 
     @Test
     public void testSkalFeilPåManglendeInput() {
         Set<ConstraintViolation<SimuleringGjelderDto>> violations = validator.validate(new SimuleringGjelderDto(Lists.newArrayList()));
-        assertEquals(1, violations.size());
-        assertEquals("{javax.validation.constraints.Size.message}", violations.iterator().next().getMessageTemplate());
+        assertThat(violations).hasSize(1);
+        assertThat(violations.iterator().next().getMessageTemplate()).isEqualTo("{javax.validation.constraints.Size.message}");
     }
 
     @Test
@@ -67,8 +66,8 @@ public class SimuleringResultatValidatorTest {
         SimuleringDto simuleringDto = new SimuleringDto(123L, "0", Lists.newArrayList(simuleringMottakerDto));
         SimuleringGjelderDto simuleringGjelderDto = new SimuleringGjelderDto(Lists.newArrayList(simuleringDto));
         Set<ConstraintViolation<SimuleringGjelderDto>> violations = validator.validate(simuleringGjelderDto);
-        assertEquals(1, violations.size());
-        assertEquals("ugyldig mottaker", violations.iterator().next().getMessageTemplate());
+        assertThat(violations).hasSize(1);
+        assertThat(violations.iterator().next().getMessageTemplate()).isEqualTo("ugyldig mottaker");
     }
 
 

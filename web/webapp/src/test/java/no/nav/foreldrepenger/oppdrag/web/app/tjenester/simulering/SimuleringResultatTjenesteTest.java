@@ -17,11 +17,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import org.junit.Rule;
-import org.junit.Test;
+import javax.persistence.EntityManager;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
@@ -43,18 +46,23 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.Simulering
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatPerFagområdeDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatRadDto;
 
+@ExtendWith(EntityManagerAwareExtension.class)
 public class SimuleringResultatTjenesteTest {
 
-    @Rule
-    public UnittestRepositoryRule repoRule = new UnittestRepositoryRule();
-
-    private SimuleringRepository simuleringRepository = new SimuleringRepository(repoRule.getEntityManager());
+    private SimuleringRepository simuleringRepository;
 
     private HentNavnTjeneste hentNavnTjeneste = Mockito.mock(HentNavnTjeneste.class);
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
-    private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjeneste(simuleringRepository, hentNavnTjeneste, simuleringBeregningTjeneste);
+    private SimuleringResultatTjeneste simuleringResultatTjeneste;
 
     private String aktørId = "0";
+
+    @BeforeEach
+    void setUp(EntityManager entityManager) {
+        simuleringRepository = new SimuleringRepository(entityManager);
+        simuleringResultatTjeneste = new SimuleringResultatTjeneste(simuleringRepository, hentNavnTjeneste,
+                simuleringBeregningTjeneste);
+    }
 
     @Test
     public void henter_simulering_resultat_etterbetaling_en_mottaker_ett_fagområde() {
@@ -73,26 +81,44 @@ public class SimuleringResultatTjenesteTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER)
                                 // 2 måneder siden, kr 2000 i etterbetaling
-                                .medSimulertPostering(postering(startDato, startDato.plusDays(15), KREDIT, YTELSE, FORELDREPENGER, 3000))
-                                .medSimulertPostering(postering(startDato.plusDays(16), andreMåned.minusDays(1), KREDIT, YTELSE, FORELDREPENGER, 2000))
-                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER, 7000))
-                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), DEBIT, FORSKUDSSKATT, FORELDREPENGER, 100))
+                                .medSimulertPostering(
+                                        postering(startDato, startDato.plusDays(15), KREDIT, YTELSE, FORELDREPENGER,
+                                                3000))
+                                .medSimulertPostering(
+                                        postering(startDato.plusDays(16), andreMåned.minusDays(1), KREDIT, YTELSE,
+                                                FORELDREPENGER, 2000))
+                                .medSimulertPostering(
+                                        postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER,
+                                                7000))
+                                .medSimulertPostering(
+                                        postering(startDato, andreMåned.minusDays(1), DEBIT, FORSKUDSSKATT,
+                                                FORELDREPENGER, 100))
                                 // Forrige måned, kr 4000 i etterbetaling
-                                .medSimulertPostering(postering(andreMåned, nesteMåned.minusDays(1), KREDIT, YTELSE, FORELDREPENGER, 6000))
-                                .medSimulertPostering(postering(andreMåned, nesteMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER, 10000))
-                                .medSimulertPostering(postering(andreMåned, nesteMåned.minusDays(1), DEBIT, FORSKUDSSKATT, FORELDREPENGER, 400))
+                                .medSimulertPostering(
+                                        postering(andreMåned, nesteMåned.minusDays(1), KREDIT, YTELSE, FORELDREPENGER,
+                                                6000))
+                                .medSimulertPostering(
+                                        postering(andreMåned, nesteMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER,
+                                                10000))
+                                .medSimulertPostering(
+                                        postering(andreMåned, nesteMåned.minusDays(1), DEBIT, FORSKUDSSKATT,
+                                                FORELDREPENGER, 400))
                                 // Neste måned, kr 10000 til utbetaling
-                                .medSimulertPostering(postering(nesteMåned, nesteMåned.plusMonths(1).minusDays(1), DEBIT, YTELSE, FORELDREPENGER, 10000, nesteForfallsdato))
-                                .medSimulertPostering(postering(nesteMåned, nesteMåned.plusMonths(1).minusDays(1), DEBIT, FORSKUDSSKATT, FORELDREPENGER, 400, nesteForfallsdato))
+                                .medSimulertPostering(
+                                        postering(nesteMåned, nesteMåned.plusMonths(1).minusDays(1), DEBIT, YTELSE,
+                                                FORELDREPENGER, 10000, nesteForfallsdato))
+                                .medSimulertPostering(
+                                        postering(nesteMåned, nesteMåned.plusMonths(1).minusDays(1), DEBIT,
+                                                FORSKUDSSKATT, FORELDREPENGER, 400, nesteForfallsdato))
                                 .build())
                         .build())
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
-        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
+        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
+                behandlingId);
 
         // Assert
         assertThat(simuleringDto).isPresent();
@@ -129,7 +155,8 @@ public class SimuleringResultatTjenesteTest {
 
 
         assertThat(mottakerDto.getResultatPerFagområde()).hasSize(1);
-        assertThat(mottakerDto.getResultatPerFagområde().get(0).getFagOmrådeKode()).isEqualTo(FagOmrådeKode.FORELDREPENGER);
+        assertThat(mottakerDto.getResultatPerFagområde().get(0).getFagOmrådeKode()).isEqualTo(
+                FagOmrådeKode.FORELDREPENGER);
         assertThat(mottakerDto.getResultatPerFagområde().get(0).getRader()).hasSize(3);
 
         // Nytt beløp - skal være sortert i riktig rekkefølge
@@ -146,7 +173,8 @@ public class SimuleringResultatTjenesteTest {
         assertThat(nyttBeløp.getResultaterPerMåned().get(1).getBeløp()).isEqualTo(10000);
         // Assert tredje periode
         assertThat(nyttBeløp.getResultaterPerMåned().get(2).getPeriode().getFom()).isEqualTo(nesteMåned);
-        assertThat(nyttBeløp.getResultaterPerMåned().get(2).getPeriode().getTom()).isEqualTo(nesteMåned.plusMonths(1).minusDays(1));
+        assertThat(nyttBeløp.getResultaterPerMåned().get(2).getPeriode().getTom()).isEqualTo(
+                nesteMåned.plusMonths(1).minusDays(1));
         assertThat(nyttBeløp.getResultaterPerMåned().get(2).getBeløp()).isEqualTo(10000);
 
         // Tidligere utbetalt
@@ -155,15 +183,18 @@ public class SimuleringResultatTjenesteTest {
         assertThat(tidligereUtbetalt.getResultaterPerMåned()).hasSize(3);
         // Assert første periode (skal returneres sortert)
         assertThat(tidligereUtbetalt.getResultaterPerMåned().get(0).getPeriode().getFom()).isEqualTo(startDato);
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(0).getPeriode().getTom()).isEqualTo(andreMåned.minusDays(1));
+        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(0).getPeriode().getTom()).isEqualTo(
+                andreMåned.minusDays(1));
         assertThat(tidligereUtbetalt.getResultaterPerMåned().get(0).getBeløp()).isEqualTo(5000);
         // Assert andre periode
         assertThat(tidligereUtbetalt.getResultaterPerMåned().get(1).getPeriode().getFom()).isEqualTo(andreMåned);
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(1).getPeriode().getTom()).isEqualTo(nesteMåned.minusDays(1));
+        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(1).getPeriode().getTom()).isEqualTo(
+                nesteMåned.minusDays(1));
         assertThat(tidligereUtbetalt.getResultaterPerMåned().get(1).getBeløp()).isEqualTo(6000);
         // Assert tredje periode
         assertThat(tidligereUtbetalt.getResultaterPerMåned().get(2).getPeriode().getFom()).isEqualTo(nesteMåned);
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(2).getPeriode().getTom()).isEqualTo(nesteMåned.plusMonths(1).minusDays(1));
+        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(2).getPeriode().getTom()).isEqualTo(
+                nesteMåned.plusMonths(1).minusDays(1));
         assertThat(tidligereUtbetalt.getResultaterPerMåned().get(2).getBeløp()).isEqualTo(0);
 
 
@@ -181,7 +212,8 @@ public class SimuleringResultatTjenesteTest {
         assertThat(differanse.getResultaterPerMåned().get(1).getBeløp()).isEqualTo(4000);
         // Assert tredje periode
         assertThat(differanse.getResultaterPerMåned().get(2).getPeriode().getFom()).isEqualTo(nesteMåned);
-        assertThat(differanse.getResultaterPerMåned().get(2).getPeriode().getTom()).isEqualTo(nesteMåned.plusMonths(1).minusDays(1));
+        assertThat(differanse.getResultaterPerMåned().get(2).getPeriode().getTom()).isEqualTo(
+                nesteMåned.plusMonths(1).minusDays(1));
         assertThat(differanse.getResultaterPerMåned().get(2).getBeløp()).isEqualTo(10000);
     }
 
@@ -211,28 +243,35 @@ public class SimuleringResultatTjenesteTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER)
                                 // 2 måneder siden, kr 2000 i etterbetaling
-                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), KREDIT, YTELSE, FORELDREPENGER, 5000))
-                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER, 7000))
+                                .medSimulertPostering(
+                                        postering(startDato, andreMåned.minusDays(1), KREDIT, YTELSE, FORELDREPENGER,
+                                                5000))
+                                .medSimulertPostering(
+                                        postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER,
+                                                7000))
                                 .build())
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.ARBG_PRIV)
                                 .medMottakerNummer(fnrArbgiv)
-                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), KREDIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER, 1000))
-                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER, 2000))
+                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), KREDIT, YTELSE,
+                                        FORELDREPENGER_ARBEIDSGIVER, 1000))
+                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE,
+                                        FORELDREPENGER_ARBEIDSGIVER, 2000))
                                 .build())
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.ARBG_ORG)
                                 .medMottakerNummer(orgnr)
-                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER, 1000))
+                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE,
+                                        FORELDREPENGER_ARBEIDSGIVER, 1000))
                                 .build())
                         .build())
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
-        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
+        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
+                behandlingId);
 
         // Assert
         assertThat(simuleringDto).isPresent();
@@ -249,8 +288,9 @@ public class SimuleringResultatTjenesteTest {
 
         // Mottaker = bruker
         Optional<SimuleringForMottakerDto> brukerOptional = simuleringResultatDto.getPerioderPerMottaker()
-                .stream().filter(p -> p.getMottakerType()
-                        .equals(MottakerType.BRUKER)).findFirst();
+                .stream()
+                .filter(p -> p.getMottakerType().equals(MottakerType.BRUKER))
+                .findFirst();
         assertThat(brukerOptional).isPresent();
         SimuleringForMottakerDto bruker = brukerOptional.get();
         assertThat(bruker.getResultatPerFagområde()).hasSize(1);
@@ -262,20 +302,42 @@ public class SimuleringResultatTjenesteTest {
         assertThat(bruker.getResultatOgMotregningRader().get(0).getFeltnavn()).isEqualTo(RadId.INNTREKK_NESTE_MÅNED);
         assertThat(bruker.getResultatOgMotregningRader().get(0).getResultaterPerMåned()).hasSize(1);
         assertThat(bruker.getResultatOgMotregningRader().get(0).getResultaterPerMåned().get(0).getBeløp()).isEqualTo(0);
-        assertThat(bruker.getResultatOgMotregningRader().get(0).getResultaterPerMåned().get(0).getPeriode().getFom()).isEqualTo(startDato);
-        assertThat(bruker.getResultatOgMotregningRader().get(0).getResultaterPerMåned().get(0).getPeriode().getTom()).isEqualTo(andreMåned.minusDays(1));
+        assertThat(bruker.getResultatOgMotregningRader()
+                .get(0)
+                .getResultaterPerMåned()
+                .get(0)
+                .getPeriode()
+                .getFom()).isEqualTo(startDato);
+        assertThat(bruker.getResultatOgMotregningRader()
+                .get(0)
+                .getResultaterPerMåned()
+                .get(0)
+                .getPeriode()
+                .getTom()).isEqualTo(andreMåned.minusDays(1));
 
         assertThat(bruker.getResultatOgMotregningRader().get(1).getFeltnavn()).isEqualTo(RadId.RESULTAT);
         assertThat(bruker.getResultatOgMotregningRader().get(1).getResultaterPerMåned()).hasSize(1);
-        assertThat(bruker.getResultatOgMotregningRader().get(1).getResultaterPerMåned().get(0).getBeløp()).isEqualTo(2000);
-        assertThat(bruker.getResultatOgMotregningRader().get(1).getResultaterPerMåned().get(0).getPeriode().getFom()).isEqualTo(startDato);
-        assertThat(bruker.getResultatOgMotregningRader().get(1).getResultaterPerMåned().get(0).getPeriode().getTom()).isEqualTo(andreMåned.minusDays(1));
+        assertThat(bruker.getResultatOgMotregningRader().get(1).getResultaterPerMåned().get(0).getBeløp()).isEqualTo(
+                2000);
+        assertThat(bruker.getResultatOgMotregningRader()
+                .get(1)
+                .getResultaterPerMåned()
+                .get(0)
+                .getPeriode()
+                .getFom()).isEqualTo(startDato);
+        assertThat(bruker.getResultatOgMotregningRader()
+                .get(1)
+                .getResultaterPerMåned()
+                .get(0)
+                .getPeriode()
+                .getTom()).isEqualTo(andreMåned.minusDays(1));
 
 
         // Mottaker = arbeidsgiver med fnr
         Optional<SimuleringForMottakerDto> arbgivPrivOptional = simuleringResultatDto.getPerioderPerMottaker()
-                .stream().filter(p -> p.getMottakerType()
-                        .equals(MottakerType.ARBG_PRIV)).findFirst();
+                .stream()
+                .filter(p -> p.getMottakerType().equals(MottakerType.ARBG_PRIV))
+                .findFirst();
         assertThat(arbgivPrivOptional).isPresent();
         SimuleringForMottakerDto arbgivPriv = arbgivPrivOptional.get();
         assertThat(arbgivPriv.getMottakerNavn()).isEqualTo(navn);
@@ -291,8 +353,9 @@ public class SimuleringResultatTjenesteTest {
 
         // Mottaker = arbeidsgiver med orgnr
         Optional<SimuleringForMottakerDto> arbgivOrgnrOptional = simuleringResultatDto.getPerioderPerMottaker()
-                .stream().filter(p -> p.getMottakerType()
-                        .equals(MottakerType.ARBG_ORG)).findFirst();
+                .stream()
+                .filter(p -> p.getMottakerType().equals(MottakerType.ARBG_ORG))
+                .findFirst();
         assertThat(arbgivOrgnrOptional).isPresent();
         SimuleringForMottakerDto arbgivOrgnr = arbgivOrgnrOptional.get();
         assertThat(arbgivOrgnr.getMottakerNavn()).isEqualToIgnoringCase(orgName);
@@ -330,28 +393,38 @@ public class SimuleringResultatTjenesteTest {
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER)
-                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), KREDIT, YTELSE, FORELDREPENGER, 5000))
-                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER, 7000))
+                                .medSimulertPostering(
+                                        postering(startDato, andreMåned.minusDays(1), KREDIT, YTELSE, FORELDREPENGER,
+                                                5000))
+                                .medSimulertPostering(
+                                        postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER,
+                                                7000))
                                 .build())
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.ARBG_PRIV)
                                 .medMottakerNummer(fnrArbgiv)
-                                .medSimulertPostering(postering(startDato.minusMonths(1), startDato.minusDays(1), KREDIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER, 1000))
-                                .medSimulertPostering(postering(startDato.minusMonths(1), startDato.minusDays(1), DEBIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER, 2000))
+                                .medSimulertPostering(
+                                        postering(startDato.minusMonths(1), startDato.minusDays(1), KREDIT, YTELSE,
+                                                FORELDREPENGER_ARBEIDSGIVER, 1000))
+                                .medSimulertPostering(
+                                        postering(startDato.minusMonths(1), startDato.minusDays(1), DEBIT, YTELSE,
+                                                FORELDREPENGER_ARBEIDSGIVER, 2000))
                                 .build())
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.ARBG_ORG)
                                 .medMottakerNummer(orgnr)
-                                .medSimulertPostering(postering(andreMåned, andreMåned.plusMonths(1).minusDays(1), DEBIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER, 1000))
+                                .medSimulertPostering(
+                                        postering(andreMåned, andreMåned.plusMonths(1).minusDays(1), DEBIT, YTELSE,
+                                                FORELDREPENGER_ARBEIDSGIVER, 1000))
                                 .build())
                         .build())
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
-        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
+        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
+                behandlingId);
         assertThat(simuleringDto).isPresent();
 
         DetaljertSimuleringResultatDto simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
@@ -373,18 +446,24 @@ public class SimuleringResultatTjenesteTest {
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER)
-                                .medSimulertPostering(postering(startDato.plusDays(3), startDato.plusDays(3), KREDIT, YTELSE, ENGANGSSTØNAD, 40000))
-                                .medSimulertPostering(postering(startDato.plusDays(3), startDato.plusDays(3), DEBIT, FEILUTBETALING, ENGANGSSTØNAD, 40000))
-                                .medSimulertPostering(postering(startDato.plusDays(3), startDato.plusDays(3), DEBIT, YTELSE, ENGANGSSTØNAD, 40000))
+                                .medSimulertPostering(
+                                        postering(startDato.plusDays(3), startDato.plusDays(3), KREDIT, YTELSE,
+                                                ENGANGSSTØNAD, 40000))
+                                .medSimulertPostering(
+                                        postering(startDato.plusDays(3), startDato.plusDays(3), DEBIT, FEILUTBETALING,
+                                                ENGANGSSTØNAD, 40000))
+                                .medSimulertPostering(
+                                        postering(startDato.plusDays(3), startDato.plusDays(3), DEBIT, YTELSE,
+                                                ENGANGSSTØNAD, 40000))
                                 .build())
                         .build())
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
-        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
+        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
+                behandlingId);
 
         // Assert
         assertThat(simuleringDto).isPresent();
@@ -408,17 +487,21 @@ public class SimuleringResultatTjenesteTest {
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER)
-                                .medSimulertPostering(postering(førsteAugust2018, førsteAugust2018.plusDays(15), DEBIT, YTELSE, FORELDREPENGER, 15600.75))
-                                .medSimulertPostering(postering(førsteAugust2018.plusDays(16), førsteAugust2018.plusDays(25), DEBIT, YTELSE, FORELDREPENGER, 7400.85))
+                                .medSimulertPostering(
+                                        postering(førsteAugust2018, førsteAugust2018.plusDays(15), DEBIT, YTELSE,
+                                                FORELDREPENGER, 15600.75))
+                                .medSimulertPostering(
+                                        postering(førsteAugust2018.plusDays(16), førsteAugust2018.plusDays(25), DEBIT,
+                                                YTELSE, FORELDREPENGER, 7400.85))
                                 .build())
                         .build())
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
-        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
+        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
+                behandlingId);
 
         // Assert
         assertThat(simuleringDto).isPresent();
@@ -447,21 +530,26 @@ public class SimuleringResultatTjenesteTest {
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER)
-                                .medSimulertPostering(postering(januar01, januar31, DEBIT, YTELSE, FORELDREPENGER, 523, januar23))
+                                .medSimulertPostering(
+                                        postering(januar01, januar31, DEBIT, YTELSE, FORELDREPENGER, 523, januar23))
                                 .build())
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.ARBG_ORG)
-                                .medSimulertPostering(postering(januar01, januar31, DEBIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER, 14875, januar31))
-                                .medSimulertPostering(postering(februar01, februar28, DEBIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER, 25875, februar28))
+                                .medSimulertPostering(
+                                        postering(januar01, januar31, DEBIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER, 14875,
+                                                januar31))
+                                .medSimulertPostering(
+                                        postering(februar01, februar28, DEBIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER,
+                                                25875, februar28))
                                 .build())
                         .build())
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
-        Optional<SimuleringDto> optSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
+        Optional<SimuleringDto> optSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
+                behandlingId);
 
         // Assert
         assertThat(optSimuleringDto).isPresent();
@@ -498,16 +586,18 @@ public class SimuleringResultatTjenesteTest {
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.ARBG_ORG)
-                                .medSimulertPostering(postering(februar01, februar28, DEBIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER, 25875, februar28))
+                                .medSimulertPostering(
+                                        postering(februar01, februar28, DEBIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER,
+                                                25875, februar28))
                                 .build())
                         .build())
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
-        Optional<SimuleringDto> optSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
+        Optional<SimuleringDto> optSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
+                behandlingId);
 
         // Assert
         assertThat(optSimuleringDto).isPresent();
@@ -532,19 +622,26 @@ public class SimuleringResultatTjenesteTest {
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER)
-                                .medSimulertPostering(postering(februar01, februar28, DEBIT, FEILUTBETALING, FORELDREPENGER, feilutbetaltBeløp, februar28))
-                                .medSimulertPostering(postering(februar01, februar28, KREDIT, YTELSE, FORELDREPENGER, 30000, februar28))
-                                .medSimulertPostering(postering(februar01, februar28, DEBIT, YTELSE, FORELDREPENGER, 18000, februar28))
-                                .medSimulertPostering(postering(februar01, februar28, DEBIT, YTELSE, FORELDREPENGER, feilutbetaltBeløp, februar28))
+                                .medSimulertPostering(
+                                        postering(februar01, februar28, DEBIT, FEILUTBETALING, FORELDREPENGER,
+                                                feilutbetaltBeløp, februar28))
+                                .medSimulertPostering(
+                                        postering(februar01, februar28, KREDIT, YTELSE, FORELDREPENGER, 30000,
+                                                februar28))
+                                .medSimulertPostering(
+                                        postering(februar01, februar28, DEBIT, YTELSE, FORELDREPENGER, 18000,
+                                                februar28))
+                                .medSimulertPostering(postering(februar01, februar28, DEBIT, YTELSE, FORELDREPENGER,
+                                        feilutbetaltBeløp, februar28))
                                 .build())
                         .build())
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
-        FeilutbetaltePerioderDto feilutbetaltePerioderDto = simuleringResultatTjeneste.hentFeilutbetaltePerioder(behandlingId);
+        FeilutbetaltePerioderDto feilutbetaltePerioderDto = simuleringResultatTjeneste.hentFeilutbetaltePerioder(
+                behandlingId);
 
         // Assert
         assertThat(feilutbetaltePerioderDto.getSumFeilutbetaling()).isEqualTo(feilutbetaltBeløp);
@@ -561,13 +658,22 @@ public class SimuleringResultatTjenesteTest {
         return datoKjøres;
     }
 
-    private SimulertPostering postering(LocalDate fom, LocalDate tom, BetalingType betalingType, PosteringType posteringType,
-                                        FagOmrådeKode fagOmrådeKode, double beløp) {
+    private SimulertPostering postering(LocalDate fom,
+                                        LocalDate tom,
+                                        BetalingType betalingType,
+                                        PosteringType posteringType,
+                                        FagOmrådeKode fagOmrådeKode,
+                                        double beløp) {
         return postering(fom, tom, betalingType, posteringType, fagOmrådeKode, beløp, LocalDate.now());
     }
 
-    private SimulertPostering postering(LocalDate fom, LocalDate tom, BetalingType betalingType, PosteringType posteringType,
-                                        FagOmrådeKode fagOmrådeKode, double beløp, LocalDate forfallsdato) {
+    private SimulertPostering postering(LocalDate fom,
+                                        LocalDate tom,
+                                        BetalingType betalingType,
+                                        PosteringType posteringType,
+                                        FagOmrådeKode fagOmrådeKode,
+                                        double beløp,
+                                        LocalDate forfallsdato) {
         return SimulertPostering.builder()
                 .medFagOmraadeKode(fagOmrådeKode)
                 .medFom(fom)
