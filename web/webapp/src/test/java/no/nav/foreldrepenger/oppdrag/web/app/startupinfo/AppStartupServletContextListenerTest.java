@@ -1,16 +1,17 @@
 package no.nav.foreldrepenger.oppdrag.web.app.startupinfo;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import javax.servlet.ServletContextEvent;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import no.nav.foreldrepenger.oppdrag.test.LogSniffer;
+import ch.qos.logback.classic.Level;
+import no.nav.vedtak.log.util.MemoryAppender;
 
 public class AppStartupServletContextListenerTest {
 
@@ -18,10 +19,9 @@ public class AppStartupServletContextListenerTest {
 
     private AppStartupInfoLogger mockAppStartupInfoLogger;
 
-    @Rule
-    public final LogSniffer logSniffer = new LogSniffer();
+    public final MemoryAppender logSniffer = MemoryAppender.sniff(AppStartupServletContextListener.class);
 
-    @Before
+    @BeforeEach
     public void setup() {
         listener = new AppStartupServletContextListener();
         mockAppStartupInfoLogger = mock(AppStartupInfoLogger.class);
@@ -41,7 +41,7 @@ public class AppStartupServletContextListenerTest {
 
         listener.contextInitialized(mock(ServletContextEvent.class));
 
-        logSniffer.assertHasErrorMessage("FPO-753407");
+        assertThat(logSniffer.contains("FPO-753407", Level.ERROR)).isTrue();
     }
 
     @Test

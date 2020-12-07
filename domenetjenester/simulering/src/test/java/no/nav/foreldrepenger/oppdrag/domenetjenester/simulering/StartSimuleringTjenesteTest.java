@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -17,15 +18,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import javax.persistence.EntityManager;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 
 import no.nav.foreldrepenger.oppdrag.OppdragConsumer;
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.OppdragMapper;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.SimuleringResultatTransformer;
@@ -48,20 +50,15 @@ import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.S
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse;
 import no.nav.vedtak.exception.TekniskException;
 
+@ExtendWith(EntityManagerAwareExtension.class)
 public class StartSimuleringTjenesteTest {
 
     private static final Long BEHANDLING_ID_1 = 42345L;
     private static final Long BEHANDLING_ID_2 = 87890L;
     private static final String AKTØR_ID = "12345678901";
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Rule
-    public UnittestRepositoryRule repositoryRule = new UnittestRepositoryRule();
-
-    private SimuleringXmlRepository simuleringXmlRepository = new SimuleringXmlRepository(repositoryRule.getEntityManager());
-    private SimuleringRepository simuleringRepository = new SimuleringRepository(repositoryRule.getEntityManager());
+    private SimuleringXmlRepository simuleringXmlRepository;
+    private SimuleringRepository simuleringRepository;
     private OppdragConsumer oppdragConsumerMock = mock(OppdragConsumer.class);
     private PersonTjeneste tpsTjenesteMock = mock(PersonTjeneste.class);
     private SimuleringResultatTransformer resultatTransformer = new SimuleringResultatTransformer(tpsTjenesteMock);
@@ -69,13 +66,15 @@ public class StartSimuleringTjenesteTest {
     private StartSimuleringTjeneste simuleringTjeneste;
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    public void setup(EntityManager entityManager) {
 
+        simuleringXmlRepository = new SimuleringXmlRepository(entityManager);
+        simuleringRepository = new SimuleringRepository(entityManager);
         simuleringTjeneste = new StartSimuleringTjeneste(simuleringXmlRepository, simuleringRepository, oppdragConsumerMock, resultatTransformer, simuleringBeregningTjeneste);
         when(tpsTjenesteMock.hentAktørForFnr(any())).thenReturn(Optional.of(new AktørId(AKTØR_ID)));
 
-        repositoryRule.getEntityManager().createQuery("DELETE from SimuleringXml s WHERE s.eksternReferanse.behandlingId IN (:behandlingId1, :behandlingId2)")
+        entityManager.createQuery("DELETE from SimuleringXml s WHERE s.eksternReferanse.behandlingId IN (:behandlingId1, :behandlingId2)")
                 .setParameter("behandlingId1", BEHANDLING_ID_1)
                 .setParameter("behandlingId2", BEHANDLING_ID_2)
                 .executeUpdate();
@@ -83,24 +82,13 @@ public class StartSimuleringTjenesteTest {
 
     @Test
     public void test_skalKasteFeilVedUkjentEllerUgyldigXml() {
-        expectedException.expect(TekniskException.class);
-        expectedException.expectMessage("FPO-832562");
-
-        simuleringTjeneste.startSimulering(BEHANDLING_ID_1, Collections.singletonList("abcd"));
-    }
-
-    // TODO lagringAvSimuleringXML er implementert vha to transaksjoner, som gjør at data blir liggende i test-datbasen
-    boolean erPåJenkins() {
-        return !simuleringXmlRepository.hentSimuleringXml(BEHANDLING_ID_1).isEmpty()
-                || !simuleringXmlRepository.hentSimuleringXml(BEHANDLING_ID_2).isEmpty();
+        assertThatThrownBy(() -> simuleringTjeneste.startSimulering(BEHANDLING_ID_1, Collections.singletonList("abcd")))
+                .isInstanceOf(TekniskException.class)
+                .hasMessageContaining("FPO-832562");
     }
 
     @Test
     public void test_skalLagreOppdragXmlVedGyldigXml() throws Exception {
-        if (erPåJenkins()) {
-            return;
-        }
-
         String xml = TestResourceLoader.loadXml("/xml/oppdrag_mottaker.xml");
 
         when(oppdragConsumerMock.hentSimulerBeregningResponse(any())).thenReturn(lagRespons("12345678901", "12345"));
@@ -118,9 +106,6 @@ public class StartSimuleringTjenesteTest {
 
     @Test
     public void test_skalLagreToOppdragXml() throws Exception {
-        if (erPåJenkins()) {
-            return;
-        }
         String xml1 = TestResourceLoader.loadXml("/xml/oppdrag_mottaker_3.xml");
         String xml2 = TestResourceLoader.loadXml("/xml/oppdrag_refusjon.xml");
 
@@ -136,11 +121,8 @@ public class StartSimuleringTjenesteTest {
     }
 
     @Test
-    @Ignore("FIXME: Enten må koden fikses eller testen, feiler med NullpointerException")
+    @Disabled("FIXME: Enten må koden fikses eller testen, feiler med NullpointerException")
     public void test_skal_deaktivere_forrige_simulering_når_ny_simulering_gir_tomt_resultat() throws Exception {
-        if (erPåJenkins()) {
-            return;
-        }
         String xml1 = TestResourceLoader.loadXml("/xml/oppdrag_mottaker_2.xml");
         String xml2 = TestResourceLoader.loadXml("/xml/oppdrag_refusjon.xml");
 
@@ -161,9 +143,6 @@ public class StartSimuleringTjenesteTest {
 
     @Test
     public void test_skal_deaktiver_behandling_med_gitt_behandling() throws Exception {
-        if (erPåJenkins()) {
-            return;
-        }
         String xml = TestResourceLoader.loadXml("/xml/oppdrag_mottaker_2.xml");
 
         when(oppdragConsumerMock.hentSimulerBeregningResponse(any())).thenReturn(lagRespons("24153532444", "423535"));

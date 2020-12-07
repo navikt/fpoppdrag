@@ -46,11 +46,6 @@
             <artifactId>ojdbc8</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-            <artifactId>testutilities</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <!-- ekstern avhengighet -->
         <dependency>

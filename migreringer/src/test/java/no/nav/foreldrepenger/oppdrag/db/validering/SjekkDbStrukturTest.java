@@ -12,8 +12,8 @@ import java.util.Locale;
 
 import javax.sql.DataSource;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import no.nav.foreldrepenger.oppdrag.dbstoette.DatasourceConfiguration;
 import no.nav.vedtak.felles.lokal.dbstoette.ConnectionHandler;
@@ -29,7 +29,7 @@ public class SjekkDbStrukturTest {
 
     private static String schema;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws FileNotFoundException {
         List<DBConnectionProperties> connectionProperties = DatasourceConfiguration.UNIT_TEST.get();
 
@@ -90,7 +90,7 @@ public class SjekkDbStrukturTest {
         System.err.println(error);
         int sz = avvik.size();
         assertThat(sz).isLessThanOrEqualTo(17);
-      
+
 //        assumeTrue(error, avvik.size() == 0); // Fjerne denne når denne ikke lenger ignorerer
 
         assertThat(avvik).withFailMessage("Mangler dokumentasjon for %s kolonner. %s\n %s", avvik.size(), avvik, HJELP).isEmpty();
@@ -176,32 +176,32 @@ public class SjekkDbStrukturTest {
 
         int sz = avvik.size();
         String feilTekst = "Feil navn på kolonner som refererer KODELISTE, skal ha 'KL_' prefiks. Antall feil=";
-        
+
         assertThat(avvik).withFailMessage(feilTekst + sz + ".\n\nTabell, kolonne\n" + tekst).isEmpty();
 
     }
 
     @Test
     public void skal_ha_virtual_column_defnisjon_for_kodeverk_kolonne_i_source_tabell() throws Exception {
-        String sql = "SELECT T.TABLE_NAME, T.CONSTRAINT_NAME, LISTAGG(COLC.COLUMN_NAME, ',') WITHIN GROUP (ORDER BY COLC.POSITION) AS COLUMNS FROM ALL_CONSTRAINTS T\n" + 
-            "INNER JOIN ALL_CONS_COLUMNS COLC ON COLC.CONSTRAINT_NAME=T.CONSTRAINT_NAME AND COLC.TABLE_NAME = T.TABLE_NAME AND COLC.OWNER=T.OWNER \n" + 
-            "WHERE T.OWNER = UPPER(?) AND COLC.OWNER = UPPER(?) \n" + 
-            "AND EXISTS\n" + 
-            "  (SELECT 1 FROM ALL_CONSTRAINTS UC\n" + 
-            "    INNER JOIN ALL_CONS_COLUMNS COLA ON COLA.CONSTRAINT_NAME=UC.CONSTRAINT_NAME AND COLA.OWNER =UC.OWNER \n" + 
-            "    INNER JOIN ALL_CONS_COLUMNS COLB ON COLB.CONSTRAINT_NAME=UC.R_CONSTRAINT_NAME AND COLB.OWNER =UC.OWNER AND COLB.OWNER=UC.OWNER AND COLB.OWNER=COLA.OWNER\n" + 
-            "    INNER JOIN ALL_TAB_COLS AT ON AT.COLUMN_NAME       =COLA.COLUMN_NAME AND AT.TABLE_NAME       =COLA.TABLE_NAME AND AT.OWNER =COLA.OWNER\n" + 
-            "    WHERE UC.CONSTRAINT_TYPE=T.CONSTRAINT_TYPE AND UC.CONSTRAINT_NAME = T.CONSTRAINT_NAME AND UC.OWNER = T.OWNER\n" + 
-            "      AND COLA.TABLE_NAME = T.TABLE_NAME AND T.TABLE_NAME=COLA.TABLE_NAME AND COLA.owner=T.OWNER AND COLA.CONSTRAINT_NAME=T.CONSTRAINT_NAME AND COLB.OWNER=T.OWNER \n" + 
-            "      AND COLB.COLUMN_NAME    ='KODEVERK' AND COLB.TABLE_NAME ='KODELISTE' AND COLB.POSITION =COLA.POSITION\n" + 
-            "      AND COLA.TABLE_NAME NOT LIKE 'KODELI%'\n" + 
+        String sql = "SELECT T.TABLE_NAME, T.CONSTRAINT_NAME, LISTAGG(COLC.COLUMN_NAME, ',') WITHIN GROUP (ORDER BY COLC.POSITION) AS COLUMNS FROM ALL_CONSTRAINTS T\n" +
+            "INNER JOIN ALL_CONS_COLUMNS COLC ON COLC.CONSTRAINT_NAME=T.CONSTRAINT_NAME AND COLC.TABLE_NAME = T.TABLE_NAME AND COLC.OWNER=T.OWNER \n" +
+            "WHERE T.OWNER = UPPER(?) AND COLC.OWNER = UPPER(?) \n" +
+            "AND EXISTS\n" +
+            "  (SELECT 1 FROM ALL_CONSTRAINTS UC\n" +
+            "    INNER JOIN ALL_CONS_COLUMNS COLA ON COLA.CONSTRAINT_NAME=UC.CONSTRAINT_NAME AND COLA.OWNER =UC.OWNER \n" +
+            "    INNER JOIN ALL_CONS_COLUMNS COLB ON COLB.CONSTRAINT_NAME=UC.R_CONSTRAINT_NAME AND COLB.OWNER =UC.OWNER AND COLB.OWNER=UC.OWNER AND COLB.OWNER=COLA.OWNER\n" +
+            "    INNER JOIN ALL_TAB_COLS AT ON AT.COLUMN_NAME       =COLA.COLUMN_NAME AND AT.TABLE_NAME       =COLA.TABLE_NAME AND AT.OWNER =COLA.OWNER\n" +
+            "    WHERE UC.CONSTRAINT_TYPE=T.CONSTRAINT_TYPE AND UC.CONSTRAINT_NAME = T.CONSTRAINT_NAME AND UC.OWNER = T.OWNER\n" +
+            "      AND COLA.TABLE_NAME = T.TABLE_NAME AND T.TABLE_NAME=COLA.TABLE_NAME AND COLA.owner=T.OWNER AND COLA.CONSTRAINT_NAME=T.CONSTRAINT_NAME AND COLB.OWNER=T.OWNER \n" +
+            "      AND COLB.COLUMN_NAME    ='KODEVERK' AND COLB.TABLE_NAME ='KODELISTE' AND COLB.POSITION =COLA.POSITION\n" +
+            "      AND COLA.TABLE_NAME NOT LIKE 'KODELI%'\n" +
             "      AND AT.VIRTUAL_COLUMN='NO'\n" +
             "      AND UC.OWNER = UPPER(?) AND AT.OWNER = UPPER(?) AND COLA.OWNER = UPPER(?) AND COLB.OWNER = UPPER(?) \n" +
-            "  )\n" + 
-            "\n" + 
-            "GROUP BY T.TABLE_NAME, T.CONSTRAINT_NAME\n" + 
+            "  )\n" +
+            "\n" +
+            "GROUP BY T.TABLE_NAME, T.CONSTRAINT_NAME\n" +
             "ORDER BY 1, 2";
-        
+
         //System.out.println(sql);
 
         List<String> avvik = new ArrayList<>();
@@ -222,14 +222,14 @@ public class SjekkDbStrukturTest {
                     String table = rs.getString(1);
                     String fk = rs.getString(2);
                     String cols = rs.getString(3);
-                    
+
                     if(ignoreColumn(table, cols)) {
                         continue;
                     }
-                    
+
                     @SuppressWarnings("unused")
                     String klCol = cols.split(",\\s*")[1];
-                    
+
                     String t = table + ", " + fk + ", " + cols;
                     avvik.add(t);
                     tekst.append(t).append("\n");
@@ -240,7 +240,7 @@ public class SjekkDbStrukturTest {
 
         int sz = avvik.size();
         String feilTekst = "Feil definisjon på kolonner som refererer KODELISTE, definieres som virtual column, ikke med default eller annet. Antall feil=";
-        
+
         assertThat(avvik).withFailMessage(feilTekst + sz + ".\n\nTabell, kolonne\n" + tekst).isEmpty();
 
     }
@@ -249,10 +249,10 @@ public class SjekkDbStrukturTest {
         String[][] ignored = new String [] []{
                 {"IAY_INNTEKTSPOST", "KL_YTELSE_TYPE"}
         };
-        
+
         table = table.toUpperCase(Locale.getDefault());
         cols = cols.toUpperCase(Locale.getDefault());
-        
+
         for(String[] ignore: ignored) {
             if(ignore[0].equals(table) && cols.contains(ignore[1])) {
                 return true;
@@ -289,7 +289,7 @@ public class SjekkDbStrukturTest {
 
         int sz = avvik.size();
         String feilTekst = "Feil eller mangelende definisjon av primary key (skal hete 'PK_<tabell navn>'). Antall feil=";
-        
+
         assertThat(avvik).withFailMessage(feilTekst + +sz + "\n\nTabell\n" + tekst).isEmpty();
 
     }
@@ -352,32 +352,32 @@ public class SjekkDbStrukturTest {
 
         int sz = avvik.size();
         String feilTekst = "Feil navngiving av index.  Primary Keys skal ha prefiks PK_, andre unike indekser prefiks UIDX_, vanlige indekser prefiks IDX_. Antall feil=";
-        
+
         assertThat(avvik).withFailMessage(feilTekst + +sz + "\n\nTabell, Index, Kolonne\n" + tekst).isEmpty();
 
     }
 
     @Test
     public void skal_ha_samme_data_type_for_begge_sider_av_en_FK() throws Exception {
-        String sql = "SELECT T.TABLE_NAME\n" + 
-            ", TCC.COLUMN_NAME AS KOL_A\n" + 
-            ", ATT.DATA_TYPE AS KOL_A_DATA_TYPE\n" + 
-            ", ATT.CHAR_LENGTH AS KOL_A_CHAR_LENGTH\n" + 
-            ", ATT.CHAR_USED AS KOL_A_CHAR_USED\n" + 
-            ", RCC.COLUMN_NAME AS KOL_B \n" + 
-            ", ATR.DATA_TYPE AS KOL_B_DATA_TYPE\n" + 
-            ", ATR.CHAR_LENGTH AS KOL_B_CHAR_LENGTH\n" + 
-            ", atr.CHAR_USED as KOL_B_CHAR_USED\n" + 
-            "FROM ALL_CONSTRAINTS T \n" + 
-            "INNER JOIN ALL_CONSTRAINTS R ON R.OWNER=T.OWNER AND R.CONSTRAINT_NAME = T.R_CONSTRAINT_NAME\n" + 
-            "INNER JOIN ALL_CONS_COLUMNS TCC ON TCC.TABLE_NAME=T.TABLE_NAME AND TCC.OWNER=T.OWNER AND TCC.CONSTRAINT_NAME=T.CONSTRAINT_NAME \n" + 
-            "INNER JOIN ALL_CONS_COLUMNS RCC ON RCC.TABLE_NAME = R.TABLE_NAME AND RCC.OWNER=R.OWNER AND RCC.CONSTRAINT_NAME=R.CONSTRAINT_NAME\n" + 
-            "INNER JOIN ALL_TAB_COLS ATT ON ATT.COLUMN_NAME=TCC.COLUMN_NAME AND ATT.OWNER=TCC.OWNER AND Att.TABLE_NAME=TCC.TABLE_NAME\n" + 
-            "inner join all_tab_cols atr on atr.column_name=rcc.column_name and atr.owner=rcc.owner and atr.table_name=rcc.table_name\n" + 
-            "WHERE T.OWNER=upper(?) AND T.CONSTRAINT_TYPE='R'\n" + 
-            "AND TCC.POSITION = RCC.POSITION\n" + 
-            "AND TCC.POSITION IS NOT NULL AND RCC.POSITION IS NOT NULL\n" + 
-            "AND ((ATT.DATA_TYPE!=ATR.DATA_TYPE) OR (ATT.CHAR_LENGTH!=ATR.CHAR_LENGTH OR ATT.CHAR_USED!=ATR.CHAR_USED) OR (ATT.DATA_TYPE NOT LIKE '%CHAR%' AND ATT.DATA_LENGTH!=ATR.DATA_LENGTH))\n" + 
+        String sql = "SELECT T.TABLE_NAME\n" +
+            ", TCC.COLUMN_NAME AS KOL_A\n" +
+            ", ATT.DATA_TYPE AS KOL_A_DATA_TYPE\n" +
+            ", ATT.CHAR_LENGTH AS KOL_A_CHAR_LENGTH\n" +
+            ", ATT.CHAR_USED AS KOL_A_CHAR_USED\n" +
+            ", RCC.COLUMN_NAME AS KOL_B \n" +
+            ", ATR.DATA_TYPE AS KOL_B_DATA_TYPE\n" +
+            ", ATR.CHAR_LENGTH AS KOL_B_CHAR_LENGTH\n" +
+            ", atr.CHAR_USED as KOL_B_CHAR_USED\n" +
+            "FROM ALL_CONSTRAINTS T \n" +
+            "INNER JOIN ALL_CONSTRAINTS R ON R.OWNER=T.OWNER AND R.CONSTRAINT_NAME = T.R_CONSTRAINT_NAME\n" +
+            "INNER JOIN ALL_CONS_COLUMNS TCC ON TCC.TABLE_NAME=T.TABLE_NAME AND TCC.OWNER=T.OWNER AND TCC.CONSTRAINT_NAME=T.CONSTRAINT_NAME \n" +
+            "INNER JOIN ALL_CONS_COLUMNS RCC ON RCC.TABLE_NAME = R.TABLE_NAME AND RCC.OWNER=R.OWNER AND RCC.CONSTRAINT_NAME=R.CONSTRAINT_NAME\n" +
+            "INNER JOIN ALL_TAB_COLS ATT ON ATT.COLUMN_NAME=TCC.COLUMN_NAME AND ATT.OWNER=TCC.OWNER AND Att.TABLE_NAME=TCC.TABLE_NAME\n" +
+            "inner join all_tab_cols atr on atr.column_name=rcc.column_name and atr.owner=rcc.owner and atr.table_name=rcc.table_name\n" +
+            "WHERE T.OWNER=upper(?) AND T.CONSTRAINT_TYPE='R'\n" +
+            "AND TCC.POSITION = RCC.POSITION\n" +
+            "AND TCC.POSITION IS NOT NULL AND RCC.POSITION IS NOT NULL\n" +
+            "AND ((ATT.DATA_TYPE!=ATR.DATA_TYPE) OR (ATT.CHAR_LENGTH!=ATR.CHAR_LENGTH OR ATT.CHAR_USED!=ATR.CHAR_USED) OR (ATT.DATA_TYPE NOT LIKE '%CHAR%' AND ATT.DATA_LENGTH!=ATR.DATA_LENGTH))\n" +
             "ORDER BY T.TABLE_NAME, TCC.COLUMN_NAME";
 
         List<String> avvik = new ArrayList<>();
@@ -401,7 +401,7 @@ public class SjekkDbStrukturTest {
         int sz = avvik.size();
         String feilTekst = "Forskjellig datatype for kolonne på hver side av en FK. Kan være deklarert feil (husk VARCHAR2(100 CHAR) og ikke VARCHAR2(100)). Antall feil=";
         String cols = ".\n\nTABELL, KOL_A, KOL_A_DATA_TYPE, KOL_A_CHAR_LENGTH, KOL_A_CHAR_USED, KOL_B, KOL_B_DATA_TYPE, KOL_B_CHAR_LENGTH, KOL_B_CHAR_USED\n";
-        
+
         assertThat(avvik).withFailMessage(feilTekst + +sz + cols + tekst).isEmpty();
 
     }
@@ -435,7 +435,7 @@ public class SjekkDbStrukturTest {
         int sz = avvik.size();
         String feilTekst = "Feil deklarasjon av VARCHAR2 kolonne (husk VARCHAR2(100 CHAR) og ikke VARCHAR2(100)). Antall feil=";
         String cols = ".\n\nTABELL, KOLONNE, DATA_TYPE, CHAR_USED, CHAR_LENGTH\n";
-        
+
         assertThat(avvik).withFailMessage(feilTekst + +sz + cols + tekst).isEmpty();
 
     }

@@ -5,23 +5,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 
-import org.junit.Rule;
-import org.junit.Test;
+import javax.persistence.EntityManager;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.BehandlingRef;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
-import no.nav.vedtak.felles.testutilities.db.RepositoryRule;
 
+@ExtendWith(EntityManagerAwareExtension.class)
 public class PipRepositoryTest {
 
-    @Rule
-    public final RepositoryRule repoRule = new UnittestRepositoryRule();
-    private PipRepository pipRepository = new PipRepository(repoRule.getEntityManager());
-    private SimuleringRepository simuleringRepository = new SimuleringRepository(repoRule.getEntityManager());
+    private PipRepository pipRepository;
+    private SimuleringRepository simuleringRepository;
+
+    @BeforeEach
+    void setUp(EntityManager entityManager) {
+        pipRepository = new PipRepository(entityManager);
+        simuleringRepository = new SimuleringRepository(entityManager);
+    }
 
     @Test
     public void henterAktørIdForBehandlingId() {

@@ -2,7 +2,7 @@ package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import no.nav.foreldrepenger.integrasjon.økonomistøtte.oppdrag.Oppdrag110;
 import no.nav.foreldrepenger.integrasjon.økonomistøtte.oppdrag.OppdragSkjemaConstants;

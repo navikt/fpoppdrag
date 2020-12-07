@@ -14,10 +14,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Rule;
-import org.junit.Test;
+import javax.persistence.EntityManager;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
@@ -38,17 +41,21 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.Simulering
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatPerMånedDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatRadDto;
 
+@ExtendWith(EntityManagerAwareExtension.class)
 public class SimuleringResultatTjenesteFlereYtelserTest {
 
-    @Rule
-    public UnittestRepositoryRule repoRule = new UnittestRepositoryRule();
-
-    private SimuleringRepository simuleringRepository = new SimuleringRepository(repoRule.getEntityManager());
+    private SimuleringRepository simuleringRepository;
 
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
-    private SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjeneste(simuleringRepository, mock(HentNavnTjeneste.class), simuleringBeregningTjeneste);
+    private SimuleringResultatTjeneste simuleringResultatTjeneste;
 
     private String aktørId = "0";
+
+    @BeforeEach
+    void setUp(EntityManager entityManager) {
+        simuleringRepository = new SimuleringRepository(entityManager);
+        simuleringResultatTjeneste = new SimuleringResultatTjeneste(simuleringRepository, mock(HentNavnTjeneste.class), simuleringBeregningTjeneste);
+    }
 
     @Test
     public void henterResultatForFlereYtelser() {
@@ -84,7 +91,6 @@ public class SimuleringResultatTjenesteFlereYtelserTest {
                 .build();
 
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        repoRule.getRepository().flushAndClear();
 
         // Act
         Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);

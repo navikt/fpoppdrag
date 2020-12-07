@@ -40,26 +40,28 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.ws.rs.core.Context;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import no.nav.vedtak.felles.testutilities.cdi.CdiRunner;
+import no.nav.vedtak.felles.testutilities.cdi.WeldContext;
 
-@RunWith(CdiRunner.class)
 public class RestApiInputValideringAnnoteringTest extends RestApiTester {
+
+    static {
+        WeldContext.getInstance(); // init cdi container
+    }
 
     private Function<Method, String> printKlasseOgMetodeNavn = (method -> String.format("%s.%s", method.getDeclaringClass(), method.getName()));
 
-    @Before
+    @BeforeEach
     public void setup() {
         System.setProperty("loadbalancer.url", "http://localhost:8070");
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         System.clearProperty("loadbalancer.url");
     }

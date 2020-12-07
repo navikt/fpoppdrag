@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.oppdrag;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -10,10 +11,8 @@ import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.soap.SOAPFaultException;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerFpService;
@@ -26,10 +25,7 @@ public class OppdragConsumerTestET {
 
     private OppdragConsumer oppdragConsumer;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         mockOppdragService = Mockito.mock(SimulerFpService.class);
         oppdragConsumer = new OppdragConsumerImpl(mockOppdragService);
@@ -37,11 +33,13 @@ public class OppdragConsumerTestET {
 
     @Test
     public void skalKasteIntegrasjonsfeilNårWebserviceSenderSoapFault_hentSimulerBeregningResponse() throws Exception {
-        when(mockOppdragService.simulerBeregning(any(SimulerBeregningRequest.class)))
-                .thenThrow(opprettSOAPFaultException("feil"));
-        expectedException.expect(IntegrasjonException.class);
-        expectedException.expectMessage("FP-942048");
-        oppdragConsumer.hentSimulerBeregningResponse(mock(SimulerBeregningRequest.class));
+        when(mockOppdragService.simulerBeregning(any(SimulerBeregningRequest.class))).thenThrow(
+                opprettSOAPFaultException("feil"));
+
+        assertThatThrownBy(
+                () -> oppdragConsumer.hentSimulerBeregningResponse(mock(SimulerBeregningRequest.class)))
+                .isInstanceOf(IntegrasjonException.class)
+                .hasMessageContaining("FP-942048");
     }
 
     private SOAPFaultException opprettSOAPFaultException(String faultString) throws SOAPException {

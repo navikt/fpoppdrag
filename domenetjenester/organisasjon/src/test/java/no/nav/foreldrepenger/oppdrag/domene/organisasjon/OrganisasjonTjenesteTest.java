@@ -7,8 +7,8 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonEReg;
 import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonRestKlient;
@@ -20,7 +20,7 @@ public class OrganisasjonTjenesteTest {
 
     private static final String ORG_NUMMER = "973861778";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         organisasjonConsumer = mock(OrganisasjonRestKlient.class);
         organisasjonTjeneste = new OrganisasjonTjeneste(organisasjonConsumer);

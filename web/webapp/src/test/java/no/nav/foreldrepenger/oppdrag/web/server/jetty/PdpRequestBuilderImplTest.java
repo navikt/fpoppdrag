@@ -1,15 +1,17 @@
 package no.nav.foreldrepenger.oppdrag.web.server.jetty;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import javax.persistence.EntityManager;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.pip.PipRepository;
 import no.nav.foreldrepenger.oppdrag.web.server.jetty.abac.PdpRequestBuilderImpl;
-import no.nav.vedtak.felles.testutilities.db.RepositoryRule;
 import no.nav.vedtak.sikkerhet.abac.AbacAttributtSamling;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt;
@@ -17,17 +19,18 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt;
 import no.nav.vedtak.sikkerhet.abac.PdpRequest;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 
+@ExtendWith(EntityManagerAwareExtension.class)
 public class PdpRequestBuilderImplTest {
 
     private static final String DUMMY_ID_TOKEN = "dfksjkfjdgskjhkjuh";
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-    @Rule
-    public RepositoryRule repositoryRule = new UnittestRepositoryRule();
+    private PdpRequestBuilderImpl pdpRequestBuilder;
 
-    private PipRepository pipRepository = new PipRepository(repositoryRule.getEntityManager());
-    private PdpRequestBuilderImpl pdpRequestBuilder = new PdpRequestBuilderImpl(pipRepository);
+    @BeforeEach
+    void setUp(EntityManager entityManager) {
+        PipRepository pipRepository = new PipRepository(entityManager);
+        pdpRequestBuilder = new PdpRequestBuilderImpl(pipRepository);
+    }
 
     @Test
     public void skal_feil_lagPdpRequest_med_ugyldig_attributter() {
@@ -35,10 +38,9 @@ public class PdpRequestBuilderImplTest {
         AbacDataAttributter aktørIdAttribute = AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.DOKUMENT_DATA_ID, "foo");
         abacAttributtSamling.leggTil(aktørIdAttribute);
 
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("Utvikler-feil: ikke-implementert støtte for minst en av typene: [DOKUMENT_DATA_ID]");
-
-        pdpRequestBuilder.lagPdpRequest(abacAttributtSamling);
+        assertThatThrownBy(() -> pdpRequestBuilder.lagPdpRequest(abacAttributtSamling))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Utvikler-feil: ikke-implementert støtte for minst en av typene: [DOKUMENT_DATA_ID]");
     }
 
     @Test

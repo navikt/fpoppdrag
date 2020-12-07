@@ -10,29 +10,32 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.junit.Rule;
-import org.junit.Test;
+import javax.persistence.EntityManager;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import no.nav.foreldrepenger.kontrakter.tilkjentytelse.TilkjentYtelse;
-import no.nav.foreldrepenger.oppdrag.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.tilkjentytelse.TilkjentYtelseEntitet;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.tilkjentytelse.TilkjentYtelseRepository;
-import no.nav.foreldrepenger.oppdrag.test.LogSniffer;
-import no.nav.vedtak.felles.testutilities.db.Repository;
-import no.nav.vedtak.felles.testutilities.db.RepositoryRule;
+import no.nav.vedtak.log.util.MemoryAppender;
 
+@ExtendWith(EntityManagerAwareExtension.class)
 public class TilkjentYtelseTjenesteTest {
 
-    @Rule
-    public RepositoryRule repositoryRule = new UnittestRepositoryRule();
-    private Repository repository = repositoryRule.getRepository();
+    public final MemoryAppender logSniffer = MemoryAppender.sniff(TilkjentYtelseTjeneste.class);
 
-    @Rule
-    public final LogSniffer logSniffer = new LogSniffer();
+    private TilkjentYtelseRepository tilkjentYtelseRepository;
+    private final TilkjentYtelseRestKlient restClient = mock(TilkjentYtelseRestKlient.class);
+    private TilkjentYtelseTjeneste tilkjentYtelseTjeneste;
 
-    private TilkjentYtelseRepository tilkjentYtelseRepository = new TilkjentYtelseRepository(repositoryRule.getEntityManager());
-    private TilkjentYtelseRestKlient restClient = mock(TilkjentYtelseRestKlient.class);
-    private TilkjentYtelseTjeneste tilkjentYtelseTjeneste = new TilkjentYtelseTjeneste(tilkjentYtelseRepository, restClient);
+    @BeforeEach
+    void setUp(EntityManager entityManager) {
+        tilkjentYtelseRepository = new TilkjentYtelseRepository(entityManager);
+        tilkjentYtelseTjeneste = new TilkjentYtelseTjeneste(tilkjentYtelseRepository, restClient);
+    }
 
     @Test
     public void skal_hente_tilkjent_ytelse_fra_fpsak_og_lagre_i_fpoppdrag() {
@@ -58,11 +61,10 @@ public class TilkjentYtelseTjenesteTest {
 
         //Act
         tilkjentYtelseTjeneste.hentOgLagreTilkjentYtelse(BEHANDLING_ID);
-        repository.flushAndClear();
         tilkjentYtelseTjeneste.hentOgLagreTilkjentYtelse(BEHANDLING_ID);
 
         //Assert
-        logSniffer.assertHasInfoMessage("Har allerede hentet og lagret tilkjent ytelse for behandlingId=100000123. Ignorerer.");
+        assertThat(logSniffer.countEntries("Har allerede hentet og lagret tilkjent ytelse for behandlingId=100000123. Ignorerer.")).isEqualTo(1);
         //Blir kalt en gang i første hentOgLagreTilkjentYtelse
         verify(restClient).hentTilkjentYtelse(BEHANDLING_ID);
     }

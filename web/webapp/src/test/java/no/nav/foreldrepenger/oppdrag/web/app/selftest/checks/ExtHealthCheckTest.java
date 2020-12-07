@@ -4,8 +4,8 @@ import com.codahale.metrics.health.HealthCheck;
 
 import no.nav.foreldrepenger.oppdrag.web.app.selftest.checks.ExtHealthCheck.InternalResult;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,7 +15,7 @@ public class ExtHealthCheckTest {
 
     private ExtHealthCheck.InternalResult internalResult;
 
-    @Before
+    @BeforeEach
     public void setup() {
         check = new MyExtHealthCheck();
         internalResult = null;
