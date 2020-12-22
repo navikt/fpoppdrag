@@ -5,6 +5,7 @@ import static no.nav.vedtak.util.Objects.check;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +117,7 @@ public class StartSimuleringTjeneste {
         //TODO skal ikke ha ny transaksjon, bruk savepoint istedet.. ønsker å oppnå med dette at requestXML lagres også når det feiler
         simuleringXmlRepository.nyTransaksjon();
 
-        List<SimulerBeregningResponse> simuleringResponsListe = utførSimulering(simuleringRequestListe);
+        List<SimulerBeregningResponse> simuleringResponsListe = utførSimulering(simuleringRequestListe, oppdragXmlListe);
 
         LOG.info("Simulering svarmeldinger mottatt. behandlingID={} oppdragantall={} totalstørrelseUt={} tidsforbruk={} ms",
                 behandlingId,
@@ -155,7 +156,7 @@ public class StartSimuleringTjeneste {
             }
             List<SimuleringXml.Builder> xmlBuilderListe = lagSimuleringXmlEntitetBuilder(behandlingId, requestsForBruker);
 
-            List<SimulerBeregningResponse> beregningResultater = utførSimulering(requestsForBruker);
+            List<SimulerBeregningResponse> beregningResultater = utførSimulering(requestsForBruker, Collections.emptyList());
 
             for (SimulerBeregningResponse response : beregningResultater) {
                 if (response.getResponse() != null) {
@@ -261,14 +262,14 @@ public class StartSimuleringTjeneste {
         return ytelseType;
     }
 
-    private List<SimulerBeregningResponse> utførSimulering(List<SimulerBeregningRequest> simuleringRequestListe) {
+    private List<SimulerBeregningResponse> utførSimulering(List<SimulerBeregningRequest> simuleringRequestListe, List<String> source) {
         return simuleringRequestListe.stream()
-                .map(this::utførSimulering)
+                .map(r -> utførSimulering(r, source))
                 .collect(Collectors.toList());
     }
 
-    private SimulerBeregningResponse utførSimulering(SimulerBeregningRequest simuleringOppdrag) {
-        return oppdragConsumer.hentSimulerBeregningResponse(simuleringOppdrag);
+    private SimulerBeregningResponse utførSimulering(SimulerBeregningRequest simuleringOppdrag, List<String> source) {
+        return oppdragConsumer.hentSimulerBeregningResponse(simuleringOppdrag, source);
     }
 
     private List<SimulerBeregningRequest> opprettBeregningRequestListe(List<Oppdrag> simuleringOppdragListe) {
