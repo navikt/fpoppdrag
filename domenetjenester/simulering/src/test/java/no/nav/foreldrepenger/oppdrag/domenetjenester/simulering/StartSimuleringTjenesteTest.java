@@ -91,7 +91,7 @@ public class StartSimuleringTjenesteTest {
     public void test_skalLagreOppdragXmlVedGyldigXml() throws Exception {
         String xml = TestResourceLoader.loadXml("/xml/oppdrag_mottaker.xml");
 
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(any())).thenReturn(lagRespons("12345678901", "12345"));
+        when(oppdragConsumerMock.hentSimulerBeregningResponse(any(), any())).thenReturn(lagRespons("12345678901", "12345"));
 
         simuleringTjeneste.startSimulering(BEHANDLING_ID_1, Collections.singletonList(xml));
 
@@ -109,7 +109,7 @@ public class StartSimuleringTjenesteTest {
         String xml1 = TestResourceLoader.loadXml("/xml/oppdrag_mottaker_3.xml");
         String xml2 = TestResourceLoader.loadXml("/xml/oppdrag_refusjon.xml");
 
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(any())).thenReturn(lagRespons("12345678912", "67890"));
+        when(oppdragConsumerMock.hentSimulerBeregningResponse(any(), any())).thenReturn(lagRespons("12345678912", "67890"));
 
         simuleringTjeneste.startSimulering(BEHANDLING_ID_2, Arrays.asList(xml1, xml2));
 
@@ -126,7 +126,7 @@ public class StartSimuleringTjenesteTest {
         String xml1 = TestResourceLoader.loadXml("/xml/oppdrag_mottaker_2.xml");
         String xml2 = TestResourceLoader.loadXml("/xml/oppdrag_refusjon.xml");
 
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(any())).thenReturn(lagRespons("24153532444", "423535"));
+        when(oppdragConsumerMock.hentSimulerBeregningResponse(any(), any())).thenReturn(lagRespons("24153532444", "423535"));
 
         simuleringTjeneste.startSimulering(BEHANDLING_ID_2, Collections.singletonList(xml1));
 
@@ -134,7 +134,7 @@ public class StartSimuleringTjenesteTest {
         assertThat(grunnlagOpt1).isPresent();
         assertThat(grunnlagOpt1.get().isAktiv()).isTrue();
 
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(any())).thenReturn(null);
+        when(oppdragConsumerMock.hentSimulerBeregningResponse(any(), any())).thenReturn(null);
         simuleringTjeneste.startSimulering(BEHANDLING_ID_2, Collections.singletonList(xml2));
 
         Optional<SimuleringGrunnlag> grunnlagOpt2 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
@@ -145,7 +145,7 @@ public class StartSimuleringTjenesteTest {
     public void test_skal_deaktiver_behandling_med_gitt_behandling() throws Exception {
         String xml = TestResourceLoader.loadXml("/xml/oppdrag_mottaker_2.xml");
 
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(any())).thenReturn(lagRespons("24153532444", "423535"));
+        when(oppdragConsumerMock.hentSimulerBeregningResponse(any(), any())).thenReturn(lagRespons("24153532444", "423535"));
 
         simuleringTjeneste.startSimulering(BEHANDLING_ID_2, Collections.singletonList(xml));
 
@@ -163,7 +163,7 @@ public class StartSimuleringTjenesteTest {
         // Arrange
         String xml = TestResourceLoader.loadXml("/xml/oppdrag_mottaker_2.xml");
 
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(any())).thenReturn(lagRespons("24153532444", "423535"));
+        when(oppdragConsumerMock.hentSimulerBeregningResponse(any(), any())).thenReturn(lagRespons("24153532444", "423535"));
 
         // Act - Skal gi to beregningsresultater til samme mottaker
         simuleringTjeneste.startSimulering(BEHANDLING_ID_2, Arrays.asList(xml, xml));
@@ -210,7 +210,7 @@ public class StartSimuleringTjenesteTest {
 
 
         ArgumentCaptor<SimulerBeregningRequest> captor = ArgumentCaptor.forClass(SimulerBeregningRequest.class);
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(captor.capture())).thenReturn(response);
+        when(oppdragConsumerMock.hentSimulerBeregningResponse(captor.capture(), any())).thenReturn(response);
 
         String xml = TestResourceLoader.loadXml("/xml/oppdrag_mottaker.xml");
 
@@ -218,7 +218,7 @@ public class StartSimuleringTjenesteTest {
         simuleringTjeneste.startSimulering(BEHANDLING_ID_1, Collections.singletonList(xml));
 
         // Assert
-        verify(oppdragConsumerMock, times(2)).hentSimulerBeregningResponse(any());
+        verify(oppdragConsumerMock, times(2)).hentSimulerBeregningResponse(any(), any());
         SimulerBeregningRequest request = captor.getValue();
         assertThat(request.getRequest().getOppdrag().getOmpostering().getOmPostering()).isEqualTo("N");
         assertThat(request.getRequest().getOppdrag().getKodeEndring()).isEqualTo(ØkonomiKodeEndring.ENDR.name());
@@ -242,7 +242,7 @@ public class StartSimuleringTjenesteTest {
         // Arrange
         String xml = TestResourceLoader.loadXml("/xml/oppdrag_mottaker_2.xml");
 
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(any())).thenReturn(lagRespons("24153532444", "423535"));
+        when(oppdragConsumerMock.hentSimulerBeregningResponse(any(), any())).thenReturn(lagRespons("24153532444", "423535"));
 
         // Act
         simuleringTjeneste.startSimulering(BEHANDLING_ID_2, Collections.singletonList(xml));

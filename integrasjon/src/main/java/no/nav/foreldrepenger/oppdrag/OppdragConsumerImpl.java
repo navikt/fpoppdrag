@@ -10,6 +10,9 @@ import java.util.Set;
 
 import javax.xml.ws.WebServiceException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.nav.foreldrepenger.oppdrag.util.XmlStringFieldFikser;
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling;
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerFpService;
@@ -27,6 +30,8 @@ public class OppdragConsumerImpl implements OppdragConsumer {
     private static final LocalTime OPPDRAG_ÅPNINGSTID_SLUTT = LocalTime.of(19, 0);
     static final List<String> TYPISKE_FEILMELDING_NÅR_OPPDRAG_ER_NEDE = Arrays.asList("Unexpected EOF in prolog", "Could not send Message", "Error writing request body to server");
 
+    private static final Logger log = LoggerFactory.getLogger(OppdragConsumerImpl.class);
+
     private SimulerFpService port;
 
     public OppdragConsumerImpl(SimulerFpService port) {
@@ -34,13 +39,14 @@ public class OppdragConsumerImpl implements OppdragConsumer {
     }
 
     @Override
-    public SimulerBeregningResponse hentSimulerBeregningResponse(SimulerBeregningRequest simulerBeregningRequest) {
+    public SimulerBeregningResponse hentSimulerBeregningResponse(SimulerBeregningRequest simulerBeregningRequest, List<String> source) {
         try {
             SimulerBeregningResponse response = port.simulerBeregning(simulerBeregningRequest);
             XmlStringFieldFikser.stripTrailingSpacesFromStrings(response);
             return response;
         } catch (SimulerBeregningFeilUnderBehandling e) {
             FeilUnderBehandling fault = e.getFaultInfo();
+            log.warn("Simulering feiler for request {}", source);
             throw OppdragConsumerFeil.FACTORY.feilUnderBehandlingAvSimulering(fault.getErrorSource(), fault.getErrorType(), fault.getErrorMessage(), fault.getRootCause(), fault.getDateTimeStamp(), e).toException();
         } catch (WebServiceException e) {
             if (feiletPgaOppdragsystemetUtenforÅpningstid(e)) {

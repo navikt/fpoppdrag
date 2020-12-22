@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
+
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
@@ -37,7 +39,7 @@ public class OppdragConsumerTestET {
                 opprettSOAPFaultException("feil"));
 
         assertThatThrownBy(
-                () -> oppdragConsumer.hentSimulerBeregningResponse(mock(SimulerBeregningRequest.class)))
+                () -> oppdragConsumer.hentSimulerBeregningResponse(mock(SimulerBeregningRequest.class), Collections.emptyList()))
                 .isInstanceOf(IntegrasjonException.class)
                 .hasMessageContaining("FP-942048");
     }

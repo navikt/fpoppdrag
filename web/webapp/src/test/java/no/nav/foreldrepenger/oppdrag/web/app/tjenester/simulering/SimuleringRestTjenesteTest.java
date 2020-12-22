@@ -93,7 +93,7 @@ public class SimuleringRestTjenesteTest {
         String xml = TestResourceLoader.loadXml("/xml/oppdrag_mottaker.xml");
         SimulerOppdragDto oppdragDto = SimulerOppdragDto.lagDto(BEHANDLING_ID, Collections.singletonList(xml));
 
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(any(SimulerBeregningRequest.class))).thenReturn(
+        when(oppdragConsumerMock.hentSimulerBeregningResponse(any(SimulerBeregningRequest.class), any())).thenReturn(
                 lagRespons());
 
 
