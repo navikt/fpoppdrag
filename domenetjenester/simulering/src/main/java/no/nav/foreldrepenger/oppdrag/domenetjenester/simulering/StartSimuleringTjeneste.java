@@ -117,7 +117,8 @@ public class StartSimuleringTjeneste {
         //TODO skal ikke ha ny transaksjon, bruk savepoint istedet.. ønsker å oppnå med dette at requestXML lagres også når det feiler
         simuleringXmlRepository.nyTransaksjon();
 
-        List<SimulerBeregningResponse> simuleringResponsListe = utførSimulering(simuleringRequestListe, oppdragXmlListe);
+        // send med oppdragXmlListe for debugging av vrange saker
+        List<SimulerBeregningResponse> simuleringResponsListe = utførSimulering(simuleringRequestListe, Collections.emptyList());
 
         LOG.info("Simulering svarmeldinger mottatt. behandlingID={} oppdragantall={} totalstørrelseUt={} tidsforbruk={} ms",
                 behandlingId,

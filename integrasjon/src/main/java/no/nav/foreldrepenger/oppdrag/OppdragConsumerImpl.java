@@ -46,7 +46,8 @@ public class OppdragConsumerImpl implements OppdragConsumer {
             return response;
         } catch (SimulerBeregningFeilUnderBehandling e) {
             FeilUnderBehandling fault = e.getFaultInfo();
-            log.warn("Simulering feiler for request {}", source);
+            if (!source.isEmpty())
+                log.warn("Simulering feiler for request {}", source);
             throw OppdragConsumerFeil.FACTORY.feilUnderBehandlingAvSimulering(fault.getErrorSource(), fault.getErrorType(), fault.getErrorMessage(), fault.getRootCause(), fault.getDateTimeStamp(), e).toException();
         } catch (WebServiceException e) {
             if (feiletPgaOppdragsystemetUtenforÅpningstid(e)) {
