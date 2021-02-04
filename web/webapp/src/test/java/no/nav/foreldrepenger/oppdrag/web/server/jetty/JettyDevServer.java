@@ -129,7 +129,7 @@ public class JettyDevServer extends JettyServer {
 
     @Override
     protected void konfigurerJndi() {
-        Databaseskjemainitialisering.settJdniOppslag();
+        Databaseskjemainitialisering.settJndiOppslag();
     }
 
     @Override

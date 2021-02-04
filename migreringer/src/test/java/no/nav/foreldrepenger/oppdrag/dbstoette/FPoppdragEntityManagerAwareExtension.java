@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.oppdrag.dbstoette;
 
 import static no.nav.foreldrepenger.oppdrag.dbstoette.Databaseskjemainitialisering.migrer;
-import static no.nav.foreldrepenger.oppdrag.dbstoette.Databaseskjemainitialisering.settJdniOppslag;
 
 import java.util.TimeZone;
 
@@ -22,7 +21,7 @@ public class FPoppdragEntityManagerAwareExtension extends EntityManagerAwareExte
             // prøver alltid migrering hvis endring, ellers funker det dårlig i IDE.
             migrer();
         }
-        settJdniOppslag();
+        Databaseskjemainitialisering.settJndiOppslagForUnitTests();
     }
 
 }

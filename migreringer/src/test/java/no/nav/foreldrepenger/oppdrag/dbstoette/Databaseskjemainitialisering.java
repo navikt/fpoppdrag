@@ -1,5 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.dbstoette;
 
+import static no.nav.foreldrepenger.oppdrag.dbstoette.DBTestUtil.kjøresAvMaven;
+
 import java.io.File;
 
 import javax.sql.DataSource;
@@ -22,29 +24,51 @@ public final class Databaseskjemainitialisering {
     private static final Logger LOG = LoggerFactory.getLogger(Databaseskjemainitialisering.class);
     private static final Environment ENV = Environment.current();
 
-    public static final DBProperties DEFAULT_DS_PROPERTIES = dbProperties("defaultDS", "fpoppdrag");
-    public static final DBProperties DVH_DS_PROPERTIES = dbProperties("defaultDS", "fpoppdrag_unit");
     public static final String URL_DEFAULT = "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp) (HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)))";
 
+    public static final String DEFAULT_SCEHMA = "fpoppdrag";
+    public static final String JUNIT_SCHEMA = "fpoppdrag_unit";
+    public static final String DBA_SCHEMA = "vl_dba";
+    public static final String DEFAULT_DS_NAME = "defaultDS";
+    public static final String DBA_DS_NAME = "vl_dba";
+
+    public static final DBProperties DBA_PROPERTIES = new DBProperties(DBA_DS_NAME, DBA_SCHEMA, dbaScriptLocation());
+    public static final DBProperties JUNIT_PROPERTIES = dbProperties(DEFAULT_DS_NAME, JUNIT_SCHEMA);
+    public static final DBProperties DEFAULT_PROPERTIES = dbProperties(DEFAULT_DS_NAME, DEFAULT_SCEHMA);
+
     public static void main(String[] args) {
-        migrer();
+        //brukes i mvn clean install
+        migrerForUnitTests();
     }
 
     public static void migrer() {
-        migrer(DEFAULT_DS_PROPERTIES);
-        migrer(DVH_DS_PROPERTIES);
+        migrer(DEFAULT_PROPERTIES);
     }
 
-    private static DBProperties dbProperties(String dsName, String schema) {
-        return new DBProperties(dsName, schema, ds(dsName, schema), getScriptLocation(dsName));
+    public static void migrerForUnitTests() {
+        //Må kjøres først for å opprette fplos_unit
+        migrer(DBA_PROPERTIES);
+        migrer(JUNIT_PROPERTIES);
     }
 
-    public static void settJdniOppslag() {
+    public static DBProperties dbProperties(String dsName, String schema) {
+        return new DBProperties(dsName, schema, getScriptLocation(dsName));
+    }
+
+    public static void settJndiOppslag() {
+        settJndiOppslag(DEFAULT_PROPERTIES);
+    }
+
+    public static void settJndiOppslagForUnitTests() {
+        settJndiOppslag(JUNIT_PROPERTIES);
+    }
+
+    private static void settJndiOppslag(DBProperties properties) {
         try {
-            var props = DEFAULT_DS_PROPERTIES;
+            var props = properties;
             new EnvEntry("jdbc/" + props.dsName(), props.dataSource());
         } catch (Exception e) {
-            throw new RuntimeException("Feil under registrering av JDNI-entry for default datasource", e);
+            throw new RuntimeException("Feil under registrering av Jndi-entry for default datasource", e);
         }
     }
 
@@ -63,7 +87,7 @@ public final class Databaseskjemainitialisering {
     }
 
     private static String getScriptLocation(String dsName) {
-        if (DBTestUtil.kjøresAvMaven()) {
+        if (kjøresAvMaven()) {
             return classpathScriptLocation(dsName);
         }
         return fileScriptLocation(dsName);
@@ -93,6 +117,13 @@ public final class Databaseskjemainitialisering {
         return ds;
     }
 
+    private static String dbaScriptLocation() {
+        if (kjøresAvMaven()) {
+            return classpathScriptLocation("vl_dba");
+        }
+        return "migreringer/src/test/resources/db/migration/vl_dba";
+    }
+
     private static HikariConfig hikariConfig(String dsName, String schema) {
         var cfg = new HikariConfig();
         cfg.setJdbcUrl(ENV.getProperty(dsName + ".url", URL_DEFAULT));
@@ -106,15 +137,15 @@ public final class Databaseskjemainitialisering {
     }
 
     public static class DBProperties {
+
         private final String schema;
-        private final DataSource dataSource;
         private final String scriptLocation;
         private final String dsName;
+        private HikariDataSource ds;
 
-        private DBProperties(String dsName, String schema, DataSource dataSource, String scriptLocation) {
+        private DBProperties(String dsName, String schema, String scriptLocation) {
             this.dsName = dsName;
             this.schema = schema;
-            this.dataSource = dataSource;
             this.scriptLocation = scriptLocation;
         }
 
@@ -126,12 +157,22 @@ public final class Databaseskjemainitialisering {
             return schema;
         }
 
-        public DataSource dataSource() {
-            return dataSource;
+        public synchronized DataSource dataSource() {
+            if (ds == null) {
+                ds = new HikariDataSource(hikariConfig(dsName, schema));
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> ds.close()));
+            }
+            return ds;
         }
 
         public String scriptLocation() {
             return scriptLocation;
+        }
+
+        @Override
+        public String toString() {
+            return "DBProperties{" + "schema='" + schema + '\'' + ", scriptLocation='" + scriptLocation + '\''
+                    + ", dsName='" + dsName + '\'' + '}';
         }
     }
 }
