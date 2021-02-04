@@ -30,18 +30,18 @@
 
         <!-- Felles avhengigheter i prosjektet Disse skal ALLTID være en
             RELEASE-avhengighet UNNTAK: feature-brancher og lokalt -->
-        <felles.version>2.4.0-20201125100519-780282a</felles.version>
-        <prosesstask.version>2.4.5-20201119115019-68b00fb</prosesstask.version>
+        <felles.version>3.0.54</felles.version>
+        <prosesstask.version>2.5.10</prosesstask.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
-        <fp-kontrakter.version>5.1-20201118182725-764a023</fp-kontrakter.version>
+        <fp-kontrakter.version>5.1-20200123101919-e481c64</fp-kontrakter.version>
 
         <!-- NAV -->
 
         <!-- Eksterne -->
         <prometheus.version>0.9.0</prometheus.version>
-        <logstash.version>6.4</logstash.version>
-        <swagger.version>2.1.5</swagger.version>
+        <logstash.version>6.6</logstash.version>
+        <swagger.version>2.1.6</swagger.version>
         <woodstox.version>6.2.3</woodstox.version>
 
         <!-- Dupliserte properties fra vl-felles. Pass på å oppdatere begge steder. Disse trengs for definisjon av videre plugins -->
@@ -195,7 +195,7 @@
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-healthchecks</artifactId>
-                <version>4.1.15</version>
+                <version>4.1.17</version>
             </dependency>
             <dependency>
                 <groupId>io.prometheus</groupId>
@@ -297,7 +297,7 @@
                 <!-- velger en transitiv avhengighet - felles ikke enig med seg selv, velger den som blir brukt i prod-scope i felles -->
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker-qual</artifactId>
-                <version>3.7.1</version>
+                <version>3.10.0</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
@@ -307,7 +307,7 @@
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-compat-spec-parser</artifactId>
-                <version>1.0.52</version>
+                <version>1.0.54</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
@@ -566,6 +566,20 @@
                             <useFile>true</useFile>
                             <argLine>${jacoco.agent.argLine} -Xms256m -Dfile.encoding=UTF-8 -Dlog.level.no.nav=WARN
                             </argLine>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <addClasspath>true</addClasspath>
+                                    <classpathPrefix>lib/</classpathPrefix>
+                                    <mainClass>no.nav.foreldrepenger.oppdrag.web.server.jetty.JettyServer</mainClass>
+                                </manifest>
+                            </archive>
                         </configuration>
                     </plugin>
 

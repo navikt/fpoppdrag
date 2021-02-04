@@ -19,7 +19,6 @@ import no.nav.vedtak.isso.config.ServerInfo;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt;
-import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
 public class RestApiAbacTest {
@@ -36,7 +35,7 @@ public class RestApiAbacTest {
      * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her     *
      */
     @Test
-    public void test_at_alle_restmetoder_er_annotert_med_BeskyttetRessurs() {
+    public void test_at_alle_restmetoder_er_annotert_med_BeskyttetRessurs() throws Exception {
         for (Method restMethod : RestApiTester.finnAlleRestMetoder()) {
             if (restMethod.getAnnotation(BeskyttetRessurs.class) == null) {
                 throw new AssertionError("Mangler @" + BeskyttetRessurs.class.getSimpleName() + "-annotering på " + restMethod);
@@ -57,7 +56,7 @@ public class RestApiAbacTest {
      * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her     *
      */
     @Test
-    public void test_at_alle_input_parametre_til_restmetoder_implementer_AbacDto() {
+    public void test_at_alle_input_parametre_til_restmetoder_implementer_AbacDto() throws Exception {
         String feilmelding = "Parameter på %s.%s av type %s må implementere " + AbacDto.class.getSimpleName() + ".\n";
         StringBuilder feilmeldinger = new StringBuilder();
 
@@ -67,11 +66,15 @@ public class RestApiAbacTest {
                     ParameterizedType type = (ParameterizedType) parameter.getParameterizedType();
                     @SuppressWarnings("rawtypes")
                     Class<?> aClass = (Class) (type.getActualTypeArguments()[0]);
-                    if (!AbacDto.class.isAssignableFrom(aClass) && !IgnorerteInputTyper.ignore(aClass)) {
+                    if (!AbacDto.class.isAssignableFrom(aClass)
+                            && !parameter.isAnnotationPresent(TilpassetAbacAttributt.class)
+                            && !IgnorerteInputTyper.ignore(aClass)) {
                         feilmeldinger.append(String.format(feilmelding, restMethode.getDeclaringClass().getSimpleName(), restMethode.getName(), aClass.getSimpleName()));
                     }
                 } else {
-                    if (!AbacDto.class.isAssignableFrom(parameter.getType()) && !IgnorerteInputTyper.ignore(parameter.getType()) && parameter.getAnnotation(TilpassetAbacAttributt.class) == null) {
+                    if (!AbacDto.class.isAssignableFrom(parameter.getType())
+                            && !parameter.isAnnotationPresent(TilpassetAbacAttributt.class)
+                            && !IgnorerteInputTyper.ignore(parameter.getType())) {
                         feilmeldinger.append(String.format(feilmelding, restMethode.getDeclaringClass().getSimpleName(), restMethode.getName(), parameter.getType().getSimpleName()));
                     }
                 }
@@ -85,18 +88,11 @@ public class RestApiAbacTest {
     private void assertAtIngenBrukerDummyVerdierPåBeskyttetRessurs(Method metode) {
         Class<?> klasse = metode.getDeclaringClass();
         BeskyttetRessurs annotation = metode.getAnnotation(BeskyttetRessurs.class);
-        if (annotation != null && !annotation.property().isEmpty()) {
-            if (annotation.property().equals("abac.attributt.drift")) {
-                return;
-            }
-            fail(klasse.getSimpleName() + "." + metode.getName() + " @" + annotation.getClass().getSimpleName() + " bruker ikke-støttet property: " + annotation.property());
-        }
         if (annotation != null && annotation.action() == BeskyttetRessursActionAttributt.DUMMY) {
             fail(klasse.getSimpleName() + "." + metode.getName() + " Ikke bruk DUMMY-verdi for "
                     + BeskyttetRessursActionAttributt.class.getSimpleName());
-        } else if (annotation != null && annotation.ressurs() == BeskyttetRessursResourceAttributt.DUMMY) {
-            fail(klasse.getSimpleName() + "." + metode.getName() + " Ikke bruk DUMMY-verdi for "
-                    + BeskyttetRessursResourceAttributt.class.getSimpleName());
+        } else if (annotation != null && annotation.resource().isEmpty() && annotation.property().isEmpty()) {
+            fail(klasse.getSimpleName() + "." + metode.getName() + " En verdi for resource må være satt!");
         }
     }
 
@@ -120,12 +116,12 @@ public class RestApiAbacTest {
 
     @BeforeAll
     public static void setup() {
-        PREV_LB_URL = System.setProperty(ServerInfo.PROPERTY_KEY_LOADBALANCER_URL, "http://localhost:8090");
+        PREV_LB_URL = System.setProperty(ServerInfo.PROPERTY_KEY_LOADBALANCER_URL, "http://localhost:8070");
     }
 
     @AfterAll
     public static void teardown() {
-        if (PREV_LB_URL != null) {
+        if(PREV_LB_URL != null){
             System.setProperty(ServerInfo.PROPERTY_KEY_LOADBALANCER_URL, PREV_LB_URL);
         }
     }

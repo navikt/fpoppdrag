@@ -1,69 +1,137 @@
 package no.nav.foreldrepenger.oppdrag.dbstoette;
 
-import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.File;
 
-import no.nav.vedtak.felles.lokal.dbstoette.DBConnectionProperties;
-import no.nav.vedtak.felles.lokal.dbstoette.DatabaseStøtte;
+import javax.sql.DataSource;
+
+import org.eclipse.jetty.plus.jndi.EnvEntry;
+import org.flywaydb.core.Flyway;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import no.nav.vedtak.util.env.Environment;
 
 /**
  * Initielt skjemaoppsett + migrering av unittest-skjemaer
  */
 public final class Databaseskjemainitialisering {
 
-    private static final Pattern placeholderPattern = Pattern.compile("\\$\\{(.*)\\}");
+    private static final Logger LOG = LoggerFactory.getLogger(Databaseskjemainitialisering.class);
+    private static final Environment ENV = Environment.current();
 
-    private static final AtomicBoolean GUARD_SKJEMAER = new AtomicBoolean();
-    private static final AtomicBoolean GUARD_UNIT_TEST_SKJEMAER = new AtomicBoolean();
+    public static final DBProperties DEFAULT_DS_PROPERTIES = dbProperties("defaultDS", "fpoppdrag");
+    public static final DBProperties DVH_DS_PROPERTIES = dbProperties("defaultDS", "fpoppdrag_unit");
+    public static final String URL_DEFAULT = "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp) (HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)))";
 
     public static void main(String[] args) {
-        migrerUnittestSkjemaer();
+        migrer();
     }
 
-    public static void settOppSkjemaer() {
-        if (GUARD_SKJEMAER.compareAndSet(false, true)) {
-            try {
-                settSchemaPlaceholder(DatasourceConfiguration.UNIT_TEST.getRaw());
-                DatabaseStøtte.kjørMigreringFor(DatasourceConfiguration.DBA.get());
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    public static void migrer() {
+        migrer(DEFAULT_DS_PROPERTIES);
+        migrer(DVH_DS_PROPERTIES);
     }
 
-    public static void migrerUnittestSkjemaer() {
-        settOppSkjemaer();
-
-        if (GUARD_UNIT_TEST_SKJEMAER.compareAndSet(false, true)) {
-            try {
-                DatabaseStøtte.kjørMigreringFor(DatasourceConfiguration.UNIT_TEST.get());
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    private static DBProperties dbProperties(String dsName, String schema) {
+        return new DBProperties(dsName, schema, ds(dsName, schema), getScriptLocation(dsName));
     }
 
-    public static void settPlaceholdereOgJdniOppslag() {
+    public static void settJdniOppslag() {
         try {
-            Databaseskjemainitialisering.settSchemaPlaceholder(DatasourceConfiguration.UNIT_TEST.getRaw());
-            DatabaseStøtte.settOppJndiForDefaultDataSource(DatasourceConfiguration.UNIT_TEST.get());
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            var props = DEFAULT_DS_PROPERTIES;
+            new EnvEntry("jdbc/" + props.dsName(), props.dataSource());
+        } catch (Exception e) {
+            throw new RuntimeException("Feil under registrering av JDNI-entry for default datasource", e);
         }
     }
 
-    private static void settSchemaPlaceholder(List<DBConnectionProperties> connectionProperties) throws FileNotFoundException {
-        for (DBConnectionProperties dbcp : connectionProperties) {
-            Matcher matcher = placeholderPattern.matcher(dbcp.getSchema());
-            if (matcher.matches()) {
-                String placeholder = matcher.group(1);
-                if (System.getProperty(placeholder) == null) {
-                    System.setProperty(placeholder, dbcp.getDefaultSchema());
-                }
+    private static void migrer(DBProperties dbProperties) {
+        LOG.info("Migrerer {}", dbProperties.schema());
+        Flyway flyway = new Flyway();
+        flyway.setBaselineOnMigrate(true);
+        flyway.setDataSource(dbProperties.dataSource());
+        flyway.setTable("schema_version");
+        flyway.setLocations(dbProperties.scriptLocation());
+        flyway.setCleanOnValidationError(true);
+        if (!ENV.isLocal()) {
+            throw new IllegalStateException("Forventer at denne migreringen bare kjøres lokalt");
+        }
+        flyway.migrate();
+    }
+
+    private static String getScriptLocation(String dsName) {
+        if (DBTestUtil.kjøresAvMaven()) {
+            return classpathScriptLocation(dsName);
+        }
+        return fileScriptLocation(dsName);
+    }
+
+    private static String classpathScriptLocation(String dsName) {
+        return "classpath:/db/migration/" + dsName;
+    }
+
+    private static String fileScriptLocation(String dsName) {
+        String relativePath = "migreringer/src/main/resources/db/migration/" + dsName;
+        File baseDir = new File(".").getAbsoluteFile();
+        File location = new File(baseDir, relativePath);
+        while (!location.exists()) {
+            baseDir = baseDir.getParentFile();
+            if (baseDir == null || !baseDir.isDirectory()) {
+                throw new IllegalArgumentException("Klarte ikke finne : " + baseDir);
             }
+            location = new File(baseDir, relativePath);
+        }
+        return "filesystem:" + location.getPath();
+    }
+
+    private static DataSource ds(String dsName, String schema) {
+        var ds = new HikariDataSource(hikariConfig(dsName, schema));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> ds.close()));
+        return ds;
+    }
+
+    private static HikariConfig hikariConfig(String dsName, String schema) {
+        var cfg = new HikariConfig();
+        cfg.setJdbcUrl(ENV.getProperty(dsName + ".url", URL_DEFAULT));
+        cfg.setUsername(ENV.getProperty(dsName + ".username", schema));
+        cfg.setPassword(ENV.getProperty(dsName + ".password", schema));
+        cfg.setConnectionTimeout(10000);
+        cfg.setMinimumIdle(0);
+        cfg.setMaximumPoolSize(4);
+        cfg.setAutoCommit(false);
+        return cfg;
+    }
+
+    public static class DBProperties {
+        private final String schema;
+        private final DataSource dataSource;
+        private final String scriptLocation;
+        private final String dsName;
+
+        private DBProperties(String dsName, String schema, DataSource dataSource, String scriptLocation) {
+            this.dsName = dsName;
+            this.schema = schema;
+            this.dataSource = dataSource;
+            this.scriptLocation = scriptLocation;
+        }
+
+        public String dsName() {
+            return dsName;
+        }
+
+        public String schema() {
+            return schema;
+        }
+
+        public DataSource dataSource() {
+            return dataSource;
+        }
+
+        public String scriptLocation() {
+            return scriptLocation;
         }
     }
 }

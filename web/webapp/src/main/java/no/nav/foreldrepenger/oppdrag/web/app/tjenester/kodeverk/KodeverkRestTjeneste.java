@@ -1,7 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester.kodeverk;
 
+import static no.nav.foreldrepenger.oppdrag.web.app.abac.FPOppdragBeskyttetRessursAttributt.APPLIKASJON;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.APPLIKASJON;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class KodeverkRestTjeneste {
 
     @GET
     @Operation(description = "Henter kodeliste", tags = "kodeverk")
-    @BeskyttetRessurs(action = READ, ressurs = APPLIKASJON, sporingslogg = false)
+    @BeskyttetRessurs(action = READ, resource = APPLIKASJON, sporingslogg = false)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Map<String, Object> hentGruppertKodeliste() {
         log.info("Logger kall til denne REST-tjenesten. Er usikker på om den er i bruk.");

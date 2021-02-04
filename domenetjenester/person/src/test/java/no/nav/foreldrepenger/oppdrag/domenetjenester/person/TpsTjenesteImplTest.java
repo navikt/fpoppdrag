@@ -44,7 +44,7 @@ public class TpsTjenesteImplTest {
         AktørId aktørId = new AktørId("12345");
         String fnr = "24069305608";
 
-        when(pdlKlient.hentIdenter(any(), any(), any())).thenReturn(new Identliste(List.of(new IdentInformasjon(aktørId.getId(), IdentGruppe.AKTORID, false))));;
+        when(pdlKlient.hentIdenter(any(), any())).thenReturn(new Identliste(List.of(new IdentInformasjon(aktørId.getId(), IdentGruppe.AKTORID, false))));;
 
         // Act
         Optional<AktørId> funnetAktørId = tpsTjeneste.hentAktørForFnr(PersonIdent.fra(fnr));
@@ -59,7 +59,7 @@ public class TpsTjenesteImplTest {
         // Arrange
         AktørId aktørId = new AktørId("12345");
         String fnr = "24069305608";
-        when(pdlKlient.hentIdenter(any(), any(), any())).thenReturn(new Identliste(List.of(new IdentInformasjon(fnr, IdentGruppe.FOLKEREGISTERIDENT, false))));;
+        when(pdlKlient.hentIdenter(any(), any())).thenReturn(new Identliste(List.of(new IdentInformasjon(fnr, IdentGruppe.FOLKEREGISTERIDENT, false))));;
 
         // Act
         Optional<PersonIdent> funnetPersonIdent = tpsTjeneste.hentFnr(aktørId);
@@ -79,7 +79,7 @@ public class TpsTjenesteImplTest {
         Navn navnPdl  = new Navn("Nøff", null, "Nasse", "Nasse Nøff", null, null, null, null);
         person.setNavn(List.of(navnPdl));
 
-        when(pdlKlient.hentPerson(any(), any(), any())).thenReturn(person);
+        when(pdlKlient.hentPerson(any(), any())).thenReturn(person);
 
         // Act
         String personinfo = tpsTjeneste.hentNavnFor(new PersonIdent(fnr)).orElse(null);
@@ -96,7 +96,7 @@ public class TpsTjenesteImplTest {
         when(unntak.getKode()).thenReturn(PdlKlient.PDL_KLIENT_NOT_FOUND_KODE);
 
 
-        when(pdlKlient.hentIdenter(any(), any(), any())).thenThrow(unntak);
+        when(pdlKlient.hentIdenter(any(), any())).thenThrow(unntak);
 
         // Act
         assertThat(tpsTjeneste.hentAktørForFnr(new PersonIdent(fnr))).isEmpty();
@@ -110,7 +110,7 @@ public class TpsTjenesteImplTest {
         when(unntak.getKode()).thenReturn("Ukjent");
 
 
-        when(pdlKlient.hentPerson(any(), any(), any())).thenThrow(unntak);
+        when(pdlKlient.hentPerson(any(), any())).thenThrow(unntak);
 
         // Act
         assertThrows(TekniskException.class, () -> tpsTjeneste.hentNavnFor(fnr));

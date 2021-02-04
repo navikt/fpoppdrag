@@ -27,7 +27,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 
 import no.nav.foreldrepenger.oppdrag.OppdragConsumer;
-import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
+import no.nav.foreldrepenger.oppdrag.dbstoette.FPoppdragEntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.OppdragMapper;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.SimuleringResultatTransformer;
@@ -50,7 +50,7 @@ import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.S
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse;
 import no.nav.vedtak.exception.TekniskException;
 
-@ExtendWith(EntityManagerAwareExtension.class)
+@ExtendWith(FPoppdragEntityManagerAwareExtension.class)
 public class StartSimuleringTjenesteTest {
 
     private static final Long BEHANDLING_ID_1 = 42345L;

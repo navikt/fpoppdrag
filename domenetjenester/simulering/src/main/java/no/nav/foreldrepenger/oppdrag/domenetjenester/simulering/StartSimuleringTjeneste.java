@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
-import static no.nav.vedtak.util.Objects.check;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -304,7 +302,6 @@ public class StartSimuleringTjeneste {
     private List<SimuleringXml.Builder> lagSimuleringXmlEntitetBuilder(long behandlingId, List<String> fpsakInput, List<SimulerBeregningRequest> beregningRequestListe) {
         // Begge listene skal være i samme rekkefølge
         List<SimuleringXml.Builder> builders = lagSimuleringXmlEntitetBuilder(behandlingId, beregningRequestListe);
-        check(fpsakInput.size() == builders.size(), "Ulik lengde på input og requests for behandlingId=" + behandlingId);
         for (int i = 0; i < fpsakInput.size(); i++) {
             SimuleringXml.Builder builder = builders.get(i);
             builder.medFpsakInput(fpsakInput.get(i));

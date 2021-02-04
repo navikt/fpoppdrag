@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.oppdrag.web.server.jetty;
 
+import static no.nav.foreldrepenger.oppdrag.web.app.abac.FPOppdragBeskyttetRessursAttributt.FAGSAK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -9,17 +10,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
+import no.nav.foreldrepenger.oppdrag.dbstoette.FPoppdragEntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.pip.PipRepository;
 import no.nav.foreldrepenger.oppdrag.web.server.jetty.abac.PdpRequestBuilderImpl;
 import no.nav.vedtak.sikkerhet.abac.AbacAttributtSamling;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt;
-import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt;
 import no.nav.vedtak.sikkerhet.abac.PdpRequest;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 
-@ExtendWith(EntityManagerAwareExtension.class)
+@ExtendWith(FPoppdragEntityManagerAwareExtension.class)
 public class PdpRequestBuilderImplTest {
 
     private static final String DUMMY_ID_TOKEN = "dfksjkfjdgskjhkjuh";
@@ -57,7 +57,7 @@ public class PdpRequestBuilderImplTest {
     private AbacAttributtSamling byggAbacAttributtSamling(BeskyttetRessursActionAttributt actionType) {
         AbacAttributtSamling attributtSamling = AbacAttributtSamling.medJwtToken(DUMMY_ID_TOKEN);
         attributtSamling.setActionType(actionType);
-        attributtSamling.setResource(BeskyttetRessursResourceAttributt.FAGSAK.getEksternKode());
+        attributtSamling.setResource(FAGSAK);
         return attributtSamling;
     }
 }

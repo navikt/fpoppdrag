@@ -14,10 +14,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
+import no.nav.foreldrepenger.oppdrag.dbstoette.FPoppdragEntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Inntektskategori;
 
-@ExtendWith(EntityManagerAwareExtension.class)
+@ExtendWith(FPoppdragEntityManagerAwareExtension.class)
 public class TilkjentYtelseRepositoryTest {
 
     private static final LocalDate DAGENSDATO = LocalDate.now();

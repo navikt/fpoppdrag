@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.oppdrag.web.server.jetty.abac;
 
+import static no.nav.foreldrepenger.oppdrag.web.app.abac.FPOppdragBeskyttetRessursAttributt.FAGSAK;
 import static no.nav.vedtak.sikkerhet.abac.NavAbacCommonAttributter.ENVIRONMENT_FELLES_OIDC_TOKEN_BODY;
 import static no.nav.vedtak.sikkerhet.abac.NavAbacCommonAttributter.ENVIRONMENT_FELLES_SAML_TOKEN;
 import static no.nav.vedtak.sikkerhet.abac.NavAbacCommonAttributter.RESOURCE_FELLES_DOMENE;
@@ -29,7 +30,6 @@ import org.mockito.ArgumentCaptor;
 
 import no.nav.vedtak.sikkerhet.abac.AbacIdToken;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt;
-import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt;
 import no.nav.vedtak.sikkerhet.abac.PdpKlient;
 import no.nav.vedtak.sikkerhet.abac.PdpRequest;
 import no.nav.vedtak.sikkerhet.pdp.PdpConsumer;
@@ -154,7 +154,7 @@ public class XacmlRequestBuilderTjenesteImplTest {
         PdpRequest request = new PdpRequest();
         request.put(RESOURCE_FELLES_DOMENE, "foreldrepenger");
         request.put(XACML10_ACTION_ACTION_ID, BeskyttetRessursActionAttributt.READ.getEksternKode());
-        request.put(RESOURCE_FELLES_RESOURCE_TYPE, BeskyttetRessursResourceAttributt.FAGSAK.getEksternKode());
+        request.put(RESOURCE_FELLES_RESOURCE_TYPE, FAGSAK);
         return request;
     }
 

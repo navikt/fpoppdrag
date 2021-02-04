@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
+import no.nav.foreldrepenger.oppdrag.dbstoette.FPoppdragEntityManagerAwareExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
@@ -46,7 +46,7 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.Simulering
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatPerFagområdeDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatRadDto;
 
-@ExtendWith(EntityManagerAwareExtension.class)
+@ExtendWith(FPoppdragEntityManagerAwareExtension.class)
 public class SimuleringResultatTjenesteTest {
 
     private SimuleringRepository simuleringRepository;
