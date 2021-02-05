@@ -24,7 +24,8 @@ public final class Databaseskjemainitialisering {
     private static final Logger LOG = LoggerFactory.getLogger(Databaseskjemainitialisering.class);
     private static final Environment ENV = Environment.current();
 
-    public static final String URL_DEFAULT = "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp) (HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)))";
+    public static final String URL_DEFAULT = "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp) "
+            + "(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)))";
 
     public static final String DEFAULT_SCEHMA = "fpoppdrag";
     public static final String JUNIT_SCHEMA = "fpoppdrag_unit";
@@ -46,7 +47,7 @@ public final class Databaseskjemainitialisering {
     }
 
     public static void migrerForUnitTests() {
-        //Må kjøres først for å opprette fplos_unit
+        //Må kjøres først for å opprette fpoppdrag_unit
         migrer(DBA_PROPERTIES);
         migrer(JUNIT_PROPERTIES);
     }
@@ -90,15 +91,21 @@ public final class Databaseskjemainitialisering {
         if (kjøresAvMaven()) {
             return classpathScriptLocation(dsName);
         }
-        return fileScriptLocation(dsName);
+        return fileScriptLocation("migreringer/src/main/resources/db/migration/" + dsName);
     }
 
     private static String classpathScriptLocation(String dsName) {
         return "classpath:/db/migration/" + dsName;
     }
 
-    private static String fileScriptLocation(String dsName) {
-        String relativePath = "migreringer/src/main/resources/db/migration/" + dsName;
+    private static String dbaScriptLocation() {
+        if (kjøresAvMaven()) {
+            return classpathScriptLocation("vl_dba");
+        }
+        return fileScriptLocation("migreringer/src/test/resources/db/migration/vl_dba");
+    }
+
+    private static String fileScriptLocation(String relativePath) {
         File baseDir = new File(".").getAbsoluteFile();
         File location = new File(baseDir, relativePath);
         while (!location.exists()) {
@@ -111,24 +118,14 @@ public final class Databaseskjemainitialisering {
         return "filesystem:" + location.getPath();
     }
 
-    private static DataSource ds(String dsName, String schema) {
-        var ds = new HikariDataSource(hikariConfig(dsName, schema));
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> ds.close()));
-        return ds;
-    }
-
-    private static String dbaScriptLocation() {
-        if (kjøresAvMaven()) {
-            return classpathScriptLocation("vl_dba");
-        }
-        return "migreringer/src/test/resources/db/migration/vl_dba";
-    }
-
     private static HikariConfig hikariConfig(String dsName, String schema) {
         var cfg = new HikariConfig();
-        cfg.setJdbcUrl(ENV.getProperty(dsName + ".url", URL_DEFAULT));
-        cfg.setUsername(ENV.getProperty(dsName + ".username", schema));
-        cfg.setPassword(ENV.getProperty(dsName + ".password", schema));
+        var url = ENV.getProperty(dsName + ".url", URL_DEFAULT);
+        var username = ENV.getProperty(dsName + ".username", schema);
+        var password = ENV.getProperty(dsName + ".password", schema);
+        cfg.setJdbcUrl(url);
+        cfg.setUsername(username);
+        cfg.setPassword(password);
         cfg.setConnectionTimeout(10000);
         cfg.setMinimumIdle(0);
         cfg.setMaximumPoolSize(4);
