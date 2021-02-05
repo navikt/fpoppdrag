@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.oppdrag.dbstoette;
 
-import static no.nav.foreldrepenger.oppdrag.dbstoette.Databaseskjemainitialisering.migrer;
-
 import java.util.TimeZone;
 
 import org.slf4j.Logger;
@@ -19,7 +17,7 @@ public class FPoppdragEntityManagerAwareExtension extends EntityManagerAwareExte
         if (!DBTestUtil.kjøresAvMaven()) {
             LOG.info("Kjører IKKE under maven");
             // prøver alltid migrering hvis endring, ellers funker det dårlig i IDE.
-            migrer();
+            Databaseskjemainitialisering.migrerForUnitTests();
         }
         Databaseskjemainitialisering.settJndiOppslagForUnitTests();
     }
