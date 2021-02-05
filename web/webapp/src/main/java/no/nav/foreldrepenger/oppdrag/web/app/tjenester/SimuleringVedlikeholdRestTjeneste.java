@@ -1,8 +1,8 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static no.nav.foreldrepenger.oppdrag.web.app.abac.FPOppdragBeskyttetRessursAttributt.DRIFT;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.DRIFT;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -54,7 +54,7 @@ public class SimuleringVedlikeholdRestTjeneste {
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
     @Operation(description = "Sletter gamle simulering-xml-er", tags = "FORVALTNING")
-    @BeskyttetRessurs(action = CREATE, ressurs = DRIFT, sporingslogg = false)
+    @BeskyttetRessurs(action = CREATE, resource = DRIFT, sporingslogg = false)
     public Response slettGamleSimuleringXml(@Valid @NotNull AntallAbacDto antall) {
         long antallNyesteDagerSomIkkeSkalSlettes = 90;
 

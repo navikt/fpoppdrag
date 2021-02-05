@@ -1,7 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test;
 
+import static no.nav.foreldrepenger.oppdrag.web.app.abac.FPOppdragBeskyttetRessursAttributt.FAGSAK;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -44,7 +44,7 @@ public class SimuleringTestRestTjenesteImpl implements SimuleringTestRestTjenest
     @Path("/testdata")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(description = "Lagre simulering test data", summary = ("Brukes til intern testing"), tags = "simtest")
-    @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = CREATE, resource = FAGSAK)
     public Response lagreSimuleringTestData(@NotNull @Valid SimuleringGjelderDto simuleringGjelderDto) {
         if (Environment.current().isProd()) {
             throw new IllegalStateException(getClass().getName() + " skal ikke være tilgjengelig i produksjonsmijøet.");

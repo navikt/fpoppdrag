@@ -1,8 +1,8 @@
 package no.nav.foreldrepenger.oppdrag.feed.poller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.Iterator;
 
@@ -12,15 +12,14 @@ import javax.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
+import no.nav.foreldrepenger.oppdrag.dbstoette.CdiDbAwareTest;
 import no.nav.vedtak.log.util.MemoryAppender;
 
 @Execution(ExecutionMode.SAME_THREAD)
-@ExtendWith(EntityManagerAwareExtension.class)
+@CdiDbAwareTest
 public class FeedPollerManagerTest {
 
     private static MemoryAppender logSniffer;
@@ -34,10 +33,10 @@ public class FeedPollerManagerTest {
         @SuppressWarnings("unchecked")
         Iterator<FeedPoller> iterator = mock(Iterator.class);
 
-        when(feedPollers.get()).thenReturn(new TestFeedPoller());
-        when(feedPollers.iterator()).thenReturn(iterator);
-        when(iterator.hasNext()).thenReturn(true, false);
-        when(iterator.next()).thenReturn(new TestFeedPoller());
+        lenient().when(feedPollers.get()).thenReturn(new TestFeedPoller());
+        lenient().when(feedPollers.iterator()).thenReturn(iterator);
+        lenient().when(iterator.hasNext()).thenReturn(true, false);
+        lenient().when(iterator.next()).thenReturn(new TestFeedPoller());
         manager = new FeedPollerManager(entityManager, feedPollers);
     }
 

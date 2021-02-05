@@ -10,9 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
+import no.nav.foreldrepenger.oppdrag.dbstoette.FPoppdragEntityManagerAwareExtension;
 
-@ExtendWith(EntityManagerAwareExtension.class)
+@ExtendWith(FPoppdragEntityManagerAwareExtension.class)
 public class SimuleringXmlRepositoryTest {
 
     private static final Long BEHANDLING_ID = 123456L;

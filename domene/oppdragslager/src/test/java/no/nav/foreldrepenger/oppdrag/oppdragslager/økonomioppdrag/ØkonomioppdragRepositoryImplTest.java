@@ -1,7 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.oppdragslager.økonomioppdrag;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Fail.fail;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,10 +12,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareExtension;
+import no.nav.foreldrepenger.oppdrag.dbstoette.FPoppdragEntityManagerAwareExtension;
 import no.nav.vedtak.exception.TekniskException;
 
-@ExtendWith(EntityManagerAwareExtension.class)
+@ExtendWith(FPoppdragEntityManagerAwareExtension.class)
 public class ØkonomioppdragRepositoryImplTest {
 
     private ØkonomioppdragRepository økonomioppdragRepository;

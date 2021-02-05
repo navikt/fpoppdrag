@@ -23,7 +23,6 @@ import no.nav.pdl.NavnResponseProjection;
 import no.nav.pdl.PersonResponseProjection;
 import no.nav.vedtak.exception.VLException;
 import no.nav.vedtak.felles.integrasjon.pdl.PdlKlient;
-import no.nav.vedtak.felles.integrasjon.pdl.Tema;
 import no.nav.vedtak.util.LRUCache;
 
 @ApplicationScoped
@@ -69,7 +68,7 @@ public class PersonTjeneste {
         final Identliste identliste;
 
         try {
-            identliste = pdlKlient.hentIdenter(request, projection, Tema.FOR);
+            identliste = pdlKlient.hentIdenter(request, projection);
         } catch (VLException v) {
             if (PdlKlient.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
                 return Optional.empty();
@@ -97,7 +96,7 @@ public class PersonTjeneste {
         final Identliste identliste;
 
         try {
-            identliste = pdlKlient.hentIdenter(request, projection, Tema.FOR);
+            identliste = pdlKlient.hentIdenter(request, projection);
         } catch (VLException v) {
             if (PdlKlient.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
                 return Optional.empty();
@@ -121,7 +120,7 @@ public class PersonTjeneste {
             var projection = new PersonResponseProjection()
                     .navn(new NavnResponseProjection().forkortetNavn().fornavn().mellomnavn().etternavn());
 
-            var person = pdlKlient.hentPerson(request, projection, Tema.FOR);
+            var person = pdlKlient.hentPerson(request, projection);
 
             return person.getNavn().stream().map(PersonTjeneste::mapNavn).findFirst();
         } catch (VLException v) {

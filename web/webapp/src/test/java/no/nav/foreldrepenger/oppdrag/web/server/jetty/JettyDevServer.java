@@ -21,6 +21,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+import no.nav.foreldrepenger.oppdrag.dbstoette.Databaseskjemainitialisering;
 
 public class JettyDevServer extends JettyServer {
 
@@ -127,13 +128,13 @@ public class JettyDevServer extends JettyServer {
 
 
     @Override
-    protected void konfigurerJndi() throws Exception {
-        JettyDevDbKonfigurasjon.ConnectionHandler.settOppJndiDataSource(PropertiesUtils.getDBConnectionProperties());
+    protected void konfigurerJndi() {
+        Databaseskjemainitialisering.settJndiOppslag();
     }
 
     @Override
-    protected void migrerDatabaser() throws IOException {
-        JettyDevDbKonfigurasjon.kjørMigreringFor(PropertiesUtils.getDBConnectionProperties());
+    protected void migrerDatabaser() {
+        Databaseskjemainitialisering.migrer();
     }
 
     @SuppressWarnings("resource")
