@@ -7,7 +7,6 @@ ENV APPDYNAMICS_CONTROLLER_SSL_ENABLED=true
 ENV TZ=Europe/Oslo
 
 RUN mkdir /app/lib
-RUN mkdir /app/webapp
 RUN mkdir /app/conf
 
 # Config
@@ -21,6 +20,8 @@ COPY web/webapp/target/lib/*.jar /app/lib/
 # Export vault properties
 COPY export-vault.sh /init-scripts/export-vault.sh
 
-USER applikasjon
-
-ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom -Duser.timezone=Europe/Oslo -Dapplication.name=fpoppdrag "
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 \
+                -Djava.security.egd=file:/dev/./urandom \
+                -Duser.timezone=Europe/Oslo \
+                -Dapplication.name=fpoppdrag  \
+                -Dlogback.configurationFile=/app/conf/logback.xml "
