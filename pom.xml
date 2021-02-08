@@ -48,7 +48,7 @@
         <!-- <flyway.version>5.1.4</flyway.version> FIXME: støtter ikke oracle 11, se på hva som skal til for å kjøre på 12 -->
         <flyway.version>4.2.0</flyway.version>
 
-        <jupiter.version>5.7.0</jupiter.version>
+        <jupiter.version>5.7.1</jupiter.version>
     </properties>
 
     <dependencyManagement>
