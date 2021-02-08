@@ -39,7 +39,7 @@
         <!-- NAV -->
 
         <!-- Eksterne -->
-        <prometheus.version>0.9.0</prometheus.version>
+        <prometheus.version>0.10.0</prometheus.version>
         <logstash.version>6.6</logstash.version>
         <swagger.version>2.1.6</swagger.version>
         <woodstox.version>6.2.3</woodstox.version>
