@@ -76,8 +76,12 @@ public class StartSimuleringTjeneste {
     }
 
     private static boolean harIkkeTomRespons(List<SimulerBeregningResponse> simuleringResponsListe) {
-        return simuleringResponsListe.stream()
+        return simuleringResponsListe != null && simuleringResponsListe.stream()
                 .map(SimulerBeregningResponse::getResponse)
+                .filter(Objects::nonNull)
+                .map(no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.SimulerBeregningResponse::getSimulering)
+                .filter(Objects::nonNull)
+                .map(Beregning::getGjelderId)
                 .anyMatch(Objects::nonNull);
     }
 
@@ -211,10 +215,10 @@ public class StartSimuleringTjeneste {
         String gjelderIdFnr = simuleringResponsListe.stream()
                 .map(SimulerBeregningResponse::getResponse)
                 .filter(Objects::nonNull)
+                .map(no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.SimulerBeregningResponse::getSimulering)
+                .filter(Objects::nonNull)
+                .map(Beregning::getGjelderId)
                 .findFirst()
-                .map(m -> m
-                        .getSimulering()
-                        .getGjelderId())
                 .orElseThrow(() -> new IllegalArgumentException("Utvikler-feil: skulle ikke kommet hit med bare null-responser"));
 
         String gjelderId = resultatTransformer.hentAktørIdHvisFnr(gjelderIdFnr);
@@ -223,7 +227,7 @@ public class StartSimuleringTjeneste {
 
         Map<String, SimuleringMottaker.Builder> mottakerBuilderMap = new HashMap<>();
         for (SimulerBeregningResponse response : simuleringResponsListe) {
-            if (response.getResponse() == null) {
+            if (response.getResponse() == null || response.getResponse().getSimulering() == null) {
                 continue;
             }
             Beregning beregning = response.getResponse().getSimulering();
