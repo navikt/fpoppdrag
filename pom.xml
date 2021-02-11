@@ -46,7 +46,7 @@
 
         <!-- Dupliserte properties fra vl-felles. Pass på å oppdatere begge steder. Disse trengs for definisjon av videre plugins -->
         <!-- <flyway.version>5.1.4</flyway.version> FIXME: støtter ikke oracle 11, se på hva som skal til for å kjøre på 12 -->
-        <flyway.version>4.2.0</flyway.version>
+        <flyway.version>7.5.3</flyway.version>
 
         <jupiter.version>5.7.0</jupiter.version>
     </properties>
