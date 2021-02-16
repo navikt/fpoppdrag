@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
+import static java.time.temporal.ChronoUnit.DAYS;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.FEILUTBETALING;
 
 import java.math.BigDecimal;
@@ -14,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import org.threeten.extra.Days;
 
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.PeriodeDto;
@@ -91,7 +90,7 @@ public class FeilutbetalingTjeneste {
             return true;
         }
 
-        if (Days.between(førstePeriodeTom.plusDays(1), p.getPeriodeFom()).getAmount() > 2) {
+        if (DAYS.between(førstePeriodeTom.plusDays(1), p.getPeriodeFom()) > 2) {
             return false;
         }
 
