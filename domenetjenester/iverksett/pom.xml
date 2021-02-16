@@ -18,6 +18,12 @@
         <dependency>
             <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
             <artifactId>felles-integrasjon-rest-klient</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.reactivestreams</groupId>
+                    <artifactId>reactive-streams</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -39,11 +45,6 @@
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
             <artifactId>migreringer</artifactId>
             <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.ojdbc</groupId>
-            <artifactId>ojdbc8</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -30,8 +30,8 @@
 
         <!-- Felles avhengigheter i prosjektet Disse skal ALLTID være en
             RELEASE-avhengighet UNNTAK: feature-brancher og lokalt -->
-        <felles.version>3.0.54</felles.version>
-        <prosesstask.version>2.5.10</prosesstask.version>
+        <felles.version>3.0.91</felles.version>
+        <prosesstask.version>2.5.15</prosesstask.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
         <fp-kontrakter.version>5.1-20210125085553-1b2683d</fp-kontrakter.version>
@@ -42,13 +42,13 @@
         <prometheus.version>0.10.0</prometheus.version>
         <logstash.version>6.6</logstash.version>
         <swagger.version>2.1.6</swagger.version>
-        <woodstox.version>6.2.3</woodstox.version>
+        <woodstox.version>6.2.4</woodstox.version>
 
         <!-- Dupliserte properties fra vl-felles. Pass på å oppdatere begge steder. Disse trengs for definisjon av videre plugins -->
         <!-- <flyway.version>5.1.4</flyway.version> FIXME: støtter ikke oracle 11, se på hva som skal til for å kjøre på 12 -->
         <flyway.version>4.2.0</flyway.version>
 
-        <jupiter.version>5.7.0</jupiter.version>
+        <jupiter.version>5.7.1</jupiter.version>
     </properties>
 
     <dependencyManagement>
@@ -252,11 +252,6 @@
                 <artifactId>weld-web</artifactId>
                 <version>3.1.5.Final</version>
             </dependency>
-            <dependency>
-                <groupId>org.glassfish</groupId>
-                <artifactId>jakarta.el</artifactId>
-                <version>4.0.1</version>
-            </dependency>
 
             <!-- Java 10 -->
             <dependency>
@@ -269,6 +264,12 @@
                 <artifactId>jaxws-api</artifactId>
                 <version>2.3.1</version>
             </dependency>
+            <dependency>
+                <!-- velger en transitiv avhengighet - felles ikke enig med seg selv -->
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>3.0.0</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -280,18 +281,18 @@
                 <artifactId>junit-jupiter-params</artifactId>
                 <version>${jupiter.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>3.7.7</version>
+            </dependency>
+
 
             <dependency>
                 <!-- Transitive avhengighet resolution for å sikre bestemt versjon -->
                 <groupId>com.fasterxml.woodstox</groupId>
                 <artifactId>woodstox-core</artifactId>
                 <version>${woodstox.version}</version>
-            </dependency>
-            <dependency>
-                <!-- velger en transitiv avhengighet - felles ikke enig med seg selv -->
-                <groupId>com.sun.activation</groupId>
-                <artifactId>jakarta.activation</artifactId>
-                <version>2.0.0</version>
             </dependency>
             <dependency>
                 <!-- velger en transitiv avhengighet - felles ikke enig med seg selv, velger den som blir brukt i prod-scope i felles -->
@@ -326,6 +327,27 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
         <pluginManagement>
