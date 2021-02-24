@@ -58,16 +58,15 @@ public class SimuleringVedlikeholdRestTjeneste {
     public Response slettGamleSimuleringXml(@Valid @NotNull AntallAbacDto antall) {
         long antallNyesteDagerSomIkkeSkalSlettes = 90;
 
-        Query query = entityManager.createNativeQuery("delete from simulering_xml" +
-                "  where opprettet_tid <=" +
-                "   (select max(opprettet_tid) from (" +
-                "       select opprettet_tid" +
-                "       from simulering_xml" +
-                "       where opprettet_tid < systimestamp - :uslettbareDager" +
-                "       order by opprettet_tid" +
-                "    )" +
-                "    where rownum <= :antall" +
-                "  )")
+        Query query = entityManager.createNativeQuery("""
+                  delete from simulering_xml
+                  where opprettet_tid <=
+                   (select max(opprettet_tid) from (
+                       select opprettet_tid from simulering_xml
+                       where opprettet_tid < systimestamp - :uslettbareDager
+                       order by opprettet_tid )
+                    where rownum <= :antall)
+                    """)
                 .setParameter("uslettbareDager", antallNyesteDagerSomIkkeSkalSlettes)
                 .setParameter("antall", antall.getAntall());
         int resultat = query.executeUpdate();

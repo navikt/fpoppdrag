@@ -76,12 +76,7 @@ public class SimuleringRestTjeneste {
     @BeskyttetRessurs(action = UPDATE, resource = FAGSAK)
     public Response startSimulering(@Valid SimulerOppdragDto simulerOppdragDto) {
         final Long behandlingId = simulerOppdragDto.getBehandlingId();
-        try {
-            startSimuleringTjeneste.startSimulering(behandlingId, simulerOppdragDto.getOppdragPrMottakerDecoded());
-        } catch (Exception e) {
-            LOG.error("Hvor gikk det egentlig feil, trenger trace", e);
-            throw e;
-        }
+        startSimuleringTjeneste.startSimulering(behandlingId, simulerOppdragDto.getOppdragPrMottakerDecoded());
 
         return Response.ok().build();
     }

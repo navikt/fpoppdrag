@@ -63,8 +63,8 @@ public class ØkonomioppdragRepositoryImpl implements ØkonomioppdragRepository 
     public Oppdragskontroll finnVentendeOppdrag(long behandlingId) {
         final LockModeType lockModeType = LockModeType.PESSIMISTIC_FORCE_INCREMENT;
         TypedQuery<Oppdragskontroll> query = entityManager.createQuery(
-                "from Oppdragskontroll where behandlingId = :behandlingId " +
-                        "and venterKvittering = :venterKvittering", Oppdragskontroll.class); //$NON-NLS-1$
+                "from Oppdragskontroll where behandlingId = :behandlingId and venterKvittering = :venterKvittering",
+                Oppdragskontroll.class); //$NON-NLS-1$
         query.setParameter("behandlingId", behandlingId); //$NON-NLS-1$
         query.setParameter("venterKvittering", true); //$NON-NLS-1$
         query.setLockMode(lockModeType);
