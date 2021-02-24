@@ -64,15 +64,12 @@ class TilkjentYtelseV1Mapper {
 
     private static String map(TilkjentYtelseV1.YtelseType ytelseType) {
         //TODO bør bruke samme koder som i fpsak (FP/SVP/ES)
-        switch (ytelseType) {
-            case FORELDREPENGER:
-                return "FORELDREPENGER";
-            case SVANGERSKAPSPENGER:
-                return "SVANGERSKAPSPENGER";
-            case ENGANGSTØNAD:
-                return "ENGANGSTØNAD";
-        }
-        throw new IllegalArgumentException("Ikke-støttet ytelseType: " + ytelseType);
+        return switch (ytelseType) {
+            case FORELDREPENGER -> "FORELDREPENGER";
+            case SVANGERSKAPSPENGER -> "SVANGERSKAPSPENGER";
+            case ENGANGSTØNAD -> "ENGANGSTØNAD";
+            default -> throw new IllegalArgumentException("Ikke-støttet ytelseType: " + ytelseType);
+        };
     }
 
     private static String map(TilkjentYtelseV1.SatsType satsType) {
