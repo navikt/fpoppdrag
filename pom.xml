@@ -30,11 +30,11 @@
 
         <!-- Felles avhengigheter i prosjektet Disse skal ALLTID være en
             RELEASE-avhengighet UNNTAK: feature-brancher og lokalt -->
-        <felles.version>3.0.91</felles.version>
+        <felles.version>3.1.11</felles.version>
         <prosesstask.version>2.5.15</prosesstask.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
-        <fp-kontrakter.version>5.1-20210125085553-1b2683d</fp-kontrakter.version>
+        <fp-kontrakter.version>5.2.2</fp-kontrakter.version>
 
         <!-- NAV -->
 
@@ -116,6 +116,13 @@
                 <type>pom</type>
             </dependency>
             <dependency>
+                <groupId>no.nav.foreldrepenger.felles</groupId>
+                <artifactId>felles-bom</artifactId>
+                <version>${felles.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
                 <groupId>no.nav.vedtak.prosesstask</groupId>
                 <artifactId>prosesstask-root</artifactId>
                 <version>${prosesstask.version}</version>
@@ -148,6 +155,11 @@
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-clients</artifactId>
                 <version>2.7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${flyway.version}</version>
             </dependency>
 
             <!-- Kontrakter -->
@@ -188,14 +200,9 @@
 
             <!-- Annet -->
             <dependency>
-                <groupId>javax.jws</groupId>
-                <artifactId>jsr181-api</artifactId>
-                <version>1.0-MR1</version>
-            </dependency>
-            <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-healthchecks</artifactId>
-                <version>4.1.17</version>
+                <version>4.1.18</version>
             </dependency>
             <dependency>
                 <groupId>io.prometheus</groupId>
@@ -237,63 +244,19 @@
                 <artifactId>logback-syslog4j</artifactId>
                 <version>1.0.0</version>
             </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jul-to-slf4j</artifactId>
-                <version>1.7.30</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.weld.module</groupId>
-                <artifactId>weld-web</artifactId>
-                <version>3.1.5.Final</version>
-            </dependency>
 
-            <!-- Java 10 -->
-            <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>2.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.xml.ws</groupId>
-                <artifactId>jaxws-api</artifactId>
-                <version>2.3.1</version>
-            </dependency>
-            <dependency>
-                <!-- velger en transitiv avhengighet - felles ikke enig med seg selv -->
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>3.0.0</version>
-            </dependency>
 
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>${jupiter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-params</artifactId>
                 <version>${jupiter.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>3.8.0</version>
-            </dependency>
-
 
             <dependency>
                 <!-- Transitive avhengighet resolution for å sikre bestemt versjon -->
                 <groupId>com.fasterxml.woodstox</groupId>
                 <artifactId>woodstox-core</artifactId>
                 <version>${woodstox.version}</version>
-            </dependency>
-            <dependency>
-                <!-- velger en transitiv avhengighet - felles ikke enig med seg selv, velger den som blir brukt i prod-scope i felles -->
-                <groupId>org.checkerframework</groupId>
-                <artifactId>checker-qual</artifactId>
-                <version>3.10.0</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger</groupId>
@@ -314,11 +277,6 @@
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-annotations</artifactId>
                 <version>${swagger.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
-                <version>2.10.6</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -474,21 +432,11 @@
                         <configuration>
                             <rules>
                                 <requireJavaVersion>
-                                    <version>[10,)</version>
+                                    <version>[11,)</version>
                                 </requireJavaVersion>
                                 <requireMavenVersion>
                                     <version>[3.5.3,)</version>
                                 </requireMavenVersion>
-                                <bannedDependencies>
-                                    <excludes>
-                                        <exclude>commons-logging:commons-logging</exclude>
-                                    </excludes>
-                                </bannedDependencies>
-                                <dependencyConvergence/>
-                                <!-- Ikke kommenter inn denne. Det brekker
-                                    muligheten til å bygge bare deler av prosjektet https://issues.apache.org/jira/browse/MENFORCER-189
-                                    -> "ReactorModuleConvergence is not compatible with 'advanced' reactor options:
-                                    -pl, -rf" <reactorModuleConvergence /> -->
                             </rules>
                         </configuration>
                     </execution>

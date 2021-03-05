@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import no.nav.foreldrepenger.oppdrag.OppdragSelftestConsumer;
 
 @ApplicationScoped
-public class OppdragWebServiceHealthCheck extends WebServiceHealthCheck {
+public class OppdragWebServiceHealthCheck implements HealthCheck {
 
     private OppdragSelftestConsumer selftestConsumer;
 
@@ -20,17 +20,22 @@ public class OppdragWebServiceHealthCheck extends WebServiceHealthCheck {
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Test av web service Oppdrag (Økonomi)";
     }
 
     @Override
-    protected void performWebServiceSelftest() {
-        selftestConsumer.ping();
+    public boolean isOK() {
+        try {
+            selftestConsumer.ping();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
-    protected String getEndpoint() {
+    public String getEndpoint() {
         return selftestConsumer.getEndpointUrl();
     }
 

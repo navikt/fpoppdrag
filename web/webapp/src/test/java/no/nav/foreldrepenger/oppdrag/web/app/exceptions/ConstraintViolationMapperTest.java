@@ -18,8 +18,6 @@ import javax.ws.rs.core.Response;
 
 import org.junit.jupiter.api.Test;
 
-import no.nav.vedtak.feil.Feil;
-
 public class ConstraintViolationMapperTest {
 
     @Test
@@ -48,8 +46,8 @@ public class ConstraintViolationMapperTest {
         Collection<FeltFeilDto> feilene = new ArrayList<>();
         List<String> feltNavn = new ArrayList<>();
         feltNavn.add("null");
-        Feil feil = FeltValideringFeil.FACTORY.feltverdiKanIkkeValideres(feltNavn);
-        FeilDto feilDto = new FeilDto(feil.getFeilmelding(), feilene);
+        var feil = FeltValideringFeil.feltverdiKanIkkeValideres(feltNavn);
+        FeilDto feilDto = new FeilDto(feil.toString(), feilene);
         assertThat(response.getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
         FeilDto dto = (FeilDto) response.getEntity();
         assertThat(dto.getFeilmelding()).isEqualTo(feilDto.getFeilmelding());

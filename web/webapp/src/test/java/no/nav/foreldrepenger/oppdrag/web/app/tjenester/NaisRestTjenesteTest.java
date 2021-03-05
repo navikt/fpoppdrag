@@ -10,18 +10,19 @@ import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import no.nav.foreldrepenger.oppdrag.web.app.selftest.SelftestService;
+import no.nav.foreldrepenger.oppdrag.web.app.selftest.Selftests;
 
 public class NaisRestTjenesteTest {
 
     private NaisRestTjeneste restTjeneste;
 
     private ApplicationServiceStarter serviceStarterMock = mock(ApplicationServiceStarter.class);
-    private SelftestService selftestServiceMock = mock(SelftestService.class);
+    private Selftests selftestServiceMock = mock(Selftests.class);
 
     @BeforeEach
     public void setup() {
         restTjeneste = new NaisRestTjeneste(serviceStarterMock, selftestServiceMock);
+        restTjeneste.setIsContextStartupReady(true);
     }
 
     @Test
@@ -32,8 +33,16 @@ public class NaisRestTjenesteTest {
     }
 
     @Test
+    public void test_isAlive_skal_returnere_feil_før_startet() {
+        restTjeneste.setIsContextStartupReady(false);
+        Response response = restTjeneste.isAlive();
+
+        assertThat(response.getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+    }
+
+    @Test
     public void test_isReady_skal_returnere_service_unavailable_når_kritiske_selftester_feiler() {
-        when(selftestServiceMock.kritiskTjenesteFeilet()).thenReturn(true);
+        when(selftestServiceMock.isReady()).thenReturn(false);
 
         Response response = restTjeneste.isReady();
 
@@ -42,7 +51,7 @@ public class NaisRestTjenesteTest {
 
     @Test
     public void test_isReady_skal_returnere_status_ok_når_selftester_er_ok() {
-        when(selftestServiceMock.kritiskTjenesteFeilet()).thenReturn(false);
+        when(selftestServiceMock.isReady()).thenReturn(true);
 
         Response response = restTjeneste.isReady();
 

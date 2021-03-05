@@ -113,7 +113,7 @@ public class JettyServer extends AbstractJettyServer {
 
         List<Resource> resources = appClasses.stream().map(c -> Resource.newResource(c.getProtectionDomain().getCodeSource().getLocation())).collect(Collectors.toList());
 
-        metaData.setWebInfClassesDirs(resources);
+        metaData.setWebInfClassesResources(resources);
     }
 
     @Override

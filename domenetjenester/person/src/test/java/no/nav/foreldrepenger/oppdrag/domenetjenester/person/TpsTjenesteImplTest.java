@@ -24,13 +24,14 @@ import no.nav.pdl.Identliste;
 import no.nav.pdl.Navn;
 import no.nav.pdl.Person;
 import no.nav.vedtak.exception.TekniskException;
+import no.nav.vedtak.felles.integrasjon.pdl.Pdl;
 import no.nav.vedtak.felles.integrasjon.pdl.PdlKlient;
 
 @ExtendWith(MockitoExtension.class)
 public class TpsTjenesteImplTest {
 
     @Mock
-    private PdlKlient pdlKlient;
+    private Pdl pdlKlient;
     private PersonTjeneste tpsTjeneste;
 
     @BeforeEach

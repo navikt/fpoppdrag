@@ -22,7 +22,8 @@ import no.nav.pdl.Navn;
 import no.nav.pdl.NavnResponseProjection;
 import no.nav.pdl.PersonResponseProjection;
 import no.nav.vedtak.exception.VLException;
-import no.nav.vedtak.felles.integrasjon.pdl.PdlKlient;
+import no.nav.vedtak.felles.integrasjon.pdl.Pdl;
+import no.nav.vedtak.felles.integrasjon.rest.jersey.Jersey;
 import no.nav.vedtak.util.LRUCache;
 
 @ApplicationScoped
@@ -36,14 +37,14 @@ public class PersonTjeneste {
     private LRUCache<AktørId, PersonIdent> cacheAktørIdTilIdent;
     private LRUCache<PersonIdent, AktørId> cacheIdentTilAktørId;
 
-    private PdlKlient pdlKlient;
+    private Pdl pdlKlient;
 
     public PersonTjeneste() {
         // for CDI proxy
     }
 
     @Inject
-    public PersonTjeneste(PdlKlient pdlKlient) {
+    public PersonTjeneste(@Jersey Pdl pdlKlient) {
         this.pdlKlient = pdlKlient;
         this.cacheAktørIdTilIdent = new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);
         this.cacheIdentTilAktørId = new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);
@@ -70,7 +71,7 @@ public class PersonTjeneste {
         try {
             identliste = pdlKlient.hentIdenter(request, projection);
         } catch (VLException v) {
-            if (PdlKlient.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
+            if (Pdl.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
                 return Optional.empty();
             }
             throw v;
@@ -98,7 +99,7 @@ public class PersonTjeneste {
         try {
             identliste = pdlKlient.hentIdenter(request, projection);
         } catch (VLException v) {
-            if (PdlKlient.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
+            if (Pdl.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
                 return Optional.empty();
             }
             throw v;
@@ -124,7 +125,7 @@ public class PersonTjeneste {
 
             return person.getNavn().stream().map(PersonTjeneste::mapNavn).findFirst();
         } catch (VLException v) {
-            if (PdlKlient.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
+            if (Pdl.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
                 return Optional.empty();
             }
             throw v;
