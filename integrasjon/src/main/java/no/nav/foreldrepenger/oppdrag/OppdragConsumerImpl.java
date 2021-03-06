@@ -19,6 +19,7 @@ import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerFpService;
 import no.nav.system.os.tjenester.simulerfpservice.feil.FeilUnderBehandling;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse;
+import no.nav.vedtak.exception.IntegrasjonException;
 
 public class OppdragConsumerImpl implements OppdragConsumer {
 
@@ -48,12 +49,12 @@ public class OppdragConsumerImpl implements OppdragConsumer {
             FeilUnderBehandling fault = e.getFaultInfo();
             if (!source.isEmpty())
                 log.warn("Simulering feiler for request {}", source);
-            throw OppdragConsumerFeil.FACTORY.feilUnderBehandlingAvSimulering(fault.getErrorSource(), fault.getErrorType(), fault.getErrorMessage(), fault.getRootCause(), fault.getDateTimeStamp(), e).toException();
+            throw OppdragConsumerFeil.feilUnderBehandlingAvSimulering(fault.getErrorSource(), fault.getErrorType(), fault.getErrorMessage(), fault.getRootCause(), fault.getDateTimeStamp(), e);
         } catch (WebServiceException e) {
             if (feiletPgaOppdragsystemetUtenforÅpningstid(e)) {
-                throw OppdragConsumerFeil.FACTORY.oppdragsystemetHarNedetid(e).toException();
+                throw OppdragConsumerFeil.oppdragsystemetHarNedetid(e);
             }
-            throw OppdragConsumerFeil.FACTORY.feilUnderKallTilSimuleringtjenesten(e).toException();
+            throw OppdragConsumerFeil.feilUnderKallTilSimuleringtjenesten(e);
         }
     }
 
@@ -66,6 +67,24 @@ public class OppdragConsumerImpl implements OppdragConsumer {
         return OPPDRAG_ÅPNE_DAGER.contains(nå.getDayOfWeek())
                 && nå.toLocalTime().isAfter(OPPDRAG_ÅPNINGSTID_START)
                 && nå.toLocalTime().isBefore(OPPDRAG_ÅPNINGSTID_SLUTT);
+    }
+
+    private static class OppdragConsumerFeil  {
+
+
+        static OppdragNedetidException oppdragsystemetHarNedetid(WebServiceException cause) {
+            return new OppdragNedetidException("FPO-273196", "Kallet mot oppdragsystemet feilet. Feilmelding og tidspunktet tilsier at oppdragsystemet har forventet nedetid (utenfor åpningstid).", cause);
+        }
+
+        static IntegrasjonException feilUnderKallTilSimuleringtjenesten(WebServiceException e) {
+            return new IntegrasjonException("FPO-852145", "Simulering feilet. Fikk uventet feil mot oppdragssytemet", e);
+        }
+
+        static IntegrasjonException feilUnderBehandlingAvSimulering(String source, String errorType, String errorMessage, String rootCause, String dateTimeStamp, Exception e) {
+            return new IntegrasjonException("FPO-845125", String.format("Simulering feilet. Mottok feilmelding fra oppdragsystemet: source='%s' type='%s' message='%s' rootcause='%s' timestamp='%s'", source, errorType, errorMessage, rootCause, dateTimeStamp), e);
+        }
+
+
     }
 
 }

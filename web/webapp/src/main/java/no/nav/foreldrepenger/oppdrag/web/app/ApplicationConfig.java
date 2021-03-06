@@ -6,12 +6,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.CDI;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
-
-import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
 
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
@@ -29,9 +25,12 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.kodeverk.KodeverkRestTjen
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.SimuleringRestTjeneste;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.SimuleringTestRestTjeneste;
 import no.nav.vedtak.felles.prosesstask.rest.ProsessTaskRestTjeneste;
+import no.nav.vedtak.util.env.Environment;
 
 @ApplicationPath(ApplicationConfig.API_URI)
 public class ApplicationConfig extends Application {
+
+    private static boolean ER_LOKAL_UTVIKLING = Environment.current().isLocal();
 
     public static final String API_URI = "/api";
 
@@ -78,13 +77,8 @@ public class ApplicationConfig extends Application {
 
         classes.add(SimuleringVedlikeholdRestTjeneste.class);
 
-        //HAXX SimuleringTestRestTjeneste skal bare være tilgjengelig for lokal utvikling, brukes for å sette opp test
-        //hvis denne legges til i en egen Application isdf i denne, kan man ikke bruke swagger for å nå tjenesten
-        //bruker derfor CDI for å slå opp klassen
-        Instance<SimuleringTestRestTjeneste> simuleringTestRestTjeneste = CDI.current().select(SimuleringTestRestTjeneste.class);
-        if (!simuleringTestRestTjeneste.isUnsatisfied()) {
-            TargetInstanceProxy proxy = (TargetInstanceProxy) simuleringTestRestTjeneste.get();
-            classes.add(proxy.weld_getTargetClass());
+        if (ER_LOKAL_UTVIKLING) {
+            classes.add(SimuleringTestRestTjeneste.class);
         }
 
         return Collections.unmodifiableSet(classes);

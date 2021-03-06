@@ -43,8 +43,9 @@ import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.O
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.Oppdrag;
-import no.nav.vedtak.felles.integrasjon.felles.ws.JaxbHelper;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.util.env.Environment;
+import no.nav.vedtak.xmlutils.JaxbHelper;
 
 @ApplicationScoped
 public class StartSimuleringTjeneste {
@@ -256,11 +257,11 @@ public class StartSimuleringTjeneste {
                 .map(FagOmrådeKode::getYtelseType)
                 .collect(Collectors.toSet());
         if (ytelsetyper.size() > 1) {
-            throw StartSimuleringTjenesteFeil.FACTORY.ikkeUnikYtelseType(behandlingId, fagOmrådeKoder).toException();
+            throw StartSimuleringTjenesteFeil.ikkeUnikYtelseType(behandlingId, fagOmrådeKoder);
         }
         YtelseType ytelseType = ytelsetyper.iterator().next();
         if (ytelseType == YtelseType.UDEFINERT) {
-            throw StartSimuleringTjenesteFeil.FACTORY.manglerMappingMellomFagområdeKodeOgYtleseType(behandlingId, fagOmrådeKoder).toException();
+            throw StartSimuleringTjenesteFeil.manglerMappingMellomFagområdeKodeOgYtleseType(behandlingId, fagOmrådeKoder);
         }
         return ytelseType;
     }
@@ -332,7 +333,7 @@ public class StartSimuleringTjeneste {
             for (BeregningStoppnivaa stoppnivå : periode.getBeregningStoppnivaa()) {
                 if (stoppnivå.getFagsystemId() == null || stoppnivå.getFagsystemId().isEmpty()) {
                     stoppnivå.setFagsystemId("FEIL-MANGLET"); //setter fagsystemId til for å kunne marshalle
-                    StartSimuleringTjenesteFeil.FACTORY.mangletFagsystemId(behandlingId, periode.getPeriodeFom(), periode.getPeriodeTom()).log(logger);
+                    logger.warn(StartSimuleringTjenesteFeil.mangletFagsystemId(behandlingId, periode.getPeriodeFom(), periode.getPeriodeTom()).getMessage());
                 }
             }
         }
@@ -344,7 +345,7 @@ public class StartSimuleringTjeneste {
                     OppdragSkjemaConstants.JAXB_CLASS, oppdrag, OppdragSkjemaConstants.XSD_LOCATION);
             return OppdragMapper.mapTilSimuleringOppdrag(fpOppdrag.getOppdrag110());
         } catch (JAXBException | SAXException | XMLStreamException e) {
-            throw StartSimuleringTjenesteFeil.FACTORY.kunneIkkeUnmarshalleOppdragXml(e).toException();
+            throw StartSimuleringTjenesteFeil.kunneIkkeUnmarshalleOppdragXml(e);
         }
     }
 
@@ -352,5 +353,25 @@ public class StartSimuleringTjeneste {
         SimulerBeregningRequest request = new ObjectFactory().createSimulerBeregningRequest();
         request.setRequest(simulerBeregningRequest);
         return request;
+    }
+
+    private static class StartSimuleringTjenesteFeil {
+
+        static TekniskException kunneIkkeUnmarshalleOppdragXml(Exception e) {
+            return new TekniskException("FPO-832562", "Kunne ikke tolke mottatt oppdrag XML", e);
+        }
+
+        static TekniskException manglerMappingMellomFagområdeKodeOgYtleseType(Long behandlingId, List<String> fagområdeKode) {
+            return new TekniskException( "FPO-852146", String.format("Utvikler-feil: Mangler mapping mellom fagområdekode og ytelsetype for behandlingId=%s fagområdekode=%s", behandlingId, fagområdeKode));
+        }
+
+        static TekniskException ikkeUnikYtelseType(Long behandlingId, List<String> fagområdeKode) {
+            return new TekniskException("FPO-810466", String.format("Utvikler-feil: Klarer ikke utlede unik ytelsetype for behandlingId=%s fagområdekode=%s", behandlingId, fagområdeKode));
+        }
+
+        static TekniskException  mangletFagsystemId(Long behandlingId, String periodeFom, String periodeTom) {
+            return new TekniskException("FPO-811943", String.format("Manglet fagsystemId i mottat respons for behandlingId=%s periode=%s-%s", behandlingId, periodeFom, periodeTom));
+        }
+
     }
 }

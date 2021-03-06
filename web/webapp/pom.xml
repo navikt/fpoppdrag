@@ -173,10 +173,6 @@
 
         <!-- Metrics, logging, helse- og selftest -->
         <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-healthchecks</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_dropwizard</artifactId>
         </dependency>
@@ -344,28 +340,6 @@
                 <configuration>
                     <addOutputDirectoryToResources>true</addOutputDirectoryToResources>
                     <timestampFormat>dd.MM.yyyy HH.mm.ss</timestampFormat>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>only-allowed-deps</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <rules>
-                        <bannedDependencies>
-                            <searchTransitive>true</searchTransitive>
-                            <excludes>
-                                <exclude>commons-logging:commons-logging</exclude>
-                            </excludes>
-                        </bannedDependencies>
-                    </rules>
                 </configuration>
             </plugin>
             <plugin>

@@ -29,11 +29,7 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
-import no.nav.vedtak.feil.Feil;
-import no.nav.vedtak.feil.FeilFactory;
-import no.nav.vedtak.feil.LogLevel;
-import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
-import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
+import no.nav.vedtak.exception.TekniskException;
 
 @ApplicationScoped
 public class SimuleringBeregningTjeneste {
@@ -274,7 +270,7 @@ public class SimuleringBeregningTjeneste {
 
     private static void sanityCheckResultater(List<SimulertPostering> feilutbetalingPosteringer, BigDecimal feilutbetaltBeløp) {
         if (!feilutbetalingPosteringer.isEmpty() && feilutbetaltBeløp.signum() == 0) {
-            SimuleringBeregningTjenesteFeil.FACTORY.uforventetDataFeilposteringerSummererTil0InnenforMåned().log(logger);
+            logger.warn(SimuleringBeregningTjenesteFeil.uforventetDataFeilposteringerSummererTil0InnenforMåned().getMessage());
         }
     }
 
@@ -357,12 +353,12 @@ public class SimuleringBeregningTjeneste {
                 .collect(Collectors.groupingBy(p -> YearMonth.from(p.getFom())));
     }
 
-    interface SimuleringBeregningTjenesteFeil extends DeklarerteFeil {
+    private static class SimuleringBeregningTjenesteFeil  {
 
-        SimuleringBeregningTjenesteFeil FACTORY = FeilFactory.create(SimuleringBeregningTjenesteFeil.class);
 
-        @TekniskFeil(feilkode = "FPO-723664", feilmelding = "Har FEIL-posteringer i en måned og summen var 0. Dette er ikke forventet at skjer, bør analyseres", logLevel = LogLevel.WARN)
-        Feil uforventetDataFeilposteringerSummererTil0InnenforMåned();
+        static TekniskException uforventetDataFeilposteringerSummererTil0InnenforMåned() {
+            return new TekniskException("FPO-723664", "Har FEIL-posteringer i en måned og summen var 0. Dette er ikke forventet at skjer, bør analyseres");
+        }
     }
 
 }

@@ -1,12 +1,12 @@
 package no.nav.foreldrepenger.oppdrag.web.app.exceptions;
 
-import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.ws.rs.core.Response;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
 
 public class JsonMappingExceptionMapperTest {
 
@@ -16,7 +16,7 @@ public class JsonMappingExceptionMapperTest {
         JsonMappingExceptionMapper mapper = new JsonMappingExceptionMapper();
         Response resultat = mapper.toResponse(new InvalidTypeIdException(null, "Ukjent type-kode", null, "23525"));
         FeilDto dto = (FeilDto) resultat.getEntity();
-        assertThat(dto.getFeilmelding()).isEqualTo("JSON-mapping feil");
+        assertThat(dto.getFeilmelding()).contains("JSON-mapping feil");
         assertThat(dto.getFeltFeil()).isNull();
     }
 }
