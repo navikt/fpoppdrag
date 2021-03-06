@@ -47,7 +47,7 @@ public class ConstraintViolationMapperTest {
         List<String> feltNavn = new ArrayList<>();
         feltNavn.add("null");
         var feil = FeltValideringFeil.feltverdiKanIkkeValideres(feltNavn);
-        FeilDto feilDto = new FeilDto(feil.toString(), feilene);
+        FeilDto feilDto = new FeilDto(feil.getMessage(), feilene);
         assertThat(response.getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
         FeilDto dto = (FeilDto) response.getEntity();
         assertThat(dto.getFeilmelding()).isEqualTo(feilDto.getFeilmelding());

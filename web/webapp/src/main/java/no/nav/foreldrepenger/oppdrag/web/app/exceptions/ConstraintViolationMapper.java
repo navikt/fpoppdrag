@@ -33,10 +33,10 @@ public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViol
         List<String> feltNavn = feilene.stream().map(felt -> felt.getNavn()).collect(Collectors.toList());
 
         var feil = FeltValideringFeil.feltverdiKanIkkeValideres(feltNavn);
-        log.warn(feil.toString());
+        log.warn(feil.getMessage());
         return Response
             .status(Response.Status.BAD_REQUEST)
-            .entity(new FeilDto(feil.toString(), feilene))
+            .entity(new FeilDto(feil.getMessage(), feilene))
             .type(MediaType.APPLICATION_JSON)
             .build();
     }

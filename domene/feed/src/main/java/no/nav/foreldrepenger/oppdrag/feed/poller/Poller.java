@@ -37,7 +37,7 @@ public class Poller implements Runnable {
         try {
             RequestContextHandler.doWithRequestContext(this::doPollWithEntityManager);
         } catch (VLException e) {
-            logger.warn(e.toString(), e.getCause());
+            logger.warn(e.getMessage(), e.getCause());
         } catch (Exception e) {
             logger.error("Uventet feil i polling", e);
         }

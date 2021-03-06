@@ -200,11 +200,6 @@
 
             <!-- Annet -->
             <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-healthchecks</artifactId>
-                <version>4.1.18</version>
-            </dependency>
-            <dependency>
                 <groupId>io.prometheus</groupId>
                 <artifactId>simpleclient_dropwizard</artifactId>
                 <version>${prometheus.version}</version>

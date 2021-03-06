@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import no.nav.foreldrepenger.oppdrag.OppdragNedetidException;
+import no.nav.vedtak.exception.FunksjonellException;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.exception.VLException;
 import no.nav.vedtak.felles.jpa.TomtResultatException;
@@ -61,7 +62,7 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
         return Response
                 .status(Response.Status.BAD_REQUEST)
                 .entity(new FeilDto(
-                        FeltValideringFeil.feltverdiKanIkkeValideres(feltNavn).toString(),
+                        FeltValideringFeil.feltverdiKanIkkeValideres(feltNavn).getMessage(),
                         valideringsfeil.getFeltFeil()))
                 .type(MediaType.APPLICATION_JSON)
                 .build();
@@ -97,7 +98,7 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
     }
 
     private Response ikkeTilgang(VLException feil) {
-        String feilmelding = feil.toString();
+        String feilmelding = feil.getMessage();
         FeilType feilType = FeilType.MANGLER_TILGANG_FEIL;
         return Response.status(Response.Status.FORBIDDEN)
                 .entity(new FeilDto(feilType, feilmelding))
@@ -106,10 +107,18 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
     }
 
     private String getVLExceptionFeilmelding(String callId, VLException feil) {
-        String feilbeskrivelse = feil.toString();
-        return "Det oppstod en feil: "
-                + avsluttMedPunktum(feilbeskrivelse)
-                + ". Referanse-id: " + callId;
+        String feilbeskrivelse = feil.getMessage();
+        if (feil instanceof FunksjonellException) {
+            String løsningsforslag = ((FunksjonellException) feil).getLøsningsforslag();
+            return "Det oppstod en feil: " //$NON-NLS-1$
+                    + avsluttMedPunktum(feilbeskrivelse)
+                    + avsluttMedPunktum(løsningsforslag)
+                    + ". Referanse-id: " + callId; //$NON-NLS-1$
+        } else {
+            return "Det oppstod en serverfeil: " //$NON-NLS-1$
+                    + avsluttMedPunktum(feilbeskrivelse)
+                    + ". Meld til support med referanse-id: " + callId; //$NON-NLS-1$
+        }
     }
 
     private Response handleGenerellFeil(Throwable cause, String callId) {
@@ -126,9 +135,9 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
 
     private void loggTilApplikasjonslogg(Throwable cause) {
         if (cause instanceof OppdragNedetidException) {
-            LOGGER.info(cause.toString());
+            LOGGER.info(cause.getMessage());
         } else if (cause instanceof VLException) {
-            LOGGER.warn(cause.toString(), cause.getCause());
+            LOGGER.warn(cause.getMessage(), cause.getCause());
         } else {
             String message = cause.getMessage() != null ? LoggerUtils.removeLineBreaks(cause.getMessage()) : "";
             LOGGER.error("Fikk uventet feil:" + message, cause); //NOSONAR //$NON-NLS-1$

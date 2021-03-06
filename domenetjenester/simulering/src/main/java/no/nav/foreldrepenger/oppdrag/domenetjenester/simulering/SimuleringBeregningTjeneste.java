@@ -270,7 +270,7 @@ public class SimuleringBeregningTjeneste {
 
     private static void sanityCheckResultater(List<SimulertPostering> feilutbetalingPosteringer, BigDecimal feilutbetaltBeløp) {
         if (!feilutbetalingPosteringer.isEmpty() && feilutbetaltBeløp.signum() == 0) {
-            logger.warn(SimuleringBeregningTjenesteFeil.uforventetDataFeilposteringerSummererTil0InnenforMåned().toString());
+            logger.warn(SimuleringBeregningTjenesteFeil.uforventetDataFeilposteringerSummererTil0InnenforMåned().getMessage());
         }
     }
 
