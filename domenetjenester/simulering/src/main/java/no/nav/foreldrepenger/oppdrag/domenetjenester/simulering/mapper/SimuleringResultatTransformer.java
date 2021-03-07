@@ -23,11 +23,7 @@ import no.nav.system.os.entiteter.beregningskjema.Beregning;
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaa;
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaaDetaljer;
 import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode;
-import no.nav.vedtak.feil.Feil;
-import no.nav.vedtak.feil.FeilFactory;
-import no.nav.vedtak.feil.LogLevel;
-import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
-import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
+import no.nav.vedtak.exception.TekniskException;
 
 @ApplicationScoped
 public class SimuleringResultatTransformer {
@@ -109,7 +105,7 @@ public class SimuleringResultatTransformer {
             return orgNrOrFnr.substring(2);
         } else {
             AktørId aktørId = tpsTjeneste.hentAktørForFnr(new PersonIdent(orgNrOrFnr))
-                    .orElseThrow(() -> SimuleringResultatTransformerFeil.FACTORY.fantIkkeAktørIdForFnr().toException());
+                    .orElseThrow(() -> new TekniskException("FPO-952153", "Fant ikke aktørId for FNR"));
             return aktørId.getId();
         }
     }
@@ -140,12 +136,5 @@ public class SimuleringResultatTransformer {
     private LocalDate parseDato(String dato) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATO_PATTERN);
         return LocalDate.parse(dato, dtf);
-    }
-
-    public interface SimuleringResultatTransformerFeil extends DeklarerteFeil {
-        SimuleringResultatTransformerFeil FACTORY = FeilFactory.create(SimuleringResultatTransformerFeil.class);
-
-        @TekniskFeil(feilkode = "FPO-952153", feilmelding = "Fant ikke aktørId for FNR", logLevel = LogLevel.WARN)
-        Feil fantIkkeAktørIdForFnr();
     }
 }

@@ -11,6 +11,7 @@ import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.pip.PipRepository;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.sikkerhet.abac.AbacAttributtSamling;
 import no.nav.vedtak.sikkerhet.abac.AbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.NavAbacCommonAttributter;
@@ -82,6 +83,6 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
         } else if (behandlingIder.size() == 1) {
             return Optional.of((Long) behandlingIder.iterator().next());
         }
-        throw PdpRequestBuilderFeil.FACTORY.ugyldigInputFlereBehandlingIder(behandlingIder).toException();
+        throw new TekniskException("FPO-49016", String.format("Ugyldig input. Støtter bare 0 eller 1 behandling, men har %s", behandlingIder));
     }
 }
