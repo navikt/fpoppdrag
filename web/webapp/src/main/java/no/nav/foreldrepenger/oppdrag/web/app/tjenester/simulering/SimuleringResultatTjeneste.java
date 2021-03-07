@@ -14,9 +14,9 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimulertBeregnin
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.SimuleringResultatTjenesteFeil;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatDto;
+import no.nav.vedtak.exception.TekniskException;
 
 
 @ApplicationScoped
@@ -73,11 +73,11 @@ public class SimuleringResultatTjeneste {
     public FeilutbetaltePerioderDto hentFeilutbetaltePerioder(Long behandlingId) {
         Optional<SimuleringGrunnlag> optSimuleringGrunnlag = simuleringRepository.hentSimulertOppdragForBehandling(behandlingId);
         if (!optSimuleringGrunnlag.isPresent()) {
-            throw SimuleringResultatTjenesteFeil.FACTORY.finnesIkkeSimuleringsResultat(behandlingId).toException();
+            throw new TekniskException("FPO-319832", String.format("Fant ikke simuleringsresultat for behandlingId=%s", behandlingId));
         }
         SimuleringGrunnlag simuleringGrunnlag = optSimuleringGrunnlag.get();
         return FeilutbetalingTjeneste.finnFeilutbetaltePerioderForForeldrepengerOgEngangsstønad(simuleringGrunnlag)
-                .orElseThrow(() -> SimuleringResultatTjenesteFeil.FACTORY.finnesIkkeFeilutbetalingsperioderForBruker(behandlingId).toException());
+                .orElseThrow(() -> new TekniskException("FPO-216725", String.format("Fant ingen perioder med feilutbetaling for bruker, behandlingId=%s", behandlingId)));
     }
 
     private Optional<SimulertBeregningResultat> hentResultat(Long behandlingId) {

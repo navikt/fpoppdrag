@@ -9,11 +9,7 @@ import javax.xml.bind.Marshaller;
 
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse;
-import no.nav.vedtak.feil.Feil;
-import no.nav.vedtak.feil.FeilFactory;
-import no.nav.vedtak.feil.LogLevel;
-import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
-import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
+import no.nav.vedtak.exception.TekniskException;
 
 class SimuleringMarshaller {
     private static ConcurrentHashMap<Class<?>, JAXBContext> contextCache = new ConcurrentHashMap<>();
@@ -22,7 +18,7 @@ class SimuleringMarshaller {
         try {
             return marshall(SimulerBeregningResponse.class, response);
         } catch (JAXBException e) {
-            throw SimuleringMarshallerFeil.FACTORY.kunneIkkeMarshalleSimuleringResponse(behandlingId, e).toException();
+            throw new TekniskException("FPO-852523", String.format("Kunne ikke marshalle simuleringresultatet til XML for behandlingId=%s", behandlingId), e);
         }
     }
 
@@ -30,7 +26,7 @@ class SimuleringMarshaller {
         try {
             return marshall(SimulerBeregningRequest.class, request);
         } catch (JAXBException e) {
-            throw SimuleringMarshallerFeil.FACTORY.kunneIkkeMarshalleSimuleringRequest(behandlingId, e).toException();
+            throw new TekniskException("FPO-852524", String.format("Kunne ikke marshalle simulering request til XML for behandlingId=%s", behandlingId), e);
         }
     }
 
@@ -51,21 +47,9 @@ class SimuleringMarshaller {
             try {
                 return JAXBContext.newInstance(k);
             } catch (JAXBException e) {
-                throw SimuleringMarshallerFeil.FACTORY.klarteIkkeLageJaxbContext(e).toException();
+                throw new TekniskException("FPO-285590", "Klarte ikke lage JAXBcontext");
             }
         });
     }
 
-    interface SimuleringMarshallerFeil extends DeklarerteFeil {
-        SimuleringMarshallerFeil FACTORY = FeilFactory.create(SimuleringMarshallerFeil.class);
-
-        @TekniskFeil(feilkode = "FPO-852524", feilmelding = "Kunne ikke marshalle simulering request til XML for behandlingId=%s", logLevel = LogLevel.WARN)
-        Feil kunneIkkeMarshalleSimuleringRequest(Long behandlingId, Exception e);
-
-        @TekniskFeil(feilkode = "FPO-852523", feilmelding = "Kunne ikke marshalle simuleringresultatet til XML for behandlingId=%s", logLevel = LogLevel.WARN)
-        Feil kunneIkkeMarshalleSimuleringResponse(Long behandlingId, Exception e);
-
-        @TekniskFeil(feilkode = "FPO-285590", feilmelding = "Klarte ikke lage JAXBcontext", logLevel = LogLevel.ERROR)
-        Feil klarteIkkeLageJaxbContext(JAXBException e);
-    }
 }

@@ -135,7 +135,7 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
 
     private void loggTilApplikasjonslogg(Throwable cause) {
         if (cause instanceof OppdragNedetidException) {
-            LOGGER.info(cause.getMessage());
+            LOGGER.info(cause.getMessage(), cause);
         } else if (cause instanceof VLException) {
             LOGGER.warn(cause.getMessage(), cause.getCause());
         } else {

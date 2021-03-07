@@ -8,11 +8,7 @@ import no.nav.foreldrepenger.oppdrag.domene.organisasjon.OrganisasjonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
-import no.nav.vedtak.feil.Feil;
-import no.nav.vedtak.feil.FeilFactory;
-import no.nav.vedtak.feil.LogLevel;
-import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
-import no.nav.vedtak.feil.deklarasjon.IntegrasjonFeil;
+import no.nav.vedtak.exception.IntegrasjonException;
 
 @ApplicationScoped
 class HentNavnTjeneste {
@@ -32,7 +28,7 @@ class HentNavnTjeneste {
     }
 
     public AktørId hentAktørIdGittFnr(String fnr) {
-        return tpsTjeneste.hentAktørForFnr(new PersonIdent(fnr)).orElseThrow(() -> HentNavnTjenesteFeil.FACTORY.kanIkkeFinneAktørId().toException());
+        return tpsTjeneste.hentAktørForFnr(new PersonIdent(fnr)).orElseThrow(() -> new IntegrasjonException("FPO-118600", "Kunne ikke finne aktørid"));
     }
 
     public String hentNavnGittFnr(String fnr) {
@@ -41,17 +37,7 @@ class HentNavnTjeneste {
 
     public String hentNavnGittOrgnummer(String orgnummer) {
         return organisasjonTjeneste.hentOrganisasjonInfo(orgnummer).map(OrganisasjonInfo::getNavn)
-                .orElseThrow(() -> HentNavnTjenesteFeil.FACTORY.kanIkkeFinneOrganisasjoninfo().toException());
-    }
-
-    interface HentNavnTjenesteFeil extends DeklarerteFeil {
-        HentNavnTjenesteFeil FACTORY = FeilFactory.create(HentNavnTjenesteFeil.class);
-
-        @IntegrasjonFeil(feilkode = "FPO-118600", feilmelding = "Kunne ikke finne aktørid", logLevel = LogLevel.WARN)
-        Feil kanIkkeFinneAktørId();
-
-        @IntegrasjonFeil(feilkode = "FPO-069991", feilmelding = "Kunne ikke finne organisasjoninfo", logLevel = LogLevel.WARN)
-        Feil kanIkkeFinneOrganisasjoninfo();
+                .orElseThrow(() -> new IntegrasjonException("FPO-069991", "Kunne ikke finne organisasjoninfo"));
     }
 
 }
