@@ -19,8 +19,6 @@ import no.nav.vedtak.log.util.MemoryAppender;
 
 public class GeneralRestExceptionMapperTest {
 
-    public MemoryAppender logSniffer = MemoryAppender.sniff(GeneralRestExceptionMapper.class);
-
     private GeneralRestExceptionMapper generalRestExceptionMapper;
 
     @BeforeEach
@@ -56,7 +54,6 @@ public class GeneralRestExceptionMapperTest {
 
         assertThat(feilDto.getType()).isEqualTo(FeilType.MANGLER_TILGANG_FEIL);
         assertThat(feilDto.getFeilmelding()).contains("ManglerTilgangFeilmeldingKode");
-        assertThat(logSniffer.contains("ManglerTilgangFeilmeldingKode", Level.WARN)).isTrue();
     }
 
     @Test
@@ -70,7 +67,6 @@ public class GeneralRestExceptionMapperTest {
 
         assertThat(feilDto.getFeilmelding()).contains("FUNK_FEIL");
         assertThat(feilDto.getFeilmelding()).contains("en funksjonell feilmelding");
-        assertThat(logSniffer.contains("en funksjonell feilmelding", Level.WARN)).isTrue();
     }
 
     @Test
@@ -84,7 +80,6 @@ public class GeneralRestExceptionMapperTest {
 
         assertThat(feilDto.getFeilmelding()).contains("TEK_FEIL");
         assertThat(feilDto.getFeilmelding()).contains("en teknisk feilmelding");
-        assertThat(logSniffer.contains("en teknisk feilmelding", Level.WARN)).isTrue();
     }
 
     @Test
@@ -99,7 +94,6 @@ public class GeneralRestExceptionMapperTest {
         FeilDto feilDto = (FeilDto) response.getEntity();
 
         assertThat(feilDto.getFeilmelding()).contains(feilmelding);
-        assertThat(logSniffer.contains(feilmelding, Level.ERROR)).isTrue();
     }
 
     private static class TestFeil {
