@@ -6,14 +6,12 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import no.nav.foreldrepenger.oppdrag.web.app.selftest.checks.DatabaseHealthCheck;
-import no.nav.foreldrepenger.oppdrag.web.app.selftest.checks.OppdragWebServiceHealthCheck;
 import no.nav.vedtak.konfig.KonfigVerdi;
 
 @ApplicationScoped
 public class Selftests {
 
     private DatabaseHealthCheck databaseHealthCheck;
-    private OppdragWebServiceHealthCheck healthCheckOS;
 
     private boolean isDatabaseReady;
     private LocalDateTime sistOppdatertTid = LocalDateTime.now().minusDays(1);
@@ -27,11 +25,8 @@ public class Selftests {
     @Inject
     public Selftests(
             DatabaseHealthCheck databaseHealthCheck,
-            OppdragWebServiceHealthCheck healthCheckOS,
             @KonfigVerdi(value = "application.name") String applicationName) {
-
         this.databaseHealthCheck = databaseHealthCheck;
-        this.healthCheckOS = healthCheckOS;
         this.applicationName = applicationName;
     }
 
@@ -64,8 +59,6 @@ public class Selftests {
         samletResultat.setTimestamp(LocalDateTime.now());
 
         samletResultat.leggTilResultatForKritiskTjeneste(isDatabaseReady, databaseHealthCheck.getDescription(), databaseHealthCheck.getEndpoint());
-
-        samletResultat.leggTilResultatForIkkeKritiskTjeneste(healthCheckOS.isOK(), healthCheckOS.getDescription(), healthCheckOS.getEndpoint());
 
         return samletResultat;
     }
