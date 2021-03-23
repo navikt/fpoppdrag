@@ -7,7 +7,6 @@ import static org.mockito.Mockito.mock;
 import java.util.Iterator;
 
 import javax.enterprise.inject.Instance;
-import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,18 +14,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.CdiDbAwareTest;
+import no.nav.foreldrepenger.oppdrag.dbstoette.EntityManagerAwareTest;
 import no.nav.vedtak.log.util.MemoryAppender;
 
 @Execution(ExecutionMode.SAME_THREAD)
-@CdiDbAwareTest
-public class FeedPollerManagerTest {
+public class FeedPollerManagerTest extends EntityManagerAwareTest {
 
     private static MemoryAppender logSniffer;
     private FeedPollerManager manager;
 
     @BeforeEach
-    public void setUp(EntityManager entityManager) {
+    public void setUp() {
         logSniffer = MemoryAppender.sniff(FeedPollerManager.class);
         @SuppressWarnings("unchecked")
         Instance<FeedPoller> feedPollers = mock(Instance.class);
@@ -37,7 +35,7 @@ public class FeedPollerManagerTest {
         lenient().when(feedPollers.iterator()).thenReturn(iterator);
         lenient().when(iterator.hasNext()).thenReturn(true, false);
         lenient().when(iterator.next()).thenReturn(new TestFeedPoller());
-        manager = new FeedPollerManager(entityManager, feedPollers);
+        manager = new FeedPollerManager(getEntityManager(), feedPollers);
     }
 
     @AfterEach
