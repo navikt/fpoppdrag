@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -29,12 +28,11 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
-import no.nav.vedtak.exception.TekniskException;
 
 @ApplicationScoped
 public class SimuleringBeregningTjeneste {
 
-    private static final Logger logger = LoggerFactory.getLogger(SimuleringBeregningTjeneste.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SimuleringBeregningTjeneste.class);
 
     BeregningResultat hentBeregningsresultat(SimuleringGrunnlag simuleringGrunnlag) {
         return beregnResultat(simuleringGrunnlag, false)
@@ -91,7 +89,7 @@ public class SimuleringBeregningTjeneste {
                 .anyMatch(m -> !m.getSimulertePosteringerUtenInntrekk().isEmpty());
     }
 
-    List<SimulertBeregningPeriode> beregnPosteringerPerMånedOgFagområde(Collection<SimulertPostering> posteringer) {
+    List<SimulertBeregningPeriode> beregnPosteringerPerMånedOgFagområde(List<SimulertPostering> posteringer) {
         Objects.requireNonNull(posteringer, "posteringer"); //NOSONAR
 
         List<SimulertBeregningPeriode> simulerteBeregninger = new ArrayList<>();
@@ -101,7 +99,7 @@ public class SimuleringBeregningTjeneste {
             SimulertBeregningPeriode.Builder simulertBeregningBuilder = SimulertBeregningPeriode.builder()
                     .medPeriode(periode);
 
-            Map<FagOmrådeKode, List<SimulertPostering>> posteringerPerFagområde = grupperPerFagområde(entry);
+            Map<FagOmrådeKode, List<SimulertPostering>> posteringerPerFagområde = grupperPerFagområde(entry.getValue());
             for (Map.Entry<FagOmrådeKode, List<SimulertPostering>> entryPerFagomr : posteringerPerFagområde.entrySet()) {
                 SimulertBeregning simulertBeregning = beregnPosteringerPerFagområde(entryPerFagomr.getValue());
                 simulertBeregningBuilder.medBeregning(entryPerFagomr.getKey(), simulertBeregning)
@@ -172,7 +170,7 @@ public class SimuleringBeregningTjeneste {
             YearMonth nesteUtbetalingsperiode = YearMonth.from(mottakerBruker.getNesteUtbetalingsperiodeFom());
             List<SimulertBeregningPeriode> resultatForBruker = beregningsresultat.get(mottakerBruker);
             return resultatForBruker.stream()
-                    .filter(p -> !erNesteUtbetalingsperiode(p.getPeriode(), nesteUtbetalingsperiode))
+                    .filter(p -> erIkkeNesteUtbetalingsperiode(p.getPeriode(), nesteUtbetalingsperiode))
                     .filter(r -> r.getBeregningPerFagområde().containsKey(fagOmrådeKode))
                     .map(r -> r.getBeregningPerFagområde().get(fagOmrådeKode))
                     .collect(Collectors.toList());
@@ -186,7 +184,7 @@ public class SimuleringBeregningTjeneste {
             Mottaker mottaker = entry.getKey();
             YearMonth nesteUtbetalingsperiode = YearMonth.from(mottaker.getNesteUtbetalingsperiodeFom());
             Optional<LocalDate> tomDato = entry.getValue().stream()
-                    .filter(p -> !erNesteUtbetalingsperiode(p.getPeriode(), nesteUtbetalingsperiode))
+                    .filter(p -> erIkkeNesteUtbetalingsperiode(p.getPeriode(), nesteUtbetalingsperiode))
                     .map(b -> b.getPeriode().getPeriodeTom())
                     .reduce((a, b) -> a.isAfter(b) ? a : b);
             if (tomDato.isPresent()) {
@@ -202,7 +200,7 @@ public class SimuleringBeregningTjeneste {
             Mottaker mottaker = entry.getKey();
             YearMonth nesteUtbetalingsperiode = YearMonth.from(mottaker.getNesteUtbetalingsperiodeFom());
             Optional<LocalDate> fomDato = entry.getValue().stream()
-                    .filter(p -> !erNesteUtbetalingsperiode(p.getPeriode(), nesteUtbetalingsperiode))
+                    .filter(p -> erIkkeNesteUtbetalingsperiode(p.getPeriode(), nesteUtbetalingsperiode))
                     .map(b -> b.getPeriode().getPeriodeFom())
                     .reduce((a, b) -> a.isBefore(b) ? a : b);
             if (fomDato.isPresent()) {
@@ -212,8 +210,8 @@ public class SimuleringBeregningTjeneste {
         return førsteFomDato;
     }
 
-    private static boolean erNesteUtbetalingsperiode(Periode periode, YearMonth nesteUtbetalingsperiode) {
-        return periode != null && YearMonth.from(periode.getPeriodeFom()).equals(nesteUtbetalingsperiode);
+    private static boolean erIkkeNesteUtbetalingsperiode(Periode periode, YearMonth nesteUtbetalingsperiode) {
+        return periode == null || !YearMonth.from(periode.getPeriodeFom()).equals(nesteUtbetalingsperiode);
     }
 
     private static Periode finnPeriode(List<SimulertPostering> posteringer) {
@@ -233,16 +231,17 @@ public class SimuleringBeregningTjeneste {
 
     private static SimulertBeregning beregn(List<SimulertPostering> posteringer) {
 
-        List<SimulertPostering> feilutbetalingPosteringer = bareFeilutbetalingPosteringer(posteringer);
-        BigDecimal feilutbetaltBeløp = summerBeløp(feilutbetalingPosteringer);
+        List<SimulertPostering> feilutbetalingPosteringer = bareFeilutbetalingPosteringer(posteringer); // 1 FEIL
+        BigDecimal feilutbetaltBeløp = summerBeløp(feilutbetalingPosteringer); // 6381
 
-        BigDecimal tidligereUtbetaltBeløp = beregnTidligereUtbetaltBeløp(posteringer, feilutbetaltBeløp);
-        BigDecimal nyttBeløp = beregnNyttBeløp(posteringer, feilutbetaltBeløp);
-        BigDecimal nyttMinusUtbetalt = nyttBeløp.subtract(tidligereUtbetaltBeløp);
-        BigDecimal motregning = beregnMotregning(posteringer);
-        BigDecimal resultatUtenFeilutbetaling = nyttMinusUtbetalt.add(motregning);
-        BigDecimal resultat = feilutbetalingPosteringer.isEmpty() ? resultatUtenFeilutbetaling : feilutbetaltBeløp.negate();
-        BigDecimal etterbetaling = utledEtterbetaling(feilutbetalingPosteringer, resultatUtenFeilutbetaling);
+        BigDecimal tidligereUtbetaltBeløp = beregnTidligereUtbetaltBeløp(posteringer, feilutbetaltBeløp); // 6381
+
+        BigDecimal nyttBeløp = beregnNyttBeløp(posteringer, feilutbetaltBeløp); // 0
+        BigDecimal nyttMinusUtbetalt = nyttBeløp.subtract(tidligereUtbetaltBeløp); // -6381
+        BigDecimal motregning = beregnMotregning(posteringer); // 0
+        BigDecimal resultatUtenFeilutbetaling = nyttMinusUtbetalt.add(motregning); // -6381
+        BigDecimal resultat = feilutbetalingPosteringer.isEmpty() ? resultatUtenFeilutbetaling : feilutbetaltBeløp.negate(); // -6381
+        BigDecimal etterbetaling = utledEtterbetaling(feilutbetalingPosteringer, resultatUtenFeilutbetaling); // 0
 
         sanityCheckResultater(feilutbetalingPosteringer, feilutbetaltBeløp);
 
@@ -270,7 +269,7 @@ public class SimuleringBeregningTjeneste {
 
     private static void sanityCheckResultater(List<SimulertPostering> feilutbetalingPosteringer, BigDecimal feilutbetaltBeløp) {
         if (!feilutbetalingPosteringer.isEmpty() && feilutbetaltBeløp.signum() == 0) {
-            logger.warn(SimuleringBeregningTjenesteFeil.uforventetDataFeilposteringerSummererTil0InnenforMåned().getMessage());
+            LOG.warn("FPO-723664: Har FEIL-posteringer i en måned og summen var 0. Dette er ikke forventet at skjer, bør analyseres.");
         }
     }
 
@@ -328,7 +327,7 @@ public class SimuleringBeregningTjeneste {
     }
 
     private static BigDecimal beregnTidligereUtbetaltBeløp(List<SimulertPostering> posteringer, BigDecimal sumFeilutbetalingPosteringer) {
-        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTELSE, BetalingType.KREDIT);
+        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTELSE, BetalingType.KREDIT); // 6381
         return sumFeilutbetalingPosteringer.signum() == -1
                 ? sumPosteringer.add(sumFeilutbetalingPosteringer)
                 : sumPosteringer;
@@ -343,22 +342,14 @@ public class SimuleringBeregningTjeneste {
                 .orElse(BigDecimal.ZERO);
     }
 
-    private static Map<FagOmrådeKode, List<SimulertPostering>> grupperPerFagområde(Map.Entry<YearMonth, List<SimulertPostering>> entry) {
-        return entry.getValue().stream()
+    private static Map<FagOmrådeKode, List<SimulertPostering>> grupperPerFagområde(List<SimulertPostering> posteringer) {
+        return posteringer.stream()
                 .collect(Collectors.groupingBy(SimulertPostering::getFagOmrådeKode));
     }
 
-    private static Map<YearMonth, List<SimulertPostering>> grupperPerMåned(Collection<SimulertPostering> posteringer) {
+    private static Map<YearMonth, List<SimulertPostering>> grupperPerMåned(List<SimulertPostering> posteringer) {
         return posteringer.stream()
                 .collect(Collectors.groupingBy(p -> YearMonth.from(p.getFom())));
-    }
-
-    private static class SimuleringBeregningTjenesteFeil  {
-
-
-        static TekniskException uforventetDataFeilposteringerSummererTil0InnenforMåned() {
-            return new TekniskException("FPO-723664", "Har FEIL-posteringer i en måned og summen var 0. Dette er ikke forventet at skjer, bør analyseres");
-        }
     }
 
 }

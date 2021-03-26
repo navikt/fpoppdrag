@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
@@ -529,6 +530,28 @@ public class SimuleringBeregningTjenesteTest {
 
         //assert
         assertThat(oppsummering.getFeilutbetaling()).isZero();
+    }
+
+    @Test
+    @DisplayName("TFP-4228")
+    public void skal_ikke_ha_feilutbetaling_hvis_det_er_feilutbetaling_er_for_forfall_TFP_4228() {
+        List<SimulertBeregningPeriode> resultat = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
+                // Posteringer for foreldrepenger
+                postering("26.11.2020-30.11.2020", FORELDREPENGER, YTELSE, KREDIT, 6381),
+                postering("26.11.2020-30.11.2020", FORELDREPENGER, UDEFINERT, KREDIT, 6381),
+                postering("26.11.2020-30.11.2020", FORELDREPENGER, YTELSE, DEBIT, 6381),
+                postering("26.11.2020-30.11.2020", FORELDREPENGER, FEILUTBETALING, DEBIT, 6381)
+        ));
+
+        Mottaker mottaker = new Mottaker(MottakerType.BRUKER, "1");
+        mottaker.setNesteUtbetalingsperiode(new Periode(LocalDate.of(2020, 11, 1), LocalDate.of(2020, 11, 30)));
+        Map<Mottaker, List<SimulertBeregningPeriode>> resultatForBruker = Map.of(mottaker, resultat);
+
+        //act
+        Oppsummering oppsummering = simuleringBeregningTjeneste.opprettOppsummering(resultatForBruker, YtelseType.FORELDREPENGER);
+
+        //assert
+        assertThat(oppsummering.getFeilutbetaling()).isZero(); // ??
     }
 
     private Optional<SimulertBeregningPeriode> finnPeriode(List<SimulertBeregningPeriode> perioder, LocalDate fom) {
