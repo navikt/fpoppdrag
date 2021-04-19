@@ -41,7 +41,7 @@
         <!-- Eksterne -->
         <prometheus.version>0.10.0</prometheus.version>
         <logstash.version>6.6</logstash.version>
-        <swagger.version>2.1.7</swagger.version>
+        <swagger.version>2.1.8</swagger.version>
         <woodstox.version>6.2.4</woodstox.version>
 
         <!-- Dupliserte properties fra vl-felles. Pass på å oppdatere begge steder. Disse trengs for definisjon av videre plugins -->
