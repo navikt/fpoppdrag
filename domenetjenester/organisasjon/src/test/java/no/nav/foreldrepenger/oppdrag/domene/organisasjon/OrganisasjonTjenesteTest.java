@@ -34,7 +34,7 @@ public class OrganisasjonTjenesteTest {
     public void skal_test_hentOrganisasjonInfo_medGyldigOrgnummer()  {
         Optional<OrganisasjonInfo> organisasjonInfo = organisasjonTjeneste.hentOrganisasjonInfo(ORG_NUMMER);
         Assertions.assertThat(organisasjonInfo).isPresent();
-        Assertions.assertThat(organisasjonInfo.get().getNavn()).isEqualToIgnoringCase("STATOIL ASA AVD STATOIL SOKKELVIRKSOMHET");
+        Assertions.assertThat(organisasjonInfo.get().navn()).isEqualToIgnoringCase("STATOIL ASA AVD STATOIL SOKKELVIRKSOMHET");
     }
 
 

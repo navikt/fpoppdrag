@@ -11,9 +11,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
  *
  * <li>D-nr: http://lovdata.no/forskrift/2007-11-09-1268/%C2%A72-5 (D-nr), samt hvem som kan utstede
  * (http://lovdata.no/forskrift/2007-11-09-1268/%C2%A72-6)</li>
- *
- * <li>FDAT: Personer uten FNR. Disse har fødselsdato + 00000 (normalt) eller fødselsdato + 00001 (dødfødt).
- * </ul>
  */
 public class PersonIdent implements Comparable<PersonIdent> {
 
@@ -111,12 +108,6 @@ public class PersonIdent implements Comparable<PersonIdent> {
         return Objects.hash(ident);
     }
 
-    /**
-     * Hvorvidt dette er et Fdat Nummer (dvs. gjelder person uten tildelt fødselsnummer).
-     */
-    public boolean erFdatNummer() {
-        return isFdatNummer(getPersonnummer(ident));
-    }
 
     @Override
     public String toString() {

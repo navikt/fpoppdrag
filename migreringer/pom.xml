@@ -18,10 +18,6 @@
         <!-- Test avhengigheter -->
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-db</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-testutilities</artifactId>
             <scope>test</scope>
         </dependency>
@@ -60,24 +56,6 @@
         </pluginManagement>
 
         <plugins>
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>${flyway.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.flywaydb</groupId>
-                        <artifactId>flyway-core</artifactId>
-                        <version>${flyway.version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <driver>oracle.jdbc.driver.OracleDriver</driver>
-                    <encoding>ISO-8859-1</encoding>
-                    <initOnMigrate>true</initOnMigrate>
-                    <location>db/migration</location>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-remote-resources-plugin</artifactId>

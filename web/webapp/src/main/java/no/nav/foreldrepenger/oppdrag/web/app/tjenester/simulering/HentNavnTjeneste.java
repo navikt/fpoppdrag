@@ -36,7 +36,7 @@ class HentNavnTjeneste {
     }
 
     public String hentNavnGittOrgnummer(String orgnummer) {
-        return organisasjonTjeneste.hentOrganisasjonInfo(orgnummer).map(OrganisasjonInfo::getNavn)
+        return organisasjonTjeneste.hentOrganisasjonInfo(orgnummer).map(OrganisasjonInfo::navn)
                 .orElseThrow(() -> new IntegrasjonException("FPO-069991", "Kunne ikke finne organisasjoninfo"));
     }
 
