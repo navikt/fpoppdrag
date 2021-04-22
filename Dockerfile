@@ -1,4 +1,4 @@
-FROM navikt/java:15-appdynamics
+FROM navikt/java:16-appdynamics
 ENV APPD_ENABLED=true
 ENV APP_NAME=fpoppdrag
 ENV APPDYNAMICS_CONTROLLER_HOST_NAME=appdynamics.adeo.no
@@ -24,4 +24,5 @@ ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 \
                 -Djava.security.egd=file:/dev/./urandom \
                 -Duser.timezone=Europe/Oslo \
                 -Dapplication.name=fpoppdrag  \
-                -Dlogback.configurationFile=/app/conf/logback.xml "
+                -Dlogback.configurationFile=/app/conf/logback.xml \
+                --illegal-access=permit"

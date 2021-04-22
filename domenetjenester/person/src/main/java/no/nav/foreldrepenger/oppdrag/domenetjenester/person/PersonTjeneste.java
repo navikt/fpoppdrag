@@ -51,10 +51,6 @@ public class PersonTjeneste {
     }
 
     public Optional<AktørId> hentAktørForFnr(PersonIdent personIdent) {
-        if (personIdent.erFdatNummer()) {
-            // har ikke tildelt personnr
-            return Optional.empty();
-        }
         var fraCache = cacheIdentTilAktørId.get(personIdent);
         if (fraCache != null) {
             return Optional.of(fraCache);
