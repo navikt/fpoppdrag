@@ -87,11 +87,6 @@
                 <artifactId>domenetjenester-simulering</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-                <artifactId>domenetjenester-iverksett</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <!-- Intern Test -->
             <dependency>
                 <groupId>no.nav.foreldrepenger.oppdrag</groupId>
