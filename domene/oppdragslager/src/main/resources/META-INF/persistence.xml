@@ -15,6 +15,5 @@
             <property name="org.hibernate.flushMode" value="COMMIT"/>
         </properties>
     </persistence-unit>
-
-
+    
 </persistence>
