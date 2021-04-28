@@ -24,7 +24,6 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.SimuleringVedlikeholdRest
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.kodeverk.KodeverkRestTjeneste;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.SimuleringRestTjeneste;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.SimuleringTestRestTjeneste;
-import no.nav.vedtak.felles.prosesstask.rest.ProsessTaskRestTjeneste;
 import no.nav.vedtak.util.env.Environment;
 
 @ApplicationPath(ApplicationConfig.API_URI)
@@ -71,7 +70,6 @@ public class ApplicationConfig extends Application {
         classes.add(JsonParseExceptionMapper.class);
         classes.addAll(FellesKlasserForRest.getClasses());
 
-        classes.add(ProsessTaskRestTjeneste.class);
         classes.add(KodeverkRestTjeneste.class);
         classes.add(SimuleringRestTjeneste.class);
 

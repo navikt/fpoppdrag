@@ -3,15 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
+        <artifactId>fpoppdrag</artifactId>
         <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-        <artifactId>domene</artifactId>
         <version>${revision}${sha1}${changelist}</version>
     </parent>
 
-    <groupId>no.nav.foreldrepenger.oppdrag.domene</groupId>
-    <artifactId>oppdragslager</artifactId>
+    <artifactId>simuleringslager</artifactId>
     <packaging>jar</packaging>
-    <name>FP Oppdrag :: Oppdragslager</name>
+    <name>FP Oppdrag :: Simuleringslager</name>
 
     <dependencies>
         <!-- Reaktor -->

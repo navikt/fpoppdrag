@@ -48,17 +48,8 @@ public class JettyServer extends AbstractJettyServer {
     }
 
     private void hacks4Nais() {
-        loadBalancerFqdnTilLoadBalancerUrl();
         wsMedLTPAmåIgjennomServiceGateway();
         temporært();
-    }
-
-    private void loadBalancerFqdnTilLoadBalancerUrl() {
-        if (System.getenv("LOADBALANCER_FQDN") != null) {
-            String loadbalancerFqdn = System.getenv("LOADBALANCER_FQDN");
-            String protocol = (loadbalancerFqdn.startsWith("localhost")) ? "http" : "https";
-            System.setProperty("loadbalancer.url", protocol + "://" + loadbalancerFqdn);
-        }
     }
 
     private void wsMedLTPAmåIgjennomServiceGateway() {

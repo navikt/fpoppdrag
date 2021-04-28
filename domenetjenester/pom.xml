@@ -16,13 +16,12 @@
         <module>simulering</module>
         <module>person</module>
         <module>organisasjon</module>
-        <module>iverksett</module>
     </modules>
 
     <dependencies>
         <dependency>
-            <groupId>no.nav.foreldrepenger.oppdrag.domene</groupId>
-            <artifactId>oppdragslager</artifactId>
+            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+            <artifactId>simuleringslager</artifactId>
             <scope>provided</scope>
         </dependency>
 

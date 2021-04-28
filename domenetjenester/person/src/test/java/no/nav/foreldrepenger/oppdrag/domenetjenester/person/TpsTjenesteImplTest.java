@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,21 +52,6 @@ public class TpsTjenesteImplTest {
         // Assert
         assertThat(funnetAktørId).isPresent();
         assertThat(funnetAktørId.get()).isEqualTo(aktørId);
-    }
-
-    @Test
-    public void finnerFnrForAktørId() {
-        // Arrange
-        AktørId aktørId = new AktørId("12345");
-        String fnr = "24069305608";
-        when(pdlKlient.hentIdenter(any(), any())).thenReturn(new Identliste(List.of(new IdentInformasjon(fnr, IdentGruppe.FOLKEREGISTERIDENT, false))));;
-
-        // Act
-        Optional<PersonIdent> funnetPersonIdent = tpsTjeneste.hentFnr(aktørId);
-
-        // Assert
-        Assertions.assertThat(funnetPersonIdent).isPresent();
-        assertThat(funnetPersonIdent.get().getIdent()).isEqualTo(fnr);
     }
 
     @Test
