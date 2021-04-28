@@ -36,11 +36,6 @@
             <artifactId>domenetjenester-simulering</artifactId>
         </dependency>
         <dependency>
-            <!-- for inject av FeedPoller for polling fra kafka -->
-            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-            <artifactId>domenetjenester-iverksett</artifactId>
-        </dependency>
-        <dependency>
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
             <artifactId>kodeverk</artifactId>
         </dependency>
