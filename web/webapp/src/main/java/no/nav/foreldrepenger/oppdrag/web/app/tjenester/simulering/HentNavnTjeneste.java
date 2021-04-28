@@ -13,26 +13,24 @@ import no.nav.vedtak.exception.IntegrasjonException;
 @ApplicationScoped
 class HentNavnTjeneste {
 
-    private PersonTjeneste tpsTjeneste;
-
+    private PersonTjeneste personTjeneste;
     private OrganisasjonTjeneste organisasjonTjeneste;
 
     HentNavnTjeneste() {
-
     }
 
     @Inject
     public HentNavnTjeneste(PersonTjeneste tpsTjeneste, OrganisasjonTjeneste organisasjonTjeneste) {
-        this.tpsTjeneste = tpsTjeneste;
+        this.personTjeneste = tpsTjeneste;
         this.organisasjonTjeneste = organisasjonTjeneste;
     }
 
     public AktørId hentAktørIdGittFnr(String fnr) {
-        return tpsTjeneste.hentAktørForFnr(new PersonIdent(fnr)).orElseThrow(() -> new IntegrasjonException("FPO-118600", "Kunne ikke finne aktørid"));
+        return personTjeneste.hentAktørForFnr(new PersonIdent(fnr)).orElseThrow(() -> new IntegrasjonException("FPO-118600", "Kunne ikke finne aktørid"));
     }
 
     public String hentNavnGittFnr(String fnr) {
-        return tpsTjeneste.hentNavnFor(new PersonIdent(fnr)).orElse("Ukjent navn");
+        return personTjeneste.hentNavnFor(new PersonIdent(fnr)).orElse("Ukjent navn");
     }
 
     public String hentNavnGittOrgnummer(String orgnummer) {

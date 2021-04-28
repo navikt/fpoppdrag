@@ -34,7 +34,6 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringReposito
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXml;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXmlRepository;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.økonomioppdrag.ØkonomiKodeEndringLinje;
 import no.nav.system.os.entiteter.beregningskjema.Beregning;
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaa;
 import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode;
@@ -52,6 +51,7 @@ public class StartSimuleringTjeneste {
 
     private static final Logger logger = LoggerFactory.getLogger(StartSimuleringTjeneste.class);
     private static final String DEAKTIVER_SIMULERING_DEAKTIVERING = "testing.deaktiver.simulering.deaktivering";
+    protected static final String KODE_ENDRING = "ENDR";
 
     private static final Logger LOG = LoggerFactory.getLogger(StartSimuleringTjeneste.class);
     private SimuleringXmlRepository simuleringXmlRepository;
@@ -192,7 +192,7 @@ public class StartSimuleringTjeneste {
         Oppdrag oppdrag = request.getRequest().getOppdrag();
         Ompostering ompostering = OppdragMapper.mapOmpostering(oppdrag.getSaksbehId(), "N");
         oppdrag.setOmpostering(ompostering);
-        oppdrag.setKodeEndring(ØkonomiKodeEndringLinje.ENDR.name());
+        oppdrag.setKodeEndring(KODE_ENDRING);
         return request;
     }
 

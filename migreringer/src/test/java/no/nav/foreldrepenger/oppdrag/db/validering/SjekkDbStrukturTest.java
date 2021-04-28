@@ -352,29 +352,4 @@ public class SjekkDbStrukturTest {
         assertThat(avvik).withFailMessage(feilTekst + +sz + "\n\nTabell, Kolonne, Datatype\n" + tekst).isEmpty();
 
     }
-
-    @Test
-    public void sjekk_at_status_verdiene_i_prosess_task_tabellen_er_også_i_pollingSQL() throws Exception {
-        String sql = """
-                SELECT SEARCH_CONDITION
-                FROM all_constraints
-                WHERE table_name = 'PROSESS_TASK'
-                AND constraint_name = 'CHK_PROSESS_TASK_STATUS'
-                AND owner = sys_context('userenv','current_schema')
-                """;
-
-        List<String> statusVerdier = new ArrayList<>();
-        try (Connection conn = ds.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                statusVerdier.add(rs.getString(1));
-            }
-
-        }
-        String feilTekst = "Ved innføring av ny stause må sqlen i TaskManager_pollTask.sql må oppdateres ";
-        assertThat(statusVerdier).withFailMessage(feilTekst)
-                .containsExactly("status in ('KLAR', 'FEILET', 'VENTER_SVAR', 'SUSPENDERT', 'VETO', 'FERDIG', 'KJOERT')");
-    }
 }

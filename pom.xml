@@ -10,12 +10,12 @@
     <name>FP Oppdrag :: Root</name>
 
     <modules>
-        <module>domene</module>
+        <module>migreringer</module>
+        <module>kodeverk</module>
+        <module>integrasjon</module>
+        <module>simuleringslager</module>
         <module>domenetjenester</module>
         <module>web</module>
-        <module>kodeverk</module>
-        <module>migreringer</module>
-        <module>integrasjon</module>
     </modules>
 
     <properties>
@@ -31,7 +31,6 @@
         <!-- Felles avhengigheter i prosjektet Disse skal ALLTID være en
             RELEASE-avhengighet UNNTAK: feature-brancher og lokalt -->
         <felles.version>3.1.11</felles.version>
-        <prosesstask.version>2.5.16</prosesstask.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
         <fp-kontrakter.version>5.2.2</fp-kontrakter.version>
@@ -69,13 +68,8 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>no.nav.foreldrepenger.oppdrag.domene</groupId>
-                <artifactId>oppdragslager</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.oppdrag.domene</groupId>
-                <artifactId>feed</artifactId>
+                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+                <artifactId>simuleringslager</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -91,11 +85,6 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.oppdrag</groupId>
                 <artifactId>domenetjenester-simulering</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-                <artifactId>domenetjenester-iverksett</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- Intern Test -->
@@ -126,13 +115,6 @@
                 <groupId>no.nav.foreldrepenger.felles</groupId>
                 <artifactId>felles-bom</artifactId>
                 <version>${felles.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.vedtak.prosesstask</groupId>
-                <artifactId>prosesstask-root</artifactId>
-                <version>${prosesstask.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -575,8 +557,6 @@
                 </plugins>
             </build>
         </profile>
-
-
     </profiles>
 
     <scm>

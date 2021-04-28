@@ -12,13 +12,17 @@
     <name>FP Oppdrag ::  Database migreringer</name>
 
     <dependencies>
-
         <!-- NAV -->
         <!-- Eksterne -->
         <!-- Test avhengigheter -->
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-testutilities</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

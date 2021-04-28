@@ -41,7 +41,6 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringReposito
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXml;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXmlRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.økonomioppdrag.ØkonomiKodeEndring;
 import no.nav.system.os.entiteter.beregningskjema.Beregning;
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaa;
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaaDetaljer;
@@ -221,7 +220,7 @@ public class StartSimuleringTjenesteTest {
         verify(oppdragConsumerMock, times(2)).hentSimulerBeregningResponse(any(), any());
         SimulerBeregningRequest request = captor.getValue();
         assertThat(request.getRequest().getOppdrag().getOmpostering().getOmPostering()).isEqualTo("N");
-        assertThat(request.getRequest().getOppdrag().getKodeEndring()).isEqualTo(ØkonomiKodeEndring.ENDR.name());
+        assertThat(request.getRequest().getOppdrag().getKodeEndring()).isEqualTo(StartSimuleringTjeneste.KODE_ENDRING);
 
         Optional<SimuleringGrunnlag> simuleringGrunnlag = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_1);
         assertThat(simuleringGrunnlag).isPresent();

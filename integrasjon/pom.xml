@@ -10,7 +10,7 @@
 
     <artifactId>integrasjon</artifactId>
     <packaging>jar</packaging>
-    <name>FP Oppdrag :: integrasjon</name>
+    <name>FP Oppdrag :: Integrasjon</name>
 
     <dependencies>
         <dependency>

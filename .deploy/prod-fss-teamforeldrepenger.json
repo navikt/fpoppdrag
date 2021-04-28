@@ -12,8 +12,7 @@
     "https://app.adeo.no/fpoppdrag"
   ],
   "env": {
-    "LOADBALANCER_FQDN": "app.adeo.no",
-    "ABAC_PDP_ENDPOINT_URL": "https://wasapp.adeo.no/asm-pdp/authorize",
+    "ABAC_PDP_ENDPOINT_URL": "http://abac-foreldrepenger.teamabac/application/authorize",
     "ABAC_ATTRIBUTT_DRIFT": "no.nav.abac.attributter.foreldrepenger.drift",
     "SECURITYTOKENSERVICE_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
     "OIDC_OPENAM_JWKSURL": "https://isso.adeo.no:443/isso/oauth2/connect/jwk_uri",

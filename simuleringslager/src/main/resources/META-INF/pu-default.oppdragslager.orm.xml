@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm
+      http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd"
+                 version="2.1">
+
+    <sequence-generator name="SEQ_SIMULERING_RESULTAT" allocation-size="50" sequence-name="SEQ_SIMULERING_RESULTAT"/>
+    <sequence-generator name="SEQ_GR_SIMULERING" allocation-size="50" sequence-name="SEQ_GR_SIMULERING"/>
+    <sequence-generator name="SEQ_SIMULERING_MOTTAKER" allocation-size="50" sequence-name="SEQ_SIMULERING_MOTTAKER"/>
+    <sequence-generator name="SEQ_SIMULERT_POSTERING" allocation-size="50" sequence-name="SEQ_SIMULERT_POSTERING"/>
+    <sequence-generator name="SEQ_SIMULERING_XML" allocation-size="50" sequence-name="SEQ_SIMULERING_XML"/>
+
+    <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat"/>
+    <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag"/>
+    <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker"/>
+    <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering"/>
+    <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXml"/>
+
+</entity-mappings>

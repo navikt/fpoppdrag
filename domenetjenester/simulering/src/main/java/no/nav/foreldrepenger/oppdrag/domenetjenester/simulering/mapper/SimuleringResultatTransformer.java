@@ -30,16 +30,16 @@ public class SimuleringResultatTransformer {
 
     private static final String DATO_PATTERN = "yyyy-MM-dd";
 
-    private PersonTjeneste tpsTjeneste;
+    private PersonTjeneste personTjeneste;
 
     public SimuleringResultatTransformer() {
         // CDI
     }
 
     @Inject
-    public SimuleringResultatTransformer(PersonTjeneste tpsTjeneste) {
-        Objects.requireNonNull(tpsTjeneste, "Mangler tpstjeneste");
-        this.tpsTjeneste = tpsTjeneste;
+    public SimuleringResultatTransformer(PersonTjeneste personTjeneste) {
+        Objects.requireNonNull(personTjeneste, "Mangler tpstjeneste");
+        this.personTjeneste = personTjeneste;
     }
 
     public void mapSimulering(Map<String, SimuleringMottaker.Builder> mottakerBuilderMap, Beregning beregning) {
@@ -104,7 +104,7 @@ public class SimuleringResultatTransformer {
         if (erOrgNr(orgNrOrFnr)) {
             return orgNrOrFnr.substring(2);
         } else {
-            AktørId aktørId = tpsTjeneste.hentAktørForFnr(new PersonIdent(orgNrOrFnr))
+            AktørId aktørId = personTjeneste.hentAktørForFnr(new PersonIdent(orgNrOrFnr))
                     .orElseThrow(() -> new TekniskException("FPO-952153", "Fant ikke aktørId for FNR"));
             return aktørId.getId();
         }

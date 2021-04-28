@@ -32,26 +32,8 @@
 
         <!-- Prosjekt avhengigheter -->
         <dependency>
-            <groupId>no.nav.vedtak.prosesstask</groupId>
-            <artifactId>prosesstask-legacy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.vedtak.prosesstask</groupId>
-            <artifactId>prosesstask-rest-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
             <artifactId>domenetjenester-simulering</artifactId>
-        </dependency>
-        <dependency>
-            <!-- for inject av FeedPoller for polling fra kafka -->
-            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-            <artifactId>domenetjenester-iverksett</artifactId>
-        </dependency>
-        <dependency>
-            <!-- for inject av FeedPollerManager for polling fra kafka -->
-            <groupId>no.nav.foreldrepenger.oppdrag.domene</groupId>
-            <artifactId>feed</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
@@ -68,8 +50,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>no.nav.foreldrepenger.oppdrag.domene</groupId>
-            <artifactId>oppdragslager</artifactId>
+            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+            <artifactId>simuleringslager</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
