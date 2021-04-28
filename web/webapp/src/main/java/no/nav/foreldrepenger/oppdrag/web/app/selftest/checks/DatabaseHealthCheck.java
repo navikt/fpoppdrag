@@ -22,7 +22,7 @@ public class DatabaseHealthCheck implements HealthCheck{
 
     private String jndiName;
 
-    private static final String SQL_QUERY = "select count(1) from PROSESS_TASK_TYPE";
+    private static final String SQL_QUERY = "select * from DUAL";
     // må være rask, og bruke et stabilt tabell-navn
 
     private String endpoint = null; // ukjent frem til første gangs test
