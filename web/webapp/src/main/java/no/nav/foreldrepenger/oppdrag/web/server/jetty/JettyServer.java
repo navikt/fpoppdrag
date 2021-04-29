@@ -48,14 +48,7 @@ public class JettyServer extends AbstractJettyServer {
     }
 
     private void hacks4Nais() {
-        wsMedLTPAmåIgjennomServiceGateway();
         temporært();
-    }
-
-    private void wsMedLTPAmåIgjennomServiceGateway() {
-        if (System.getenv("SERVICEGATEWAY_URL") != null) {
-            System.setProperty("Oppgave.v3.url", System.getenv("SERVICEGATEWAY_URL"));
-        }
     }
 
     private void temporært() {

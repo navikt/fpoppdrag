@@ -35,12 +35,6 @@ import no.nav.vedtak.sikkerhet.context.SubjectHandler;
 
 abstract class AbstractJettyServer {
 
-    /**
-     * @see AbstractNetworkConnector#getHost()
-     * @see ServerConnector#openAcceptChannel()
-     */
-    //TODO (u139158): Trenger vi egentlig å sette denne? Spec ser ut til å si at det er eq med null, settes den default til null eller binder den mot et interface?
-
     protected static final String SERVER_HOST = "0.0.0.0";
     /**
      * nedstrippet sett med Jetty configurations for raskere startup.

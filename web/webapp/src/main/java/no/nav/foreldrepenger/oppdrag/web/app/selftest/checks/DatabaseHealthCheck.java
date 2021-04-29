@@ -43,7 +43,6 @@ public class DatabaseHealthCheck implements HealthCheck{
 
     @Override
     public boolean isOK() {
-
         DataSource dataSource = null;
         try {
             dataSource = (DataSource) new InitialContext().lookup(jndiName);
