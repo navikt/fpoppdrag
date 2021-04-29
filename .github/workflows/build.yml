@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - master    # Push events on master branch
+    paths-ignore:
+      - '**.md'
+      - '**.MD'
+      - '.gitignore'
+      - 'LICENCE'
+      - 'CODEOWNERS'
+
 env:
   IMAGE_BASE: ghcr.io/${{ github.repository }}
   TZ: "Europe/Oslo"
@@ -63,7 +70,7 @@ jobs:
           docker push ${IMAGE_BASE} --all-tags
 
       - name: Lukk gamle deployment-issues
-        uses: actions/github-script@v3
+        uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -86,7 +93,7 @@ jobs:
       -  name: Opprett deployment issue
          id: createdeployissue
          if: success()
-         uses: actions/github-script@v3
+         uses: actions/github-script@v4
          with:
            github-token: ${{secrets.GITHUB_TOKEN}}
            script: |
