@@ -49,7 +49,6 @@ spec:
         kvPath: {{fpoppdragserviceuser}}
       - mountPath: /var/run/secrets/nais.io/vault
         kvPath: /kv/{{cluster}}/fss/fpoppdrag/{{namespace}}
-  sidecar: true # refresh token
   env:
   {{#each env}}
    - name: {{@key}}
