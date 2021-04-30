@@ -23,10 +23,11 @@ public final class Databaseskjemainitialisering {
 
     private static final Logger LOG = LoggerFactory.getLogger(Databaseskjemainitialisering.class);
     private static final Environment ENV = Environment.current();
+    protected static final String SCHEMA_VERSION = "schema_version";
 
-    public static final String URL_DEFAULT = "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp) "
-            + "(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)))";
+    public static final String URL_DEFAULT = "jdbc:oracle:thin:@127.0.0.1:1521:XE";
 
+    //public static final String URL_DEFAULT = "jdbc:h2:mem:test:DB_CLOSE_DELAY=-1;MODE=Oracle";
     public static final String DEFAULT_SCEHMA = "fpoppdrag";
     public static final String JUNIT_SCHEMA = "fpoppdrag_unit";
     public static final String DBA_SCHEMA = "vl_dba";
@@ -66,8 +67,7 @@ public final class Databaseskjemainitialisering {
 
     private static void settJndiOppslag(DBProperties properties) {
         try {
-            var props = properties;
-            new EnvEntry("jdbc/" + props.dsName(), props.dataSource());
+            new EnvEntry("jdbc/" + properties.dsName(), properties.dataSource());
         } catch (Exception e) {
             throw new RuntimeException("Feil under registrering av Jndi-entry for default datasource", e);
         }
@@ -75,12 +75,15 @@ public final class Databaseskjemainitialisering {
 
     private static void migrer(DBProperties dbProperties) {
         LOG.info("Migrerer {}", dbProperties.schema());
-        Flyway flyway = new Flyway();
-        flyway.setBaselineOnMigrate(true);
-        flyway.setDataSource(dbProperties.dataSource());
-        flyway.setTable("schema_version");
-        flyway.setLocations(dbProperties.scriptLocation());
-        flyway.setCleanOnValidationError(true);
+
+        Flyway flyway = new Flyway(Flyway
+                .configure()
+                .baselineOnMigrate(true)
+                .dataSource(dbProperties.dataSource())
+                .table(SCHEMA_VERSION)
+                .locations(dbProperties.scriptLocation())
+                .cleanOnValidationError(true));
+
         if (!ENV.isLocal()) {
             throw new IllegalStateException("Forventer at denne migreringen bare kjøres lokalt");
         }
