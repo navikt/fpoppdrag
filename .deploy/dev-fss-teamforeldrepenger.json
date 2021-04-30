@@ -12,16 +12,5 @@
     "https://fpoppdrag-q1.dev.adeo.no/"
   ],
   "env": {
-    "SECURITYTOKENSERVICE_URL": "https://sts-q1.preprod.local/SecurityTokenServiceProvider/",
-    "OIDC_OPENAM_JWKSURL": "https://isso-q.adeo.no:443/isso/oauth2/connect/jwk_uri",
-    "OIDC_OPENAM_ISSUERURL": "https://isso-q.adeo.no:443/isso/oauth2",
-    "OIDC_OPENAM_AGENTNAME": "fpoppdrag-q1",
-    "OIDC_OPENAM_HOSTURL": "https://isso-q.adeo.no:443/isso/oauth2",
-    "OIDC_STS_ISSUER_URL": "http://security-token-service.default",
-    "OIDC_STS_JWKS_URL": "http://security-token-service.default/rest/v1/sts/jwks",
-    "ORGANISASJON_RS_URL": "https://modapp-q1.adeo.no/ereg/api/v1/organisasjon",
-    "OPPDRAG_SERVICE_URL": "https://cics-q1.adeo.no/oppdrag/simulerFpServiceWSBinding",
-    "BOOTSTRAP_SERVERS": "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443",
-    "FP_TILKJENTYTELSE_V1_TOPIC_URL": "privat-foreldrepenger-tilkjentytelse-v1-q1"
   }
 }
