@@ -12,5 +12,6 @@
     "https://fpoppdrag-q1.dev.adeo.no/"
   ],
   "env": {
+    "APPDYNAMICS_AGENT_ACCOUNT_NAME": "NON-PROD"
   }
 }
