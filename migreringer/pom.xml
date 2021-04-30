@@ -77,7 +77,7 @@
                     </includes>
                 </configuration>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <executions>
@@ -94,7 +94,7 @@
                     <classpathScope>test</classpathScope>
                     <cleanupDaemonThreads>false</cleanupDaemonThreads>
                 </configuration>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

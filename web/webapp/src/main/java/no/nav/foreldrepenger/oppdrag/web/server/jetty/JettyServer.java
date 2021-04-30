@@ -75,11 +75,10 @@ public class JettyServer extends AbstractJettyServer {
         new EnvEntry("jdbc/defaultDS", dataSourceKonfig.getDefaultDatasource().getDatasource());
     }
 
-
     @Override
     protected void migrerDatabaser() throws IOException {
         for (DataSourceKonfig.DBConnProp dbConnProp : dataSourceKonfig.getDataSources()) {
-            new DatabaseScript(dbConnProp.getDatasource(), false, dbConnProp.getMigrationScripts()).migrate();
+            new DatabaseScript(dbConnProp.getDatasource(), dbConnProp.getMigrationScripts()).migrate();
         }
     }
 

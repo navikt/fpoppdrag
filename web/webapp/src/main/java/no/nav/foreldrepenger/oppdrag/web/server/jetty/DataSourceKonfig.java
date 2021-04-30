@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.oppdrag.web.server.jetty;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -14,20 +14,20 @@ import no.nav.vedtak.util.env.Environment;
 class DataSourceKonfig {
 
     private static final String CLASSPATH_DB_MIGRATION = "classpath:/db/migration/";
-    private DBConnProp defaultDatasource;
-    private List<DBConnProp> dataSources;
+    protected static final Environment ENV = Environment.current();
+    private final DBConnProp defaultDatasource;
+    private final List<DBConnProp> dataSources;
 
     DataSourceKonfig() {
-        defaultDatasource = new DBConnProp(createDatasource("defaultDS"), CLASSPATH_DB_MIGRATION + "defaultDS");
-        dataSources = Arrays.asList(
-                defaultDatasource);
+        defaultDatasource = new DBConnProp(createDatasource(), CLASSPATH_DB_MIGRATION + "defaultDS");
+        dataSources = Collections.singletonList(defaultDatasource);
     }
 
-    private DataSource createDatasource(String dataSourceName) {
+    private DataSource createDatasource() {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(Environment.current().getProperty(dataSourceName + ".url"));
-        config.setUsername(Environment.current().getProperty(dataSourceName + ".username"));
-        config.setPassword(Environment.current().getProperty(dataSourceName + ".password")); // NOSONAR false positive
+        config.setJdbcUrl(ENV.getProperty("defaultDS.url"));
+        config.setUsername(ENV.getProperty("defaultDS.username"));
+        config.setPassword(ENV.getProperty("defaultDS.password")); // NOSONAR false positive
 
         config.setConnectionTimeout(1000);
         config.setMinimumIdle(2);
@@ -50,8 +50,8 @@ class DataSourceKonfig {
     }
 
     class DBConnProp {
-        private DataSource datasource;
-        private String migrationScripts;
+        private final DataSource datasource;
+        private final String migrationScripts;
 
         public DBConnProp(DataSource datasource, String migrationScripts) {
             this.datasource = datasource;
