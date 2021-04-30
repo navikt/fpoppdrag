@@ -4,7 +4,6 @@
   "oracleconfig": "oracle/data/prod/config/fpoppdrag_p",
   "oraclefpoppdragsecret":"oracle/data/prod/creds/fpoppdrag_p-fpoppdrag_p",
   "fpoppdragserviceuser": "serviceuser/data/prod/srvfpoppdrag",
-  "ldapserviceuser": "serviceuser/data/prod/srvssolinux",
   "minReplicas": "2",
   "maxReplicas": "3",
   "ingresses": [
@@ -12,8 +11,6 @@
     "https://app.adeo.no/fpoppdrag"
   ],
   "env": {
-    "ABAC_PDP_ENDPOINT_URL": "http://abac-foreldrepenger.teamabac/application/authorize",
-    "ABAC_ATTRIBUTT_DRIFT": "no.nav.abac.attributter.foreldrepenger.drift",
     "SECURITYTOKENSERVICE_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
     "OIDC_OPENAM_JWKSURL": "https://isso.adeo.no:443/isso/oauth2/connect/jwk_uri",
     "OIDC_OPENAM_ISSUERURL": "https://isso.adeo.no:443/isso/oauth2",
@@ -21,11 +18,6 @@
     "OIDC_OPENAM_HOSTURL": "https://isso.adeo.no:443/isso/oauth2",
     "OIDC_STS_ISSUER_URL": "http://security-token-service.default",
     "OIDC_STS_JWKS_URL": "http://security-token-service.default/rest/v1/sts/jwks",
-    "LDAP_URL": "ldaps://ldapgw.adeo.no",
-    "LDAP_BASEDN": "dc=adeo,dc=no",
-    "LDAP_DOMAIN": "ADEO.NO",
-    "LDAP_USER_BASEDN": "ou=NAV,ou=BusinessUnits,dc=adeo,dc=no",
-    "LDAP_SERVICEUSER_BASEDN": "ou=ServiceAccounts,dc=adeo,dc=no",
     "ORGANISASJON_RS_URL": "https://modapp.adeo.no/ereg/api/v1/organisasjon",
     "OPPDRAG_SERVICE_URL": "https://wasapp.adeo.no/cics/services/simulerFpServiceWSBinding",
     "BOOTSTRAP_SERVERS": "a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443",
