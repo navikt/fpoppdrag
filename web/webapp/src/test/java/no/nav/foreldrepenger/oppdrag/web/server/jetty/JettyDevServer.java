@@ -30,8 +30,6 @@ public class JettyDevServer extends JettyServer {
      */
     private static final String TRUSTSTORE_PASSW_PROP = "javax.net.ssl.trustStorePassword";
     private static final String TRUSTSTORE_PATH_PROP = "javax.net.ssl.trustStore";
-    private static final String KEYSTORE_PASSW_PROP = "no.nav.modig.security.appcert.password";
-    private static final String KEYSTORE_PATH_PROP = "no.nav.modig.security.appcert.keystore";
 
     private static final String VTP_ARGUMENT = "--vtp";
     private static boolean vtp;
@@ -90,11 +88,6 @@ public class JettyDevServer extends JettyServer {
         super.konfigurerSikkerhet();
         // truststore avgjør hva vi stoler på av sertifikater når vi gjør utadgående TLS kall
         initCryptoStoreConfig("truststore", TRUSTSTORE_PATH_PROP, TRUSTSTORE_PASSW_PROP, "changeit");
-
-        // keystore genererer sertifikat og TLS for innkommende kall. Bruker standard prop hvis definert, ellers faller tilbake på modig props
-        var keystoreProp = System.getProperty("javax.net.ssl.keyStore") != null ? "javax.net.ssl.keyStore" : KEYSTORE_PATH_PROP;
-        var keystorePasswProp = System.getProperty("javax.net.ssl.keyStorePassword") != null ? "javax.net.ssl.keyStorePassword" : KEYSTORE_PASSW_PROP;
-        initCryptoStoreConfig("keystore", keystoreProp, keystorePasswProp, "changeit");
     }
 
     private static String initCryptoStoreConfig(String storeName, String storeProperty, String storePasswordProperty, String defaultPassword) {
@@ -140,22 +133,15 @@ public class JettyDevServer extends JettyServer {
     @SuppressWarnings("resource")
     @Override
     protected List<Connector> createConnectors(AppKonfigurasjon appKonfigurasjon, Server server) {
-        List<Connector> connectors = super.createConnectors(appKonfigurasjon, server);
-
-        var sslContextFactory = new SslContextFactory.Server();
-        sslContextFactory.setKeyStorePath(System.getProperty("no.nav.modig.security.appcert.keystore"));
-        sslContextFactory.setKeyStorePassword(System.getProperty("no.nav.modig.security.appcert.password"));
-        sslContextFactory.setKeyManagerPassword(System.getProperty("no.nav.modig.security.appcert.password"));
-
-        HttpConfiguration https = createHttpConfiguration();
+        var connectors = super.createConnectors(appKonfigurasjon, server);
+        var https = createHttpConfiguration();
         https.addCustomizer(new SecureRequestCustomizer());
 
         ServerConnector sslConnector = new ServerConnector(server,
-                new SslConnectionFactory(sslContextFactory, "http/1.1"),
+                new SslConnectionFactory(new SslContextFactory.Server(), "http/1.1"),
                 new HttpConnectionFactory(https));
         sslConnector.setPort(appKonfigurasjon.getSslPort());
         connectors.add(sslConnector);
-
         return connectors;
     }
 
