@@ -30,10 +30,10 @@
 
         <!-- Felles avhengigheter i prosjektet Disse skal ALLTID være en
             RELEASE-avhengighet UNNTAK: feature-brancher og lokalt -->
-        <felles.version>3.1.11</felles.version>
+        <felles.version>3.2.41</felles.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
-        <fp-kontrakter.version>5.2.2</fp-kontrakter.version>
+        <fp-kontrakter.version>5.2.3</fp-kontrakter.version>
 
         <!-- NAV -->
 
@@ -390,7 +390,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.22.2</version>
                     <configuration>
-                        <argLine>-Xms256m -Dfile.encoding=UTF-8 -Dlog.level.no.nav=WARN --illegal-access=warn</argLine>
+                        <argLine>-Xms256m -Dfile.encoding=UTF-8 -Dlog.level.no.nav=WARN</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
