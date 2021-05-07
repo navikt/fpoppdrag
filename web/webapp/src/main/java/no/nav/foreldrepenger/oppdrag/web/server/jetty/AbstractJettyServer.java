@@ -30,9 +30,6 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
 
-import no.nav.vedtak.sikkerhet.context.JettySubjectHandler;
-import no.nav.vedtak.sikkerhet.context.SubjectHandler;
-
 abstract class AbstractJettyServer {
 
     protected static final String SERVER_HOST = "0.0.0.0";
@@ -70,7 +67,6 @@ abstract class AbstractJettyServer {
 
     protected void konfigurerSikkerhet() {
         Security.setProperty(AuthConfigFactory.DEFAULT_FACTORY_SECURITY_PROPERTY, AuthConfigFactoryImpl.class.getCanonicalName());
-        System.setProperty(SubjectHandler.SUBJECTHANDLER_KEY, JettySubjectHandler.class.getName());
 
         File jaspiConf = new File(System.getProperty("conf", "./conf") + "/jaspi-conf.xml");
         if (!jaspiConf.exists()) {

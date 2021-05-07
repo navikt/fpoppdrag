@@ -24,5 +24,4 @@ ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 \
                 -Djava.security.egd=file:/dev/./urandom \
                 -Duser.timezone=Europe/Oslo \
                 -Dapplication.name=fpoppdrag  \
-                -Dlogback.configurationFile=/app/conf/logback.xml \
-                --illegal-access=permit"
+                -Dlogback.configurationFile=/app/conf/logback.xml"

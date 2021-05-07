@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import no.nav.foreldrepenger.integrasjon.økonomistøtte.oppdrag.Oppdrag110;
 import no.nav.foreldrepenger.integrasjon.økonomistøtte.oppdrag.OppdragSkjemaConstants;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.TestResourceLoader;
+import no.nav.foreldrepenger.xmlutils.JaxbHelper;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.Oppdrag;
-import no.nav.vedtak.felles.integrasjon.felles.ws.JaxbHelper;
 
 public class OppdragMapperTest {
 

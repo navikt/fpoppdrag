@@ -34,6 +34,7 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringReposito
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXml;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXmlRepository;
+import no.nav.foreldrepenger.xmlutils.JaxbHelper;
 import no.nav.system.os.entiteter.beregningskjema.Beregning;
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaa;
 import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode;
@@ -44,7 +45,6 @@ import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.S
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.Oppdrag;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.util.env.Environment;
-import no.nav.vedtak.xmlutils.JaxbHelper;
 
 @ApplicationScoped
 public class StartSimuleringTjeneste {
