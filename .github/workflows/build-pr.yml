@@ -1,7 +1,7 @@
 name: Bygg pull request
 
 on:
-  pull_request:
+  pull_request_target:
     paths-ignore:
       - '**.md'
       - '**.MD'
@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
       - name: Set cache key
         run: |
           echo "CACHE_KEY=$(expr $(date +%V) - 1 + 1)" >> $GITHUB_ENV
