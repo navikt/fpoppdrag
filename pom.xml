@@ -43,7 +43,7 @@
         <swagger.version>2.1.9</swagger.version>
         <woodstox.version>6.2.6</woodstox.version>
 
-        <flyway.version>5.2.4</flyway.version>
+        <flyway.version>7.11.0</flyway.version>
         <jupiter.version>5.7.2</jupiter.version>
     </properties>
 
