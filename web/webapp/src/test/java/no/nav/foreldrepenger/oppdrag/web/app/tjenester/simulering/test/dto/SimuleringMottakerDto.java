@@ -26,7 +26,7 @@ public class SimuleringMottakerDto {
     private List<SimuleringDetaljerDto> simuleringResultatDetaljer;
 
     private SimuleringMottakerDto() {
-        //resteasy
+        //CDI
     }
 
     public SimuleringMottakerDto(String mottakerId, String mottakerType, List<SimuleringDetaljerDto> simuleringResultatDetaljer) {

@@ -43,7 +43,7 @@ public class SimuleringRestTjeneste {
     private StartSimuleringTjeneste startSimuleringTjeneste;
 
     public SimuleringRestTjeneste() {
-        // For resteasy
+        // For CDI
     }
 
     @Inject

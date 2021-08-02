@@ -16,7 +16,7 @@ public class SimuleringGjelderDto implements AbacDto {
     private List<SimuleringDto> simuleringer;
 
     private SimuleringGjelderDto() {
-        // resteasy
+        //CDI
     }
 
     public SimuleringGjelderDto(List<SimuleringDto> simuleringer) {
