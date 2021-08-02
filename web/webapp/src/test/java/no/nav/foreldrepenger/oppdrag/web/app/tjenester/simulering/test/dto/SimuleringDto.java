@@ -29,7 +29,7 @@ public class SimuleringDto implements AbacDto {
     private List<SimuleringMottakerDto> simuleringMottakerListe;
 
     private SimuleringDto() {
-        // resteasy
+        // CDI
     }
 
     public SimuleringDto(Long behandlingId, String aktørId, List<SimuleringMottakerDto> simuleringMottakerListe) {

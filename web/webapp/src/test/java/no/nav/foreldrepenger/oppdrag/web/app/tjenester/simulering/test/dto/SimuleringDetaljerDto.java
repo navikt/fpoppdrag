@@ -51,7 +51,7 @@ public class SimuleringDetaljerDto {
     private boolean utenInntrekk;
 
     private SimuleringDetaljerDto() {
-        // resteasy
+        // CDI
     }
 
     public SimuleringDetaljerDto(LocalDate fom, LocalDate tom,

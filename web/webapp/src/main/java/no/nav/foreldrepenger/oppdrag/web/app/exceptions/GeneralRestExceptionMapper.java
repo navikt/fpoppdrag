@@ -3,12 +3,12 @@ package no.nav.foreldrepenger.oppdrag.web.app.exceptions;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import org.jboss.resteasy.spi.ApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -25,12 +25,12 @@ import no.nav.vedtak.log.util.LoggerUtils;
 // generell. (Eigen mapper for ConstraintViolationException.)
 
 @Provider
-public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationException> {
+public class GeneralRestExceptionMapper implements ExceptionMapper<WebApplicationException> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GeneralRestExceptionMapper.class);
 
     @Override
-    public Response toResponse(ApplicationException exception) {
+    public Response toResponse(WebApplicationException exception) {
         Throwable cause = exception.getCause();
 
         if (cause instanceof Valideringsfeil) { //NOSONAR

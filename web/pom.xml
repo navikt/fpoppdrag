@@ -12,7 +12,7 @@
     <name>FP Oppdrag ::  Web</name>
     <properties>
         <swagger-ui.version>3.50.0</swagger-ui.version>
-        <resteasy.version>4.6.1.Final</resteasy.version>
+        <jersey.version>2.34</jersey.version>
     </properties>
     <modules>
         <module>webapp</module>
