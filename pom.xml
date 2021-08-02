@@ -33,14 +33,14 @@
         <felles.version>3.2.41</felles.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
-        <fp-kontrakter.version>5.2.5</fp-kontrakter.version>
+        <fp-kontrakter.version>6.0.2</fp-kontrakter.version>
 
         <!-- NAV -->
 
         <!-- Eksterne -->
         <prometheus.version>0.11.0</prometheus.version>
         <logstash.version>6.6</logstash.version>
-        <swagger.version>2.1.9</swagger.version>
+        <swagger.version>2.1.10</swagger.version>
         <woodstox.version>6.2.6</woodstox.version>
 
         <flyway.version>5.2.4</flyway.version>
@@ -358,7 +358,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0-M3</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
