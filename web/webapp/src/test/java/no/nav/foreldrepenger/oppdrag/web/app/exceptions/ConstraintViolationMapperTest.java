@@ -50,7 +50,7 @@ public class ConstraintViolationMapperTest {
         FeilDto feilDto = new FeilDto(feil.getMessage(), feilene);
         assertThat(response.getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
         FeilDto dto = (FeilDto) response.getEntity();
-        assertThat(dto.getFeilmelding()).isEqualTo(feilDto.getFeilmelding());
+        assertThat(dto.feilmelding()).isEqualTo(feilDto.feilmelding());
         assertThat(response.getMediaType().toString()).isEqualTo(MediaType.APPLICATION_JSON);
     }
 
