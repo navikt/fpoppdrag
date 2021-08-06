@@ -16,7 +16,7 @@ public class JsonParseExceptionMapperTest {
         String feilTekst = "Ukjent EOF";
         Response resultat = mapper.toResponse(new JsonEOFException(null, null, feilTekst));
         FeilDto dto = (FeilDto) resultat.getEntity();
-        assertThat(dto.getFeilmelding()).contains("JSON-parsing feil: " + feilTekst);
-        assertThat(dto.getFeltFeil()).isNull();
+        assertThat(dto.feilmelding()).contains("JSON-parsing feil: " + feilTekst);
+        assertThat(dto.feltFeil()).isEmpty();
     }
 }
