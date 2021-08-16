@@ -110,13 +110,6 @@
             </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles</groupId>
-                <artifactId>felles-bom</artifactId>
-                <version>${felles.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.felles</groupId>
                 <artifactId>felles-util</artifactId>
                 <version>${felles.version}</version>
             </dependency>
