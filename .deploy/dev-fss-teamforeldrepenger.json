@@ -9,7 +9,7 @@
   "ingresses": [
     "https://fpoppdrag-q1.nais.preprod.local",
     "https://app-q1.adeo.no/fpoppdrag",
-    "https://fpoppdrag-q1.dev.adeo.no/"
+    "https://fpoppdrag.dev.intern.nav.no/"
   ],
   "env": {
     "APPDYNAMICS_AGENT_ACCOUNT_NAME": "NON-PROD"
