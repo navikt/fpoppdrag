@@ -49,6 +49,10 @@ spec:
         kvPath: {{fpoppdragserviceuser}}
       - mountPath: /var/run/secrets/nais.io/vault
         kvPath: /kv/{{cluster}}/fss/fpoppdrag/{{namespace}}
+  azure:
+    application:
+      enabled: true
+  webproxy: true
   env:
   {{#each env}}
    - name: {{@key}}
