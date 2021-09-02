@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class DatabaseScript {
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseScript.class);
-    protected static final String SCHEMA_VERSION = "schema_version";
+    protected static final String FLYWAY_SCHEMA_TABLE = "schema_version";
 
     private final DataSource dataSource;
     private final String locations;
@@ -23,7 +23,7 @@ public class DatabaseScript {
         var flyway = new Flyway(Flyway.configure()
                 .dataSource(dataSource)
                 .locations(locations)
-                .table(SCHEMA_VERSION)
+                .table(FLYWAY_SCHEMA_TABLE)
                 .baselineOnMigrate(true)
         );
         try {
