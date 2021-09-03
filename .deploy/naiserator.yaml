@@ -42,9 +42,9 @@ spec:
     enabled: true
     paths:
       - mountPath: /var/run/secrets/nais.io/defaultDS
-        kvPath:  {{oraclefpoppdragsecret}}
+        kvPath:  {{oraclesecretpath}}
       - mountPath: /var/run/secrets/nais.io/serviceuser
-        kvPath: {{fpoppdragserviceuser}}
+        kvPath: {{serviceuserpath}}
   azure:
     application:
       enabled: true

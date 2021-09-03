@@ -1,8 +1,6 @@
 {
-  "cluster": "prod",
-  "namespace": "teamforeldrepenger",
-  "oraclefpoppdragsecret":"oracle/data/prod/creds/fpoppdrag_p-fpoppdrag_p",
-  "fpoppdragserviceuser": "serviceuser/data/prod/srvfpoppdrag",
+  "oraclesecretpath":"oracle/data/prod/creds/fpoppdrag_p-fpoppdrag_p",
+  "serviceuserpath": "serviceuser/data/prod/srvfpoppdrag",
   "minReplicas": "2",
   "maxReplicas": "3",
   "ingresses": [
