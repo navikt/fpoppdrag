@@ -41,14 +41,10 @@ spec:
   vault:
     enabled: true
     paths:
-      - mountPath: /var/run/secrets/nais.io/defaultDSconfig
-        kvPath: {{oracleconfig}}
       - mountPath: /var/run/secrets/nais.io/defaultDS
         kvPath:  {{oraclefpoppdragsecret}}
       - mountPath: /var/run/secrets/nais.io/serviceuser
         kvPath: {{fpoppdragserviceuser}}
-      - mountPath: /var/run/secrets/nais.io/vault
-        kvPath: /kv/{{cluster}}/fss/fpoppdrag/{{namespace}}
   azure:
     application:
       enabled: true
