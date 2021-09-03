@@ -44,7 +44,7 @@ spec:
       - mountPath: /var/run/secrets/nais.io/defaultDS
         kvPath:  {{oraclesecretpath}}
       - mountPath: /var/run/secrets/nais.io/serviceuser
-        kvPath: {{serviceuserpath}}
+        kvPath: {{serviceusersecretpath}}
   azure:
     application:
       enabled: true

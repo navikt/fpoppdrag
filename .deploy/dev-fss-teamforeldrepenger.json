@@ -1,6 +1,6 @@
 {
   "oraclesecretpath":"oracle/data/dev/creds/fpoppdrag_q1-user",
-  "serviceuserpath": "serviceuser/data/dev/srvfpoppdrag",
+  "serviceusersecretpath": "serviceuser/data/dev/srvfpoppdrag",
   "minReplicas": "2",
   "maxReplicas": "3",
   "ingresses": [
