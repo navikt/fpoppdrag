@@ -42,7 +42,6 @@
         <logstash.version>6.6</logstash.version>
         <swagger.version>2.1.10</swagger.version>
         <woodstox.version>6.2.6</woodstox.version>
-
         <flyway.version>7.15.0</flyway.version>
         <jupiter.version>5.7.2</jupiter.version>
     </properties>
