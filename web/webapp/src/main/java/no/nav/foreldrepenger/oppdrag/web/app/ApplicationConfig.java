@@ -51,14 +51,15 @@ public class ApplicationConfig extends Application {
         oas.info(info)
                 .addServersItem(new Server()
                         .url("/fpoppdrag"));
-        SecurityScheme ssApiKey = new SecurityScheme();
-        ssApiKey.in(SecurityScheme.In.HEADER).type(SecurityScheme.Type.APIKEY).name("apiKeyAuth").scheme("bearer");
-
-        SecurityScheme openIdConnect = new SecurityScheme();
-        openIdConnect.type(SecurityScheme.Type.OPENIDCONNECT).openIdConnectUrl("https://isso-q.adeo.no:443/isso/oauth2").name("openIdConnect");
-
-        oas.addSecurityItem(new SecurityRequirement().addList("apiKeyAuth"));
-        oas.addSecurityItem(new SecurityRequirement().addList("openIdConnect"));
+//        SecurityScheme ssApiKey = new SecurityScheme();
+//        ssApiKey.in(SecurityScheme.In.HEADER).type(SecurityScheme.Type.APIKEY).name("apiKeyAuth").scheme("bearer");
+//
+//        SecurityScheme openIdConnect = new SecurityScheme();
+//        openIdConnect.type(SecurityScheme.Type.OPENIDCONNECT).openIdConnectUrl("https://isso-q.adeo.no:443/isso/oauth2").name("openIdConnect");
+//
+//
+//        oas.addSecurityItem(new SecurityRequirement().addList("apiKeyAuth"));
+//        oas.addSecurityItem(new SecurityRequirement().addList("openIdConnect"));
 
         SwaggerConfiguration oasConfig = new SwaggerConfiguration()
                 .openAPI(oas)
@@ -67,6 +68,7 @@ public class ApplicationConfig extends Application {
                 .resourcePackages(Stream.of("no.nav")
                         .collect(Collectors.toSet()));
 
+//        oas.getComponents().addSecuritySchemes("test", openIdConnect);
         try {
             new JaxrsOpenApiContextBuilder<>()
                     .openApiConfiguration(oasConfig)
