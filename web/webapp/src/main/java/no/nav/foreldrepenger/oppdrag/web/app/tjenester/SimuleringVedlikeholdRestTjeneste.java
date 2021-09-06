@@ -26,6 +26,10 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
@@ -33,9 +37,10 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 @ApplicationScoped
 @Transactional
 @Path("/forvaltning")
+@SecurityScheme(name = "openIdConnect", type = SecuritySchemeType.OPENIDCONNECT, openIdConnectUrl = "https://isso-q.adeo.no:443/isso/oauth2")
+@SecurityScheme(name = "apiKey", type = SecuritySchemeType.APIKEY, in = SecuritySchemeIn.HEADER)
 @Produces(MediaType.APPLICATION_JSON)
 public class SimuleringVedlikeholdRestTjeneste {
-
     private static final Logger logger = LoggerFactory.getLogger(SimuleringVedlikeholdRestTjeneste.class);
 
     private EntityManager entityManager;
@@ -53,7 +58,8 @@ public class SimuleringVedlikeholdRestTjeneste {
     @Path("/fjern-gamle-simulering-xml")
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
-    @Operation(description = "Sletter gamle simulering-xml-er", tags = "FORVALTNING")
+
+    @Operation(description = "Sletter gamle simulering-xml-er", tags = "FORVALTNING", security = @SecurityRequirement(name = "openIdConnect"))
     @BeskyttetRessurs(action = CREATE, resource = DRIFT, sporingslogg = false)
     public Response slettGamleSimuleringXml(@Valid @NotNull AntallAbacDto antall) {
         long antallNyesteDagerSomIkkeSkalSlettes = 90;
