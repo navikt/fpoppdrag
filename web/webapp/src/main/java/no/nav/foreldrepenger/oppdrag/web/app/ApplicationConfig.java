@@ -15,10 +15,13 @@ import org.glassfish.jersey.server.ServerProperties;
 
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import no.nav.foreldrepenger.oppdrag.web.app.exceptions.ConstraintViolationMapper;
 import no.nav.foreldrepenger.oppdrag.web.app.exceptions.GeneralRestExceptionMapper;
@@ -48,6 +51,15 @@ public class ApplicationConfig extends Application {
         oas.info(info)
                 .addServersItem(new Server()
                         .url("/fpoppdrag"));
+        SecurityScheme ssApiKey = new SecurityScheme();
+        ssApiKey.in(SecurityScheme.In.HEADER).type(SecurityScheme.Type.APIKEY).name("apiKeyAuth").scheme("bearer");
+
+        SecurityScheme openIdConnect = new SecurityScheme();
+        openIdConnect.type(SecurityScheme.Type.OPENIDCONNECT).openIdConnectUrl("https://isso-q.adeo.no:443/isso/oauth2").name("openIdConnect");
+
+        oas.addSecurityItem(new SecurityRequirement().addList("apiKeyAuth"));
+        oas.addSecurityItem(new SecurityRequirement().addList("openIdConnect"));
+
         SwaggerConfiguration oasConfig = new SwaggerConfiguration()
                 .openAPI(oas)
                 .prettyPrint(true)
