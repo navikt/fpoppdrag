@@ -80,8 +80,7 @@ public class JettyServer extends AbstractJettyServer {
         return new ResourceCollection(
                 Resource.newClassPathResource("META-INF/resources/webjars/"),
                 Resource.newClassPathResource("/web"),
-                Resource.newClassPathResource("/META-INF/resources")/** i18n */
-                );
+                Resource.newClassPathResource("/META-INF/resources")/** i18n */);
     }
 
 }
