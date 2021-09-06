@@ -59,7 +59,6 @@ public class SimuleringVedlikeholdRestTjeneste {
     @Path("/fjern-gamle-simulering-xml")
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
-
     @Operation(description = "Sletter gamle simulering-xml-er", tags = "FORVALTNING")
     @BeskyttetRessurs(action = CREATE, resource = DRIFT, sporingslogg = false)
     public Response slettGamleSimuleringXml(@Valid @NotNull AntallAbacDto antall) {
