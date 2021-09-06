@@ -7,7 +7,8 @@ import java.util.concurrent.TimeUnit;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonRestKlient;
+import no.nav.vedtak.felles.integrasjon.organisasjon.OrgInfo;
+import no.nav.vedtak.felles.integrasjon.rest.jersey.Jersey;
 import no.nav.vedtak.util.LRUCache;
 
 @ApplicationScoped
@@ -16,14 +17,14 @@ public class OrganisasjonTjeneste {
 
     private LRUCache<String, OrganisasjonInfo> cache = new LRUCache<>(500, CACHE_ELEMENT_LIVE_TIME_MS);
 
-    private OrganisasjonRestKlient organisasjonAdapter;
+    private OrgInfo organisasjonAdapter;
 
     public OrganisasjonTjeneste() {
         // For CDI
     }
 
     @Inject
-    public OrganisasjonTjeneste(OrganisasjonRestKlient organisasjonAdapter) {
+    public OrganisasjonTjeneste(@Jersey OrgInfo organisasjonAdapter) {
         this.organisasjonAdapter = organisasjonAdapter;
     }
 
