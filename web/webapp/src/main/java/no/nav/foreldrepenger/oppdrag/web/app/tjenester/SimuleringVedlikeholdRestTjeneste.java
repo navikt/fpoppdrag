@@ -37,8 +37,9 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 @ApplicationScoped
 @Transactional
 @Path("/forvaltning")
-@SecurityScheme(name = "openIdConnect", type = SecuritySchemeType.OPENIDCONNECT, openIdConnectUrl = "https://isso-q.adeo.no:443/isso/oauth2")
+@SecurityScheme(name = "openIdConnect", type = SecuritySchemeType.OPENIDCONNECT, openIdConnectUrl = "https://isso-q.adeo.no/isso/oauth2/.well-known/openid-configuration")
 @SecurityScheme(name = "apiKey", type = SecuritySchemeType.APIKEY, in = SecuritySchemeIn.HEADER)
+@SecurityRequirement(name = "openIdConnect")
 @Produces(MediaType.APPLICATION_JSON)
 public class SimuleringVedlikeholdRestTjeneste {
     private static final Logger logger = LoggerFactory.getLogger(SimuleringVedlikeholdRestTjeneste.class);
@@ -58,8 +59,7 @@ public class SimuleringVedlikeholdRestTjeneste {
     @Path("/fjern-gamle-simulering-xml")
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
-
-    @Operation(description = "Sletter gamle simulering-xml-er", tags = "FORVALTNING", security = @SecurityRequirement(name = "openIdConnect"))
+    @Operation(description = "Sletter gamle simulering-xml-er", tags = "FORVALTNING")
     @BeskyttetRessurs(action = CREATE, resource = DRIFT, sporingslogg = false)
     public Response slettGamleSimuleringXml(@Valid @NotNull AntallAbacDto antall) {
         long antallNyesteDagerSomIkkeSkalSlettes = 90;
