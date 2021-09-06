@@ -122,7 +122,7 @@ abstract class AbstractJettyServer {
         try {
             String descriptor = resource.getURI().toURL().toExternalForm();
             webAppContext.setDescriptor(descriptor);
-            //webAppContext.setBaseResource(createResourceCollection());
+            webAppContext.setBaseResource(createResourceCollection());
             webAppContext.setContextPath(appKonfigurasjon.getContextPath());
             webAppContext.setConfigurations(CONFIGURATIONS);
             webAppContext.setAttribute("org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern", "^.*jersey-.*.jar$|^.*felles-.*.jar$");
