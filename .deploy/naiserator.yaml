@@ -41,6 +41,8 @@ spec:
   vault:
     enabled: true
     paths:
+      - mountPath: /var/run/secrets/nais.io/defaultDSconfig
+        kvPath: {{oracleconfigpath}}
       - mountPath: /var/run/secrets/nais.io/defaultDS
         kvPath:  {{oraclesecretpath}}
       - mountPath: /var/run/secrets/nais.io/serviceuser
