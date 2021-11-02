@@ -23,11 +23,11 @@ public final class Databaseskjemainitialisering {
 
     private static final Logger LOG = LoggerFactory.getLogger(Databaseskjemainitialisering.class);
     private static final Environment ENV = Environment.current();
-    protected static final String SCHEMA_VERSION = "schema_version";
+    private static final String SCHEMA_VERSION = "schema_version";
 
-    public static final String URL_DEFAULT = "jdbc:oracle:thin:@127.0.0.1:1521:XE";
+    //public static final String URL_DEFAULT = "jdbc:oracle:thin:@127.0.0.1:1521:XE";
 
-    //public static final String URL_DEFAULT = "jdbc:h2:mem:test:DB_CLOSE_DELAY=-1;MODE=Oracle";
+    public static final String URL_DEFAULT = "jdbc:h2:mem:test:DB_CLOSE_DELAY=-1;MODE=Oracle";
     public static final String DEFAULT_SCEHMA = "fpoppdrag";
     public static final String JUNIT_SCHEMA = "fpoppdrag_unit";
     public static final String DBA_SCHEMA = "vl_dba";
@@ -40,7 +40,7 @@ public final class Databaseskjemainitialisering {
 
     public static void main(String[] args) {
         //brukes i mvn clean install
-        migrerForUnitTests();
+        //migrerForUnitTests();
     }
 
     public static void migrer() {
@@ -132,6 +132,7 @@ public final class Databaseskjemainitialisering {
         cfg.setConnectionTimeout(10000);
         cfg.setMinimumIdle(0);
         cfg.setMaximumPoolSize(4);
+        //cfg.setDriverClassName(org.h2.Driver.class.getName());
         cfg.setAutoCommit(false);
         return cfg;
     }

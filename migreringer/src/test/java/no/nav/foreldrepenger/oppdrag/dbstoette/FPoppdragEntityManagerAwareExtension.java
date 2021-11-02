@@ -17,7 +17,7 @@ public class FPoppdragEntityManagerAwareExtension extends EntityManagerAwareExte
         if (!DBTestUtil.kjøresAvMaven()) {
             LOG.info("Kjører IKKE under maven");
             // prøver alltid migrering hvis endring, ellers funker det dårlig i IDE.
-            Databaseskjemainitialisering.migrerForUnitTests();
+            //Databaseskjemainitialisering.migrerForUnitTests();
         }
         Databaseskjemainitialisering.settJndiOppslagForUnitTests();
     }

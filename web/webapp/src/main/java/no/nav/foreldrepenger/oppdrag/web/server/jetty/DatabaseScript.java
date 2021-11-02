@@ -20,7 +20,8 @@ public class DatabaseScript {
     }
 
     public void migrate() {
-        var flyway = new Flyway(Flyway.configure()
+        var flyway = new Flyway(Flyway
+                .configure()
                 .dataSource(dataSource)
                 .locations(locations)
                 .table(FLYWAY_SCHEMA_TABLE)
