@@ -172,6 +172,12 @@
                 <version>${fp-kontrakter.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>no.nav.foreldrepenger</groupId>
+                <artifactId>konfig</artifactId>
+                <version>1.1.4</version>
+            </dependency>
+
             <!-- nav -->
 
             <dependency>
