@@ -24,7 +24,7 @@ public class OrganisasjonTjeneste {
     }
 
     @Inject
-    public OrganisasjonTjeneste(@Jersey OrgInfo organisasjonAdapter) {
+    public OrganisasjonTjeneste(OrgInfo organisasjonAdapter) {
         this.organisasjonAdapter = organisasjonAdapter;
     }
 
