@@ -1,0 +1,36 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  labels:
+    team: teamforeldrepenger
+  name: fpoppdrag-swagger
+  namespace: teamforeldrepenger
+spec:
+  image: ghcr.io/navikt/swaggerapi/swagger-ui:latest
+  port: 8080
+  ingresses:
+    - "https://fpoppdrag-q1.nais.preprod.local/swagger"
+    - "https://fpoppdrag.dev.intern.nav.no/swagger"
+  replicas:
+    min: 1
+    max: 1
+  resources:
+    limits:
+      cpu: 250m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 1Gi
+  env:
+    - name: SWAGGER_JSON
+      value: ""
+    - name: BASE_URL
+      value: "/swagger"
+    - name: URL
+      value: "/fpoppdrag/api/openapi.json"
+#  accessPolicy:
+#    inbound:
+#      rules:
+#        - application: fp-frontend
+#        - application: fpsak-redis-exporter
+
