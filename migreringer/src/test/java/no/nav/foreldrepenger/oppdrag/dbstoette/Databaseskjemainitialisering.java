@@ -132,7 +132,6 @@ public final class Databaseskjemainitialisering {
         cfg.setConnectionTimeout(10000);
         cfg.setMinimumIdle(0);
         cfg.setMaximumPoolSize(4);
-        //cfg.setDriverClassName(org.h2.Driver.class.getName());
         cfg.setAutoCommit(false);
         return cfg;
     }
