@@ -39,10 +39,10 @@
 
         <!-- Eksterne -->
         <prometheus.version>0.12.0</prometheus.version>
-        <logstash.version>6.6</logstash.version>
+        <logstash.version>7.0.1</logstash.version>
         <swagger.version>2.1.11</swagger.version>
         <woodstox.version>6.2.6</woodstox.version>
-        <flyway.version>8.0.2</flyway.version>
+        <flyway.version>8.0.5</flyway.version>
         <jupiter.version>5.8.1</jupiter.version>
     </properties>
 
@@ -130,11 +130,6 @@
                 <version>19.3.0.0</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka-clients</artifactId>
-                <version>3.0.0</version>
-            </dependency>
-            <dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>jakarta.el</artifactId>
                 <version>3.0.3</version>
@@ -165,11 +160,6 @@
                 <version>${fp-kontrakter.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
-                <artifactId>fp-tilkjent-ytelse-v1</artifactId>
-                <version>${fp-kontrakter.version}</version>
             </dependency>
 
             <dependency>
