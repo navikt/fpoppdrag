@@ -40,7 +40,7 @@
         <!-- Eksterne -->
         <prometheus.version>0.12.0</prometheus.version>
         <logstash.version>7.0.1</logstash.version>
-        <swagger.version>2.1.11</swagger.version>
+        <swagger.version>2.1.12</swagger.version>
         <woodstox.version>6.2.6</woodstox.version>
         <flyway.version>8.2.1</flyway.version>
         <jupiter.version>5.8.2</jupiter.version>
