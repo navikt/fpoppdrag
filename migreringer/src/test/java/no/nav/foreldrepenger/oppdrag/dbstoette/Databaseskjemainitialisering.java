@@ -24,11 +24,11 @@ public final class Databaseskjemainitialisering {
 
     private static final AtomicBoolean GUARD_UNIT_TEST_SKJEMAER = new AtomicBoolean();
     private static final Environment ENV = Environment.current();
-    private static final String USER = "fpoppdrag_unit";
+    public static final String USER = "fpoppdrag_unit";
     private static final String DB_SCRIPT_LOCATION = "/db/migration/";
 
     private static final DataSource DS = settJdniOppslag(USER);
-    public static final String SCHEMA = "defaultDS";
+    private static final String SCHEMA = "defaultDS";
 
     public static void main(String[] args) {
         //brukes i mvn clean install

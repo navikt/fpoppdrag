@@ -31,7 +31,7 @@ public class SjekkDbStrukturTest {
     @BeforeAll
     public static void setup() {
         ds = Databaseskjemainitialisering.initUnitTestDataSource();
-        schema = Databaseskjemainitialisering.SCHEMA;
+        schema = Databaseskjemainitialisering.USER;
     }
 
     @Test
