@@ -11,14 +11,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.FPoppdragEntityManagerAwareExtension;
+import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.BehandlingRef;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 
-@ExtendWith(FPoppdragEntityManagerAwareExtension.class)
+@ExtendWith(JpaExtension.class)
 public class PipRepositoryTest {
 
     private PipRepository pipRepository;

@@ -12,7 +12,6 @@ RUN mkdir /app/conf
 
 # Config
 COPY web/target/classes/logback*.xml /app/conf/
-COPY web/target/classes/jetty/jaspi-conf.xml /app/conf/
 
 # Application Container (Jetty)
 COPY web/target/app.jar /app/
@@ -24,5 +23,4 @@ COPY export-vault.sh /init-scripts/export-vault.sh
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 \
                 -Djava.security.egd=file:/dev/./urandom \
                 -Duser.timezone=Europe/Oslo \
-                -Dapplication.name=fpoppdrag  \
                 -Dlogback.configurationFile=/app/conf/logback.xml"

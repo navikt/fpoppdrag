@@ -40,6 +40,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>no.nav.foreldrepenger.kontrakter</groupId>
             <artifactId>okonomistotte-v1</artifactId>
             <scope>test</scope>

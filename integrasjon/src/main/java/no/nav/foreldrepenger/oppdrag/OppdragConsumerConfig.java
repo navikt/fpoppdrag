@@ -23,7 +23,7 @@ public class OppdragConsumerConfig {
     private String endpointUrl; // NOSONAR
 
     @Inject
-    public OppdragConsumerConfig(@KonfigVerdi("Oppdrag.service.url") String endpointUrl) {
+    public OppdragConsumerConfig(@KonfigVerdi("oppdrag.service.url") String endpointUrl) {
         this.endpointUrl = endpointUrl;
     }
 
