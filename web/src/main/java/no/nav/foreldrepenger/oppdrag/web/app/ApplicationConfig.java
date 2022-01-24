@@ -15,14 +15,12 @@ import org.glassfish.jersey.server.ServerProperties;
 
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.foreldrepenger.oppdrag.web.app.exceptions.ConstraintViolationMapper;
 import no.nav.foreldrepenger.oppdrag.web.app.exceptions.GeneralRestExceptionMapper;
 import no.nav.foreldrepenger.oppdrag.web.app.exceptions.JsonMappingExceptionMapper;
@@ -32,7 +30,6 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.SimuleringVedlikeholdRest
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.kodeverk.KodeverkRestTjeneste;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.SimuleringRestTjeneste;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.SimuleringTestRestTjeneste;
-import no.nav.foreldrepenger.konfig.Environment;
 
 @ApplicationPath(ApplicationConfig.API_URI)
 public class ApplicationConfig extends Application {

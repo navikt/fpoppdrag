@@ -78,9 +78,9 @@ public class SimuleringRepositoryTest {
         assertThat(simuleringMottakere.iterator().next().getSimulertePosteringer().iterator().next().getForfallsdato()).isEqualTo(andreForfallsDato);
 
         List<SimuleringGrunnlag> inaktiveGrunnlag = entityManager.createQuery(
-                "from SimuleringGrunnlag s" +
-                        " where s.eksternReferanse.behandlingId = :behandlingId" +
-                        " and s.aktiv = :aktiv", SimuleringGrunnlag.class)
+                        "from SimuleringGrunnlag s" +
+                                " where s.eksternReferanse.behandlingId = :behandlingId" +
+                                " and s.aktiv = :aktiv", SimuleringGrunnlag.class)
                 .setParameter("behandlingId", behandlingId)
                 .setParameter("aktiv", false)
                 .getResultList();

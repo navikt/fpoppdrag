@@ -41,7 +41,7 @@ public class SjekkDtoStrukturTest {
                 c -> !c.isInterface());
 
         for (int i = 0; i < classes.size(); i++) {
-            params.add(new Object[] { classes.get(i) });
+            params.add(new Object[]{classes.get(i)});
         }
         return params;
     }

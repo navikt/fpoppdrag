@@ -8,7 +8,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import no.nav.vedtak.felles.integrasjon.organisasjon.OrgInfo;
-import no.nav.vedtak.felles.integrasjon.rest.jersey.Jersey;
 import no.nav.vedtak.util.LRUCache;
 
 @ApplicationScoped

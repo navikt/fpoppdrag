@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
-public class DatabaseHealthCheck implements HealthCheck{
+public class DatabaseHealthCheck implements HealthCheck {
 
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseHealthCheck.class);
     private static final String JDBC_DEFAULT_DS = "jdbc/defaultDS";

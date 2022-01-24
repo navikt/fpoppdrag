@@ -121,7 +121,7 @@ public class RestApiAbacTest {
 
     @AfterAll
     public static void teardown() {
-        if(PREV_LB_URL != null){
+        if (PREV_LB_URL != null) {
             System.setProperty(ServerInfo.PROPERTY_KEY_LOADBALANCER_URL, PREV_LB_URL);
         }
     }

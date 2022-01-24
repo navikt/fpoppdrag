@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import no.nav.foreldrepenger.integrasjon.økonomistøtte.oppdrag.OppdragSkjemaConstants;
+import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.foreldrepenger.oppdrag.OppdragConsumer;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.OppdragMapper;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.SimuleringResultatTransformer;
@@ -44,7 +45,6 @@ import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.S
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.Oppdrag;
 import no.nav.vedtak.exception.TekniskException;
-import no.nav.foreldrepenger.konfig.Environment;
 
 @ApplicationScoped
 public class StartSimuleringTjeneste {
@@ -362,14 +362,14 @@ public class StartSimuleringTjeneste {
         }
 
         static TekniskException manglerMappingMellomFagområdeKodeOgYtleseType(Long behandlingId, List<String> fagområdeKode) {
-            return new TekniskException( "FPO-852146", String.format("Utvikler-feil: Mangler mapping mellom fagområdekode og ytelsetype for behandlingId=%s fagområdekode=%s", behandlingId, fagområdeKode));
+            return new TekniskException("FPO-852146", String.format("Utvikler-feil: Mangler mapping mellom fagområdekode og ytelsetype for behandlingId=%s fagområdekode=%s", behandlingId, fagområdeKode));
         }
 
         static TekniskException ikkeUnikYtelseType(Long behandlingId, List<String> fagområdeKode) {
             return new TekniskException("FPO-810466", String.format("Utvikler-feil: Klarer ikke utlede unik ytelsetype for behandlingId=%s fagområdekode=%s", behandlingId, fagområdeKode));
         }
 
-        static TekniskException  mangletFagsystemId(Long behandlingId, String periodeFom, String periodeTom) {
+        static TekniskException mangletFagsystemId(Long behandlingId, String periodeFom, String periodeTom) {
             return new TekniskException("FPO-811943", String.format("Manglet fagsystemId i mottat respons for behandlingId=%s periode=%s-%s", behandlingId, periodeFom, periodeTom));
         }
 

@@ -18,10 +18,10 @@ public class JsonMappingExceptionMapper implements ExceptionMapper<JsonMappingEx
         var melding = "FPO-252294 JSON-mapping feil";
         log.warn(melding, exception);
         return Response
-            .status(Response.Status.BAD_REQUEST)
-            .entity(new FeilDto(melding))
-            .type(MediaType.APPLICATION_JSON)
-            .build();
+                .status(Response.Status.BAD_REQUEST)
+                .entity(new FeilDto(melding))
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 
 }

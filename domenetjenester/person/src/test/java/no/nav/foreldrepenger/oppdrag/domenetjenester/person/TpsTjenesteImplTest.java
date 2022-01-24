@@ -44,7 +44,8 @@ public class TpsTjenesteImplTest {
         AktørId aktørId = new AktørId("12345");
         String fnr = "24069305608";
 
-        when(pdlKlient.hentIdenter(any(), any())).thenReturn(new Identliste(List.of(new IdentInformasjon(aktørId.getId(), IdentGruppe.AKTORID, false))));;
+        when(pdlKlient.hentIdenter(any(), any())).thenReturn(new Identliste(List.of(new IdentInformasjon(aktørId.getId(), IdentGruppe.AKTORID, false))));
+        ;
 
         // Act
         Optional<AktørId> funnetAktørId = tpsTjeneste.hentAktørForFnr(PersonIdent.fra(fnr));
@@ -55,13 +56,13 @@ public class TpsTjenesteImplTest {
     }
 
     @Test
-    public void finnerPersonInfoForAktørId()  {
+    public void finnerPersonInfoForAktørId() {
         // Arrange
         String fnr = "24069305608";
         String navn = "Nasse Nøff";
 
         Person person = new Person();
-        Navn navnPdl  = new Navn("Nøff", null, "Nasse", "Nasse Nøff", null, null, null, null);
+        Navn navnPdl = new Navn("Nøff", null, "Nasse", "Nasse Nøff", null, null, null, null);
         person.setNavn(List.of(navnPdl));
 
         when(pdlKlient.hentPerson(any(), any())).thenReturn(person);
@@ -74,7 +75,7 @@ public class TpsTjenesteImplTest {
     }
 
     @Test
-    public void kasterExceptionPersonIkkeFunnetSomHåndteres()  {
+    public void kasterExceptionPersonIkkeFunnetSomHåndteres() {
         // Arrange
         String fnr = "24069305608";
         var unntak = Mockito.mock(TekniskException.class);
@@ -88,7 +89,7 @@ public class TpsTjenesteImplTest {
     }
 
     @Test
-    public void kasterExceptionSomIkkeHåndteresForAndreTilfelle()  {
+    public void kasterExceptionSomIkkeHåndteresForAndreTilfelle() {
         // Arrange
         PersonIdent fnr = new PersonIdent("24069305608");
         var unntak = Mockito.mock(TekniskException.class);

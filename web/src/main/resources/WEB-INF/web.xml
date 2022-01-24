@@ -2,7 +2,7 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
                  http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" version="3.1"
-        metadata-complete="false">
+         metadata-complete="false">
 
     <session-config>
         <cookie-config>
@@ -20,7 +20,8 @@
 
     <!-- Listeners her slik at vi kan styre rekkefølgen de kjøres i: -->
     <listener>
-        <listener-class>no.nav.foreldrepenger.oppdrag.web.app.startupinfo.AppStartupServletContextListener</listener-class>
+        <listener-class>no.nav.foreldrepenger.oppdrag.web.app.startupinfo.AppStartupServletContextListener
+        </listener-class>
     </listener>
     <listener>
         <listener-class>no.nav.foreldrepenger.oppdrag.web.app.tjenester.ApplicationContextListener</listener-class>
@@ -57,7 +58,7 @@
             <http-method>OPTIONS</http-method>
             <http-method>DELETE</http-method>
         </web-resource-collection>
-        <auth-constraint />
+        <auth-constraint/>
     </security-constraint>
 </web-app>
 

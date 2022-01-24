@@ -35,6 +35,7 @@ public class KodeverkRestTjeneste {
     private static final Logger log = LoggerFactory.getLogger(KodeverkRestTjeneste.class);
 
     public static final Map<String, Collection<? extends Kodeverdi>> KODEVERDIER_SOM_BRUKES_PÅ_KLIENT;
+
     static {
         Map<String, Collection<? extends Kodeverdi>> map = new LinkedHashMap<>();
         map.put(Fagsystem.class.getSimpleName(), Fagsystem.kodeMap().values());

@@ -27,7 +27,7 @@ public class ConstraintViolationMapperTest {
         String rootBean = "rootBean";
         Class<String> rootBeanClass = null;
         Object leafBean = "leafBean";
-        Object [] execParam = {"param1"};
+        Object[] execParam = {"param1"};
         Object returnValue = "returnValue";
         Path path = new Path() {
             @Override
@@ -61,7 +61,7 @@ public class ConstraintViolationMapperTest {
         private String rootBean;
         private Class<String> rootBeanClass;
         private Object leafBean;
-        private Object [] execParam;
+        private Object[] execParam;
         private Object returnValue;
         private Path path;
         private Object invalid;

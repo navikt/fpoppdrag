@@ -50,7 +50,7 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
     public PdpRequest lagPdpRequest(AbacAttributtSamling attributter) {
         validerTyper(attributter);
 
-        Set<String>  aktørIder = new HashSet<>(attributter.getVerdier(StandardAbacAttributtType.AKTØR_ID));
+        Set<String> aktørIder = new HashSet<>(attributter.getVerdier(StandardAbacAttributtType.AKTØR_ID));
         Optional<Long> behandlingIdOpt = utledBehandlingId(attributter);
         if (behandlingIdOpt.isPresent()) {
             Long behandlingId = behandlingIdOpt.get();

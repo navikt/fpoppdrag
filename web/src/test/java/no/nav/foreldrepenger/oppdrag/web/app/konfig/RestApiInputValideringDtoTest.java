@@ -59,7 +59,6 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Kodeverdi;
 import no.nav.foreldrepenger.oppdrag.web.app.IndexClasses;
 import no.nav.foreldrepenger.oppdrag.web.app.validering.ValidKodeverk;
-import no.nav.vedtak.felles.testutilities.cdi.WeldContext;
 
 public class RestApiInputValideringDtoTest extends RestApiTester {
 

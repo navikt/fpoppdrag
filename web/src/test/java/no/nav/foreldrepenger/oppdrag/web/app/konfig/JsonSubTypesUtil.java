@@ -1,11 +1,11 @@
 package no.nav.foreldrepenger.oppdrag.web.app.konfig;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 
 public class JsonSubTypesUtil {
 
@@ -16,8 +16,8 @@ public class JsonSubTypesUtil {
         }
 
         return Arrays.asList(jst.value()).stream()
-            .map(type -> type.value())
-            .collect(Collectors.toSet());
+                .map(type -> type.value())
+                .collect(Collectors.toSet());
     }
 
 }

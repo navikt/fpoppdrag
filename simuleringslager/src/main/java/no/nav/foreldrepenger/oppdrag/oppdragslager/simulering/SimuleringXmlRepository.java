@@ -9,8 +9,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 /**
- * @deprecated lagring av request XML og response XML skal fjernes i fremtiden
  * @since 30.11.2018
+ * @deprecated lagring av request XML og response XML skal fjernes i fremtiden
  */
 @Deprecated
 @ApplicationScoped
@@ -52,9 +52,9 @@ public class SimuleringXmlRepository {
 
     public List<SimuleringXml> hentSimuleringXml(Long behandlingId) {
         return entityManager.createQuery(
-                "from SimuleringXml s" +
-                        " where s.eksternReferanse.behandlingId = :behandlingId",
-                SimuleringXml.class)
+                        "from SimuleringXml s" +
+                                " where s.eksternReferanse.behandlingId = :behandlingId",
+                        SimuleringXml.class)
                 .setParameter("behandlingId", behandlingId)
                 .getResultList();
     }

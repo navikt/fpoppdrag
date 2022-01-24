@@ -11,7 +11,7 @@ import com.fasterxml.jackson.core.io.JsonEOFException;
 public class JsonParseExceptionMapperTest {
 
     @Test
-    public void skal_parse_JsonEOFException(){
+    public void skal_parse_JsonEOFException() {
         JsonParseExceptionMapper mapper = new JsonParseExceptionMapper();
         String feilTekst = "Ukjent EOF";
         Response resultat = mapper.toResponse(new JsonEOFException(null, null, feilTekst));

@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.nav.foreldrepenger.oppdrag.web.app.selftest.checks.DatabaseHealthCheck;
 import no.nav.foreldrepenger.konfig.KonfigVerdi;
+import no.nav.foreldrepenger.oppdrag.web.app.selftest.checks.DatabaseHealthCheck;
 
 @ApplicationScoped
 public class Selftests {
@@ -18,8 +18,6 @@ public class Selftests {
 
     private String applicationName;
     private SelftestResultat selftestResultat;
-
-
 
 
     @Inject

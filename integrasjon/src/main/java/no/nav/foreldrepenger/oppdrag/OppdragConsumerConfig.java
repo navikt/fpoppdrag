@@ -8,9 +8,9 @@ import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.addressing.WSAddressingFeature;
 
+import no.nav.foreldrepenger.konfig.KonfigVerdi;
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerFpService;
 import no.nav.vedtak.felles.integrasjon.felles.ws.CallIdOutInterceptor;
-import no.nav.foreldrepenger.konfig.KonfigVerdi;
 
 @Dependent
 public class OppdragConsumerConfig {

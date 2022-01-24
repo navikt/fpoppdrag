@@ -72,7 +72,7 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
      * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her     *
      */
     @Test
-    public void alle_parametre_i_REST_api_skal_ha_gyldig_type_og_annotert_med_valid(){
+    public void alle_parametre_i_REST_api_skal_ha_gyldig_type_og_annotert_med_valid() {
         for (Method method : finnAlleRestMetoder()) {
             for (int i = 0; i < method.getParameterCount(); i++) {
                 assertThat(method.getParameterTypes()[i].isAssignableFrom(String.class)).as("REST_MED_INNTEKTSMELDING-metoder skal ikke har parameter som er String eller mer generelt. Bruk DTO-er og valider. " + printKlasseOgMetodeNavn.apply(method)).isFalse();
@@ -87,7 +87,7 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
      * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her
      */
     @Test
-    public void alle_felter_i_objekter_som_brukes_som_inputDTO_skal_enten_ha_valideringsannotering_eller_være_av_godkjent_type(){
+    public void alle_felter_i_objekter_som_brukes_som_inputDTO_skal_enten_ha_valideringsannotering_eller_være_av_godkjent_type() {
         Set<Class<?>> dtoKlasser = finnAlleDtoTyper();
         Set<Class<?>> validerteKlasser = new HashSet<>(); //trengs for å unngå løkker og unngå å validere samme klasse flere ganger dobbelt
         for (Class<?> c : dtoKlasser) {
@@ -107,16 +107,16 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
     @SuppressWarnings("rawtypes")
     private static final Map<Class, List<List<Class<? extends Annotation>>>> VALIDERINGSALTERNATIVER = new HashMap<>() {{
         put(String.class, asList(
-            asList(Pattern.class, Size.class),
-            singletonList(Digits.class)));
+                asList(Pattern.class, Size.class),
+                singletonList(Digits.class)));
         put(Long.class, singletonList(
-            asList(Min.class, Max.class)));
+                asList(Min.class, Max.class)));
         put(long.class, singletonList(
-            asList(Min.class, Max.class)));
+                asList(Min.class, Max.class)));
         put(Integer.class, singletonList(
-            asList(Min.class, Max.class)));
+                asList(Min.class, Max.class)));
         put(int.class, singletonList(
-            asList(Min.class, Max.class)));
+                asList(Min.class, Max.class)));
 
         //følgende unnntas i praksis. LocalDate og LocalDateTime har egne deserializers
         put(boolean.class, singletonList(emptyList()));
