@@ -6,11 +6,11 @@ metadata:
   labels:
     team: teamforeldrepenger
 spec:
-  image:  {{image}}
+  image: {{image}}
   port: 8080
   ingresses:
   {{#each ingresses as |url|}}
-     - {{url}}
+      - {{url}}
   {{/each}}
   liveness:
     path: /fpoppdrag/internal/health/isAlive
@@ -44,7 +44,7 @@ spec:
       - mountPath: /var/run/secrets/nais.io/defaultDSconfig
         kvPath: {{oracleconfigpath}}
       - mountPath: /var/run/secrets/nais.io/defaultDS
-        kvPath:  {{oraclesecretpath}}
+        kvPath: {{oraclesecretpath}}
       - mountPath: /var/run/secrets/nais.io/serviceuser
         kvPath: {{serviceusersecretpath}}
   azure:

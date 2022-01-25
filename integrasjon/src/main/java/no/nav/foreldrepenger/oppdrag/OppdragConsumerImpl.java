@@ -23,8 +23,9 @@ import no.nav.vedtak.exception.IntegrasjonException;
 
 public class OppdragConsumerImpl implements OppdragConsumer {
 
-    /** oppdragssytemet (OS) har offisiell åpningstid mandag-fredag 0700-1900, men det er ofte åpent utenom de offisielle åpningstidene.
-     *  utenom åpningstid styrer vi logging slik at feilmeldinger fra OS som vanligvis forekommer ved nedetid logges som Info, for å ikke skape støy i loggene
+    /**
+     * oppdragssytemet (OS) har offisiell åpningstid mandag-fredag 0700-1900, men det er ofte åpent utenom de offisielle åpningstidene.
+     * utenom åpningstid styrer vi logging slik at feilmeldinger fra OS som vanligvis forekommer ved nedetid logges som Info, for å ikke skape støy i loggene
      */
     private static final Set<DayOfWeek> OPPDRAG_ÅPNE_DAGER = EnumSet.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
     private static final LocalTime OPPDRAG_ÅPNINGSTID_START = LocalTime.of(7, 0);
@@ -69,7 +70,7 @@ public class OppdragConsumerImpl implements OppdragConsumer {
                 && nå.toLocalTime().isBefore(OPPDRAG_ÅPNINGSTID_SLUTT);
     }
 
-    private static class OppdragConsumerFeil  {
+    private static class OppdragConsumerFeil {
 
 
         static OppdragNedetidException oppdragsystemetHarNedetid(WebServiceException cause) {

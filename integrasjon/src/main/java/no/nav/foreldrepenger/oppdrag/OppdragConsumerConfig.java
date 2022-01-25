@@ -8,9 +8,9 @@ import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.addressing.WSAddressingFeature;
 
+import no.nav.foreldrepenger.konfig.KonfigVerdi;
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerFpService;
 import no.nav.vedtak.felles.integrasjon.felles.ws.CallIdOutInterceptor;
-import no.nav.foreldrepenger.konfig.KonfigVerdi;
 
 @Dependent
 public class OppdragConsumerConfig {
@@ -23,7 +23,7 @@ public class OppdragConsumerConfig {
     private String endpointUrl; // NOSONAR
 
     @Inject
-    public OppdragConsumerConfig(@KonfigVerdi("Oppdrag.service.url") String endpointUrl) {
+    public OppdragConsumerConfig(@KonfigVerdi("oppdrag.service.url") String endpointUrl) {
         this.endpointUrl = endpointUrl;
     }
 

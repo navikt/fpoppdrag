@@ -14,14 +14,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.FPoppdragEntityManagerAwareExtension;
+import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 
-@ExtendWith(FPoppdragEntityManagerAwareExtension.class)
+@ExtendWith(JpaExtension.class)
 public class SimuleringRepositoryTest {
 
     private SimuleringRepository simuleringRepository;
@@ -78,9 +78,9 @@ public class SimuleringRepositoryTest {
         assertThat(simuleringMottakere.iterator().next().getSimulertePosteringer().iterator().next().getForfallsdato()).isEqualTo(andreForfallsDato);
 
         List<SimuleringGrunnlag> inaktiveGrunnlag = entityManager.createQuery(
-                "from SimuleringGrunnlag s" +
-                        " where s.eksternReferanse.behandlingId = :behandlingId" +
-                        " and s.aktiv = :aktiv", SimuleringGrunnlag.class)
+                        "from SimuleringGrunnlag s" +
+                                " where s.eksternReferanse.behandlingId = :behandlingId" +
+                                " and s.aktiv = :aktiv", SimuleringGrunnlag.class)
                 .setParameter("behandlingId", behandlingId)
                 .setParameter("aktiv", false)
                 .getResultList();

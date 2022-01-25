@@ -1,7 +1,7 @@
 name: Slash command dispatch
 on:
   issue_comment:
-    types: [created]
+    types: [ created ]
 
 jobs:
   dispatcher:

@@ -58,9 +58,9 @@ public class SimuleringRepository {
 
     public Optional<SimuleringGrunnlag> hentSimulertOppdragForBehandling(Long behandlingId) {
         List<SimuleringGrunnlag> grunnlag = entityManager.createQuery(
-                "from SimuleringGrunnlag s" +
-                        " where s.eksternReferanse.behandlingId = :behandlingId" +
-                        " and s.aktiv = :aktiv", SimuleringGrunnlag.class)
+                        "from SimuleringGrunnlag s" +
+                                " where s.eksternReferanse.behandlingId = :behandlingId" +
+                                " and s.aktiv = :aktiv", SimuleringGrunnlag.class)
                 .setParameter("behandlingId", behandlingId)
                 .setParameter("aktiv", true)
                 .getResultList();
