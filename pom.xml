@@ -38,9 +38,9 @@
         <!-- Eksterne -->
         <prometheus.version>0.14.1</prometheus.version>
         <logstash.version>7.0.1</logstash.version>
-        <swagger.version>2.1.12</swagger.version>
+        <swagger.version>2.1.16</swagger.version>
         <woodstox.version>6.2.8</woodstox.version>
-        <flyway.version>8.4.2</flyway.version>
+        <flyway.version>8.4.3</flyway.version>
         <jupiter.version>5.8.2</jupiter.version>
     </properties>
 
@@ -138,7 +138,7 @@
             <dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>jakarta.el</artifactId>
-                <version>3.0.3</version>
+                <version>3.0.4</version>
             </dependency>
             <dependency>
                 <groupId>org.flywaydb</groupId>
@@ -171,7 +171,7 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger</groupId>
                 <artifactId>konfig</artifactId>
-                <version>1.1.4</version>
+                <version>1.1.5</version>
             </dependency>
 
             <!-- nav -->
