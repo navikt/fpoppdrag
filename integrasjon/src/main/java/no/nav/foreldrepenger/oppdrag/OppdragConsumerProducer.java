@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.oppdrag;
 
-import static no.nav.vedtak.sts.client.StsClientType.SECURITYCONTEXT_TIL_SAML;
 import static no.nav.vedtak.sts.client.StsClientType.SYSTEM_SAML;
 
 import javax.enterprise.context.Dependent;
@@ -21,7 +20,7 @@ public class OppdragConsumerProducer {
     }
 
     public OppdragConsumer oppdragConsumer() {
-        SimulerFpService port = wrapWithSts(consumerConfig.getPort(), SECURITYCONTEXT_TIL_SAML);
+        SimulerFpService port = wrapWithSts(consumerConfig.getPort(), SYSTEM_SAML);
         return new OppdragConsumerImpl(port);
     }
 
