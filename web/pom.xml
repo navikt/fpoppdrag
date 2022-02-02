@@ -4,7 +4,7 @@
 
     <properties>
         <swagger-ui.version>4.4.1</swagger-ui.version>
-        <jersey.version>2.35</jersey.version>
+        <jersey.version>3.0.3</jersey.version>
     </properties>
 
     <parent>
