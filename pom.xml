@@ -28,7 +28,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <felles.version>4.1.14</felles.version>
+        <felles.version>4.1.16</felles.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
         <fp-kontrakter.version>6.1.4</fp-kontrakter.version>
@@ -38,7 +38,7 @@
         <!-- Eksterne -->
         <prometheus.version>0.14.1</prometheus.version>
         <logstash.version>7.0.1</logstash.version>
-        <swagger.version>2.1.16</swagger.version>
+        <swagger.version>2.1.12</swagger.version>
         <woodstox.version>6.2.8</woodstox.version>
         <flyway.version>8.4.3</flyway.version>
         <jupiter.version>5.8.2</jupiter.version>
