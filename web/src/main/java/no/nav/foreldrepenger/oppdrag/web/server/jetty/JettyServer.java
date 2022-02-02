@@ -41,7 +41,7 @@ import org.slf4j.MDC;
 
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.foreldrepenger.oppdrag.web.app.ApplicationConfig;
-import no.nav.foreldrepenger.oppdrag.web.server.jetty.db.DatasourceUtil;
+import no.nav.foreldrepenger.oppdrag.web.server.jetty.db.DataSourceUtil;
 import no.nav.vedtak.isso.IssoApplication;
 import no.nav.vedtak.sikkerhet.jaspic.OidcAuthModule;
 
@@ -82,13 +82,13 @@ public class JettyServer {
 
     private void bootStrap() throws Exception {
         konfigurerSikkerhet();
-        var dataSource = DatasourceUtil.createDatasource(30);
-        konfigurerJndi(dataSource);
-        migrerDatabaser(dataSource);
+        var dataSource = DataSourceUtil.createDataSource(30);
+        konfigurerDatasource(dataSource);
+        migrerDatabase(dataSource);
         start();
     }
 
-    private void konfigurerSikkerhet() {
+    private static void konfigurerSikkerhet() {
         if (ENV.isLocal()) {
             initTrustStore();
         }
@@ -119,11 +119,11 @@ public class JettyServer {
         System.setProperty(trustStorePasswordProp, password);
     }
 
-    private void konfigurerJndi(DataSource dataSource) throws NamingException {
+    private static void konfigurerDatasource(DataSource dataSource) throws NamingException {
         new EnvEntry("jdbc/defaultDS", dataSource);
     }
 
-    private void migrerDatabaser(DataSource dataSource) {
+    private static void migrerDatabase(DataSource dataSource) {
         try {
             Flyway.configure()
                     .dataSource(dataSource)
