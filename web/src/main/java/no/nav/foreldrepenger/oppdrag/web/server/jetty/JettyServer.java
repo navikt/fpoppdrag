@@ -83,7 +83,7 @@ public class JettyServer {
     private void bootStrap() throws Exception {
         konfigurerSikkerhet();
         var dataSource = DataSourceUtil.createDataSource(30);
-        konfigurerDatasource(dataSource);
+        konfigurerDataSource(dataSource);
         migrerDatabase(dataSource);
         start();
     }
@@ -119,7 +119,7 @@ public class JettyServer {
         System.setProperty(trustStorePasswordProp, password);
     }
 
-    private static void konfigurerDatasource(DataSource dataSource) throws NamingException {
+    private static void konfigurerDataSource(DataSource dataSource) throws NamingException {
         new EnvEntry("jdbc/defaultDS", dataSource);
     }
 
