@@ -28,7 +28,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <felles.version>4.1.14</felles.version>
+        <felles.version>4.1.16</felles.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
         <fp-kontrakter.version>6.1.4</fp-kontrakter.version>
@@ -138,7 +138,7 @@
             <dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>jakarta.el</artifactId>
-                <version>3.0.3</version>
+                <version>3.0.4</version>
             </dependency>
             <dependency>
                 <groupId>org.flywaydb</groupId>
@@ -171,7 +171,7 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger</groupId>
                 <artifactId>konfig</artifactId>
-                <version>1.1.4</version>
+                <version>1.1.5</version>
             </dependency>
 
             <!-- nav -->
