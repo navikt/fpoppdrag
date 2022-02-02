@@ -10,10 +10,10 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.micrometer.core.instrument.Metrics;
 import no.nav.foreldrepenger.konfig.Environment;
 
-public class DatasourceUtil {
+public class DataSourceUtil {
     private static final Environment ENV = Environment.current();
 
-    public static DataSource createDatasource(int maxPoolSize) {
+    public static DataSource createDataSource(int maxPoolSize) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(ENV.getRequiredProperty("defaultDS.url"));
         config.setUsername(ENV.getRequiredProperty("defaultDS.username"));

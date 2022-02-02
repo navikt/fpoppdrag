@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vedtak.felles.testutilities.db.EntityManagerAwareExtension;
 
-
 public class JpaExtension extends EntityManagerAwareExtension {
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaExtension.class);
