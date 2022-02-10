@@ -36,9 +36,9 @@
         <!-- NAV -->
 
         <!-- Eksterne -->
-        <prometheus.version>0.14.1</prometheus.version>
+        <prometheus.version>0.15.0</prometheus.version>
         <logstash.version>7.0.1</logstash.version>
-        <swagger.version>2.1.12</swagger.version>
+        <swagger.version>2.1.13</swagger.version>
         <woodstox.version>6.2.8</woodstox.version>
         <flyway.version>8.4.4</flyway.version>
         <jupiter.version>5.8.2</jupiter.version>
@@ -50,7 +50,7 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-bom</artifactId>
-                <version>10.0.7</version>
+                <version>10.0.8</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -210,11 +210,6 @@
                 <version>${prometheus.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.owasp.encoder</groupId>
-                <artifactId>encoder</artifactId>
-                <version>1.2.3</version>
-            </dependency>
-            <dependency>
                 <groupId>net.logstash.logback</groupId>
                 <artifactId>logstash-logback-encoder</artifactId>
                 <version>${logstash.version}</version>
@@ -241,7 +236,7 @@
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-compat-spec-parser</artifactId>
-                <version>1.0.56</version>
+                <version>1.0.57</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
