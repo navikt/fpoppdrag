@@ -2,16 +2,16 @@ package no.nav.foreldrepenger.oppdrag.kodeverdi;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 @JsonFormat(shape = Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
@@ -27,10 +27,9 @@ public enum BetalingType implements Kodeverdi {
     UDEFINERT("-"),
     ;
 
-    public static final String KODEVERK = "BETALING_TYPE";
-
     private static final Map<String, BetalingType> KODER = new LinkedHashMap<>();
 
+    @JsonValue
     private String kode;
 
     BetalingType() {
@@ -41,32 +40,6 @@ public enum BetalingType implements Kodeverdi {
         this.kode = kode;
     }
 
-    @JsonCreator
-    public static BetalingType fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
-            return null;
-        }
-        var ad = KODER.get(kode);
-        if (ad == null) {
-            throw new IllegalArgumentException("Ukjent Betalingtype: " + kode);
-        }
-        return ad;
-    }
-
-    public static BetalingType fraKodeDefaultUdefinert(@JsonProperty("kode") String kode) {
-        if (kode == null) {
-            return UDEFINERT;
-        }
-        return KODER.getOrDefault(kode, UDEFINERT);
-    }
-
-    @JsonProperty
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
-    }
-
-    @JsonProperty
     @Override
     public String getKode() {
         return kode;
@@ -91,6 +64,16 @@ public enum BetalingType implements Kodeverdi {
         public BetalingType convertToEntityAttribute(String dbData) {
             return dbData == null ? null : fraKode(dbData);
         }
+
+        private static BetalingType fraKode(String kode) {
+            if (kode == null) {
+                return null;
+            }
+            return Optional.ofNullable(KODER.get(kode))
+                    .orElseThrow(() -> new IllegalArgumentException("Ukjent Betalingtype: " + kode));
+        }
+
+
     }
 
 }

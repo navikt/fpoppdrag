@@ -27,7 +27,6 @@ import no.nav.foreldrepenger.oppdrag.web.app.exceptions.JsonMappingExceptionMapp
 import no.nav.foreldrepenger.oppdrag.web.app.exceptions.JsonParseExceptionMapper;
 import no.nav.foreldrepenger.oppdrag.web.app.jackson.JacksonJsonConfig;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.SimuleringVedlikeholdRestTjeneste;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.kodeverk.KodeverkRestTjeneste;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.SimuleringRestTjeneste;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.SimuleringTestRestTjeneste;
 
@@ -80,7 +79,6 @@ public class ApplicationConfig extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();
         // eksponert grensesnitt
-        classes.add(KodeverkRestTjeneste.class);
         classes.add(SimuleringRestTjeneste.class);
         classes.add(SimuleringVedlikeholdRestTjeneste.class);
 

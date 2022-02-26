@@ -20,11 +20,6 @@ public class KodeverdiValidator extends KodeverkValidator<Kodeverdi> {
             ok = false;
         }
 
-        if (!gyldigKodeverk(kodeverdi.getKodeverk())) {
-            context.buildConstraintViolationWithTemplate(invNavn);
-            ok = false;
-        }
-
         return ok;
     }
 }

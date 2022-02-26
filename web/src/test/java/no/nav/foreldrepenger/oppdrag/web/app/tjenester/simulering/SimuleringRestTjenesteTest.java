@@ -25,7 +25,6 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregn
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.SimuleringResultatTransformer;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagsystem;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
@@ -138,7 +137,7 @@ public class SimuleringRestTjenesteTest {
         bsn.setOppdragsId(123421L);
         bsn.setForfall("2018-12-15");
         bsn.setBehandlendeEnhet("8002");
-        bsn.setFagsystemId(Fagsystem.FPSAK.getKode());
+        bsn.setFagsystemId("FS36");
         bsn.setUtbetalesTilNavn("bob");
         bsn.setBilagsType("U");
 

@@ -9,7 +9,6 @@ import javax.ws.rs.ext.Provider;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -40,19 +39,10 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
         return objectMapper;
     }
 
-    public static Module defaultModule() {
-        return SER_DESER;
-    }
-
     private static SimpleModule createModule() {
         SimpleModule module = new SimpleModule("VL-REST_MED_INNTEKTSMELDING", new Version(1, 0, 0, null, null, null));
 
-        addSerializers(module);
         return module;
-    }
-
-    private static void addSerializers(SimpleModule module) {
-        module.addSerializer(new KodeverdiSerializer());
     }
 
     @Override

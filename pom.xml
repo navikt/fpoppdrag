@@ -31,7 +31,7 @@
         <felles.version>4.1.17</felles.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
-        <fp-kontrakter.version>6.1.4</fp-kontrakter.version>
+        <fp-kontrakter.version>6.1.9</fp-kontrakter.version>
 
         <!-- NAV -->
 
@@ -40,7 +40,7 @@
         <logstash.version>7.0.1</logstash.version>
         <swagger.version>2.1.13</swagger.version>
         <woodstox.version>6.2.8</woodstox.version>
-        <flyway.version>8.4.4</flyway.version>
+        <flyway.version>8.5.1</flyway.version>
         <jupiter.version>5.8.2</jupiter.version>
     </properties>
 
@@ -326,7 +326,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>3.10.0</version>
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
@@ -367,7 +367,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.3.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
