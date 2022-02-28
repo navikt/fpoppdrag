@@ -2,16 +2,16 @@ package no.nav.foreldrepenger.oppdrag.kodeverdi;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 @JsonFormat(shape = Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
@@ -42,10 +42,9 @@ public enum FagOmrådeKode implements Kodeverdi {
     UDEFINERT("-", YtelseType.UDEFINERT),
     ;
 
-    public static final String KODEVERK = "FAG_OMRAADE_KODE";
-
     private static final Map<String, FagOmrådeKode> KODER = new LinkedHashMap<>();
 
+    @JsonValue
     private String kode;
     private YtelseType ytelseType;
 
@@ -58,32 +57,21 @@ public enum FagOmrådeKode implements Kodeverdi {
         this.ytelseType = ytelseType;
     }
 
-    @JsonCreator
-    public static FagOmrådeKode fraKode(@JsonProperty("kode") String kode) {
+    public static FagOmrådeKode fraKode(String kode) {
         if (kode == null) {
             return null;
         }
-        var ad = KODER.get(kode);
-        if (ad == null) {
-            throw new IllegalArgumentException("Ukjent Fagområdekode: " + kode);
-        }
-        return ad;
+        return Optional.ofNullable(KODER.get(kode))
+                .orElseThrow(() -> new IllegalArgumentException("Ukjent Fagområdekode: " + kode));
     }
 
-    public static FagOmrådeKode fraKodeDefaultUdefinert(@JsonProperty("kode") String kode) {
+    public static FagOmrådeKode fraKodeDefaultUdefinert(String kode) {
         if (kode == null) {
             return UDEFINERT;
         }
         return KODER.getOrDefault(kode, UDEFINERT);
     }
 
-    @JsonProperty
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
-    }
-
-    @JsonProperty
     @Override
     public String getKode() {
         return kode;

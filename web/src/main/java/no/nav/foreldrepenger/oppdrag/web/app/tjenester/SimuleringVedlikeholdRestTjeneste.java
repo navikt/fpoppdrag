@@ -23,8 +23,6 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -86,7 +84,6 @@ public class SimuleringVedlikeholdRestTjeneste {
         @Min(0)
         @Max(100000)
         @NotNull
-        @JsonProperty("antall")
         private Integer antall;
 
         public Integer getAntall() {
