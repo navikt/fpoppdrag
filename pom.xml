@@ -40,7 +40,7 @@
         <logstash.version>7.0.1</logstash.version>
         <swagger.version>2.1.13</swagger.version>
         <woodstox.version>6.2.8</woodstox.version>
-        <flyway.version>8.5.2</flyway.version>
+        <flyway.version>8.5.3</flyway.version>
         <jupiter.version>5.8.2</jupiter.version>
     </properties>
 
