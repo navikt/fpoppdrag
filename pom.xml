@@ -28,10 +28,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <felles.version>4.1.17</felles.version>
+        <felles.version>4.1.20</felles.version>
         <!-- Kontrakter -->
         <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
-        <fp-kontrakter.version>6.1.9</fp-kontrakter.version>
+        <fp-kontrakter.version>6.1.19</fp-kontrakter.version>
 
         <!-- NAV -->
 
@@ -40,7 +40,7 @@
         <logstash.version>7.0.1</logstash.version>
         <swagger.version>2.1.13</swagger.version>
         <woodstox.version>6.2.8</woodstox.version>
-        <flyway.version>8.5.2</flyway.version>
+        <flyway.version>8.5.4</flyway.version>
         <jupiter.version>5.8.2</jupiter.version>
     </properties>
 
@@ -236,7 +236,7 @@
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-compat-spec-parser</artifactId>
-                <version>1.0.57</version>
+                <version>1.0.58</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
@@ -326,7 +326,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.10.0</version>
+                    <version>3.10.1</version>
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
