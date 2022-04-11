@@ -37,7 +37,7 @@
 
         <!-- Eksterne -->
         <prometheus.version>0.15.0</prometheus.version>
-        <logstash.version>7.0.1</logstash.version>
+        <logstash.version>7.1</logstash.version>
         <swagger.version>2.1.13</swagger.version>
         <woodstox.version>6.2.8</woodstox.version>
         <flyway.version>8.5.4</flyway.version>
