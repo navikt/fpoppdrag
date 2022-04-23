@@ -40,7 +40,7 @@ jobs:
       - name: Build
         run: |
           echo "Building snyk_scan"
-          mvn install -q -B -s settings.xml -Drevision=snyk
+          mvn install -q -B -s settings.xml
 
       - name: Run Snyk monitor
         run: >
