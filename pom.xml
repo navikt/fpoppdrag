@@ -557,4 +557,11 @@
         </repository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>legacy</id>
+            <url>https://maven.pkg.github.com/navikt/legacy-avhengigheter</url>
+        </repository>
+    </repositories>
+
 </project>
