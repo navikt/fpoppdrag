@@ -44,7 +44,7 @@ jobs:
       - name: Build
         run: |
           echo "Building snyk_scan"
-          mvn install -q -e -B -s settings.xml
+          mvn install -q -e -B -s settings.xml -Drevision=snyk_scan
 
       - name: Run Snyk monitor
         run: >
@@ -53,6 +53,6 @@ jobs:
           --all-projects
           --configuration-attributes=usage:java-runtime
           --remote-repo-url=https://github.com/${{ github.repository }}.git
-          -- -s settings.xml
+          -- -s settings.xml -Drevision=snyk_scan
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
