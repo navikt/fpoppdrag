@@ -275,7 +275,7 @@ public class SimuleringBeregningTjeneste {
 
     private static BigDecimal summerBeløp(List<SimulertPostering> posteringer) {
         return posteringer.stream()
-                .map(p -> BetalingType.KREDIT.equals(p.getBetalingType()) ? p.getBeløp().negate() : p.getBeløp())
+                .map(p -> BetalingType.K.equals(p.getBetalingType()) ? p.getBeløp().negate() : p.getBeløp())
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
     }
@@ -288,14 +288,14 @@ public class SimuleringBeregningTjeneste {
 
     static BigDecimal beregnMotregning(List<SimulertPostering> posteringer) {
         return posteringer.stream().filter(p -> PosteringType.JUSTERING.equals(p.getPosteringType()))
-                .map(p -> BetalingType.DEBIT.equals(p.getBetalingType()) ? p.getBeløp() : p.getBeløp().negate())
+                .map(p -> BetalingType.D.equals(p.getBetalingType()) ? p.getBeløp() : p.getBeløp().negate())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     static BigDecimal beregnFeilutbetaltBeløp(List<SimulertPostering> posteringer) {
         return posteringer.stream()
                 .filter(p -> PosteringType.FEILUTBETALING.equals(p.getPosteringType()))
-                .filter(p -> BetalingType.DEBIT.equals(p.getBetalingType()))
+                .filter(p -> BetalingType.D.equals(p.getBetalingType()))
                 .map(SimulertPostering::getBeløp)
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
@@ -304,7 +304,7 @@ public class SimuleringBeregningTjeneste {
     static BigDecimal beregnTidligereUtbetaltBeløp(List<SimulertPostering> posteringer) {
         return posteringer.stream()
                 .filter(p -> PosteringType.YTELSE.equals(p.getPosteringType()))
-                .filter(p -> BetalingType.KREDIT.equals(p.getBetalingType()))
+                .filter(p -> BetalingType.K.equals(p.getBetalingType()))
                 .map(SimulertPostering::getBeløp)
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
@@ -313,21 +313,21 @@ public class SimuleringBeregningTjeneste {
     static BigDecimal beregnNyttBeløp(List<SimulertPostering> posteringer) {
         return posteringer.stream()
                 .filter(p -> PosteringType.YTELSE.equals(p.getPosteringType()))
-                .filter(p -> BetalingType.DEBIT.equals(p.getBetalingType()))
+                .filter(p -> BetalingType.D.equals(p.getBetalingType()))
                 .map(SimulertPostering::getBeløp)
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
     }
 
     private static BigDecimal beregnNyttBeløp(List<SimulertPostering> posteringer, BigDecimal sumFeilutbetalingPosteringer) {
-        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTELSE, BetalingType.DEBIT);
+        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTELSE, BetalingType.D);
         return sumFeilutbetalingPosteringer.signum() == 1
                 ? sumPosteringer.subtract(sumFeilutbetalingPosteringer)
                 : sumPosteringer;
     }
 
     private static BigDecimal beregnTidligereUtbetaltBeløp(List<SimulertPostering> posteringer, BigDecimal sumFeilutbetalingPosteringer) {
-        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTELSE, BetalingType.KREDIT); // 6381
+        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTELSE, BetalingType.K); // 6381
         return sumFeilutbetalingPosteringer.signum() == -1
                 ? sumPosteringer.add(sumFeilutbetalingPosteringer)
                 : sumPosteringer;

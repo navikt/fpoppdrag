@@ -28,7 +28,7 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.dto.Simul
 public class SimuleringResultatValidatorTest {
 
     private static final BigDecimal BELØP = BigDecimal.valueOf(100.00);
-    private static final String KREDIT_TYPE = BetalingType.KREDIT.getKode();
+    private static final String KREDIT_TYPE = BetalingType.K.name();
     private static final String POSTERINGTYPE = PosteringType.JUSTERING.getKode();
     private static LocalDate FOM = LocalDate.of(2018, 11, 1);
     private static LocalDate TOM = LocalDate.of(2018, 11, 30);

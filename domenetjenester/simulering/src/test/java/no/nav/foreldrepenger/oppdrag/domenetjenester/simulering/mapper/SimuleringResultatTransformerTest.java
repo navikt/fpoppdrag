@@ -49,14 +49,14 @@ public class SimuleringResultatTransformerTest {
     @Test
     public void utlederBetalingTypeDebit() {
         BetalingType betalingTypeBeløp = simuleringResultatTransformer.utledBetalingType(BigDecimal.valueOf(1));
-        assertThat(betalingTypeBeløp).isEqualTo(BetalingType.DEBIT);
+        assertThat(betalingTypeBeløp).isEqualTo(BetalingType.D);
     }
 
 
     @Test
     public void utlederBetalingTypeKredit() {
         BetalingType betalingTypeBeløp = simuleringResultatTransformer.utledBetalingType(BigDecimal.valueOf(-1));
-        assertThat(betalingTypeBeløp).isEqualTo(BetalingType.KREDIT);
+        assertThat(betalingTypeBeløp).isEqualTo(BetalingType.K);
     }
 
     @Test

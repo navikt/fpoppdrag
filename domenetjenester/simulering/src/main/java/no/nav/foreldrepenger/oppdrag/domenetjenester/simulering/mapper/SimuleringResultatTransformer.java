@@ -128,9 +128,9 @@ public class SimuleringResultatTransformer {
 
     BetalingType utledBetalingType(BigDecimal belop) {
         if (belop.compareTo(BigDecimal.ZERO) > 0) {
-            return BetalingType.DEBIT;
+            return BetalingType.D;
         }
-        return BetalingType.KREDIT;
+        return BetalingType.K;
     }
 
     private LocalDate parseDato(String dato) {

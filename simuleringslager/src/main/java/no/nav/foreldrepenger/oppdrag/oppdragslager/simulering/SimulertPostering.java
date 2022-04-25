@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,9 +39,9 @@ public class SimulertPostering extends BaseEntitet {
     @Column(name = "tom", nullable = false)
     private LocalDate tom;
 
-    @Convert(converter = BetalingType.KodeverdiConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "betaling_type", nullable = false)
-    private BetalingType betalingType = BetalingType.UDEFINERT;
+    private BetalingType betalingType;
 
     @Column(name = "beloep", nullable = false)
     private BigDecimal beløp;
@@ -117,7 +119,7 @@ public class SimulertPostering extends BaseEntitet {
                 + (fagOmrådeKode != null ? ", fagOmrådeKode=" + fagOmrådeKode.getKode() : "")//$NON-NLS-1$
                 + ", fom=" + fom //$NON-NLS-1$
                 + ", tom=" + tom //$NON-NLS-1$
-                + (betalingType != null ? ", betalingType=" + betalingType.getKode() : "") //$NON-NLS-1$
+                + ", betalingType=" + betalingType //$NON-NLS-1$
                 + ", beløp=" + beløp //$NON-NLS-1$
                 + (posteringType != null ? ", posteringType=" + posteringType.getKode() : "") //$NON-NLS-1$
                 + ", utenInntrekk=" + utenInntrekk //$NON-NLS-1$

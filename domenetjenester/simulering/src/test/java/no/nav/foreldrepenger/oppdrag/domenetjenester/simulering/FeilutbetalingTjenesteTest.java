@@ -184,7 +184,7 @@ public class FeilutbetalingTjenesteTest {
     SimulertPostering lagYtelsePostering(LocalDate fom, LocalDate tom, long beløp) {
         return new SimulertPostering.Builder()
                 .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
-                .medBetalingType(BetalingType.DEBIT)
+                .medBetalingType(BetalingType.D)
                 .medBeløp(BigDecimal.valueOf(beløp))
                 .medPosteringType(PosteringType.YTELSE)
                 .medFom(fom)
@@ -194,7 +194,7 @@ public class FeilutbetalingTjenesteTest {
     SimulertPostering lagFeilUtbetalingPostering(LocalDate fom, LocalDate tom, long beløp) {
         return new SimulertPostering.Builder()
                 .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
-                .medBetalingType(BetalingType.DEBIT)
+                .medBetalingType(BetalingType.D)
                 .medBeløp(BigDecimal.valueOf(beløp))
                 .medPosteringType(PosteringType.FEILUTBETALING)
                 .medFom(fom)
@@ -205,7 +205,7 @@ public class FeilutbetalingTjenesteTest {
     private SimulertPostering opprettKreditPostering(LocalDate fom, LocalDate tom, long beløp) {
         return new SimulertPostering.Builder()
                 .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
-                .medBetalingType(BetalingType.KREDIT)
+                .medBetalingType(BetalingType.K)
                 .medBeløp(BigDecimal.valueOf(beløp))
                 .medPosteringType(PosteringType.YTELSE)
                 .medFom(fom)
@@ -216,7 +216,7 @@ public class FeilutbetalingTjenesteTest {
     private SimulertPostering opprettDebetPostering(LocalDate fom, LocalDate tom, long beløp) {
         return new SimulertPostering.Builder()
                 .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
-                .medBetalingType(BetalingType.DEBIT)
+                .medBetalingType(BetalingType.D)
                 .medBeløp(BigDecimal.valueOf(beløp))
                 .medPosteringType(PosteringType.YTELSE)
                 .medFom(fom)

@@ -28,6 +28,10 @@ public class SimuleringGrunnlag extends BaseEntitet {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GR_SIMULERING")
     private Long id;
 
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private Long versjon;
+
     @Embedded
     private BehandlingRef eksternReferanse;
 
@@ -41,10 +45,6 @@ public class SimuleringGrunnlag extends BaseEntitet {
     @Convert(converter = BooleanToStringConverter.class)
     @Column(name = "aktiv", nullable = false)
     private boolean aktiv;
-
-    @Version
-    @Column(name = "versjon", nullable = false)
-    private Long versjon;
 
     @Column(name = "simulering_kjoert_dato", nullable = false, updatable = false)
     private LocalDateTime simuleringKjørtDato = LocalDateTime.now();

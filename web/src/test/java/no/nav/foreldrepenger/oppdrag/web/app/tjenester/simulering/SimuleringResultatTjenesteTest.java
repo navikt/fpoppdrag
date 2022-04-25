@@ -1,8 +1,8 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering;
 
 
-import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.DEBIT;
-import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.KREDIT;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.D;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.K;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode.ENGANGSSTØNAD;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode.FORELDREPENGER;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode.FORELDREPENGER_ARBEIDSGIVER;
@@ -82,33 +82,33 @@ public class SimuleringResultatTjenesteTest {
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // 2 måneder siden, kr 2000 i etterbetaling
                                 .medSimulertPostering(
-                                        postering(startDato, startDato.plusDays(15), KREDIT, YTELSE, FORELDREPENGER,
+                                        postering(startDato, startDato.plusDays(15), K, YTELSE, FORELDREPENGER,
                                                 3000))
                                 .medSimulertPostering(
-                                        postering(startDato.plusDays(16), andreMåned.minusDays(1), KREDIT, YTELSE,
+                                        postering(startDato.plusDays(16), andreMåned.minusDays(1), K, YTELSE,
                                                 FORELDREPENGER, 2000))
                                 .medSimulertPostering(
-                                        postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER,
+                                        postering(startDato, andreMåned.minusDays(1), D, YTELSE, FORELDREPENGER,
                                                 7000))
                                 .medSimulertPostering(
-                                        postering(startDato, andreMåned.minusDays(1), DEBIT, FORSKUDSSKATT,
+                                        postering(startDato, andreMåned.minusDays(1), D, FORSKUDSSKATT,
                                                 FORELDREPENGER, 100))
                                 // Forrige måned, kr 4000 i etterbetaling
                                 .medSimulertPostering(
-                                        postering(andreMåned, nesteMåned.minusDays(1), KREDIT, YTELSE, FORELDREPENGER,
+                                        postering(andreMåned, nesteMåned.minusDays(1), K, YTELSE, FORELDREPENGER,
                                                 6000))
                                 .medSimulertPostering(
-                                        postering(andreMåned, nesteMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER,
+                                        postering(andreMåned, nesteMåned.minusDays(1), D, YTELSE, FORELDREPENGER,
                                                 10000))
                                 .medSimulertPostering(
-                                        postering(andreMåned, nesteMåned.minusDays(1), DEBIT, FORSKUDSSKATT,
+                                        postering(andreMåned, nesteMåned.minusDays(1), D, FORSKUDSSKATT,
                                                 FORELDREPENGER, 400))
                                 // Neste måned, kr 10000 til utbetaling
                                 .medSimulertPostering(
-                                        postering(nesteMåned, nesteMåned.plusMonths(1).minusDays(1), DEBIT, YTELSE,
+                                        postering(nesteMåned, nesteMåned.plusMonths(1).minusDays(1), D, YTELSE,
                                                 FORELDREPENGER, 10000, nesteForfallsdato))
                                 .medSimulertPostering(
-                                        postering(nesteMåned, nesteMåned.plusMonths(1).minusDays(1), DEBIT,
+                                        postering(nesteMåned, nesteMåned.plusMonths(1).minusDays(1), D,
                                                 FORSKUDSSKATT, FORELDREPENGER, 400, nesteForfallsdato))
                                 .build())
                         .build())
@@ -244,24 +244,24 @@ public class SimuleringResultatTjenesteTest {
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // 2 måneder siden, kr 2000 i etterbetaling
                                 .medSimulertPostering(
-                                        postering(startDato, andreMåned.minusDays(1), KREDIT, YTELSE, FORELDREPENGER,
+                                        postering(startDato, andreMåned.minusDays(1), K, YTELSE, FORELDREPENGER,
                                                 5000))
                                 .medSimulertPostering(
-                                        postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER,
+                                        postering(startDato, andreMåned.minusDays(1), D, YTELSE, FORELDREPENGER,
                                                 7000))
                                 .build())
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.ARBG_PRIV).medMottakerNummer("nummer")
                                 .medMottakerNummer(fnrArbgiv)
-                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), KREDIT, YTELSE,
+                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), K, YTELSE,
                                         FORELDREPENGER_ARBEIDSGIVER, 1000))
-                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE,
+                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), D, YTELSE,
                                         FORELDREPENGER_ARBEIDSGIVER, 2000))
                                 .build())
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.ARBG_ORG).medMottakerNummer("nummer")
                                 .medMottakerNummer(orgnr)
-                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE,
+                                .medSimulertPostering(postering(startDato, andreMåned.minusDays(1), D, YTELSE,
                                         FORELDREPENGER_ARBEIDSGIVER, 1000))
                                 .build())
                         .build())
@@ -394,27 +394,27 @@ public class SimuleringResultatTjenesteTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 .medSimulertPostering(
-                                        postering(startDato, andreMåned.minusDays(1), KREDIT, YTELSE, FORELDREPENGER,
+                                        postering(startDato, andreMåned.minusDays(1), K, YTELSE, FORELDREPENGER,
                                                 5000))
                                 .medSimulertPostering(
-                                        postering(startDato, andreMåned.minusDays(1), DEBIT, YTELSE, FORELDREPENGER,
+                                        postering(startDato, andreMåned.minusDays(1), D, YTELSE, FORELDREPENGER,
                                                 7000))
                                 .build())
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.ARBG_PRIV).medMottakerNummer("nummer")
                                 .medMottakerNummer(fnrArbgiv)
                                 .medSimulertPostering(
-                                        postering(startDato.minusMonths(1), startDato.minusDays(1), KREDIT, YTELSE,
+                                        postering(startDato.minusMonths(1), startDato.minusDays(1), K, YTELSE,
                                                 FORELDREPENGER_ARBEIDSGIVER, 1000))
                                 .medSimulertPostering(
-                                        postering(startDato.minusMonths(1), startDato.minusDays(1), DEBIT, YTELSE,
+                                        postering(startDato.minusMonths(1), startDato.minusDays(1), D, YTELSE,
                                                 FORELDREPENGER_ARBEIDSGIVER, 2000))
                                 .build())
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.ARBG_ORG).medMottakerNummer("nummer")
                                 .medMottakerNummer(orgnr)
                                 .medSimulertPostering(
-                                        postering(andreMåned, andreMåned.plusMonths(1).minusDays(1), DEBIT, YTELSE,
+                                        postering(andreMåned, andreMåned.plusMonths(1).minusDays(1), D, YTELSE,
                                                 FORELDREPENGER_ARBEIDSGIVER, 1000))
                                 .build())
                         .build())
@@ -447,13 +447,13 @@ public class SimuleringResultatTjenesteTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 .medSimulertPostering(
-                                        postering(startDato.plusDays(3), startDato.plusDays(3), KREDIT, YTELSE,
+                                        postering(startDato.plusDays(3), startDato.plusDays(3), K, YTELSE,
                                                 ENGANGSSTØNAD, 40000))
                                 .medSimulertPostering(
-                                        postering(startDato.plusDays(3), startDato.plusDays(3), DEBIT, FEILUTBETALING,
+                                        postering(startDato.plusDays(3), startDato.plusDays(3), D, FEILUTBETALING,
                                                 ENGANGSSTØNAD, 40000))
                                 .medSimulertPostering(
-                                        postering(startDato.plusDays(3), startDato.plusDays(3), DEBIT, YTELSE,
+                                        postering(startDato.plusDays(3), startDato.plusDays(3), D, YTELSE,
                                                 ENGANGSSTØNAD, 40000))
                                 .build())
                         .build())
@@ -488,10 +488,10 @@ public class SimuleringResultatTjenesteTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 .medSimulertPostering(
-                                        postering(førsteAugust2018, førsteAugust2018.plusDays(15), DEBIT, YTELSE,
+                                        postering(førsteAugust2018, førsteAugust2018.plusDays(15), D, YTELSE,
                                                 FORELDREPENGER, 15600.75))
                                 .medSimulertPostering(
-                                        postering(førsteAugust2018.plusDays(16), førsteAugust2018.plusDays(25), DEBIT,
+                                        postering(førsteAugust2018.plusDays(16), førsteAugust2018.plusDays(25), D,
                                                 YTELSE, FORELDREPENGER, 7400.85))
                                 .build())
                         .build())
@@ -531,15 +531,15 @@ public class SimuleringResultatTjenesteTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 .medSimulertPostering(
-                                        postering(januar01, januar31, DEBIT, YTELSE, FORELDREPENGER, 523, januar23))
+                                        postering(januar01, januar31, D, YTELSE, FORELDREPENGER, 523, januar23))
                                 .build())
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.ARBG_ORG).medMottakerNummer("nummer")
                                 .medSimulertPostering(
-                                        postering(januar01, januar31, DEBIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER, 14875,
+                                        postering(januar01, januar31, D, YTELSE, FORELDREPENGER_ARBEIDSGIVER, 14875,
                                                 januar31))
                                 .medSimulertPostering(
-                                        postering(februar01, februar28, DEBIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER,
+                                        postering(februar01, februar28, D, YTELSE, FORELDREPENGER_ARBEIDSGIVER,
                                                 25875, februar28))
                                 .build())
                         .build())
@@ -587,7 +587,7 @@ public class SimuleringResultatTjenesteTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.ARBG_ORG).medMottakerNummer("nummer")
                                 .medSimulertPostering(
-                                        postering(februar01, februar28, DEBIT, YTELSE, FORELDREPENGER_ARBEIDSGIVER,
+                                        postering(februar01, februar28, D, YTELSE, FORELDREPENGER_ARBEIDSGIVER,
                                                 25875, februar28))
                                 .build())
                         .build())
@@ -623,15 +623,15 @@ public class SimuleringResultatTjenesteTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 .medSimulertPostering(
-                                        postering(februar01, februar28, DEBIT, FEILUTBETALING, FORELDREPENGER,
+                                        postering(februar01, februar28, D, FEILUTBETALING, FORELDREPENGER,
                                                 feilutbetaltBeløp, februar28))
                                 .medSimulertPostering(
-                                        postering(februar01, februar28, KREDIT, YTELSE, FORELDREPENGER, 30000,
+                                        postering(februar01, februar28, K, YTELSE, FORELDREPENGER, 30000,
                                                 februar28))
                                 .medSimulertPostering(
-                                        postering(februar01, februar28, DEBIT, YTELSE, FORELDREPENGER, 18000,
+                                        postering(februar01, februar28, D, YTELSE, FORELDREPENGER, 18000,
                                                 februar28))
-                                .medSimulertPostering(postering(februar01, februar28, DEBIT, YTELSE, FORELDREPENGER,
+                                .medSimulertPostering(postering(februar01, februar28, D, YTELSE, FORELDREPENGER,
                                         feilutbetaltBeløp, februar28))
                                 .build())
                         .build())

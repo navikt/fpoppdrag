@@ -104,7 +104,7 @@ public class SimuleringRepositoryTest {
                                         .medFom(forfallsdato.withDayOfMonth(1))
                                         .medTom(forfallsdato)
                                         .medBeløp(BigDecimal.valueOf(10000))
-                                        .medBetalingType(BetalingType.DEBIT)
+                                        .medBetalingType(BetalingType.D)
                                         .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
                                         .medPosteringType(PosteringType.YTELSE)
                                         .medForfallsdato(forfallsdato)
