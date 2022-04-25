@@ -98,6 +98,7 @@ public class SimuleringRepositoryTest {
                         .medSimuleringMottaker(SimuleringMottaker
                                 .builder()
                                 .medMottakerType(MottakerType.BRUKER)
+                                .medMottakerNummer("test_nummer")
                                 .medSimulertPostering(SimulertPostering
                                         .builder()
                                         .medFom(forfallsdato.withDayOfMonth(1))

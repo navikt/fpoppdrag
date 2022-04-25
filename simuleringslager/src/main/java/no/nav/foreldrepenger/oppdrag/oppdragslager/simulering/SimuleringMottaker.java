@@ -6,8 +6,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,11 +19,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseCreateableEntitet;
 
 @Entity(name = "SimuleringMottaker")
 @Table(name = "SIMULERING_MOTTAKER")
-public class SimuleringMottaker extends BaseEntitet {
+public class SimuleringMottaker extends BaseCreateableEntitet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SIMULERING_MOTTAKER")
@@ -32,12 +33,12 @@ public class SimuleringMottaker extends BaseEntitet {
     @JoinColumn(name = "simulering_id", nullable = false)
     private SimuleringResultat simuleringResultat;
 
-    @Column(name = "mottaker_nummer")
+    @Column(name = "mottaker_nummer", nullable = false)
     private String mottakerNummer;
 
-    @Convert(converter = MottakerType.KodeverdiConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "mottaker_type", nullable = false)
-    private MottakerType mottakerType = MottakerType.UDEFINERT;
+    private MottakerType mottakerType;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "simuleringMottaker")
     private List<SimulertPostering> simulertePosteringer = new ArrayList<>();
@@ -141,7 +142,13 @@ public class SimuleringMottaker extends BaseEntitet {
         }
 
         public SimuleringMottaker build() {
+            verify();
             return kladd;
+        }
+
+        private void verify() {
+            Objects.requireNonNull(kladd.mottakerNummer, "mottakerNummer");
+            Objects.requireNonNull(kladd.mottakerType, "mottakerType");
         }
     }
 

@@ -44,7 +44,7 @@ public class FeilutbetalingTjenesteTest {
     @Test
     public void finnerFeilutbetaltePerioderFraSammenhengendePeriode() {
         //Arrange
-        SimuleringMottaker mottaker = SimuleringMottaker.builder().medMottakerType(MottakerType.BRUKER).build();
+        SimuleringMottaker mottaker = SimuleringMottaker.builder().medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer").build();
         mottaker.leggTilSimulertPostering(lagFeilUtbetalingPostering(januar_15_2019, januar_22_2019, 6000));
         mottaker.leggTilSimulertPostering(lagYtelsePostering(januar_15_2019, januar_22_2019, 6000));
 
@@ -70,7 +70,7 @@ public class FeilutbetalingTjenesteTest {
     @Test
     public void finnerFeilutbetaltePerioderFraOppsplittetPeriode() {
         //Arrange
-        SimuleringMottaker mottaker = SimuleringMottaker.builder().medMottakerType(MottakerType.BRUKER).build();
+        SimuleringMottaker mottaker = SimuleringMottaker.builder().medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer").build();
         mottaker.leggTilSimulertPostering(lagFeilUtbetalingPostering(januar_01_2019, januar_15_2019, 6000));
         mottaker.leggTilSimulertPostering(lagFeilUtbetalingPostering(januar_16_2019, januar_21_2019, 6000));
         mottaker.leggTilSimulertPostering(lagFeilUtbetalingPostering(januar_22_2019, januar_31_2019, 6000));
@@ -159,7 +159,7 @@ public class FeilutbetalingTjenesteTest {
                 .medAktørId("789")
                 .medYtelseType(YtelseType.FORELDREPENGER)
                 .medSimuleringResultat(SimuleringResultat.builder()
-                        .medSimuleringMottaker(SimuleringMottaker.builder().medMottakerType(MottakerType.ARBG_ORG)
+                        .medSimuleringMottaker(SimuleringMottaker.builder().medMottakerType(MottakerType.ARBG_ORG).medMottakerNummer("nummer")
                                 .build())
                         .build())
                 .build();

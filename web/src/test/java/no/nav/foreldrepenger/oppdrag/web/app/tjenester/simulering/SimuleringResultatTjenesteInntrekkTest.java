@@ -80,7 +80,7 @@ public class SimuleringResultatTjenesteInntrekkTest {
                 .medYtelseType(YtelseType.FORELDREPENGER)
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
-                                .medMottakerType(MottakerType.BRUKER)
+                                .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Posteringer første måned - med inntrekk
                                 .medSimulertPostering(postering(FORELDREPENGER, YTELSE, DEBIT, 14952, førsteMånedStart, førsteMånedSlutt, now()))
                                 .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, DEBIT, 10680, førsteMånedStart, førsteMånedSlutt, now()))
@@ -188,7 +188,7 @@ public class SimuleringResultatTjenesteInntrekkTest {
                 .medYtelseType(YtelseType.FORELDREPENGER)
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
-                                .medMottakerType(MottakerType.BRUKER)
+                                .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Posteringer første måned - med inntrekk
                                 .medSimulertPostering(postering(FORELDREPENGER, YTELSE, DEBIT, 14952, førsteMånedStart, førsteMånedSlutt, now()))
                                 .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, DEBIT, 10680, førsteMånedStart, førsteMånedSlutt, now()))
@@ -239,7 +239,7 @@ public class SimuleringResultatTjenesteInntrekkTest {
                 .medYtelseType(YtelseType.FORELDREPENGER)
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
-                                .medMottakerType(MottakerType.BRUKER)
+                                .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Foreldrepenger
                                 .medSimulertPostering(postering(FORELDREPENGER, FORSKUDSSKATT, KREDIT, 5029, periodeFom, periodeTom, now()))
                                 .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, KREDIT, 517, periodeFom, periodeTom, now()))
@@ -344,7 +344,7 @@ public class SimuleringResultatTjenesteInntrekkTest {
                 .medSimuleringKjørtDato(november10.atStartOfDay())
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
-                                .medMottakerType(MottakerType.BRUKER)
+                                .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Med inntrekk
                                 .medSimulertPostering(postering(FORELDREPENGER, YTELSE, DEBIT, riktigBeregnetBeløp, oktober01, oktober31, november10))
                                 .medSimulertPostering(postering(FORELDREPENGER, YTELSE, KREDIT, tidligereUtbetaltBeløp, oktober01, oktober31, november10))
@@ -391,7 +391,7 @@ public class SimuleringResultatTjenesteInntrekkTest {
                 .medSimuleringKjørtDato(november10.atStartOfDay())
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
-                                .medMottakerType(MottakerType.BRUKER)
+                                .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Med inntrekk
                                 .medSimulertPostering(postering(FORELDREPENGER, YTELSE, DEBIT, riktigBeregnetBeløp, oktober01, oktober31, november10))
                                 .medSimulertPostering(postering(FORELDREPENGER, YTELSE, KREDIT, tidligereUtbetaltBeløp, oktober01, oktober31, november10))
@@ -406,7 +406,7 @@ public class SimuleringResultatTjenesteInntrekkTest {
                                 .medSimulertPostering(postering(FORELDREPENGER, YTELSE, DEBIT, riktigBeregnetBeløp, november01, november30, true, desember01))
                                 .build())
                         .medSimuleringMottaker(SimuleringMottaker.builder()
-                                .medMottakerType(MottakerType.ARBG_ORG)
+                                .medMottakerType(MottakerType.ARBG_ORG).medMottakerNummer("nummer")
                                 .medMottakerNummer("12345678")
                                 .medSimulertPostering(postering(FORELDREPENGER, YTELSE, DEBIT, 1000, oktober01, oktober31, november10))
                                 .medSimulertPostering(postering(FORELDREPENGER, YTELSE, DEBIT, 1000, november01, november30, desember01))
@@ -457,7 +457,7 @@ public class SimuleringResultatTjenesteInntrekkTest {
                 .medYtelseType(YtelseType.FORELDREPENGER)
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
-                                .medMottakerType(MottakerType.BRUKER)
+                                .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Med inntrekk
                                 .medSimulertPostering(postering(FORELDREPENGER, YTELSE, DEBIT, riktigBeregnetBeløp, periodeFom, periodeTom, now()))
                                 .medSimulertPostering(postering(FORELDREPENGER, YTELSE, DEBIT, feilutbetalt, periodeFom, periodeTom, now()))

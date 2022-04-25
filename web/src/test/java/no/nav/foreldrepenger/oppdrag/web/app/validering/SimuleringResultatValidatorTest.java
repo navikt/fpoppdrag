@@ -45,7 +45,7 @@ public class SimuleringResultatValidatorTest {
     @Test
     public void testSkalPasserePåGyldigInput() {
         SimuleringDetaljerDto simuleringDetaljerDto = new SimuleringDetaljerDto(FOM, TOM, FAGOMRÅDEKODE, BELØP, KREDIT_TYPE, POSTERINGTYPE, FORFALL, false);
-        SimuleringMottakerDto simuleringMottakerDto = new SimuleringMottakerDto("213242", MottakerType.BRUKER.getKode(), Lists.newArrayList(simuleringDetaljerDto));
+        SimuleringMottakerDto simuleringMottakerDto = new SimuleringMottakerDto("213242", MottakerType.BRUKER.name(), Lists.newArrayList(simuleringDetaljerDto));
         SimuleringDto simuleringDto = new SimuleringDto(123L, "0", Lists.newArrayList(simuleringMottakerDto));
         SimuleringGjelderDto simuleringGjelderDto = new SimuleringGjelderDto(Lists.newArrayList(simuleringDto));
         Set<ConstraintViolation<SimuleringGjelderDto>> violations = validator.validate(simuleringGjelderDto);
@@ -62,7 +62,7 @@ public class SimuleringResultatValidatorTest {
     @Test
     public void testSkalFeilPåUgyldigMottakerId() {
         SimuleringDetaljerDto simuleringDetaljerDto = new SimuleringDetaljerDto(FOM, TOM, FAGOMRÅDEKODE, BELØP, KREDIT_TYPE, POSTERINGTYPE, FORFALL, false);
-        SimuleringMottakerDto simuleringMottakerDto = new SimuleringMottakerDto(RandomStringUtils.random(12), MottakerType.BRUKER.getKode(), Lists.newArrayList(simuleringDetaljerDto));
+        SimuleringMottakerDto simuleringMottakerDto = new SimuleringMottakerDto(RandomStringUtils.random(12), MottakerType.BRUKER.name(), Lists.newArrayList(simuleringDetaljerDto));
         SimuleringDto simuleringDto = new SimuleringDto(123L, "0", Lists.newArrayList(simuleringMottakerDto));
         SimuleringGjelderDto simuleringGjelderDto = new SimuleringGjelderDto(Lists.newArrayList(simuleringDto));
         Set<ConstraintViolation<SimuleringGjelderDto>> violations = validator.validate(simuleringGjelderDto);

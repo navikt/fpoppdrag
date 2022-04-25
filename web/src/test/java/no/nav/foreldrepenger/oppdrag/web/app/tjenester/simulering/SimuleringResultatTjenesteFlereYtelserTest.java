@@ -74,7 +74,7 @@ public class SimuleringResultatTjenesteFlereYtelserTest {
                 .medYtelseType(YtelseType.FORELDREPENGER)
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
-                                .medMottakerType(MottakerType.BRUKER)
+                                .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Første måned, kun sykepenger
                                 .medSimulertPostering(postering(august_01, august_31, KREDIT, YTELSE, SYKEPENGER, 1000))
                                 .medSimulertPostering(postering(august_01, august_31, DEBIT, YTELSE, SYKEPENGER, 2000))

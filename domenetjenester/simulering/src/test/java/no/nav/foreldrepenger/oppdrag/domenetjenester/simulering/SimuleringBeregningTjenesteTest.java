@@ -372,7 +372,7 @@ public class SimuleringBeregningTjenesteTest {
                 .medSimuleringKjørtDato(LocalDateTime.now())
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
-                                .medMottakerType(MottakerType.BRUKER)
+                                .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 .medSimulertPostering(postering("01.09.2017-30.09.2017", FORELDREPENGER, YTELSE, KREDIT, 8000))
                                 .medSimulertPostering(postering("01.09.2017-30.09.2017", FORELDREPENGER, YTELSE, DEBIT, 7000))
                                 .medSimulertPostering(postering("01.09.2017-30.09.2017", FORELDREPENGER, JUSTERING, DEBIT, 1000))
@@ -429,14 +429,14 @@ public class SimuleringBeregningTjenesteTest {
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(
                                 SimuleringMottaker.builder()
-                                        .medMottakerType(MottakerType.BRUKER)
+                                        .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                         .medSimulertPostering(postering("01.09.2018-30.09.2018", FORELDREPENGER, YTELSE, DEBIT, 5029, idag))
                                         .medSimulertPostering(postering("01.10.2018-31.10.2018", FORELDREPENGER, YTELSE, DEBIT, 517, idag))
                                         .medSimulertPostering(postering("01.11.2018-30.11.2018", FORELDREPENGER, YTELSE, DEBIT, 14886, idag.plusWeeks(1))) // Neste utbetalingsperiode
                                         .build())
                         .medSimuleringMottaker(
                                 SimuleringMottaker.builder()
-                                        .medMottakerType(MottakerType.ARBG_ORG)
+                                        .medMottakerType(MottakerType.ARBG_ORG).medMottakerNummer("nummer")
                                         .medSimulertPostering(postering("01.10.2018-31.10.2018", FORELDREPENGER, YTELSE, DEBIT, 5029, idag))
                                         .medSimulertPostering(postering("01.11.2018-30.11.2018", FORELDREPENGER, YTELSE, DEBIT, 517, idag))
                                         .medSimulertPostering(postering("01.12.2018-31.12.2018", FORELDREPENGER, YTELSE, DEBIT, 14886, idag.plusWeeks(1))) // Neste utbetalingsperiode
