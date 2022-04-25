@@ -21,10 +21,10 @@ jobs:
         with:
           repositories: '[
           { "id": "github", "name": "github", "url": "https://maven.pkg.github.com/${{ github.repository }}", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
-          { "id": "legacy", "name": "legacy", "url": "https://maven.pkg.github.com/navikt/legacy-avhengigheter", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } }]'
+          { "id": "felles", "name": "felles", "url": "https://maven.pkg.github.com/navikt/fp-felles", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } }]'
           servers: '[
           { "id": "github", "username": "${{ github.actor }}", "password": "${{ secrets.GH_ACCESS_TOKEN }}" },
-          { "id": "legacy", "username": "${{ github.actor }}", "password": "${{ secrets.GH_ACCESS_TOKEN }}" }]'
+          { "id": "felles", "username": "${{ github.actor }}", "password": "${{ secrets.GH_ACCESS_TOKEN }}" }]'
           output_file: settings.xml
 
       - name: Login to GitHub Packages Docker Registry
@@ -53,6 +53,6 @@ jobs:
           --all-projects
           --configuration-attributes=usage:java-runtime
           --remote-repo-url=https://github.com/${{ github.repository }}.git
-          -- -s settings.xml -Drevision=snyk-kscan
+          -- -s settings.xml -Drevision=snyk-scan
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
