@@ -12,9 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseCreateableEntitet;
+
 @Entity(name = "SimuleringXml")
 @Table(name = "SIMULERING_XML")
-public class SimuleringXml {
+public class SimuleringXml extends BaseCreateableEntitet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SIMULERING_XML")

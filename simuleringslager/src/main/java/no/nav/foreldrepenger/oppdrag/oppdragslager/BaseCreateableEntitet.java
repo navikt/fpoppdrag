@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.oppdrag.oppdragslager;
 
 import java.io.Serializable;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;

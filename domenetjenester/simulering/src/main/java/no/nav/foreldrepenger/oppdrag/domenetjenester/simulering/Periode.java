@@ -29,10 +29,6 @@ public class Periode {
         return periodeTom;
     }
 
-    public boolean starterFørEllerSamtidigSom(Periode periode) {
-        return periodeFom.isEqual(periode.getPeriodeFom()) || periodeFom.isBefore(periode.getPeriodeFom());
-    }
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Periode)) {
