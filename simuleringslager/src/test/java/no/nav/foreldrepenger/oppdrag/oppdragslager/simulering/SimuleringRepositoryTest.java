@@ -106,7 +106,7 @@ public class SimuleringRepositoryTest {
                                         .medBeløp(BigDecimal.valueOf(10000))
                                         .medBetalingType(BetalingType.D)
                                         .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
-                                        .medPosteringType(PosteringType.YTELSE)
+                                        .medPosteringType(PosteringType.YTEL)
                                         .medForfallsdato(forfallsdato)
                                         .build())
                                 .build())

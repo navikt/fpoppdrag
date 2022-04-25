@@ -5,10 +5,10 @@ import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.D;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.K;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode.FORELDREPENGER;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode.SYKEPENGER;
-import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.FEILUTBETALING;
-import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.FORSKUDSSKATT;
-import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.JUSTERING;
-import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.YTELSE;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.FEIL;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.SKAT;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.JUST;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.YTEL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
@@ -82,24 +82,24 @@ public class SimuleringResultatTjenesteInntrekkTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Posteringer første måned - med inntrekk
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 14952, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, K, 46992, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, FEILUTBETALING, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, K, 10680, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 14952, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, JUST, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, JUST, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, K, 46992, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, FEIL, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, JUST, K, 10680, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
                                 // Posteringer neste utbetalingsperiode - med inntrekk
-                                .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, K, 10680, nesteMånedStart, nesteMånedSlutt, nesteForfallsdato))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 44856, nesteMånedStart, nesteMånedSlutt, nesteForfallsdato))
+                                .medSimulertPostering(postering(FORELDREPENGER, JUST, K, 10680, nesteMånedStart, nesteMånedSlutt, nesteForfallsdato))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 44856, nesteMånedStart, nesteMånedSlutt, nesteForfallsdato))
                                 // Posteringer første måned - uten inntrekk
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 25632, førsteMånedStart, førsteMånedSlutt, true, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, K, 46992, førsteMånedStart, førsteMånedSlutt, true, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, FEILUTBETALING, D, 21360, førsteMånedStart, førsteMånedSlutt, true, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 21360, førsteMånedStart, førsteMånedSlutt, true, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 25632, førsteMånedStart, førsteMånedSlutt, true, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, K, 46992, førsteMånedStart, førsteMånedSlutt, true, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, FEIL, D, 21360, førsteMånedStart, førsteMånedSlutt, true, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 21360, førsteMånedStart, førsteMånedSlutt, true, now()))
                                 // Posteringer neste utbetalingsperiode - uten inntrekk inntrekk
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 44856, nesteMånedStart, nesteMånedSlutt, true, nesteForfallsdato))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 44856, nesteMånedStart, nesteMånedSlutt, true, nesteForfallsdato))
 
                                 .build())
                         .build())
@@ -190,24 +190,24 @@ public class SimuleringResultatTjenesteInntrekkTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Posteringer første måned - med inntrekk
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 14952, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, K, 46992, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, FEILUTBETALING, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, K, 10680, førsteMånedStart, førsteMånedSlutt, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 14952, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, JUST, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, JUST, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, K, 46992, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, FEIL, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, JUST, K, 10680, førsteMånedStart, førsteMånedSlutt, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 10680, førsteMånedStart, førsteMånedSlutt, now()))
                                 // Posteringer neste utbetalingsperiode - med inntrekk
-                                .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, K, 10680, nesteMånedStart, nesteMånedSlutt, nesteForfallsdato))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 44856, nesteMånedStart, nesteMånedSlutt, nesteForfallsdato))
+                                .medSimulertPostering(postering(FORELDREPENGER, JUST, K, 10680, nesteMånedStart, nesteMånedSlutt, nesteForfallsdato))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 44856, nesteMånedStart, nesteMånedSlutt, nesteForfallsdato))
                                 // Posteringer første måned - uten inntrekk
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 25632, førsteMånedStart, førsteMånedSlutt, true, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, K, 46992, førsteMånedStart, førsteMånedSlutt, true, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, FEILUTBETALING, D, 21360, førsteMånedStart, førsteMånedSlutt, true, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 21360, førsteMånedStart, førsteMånedSlutt, true, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 25632, førsteMånedStart, førsteMånedSlutt, true, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, K, 46992, førsteMånedStart, førsteMånedSlutt, true, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, FEIL, D, 21360, førsteMånedStart, førsteMånedSlutt, true, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 21360, førsteMånedStart, førsteMånedSlutt, true, now()))
                                 // Posteringer neste utbetalingsperiode - uten inntrekk inntrekk
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 44856, nesteMånedStart, nesteMånedSlutt, true, nesteForfallsdato))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 44856, nesteMånedStart, nesteMånedSlutt, true, nesteForfallsdato))
 
                                 .build())
                         .build())
@@ -241,13 +241,13 @@ public class SimuleringResultatTjenesteInntrekkTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Foreldrepenger
-                                .medSimulertPostering(postering(FORELDREPENGER, FORSKUDSSKATT, K, 5029, periodeFom, periodeTom, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, K, 517, periodeFom, periodeTom, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 14886, periodeFom, periodeTom, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, SKAT, K, 5029, periodeFom, periodeTom, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, JUST, K, 517, periodeFom, periodeTom, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 14886, periodeFom, periodeTom, now()))
                                 // Sykepenger
-                                .medSimulertPostering(postering(SYKEPENGER, YTELSE, D, 1551, periodeFom, periodeTom, now()))
-                                .medSimulertPostering(postering(SYKEPENGER, YTELSE, K, 2068, periodeFom, periodeTom, now()))
-                                .medSimulertPostering(postering(SYKEPENGER, JUSTERING, D, 517, periodeFom, periodeTom, now()))
+                                .medSimulertPostering(postering(SYKEPENGER, YTEL, D, 1551, periodeFom, periodeTom, now()))
+                                .medSimulertPostering(postering(SYKEPENGER, YTEL, K, 2068, periodeFom, periodeTom, now()))
+                                .medSimulertPostering(postering(SYKEPENGER, JUST, D, 517, periodeFom, periodeTom, now()))
                                 .build())
                         .build())
                 .build();
@@ -346,11 +346,11 @@ public class SimuleringResultatTjenesteInntrekkTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Med inntrekk
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, riktigBeregnetBeløp, oktober01, oktober31, november10))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, K, tidligereUtbetaltBeløp, oktober01, oktober31, november10))
-                                .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, D, feilutbetalt, oktober01, oktober31, november10))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, riktigBeregnetBeløp, november01, november30, desember01))
-                                .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, K, feilutbetalt, november01, november30, desember01))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, riktigBeregnetBeløp, oktober01, oktober31, november10))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, K, tidligereUtbetaltBeløp, oktober01, oktober31, november10))
+                                .medSimulertPostering(postering(FORELDREPENGER, JUST, D, feilutbetalt, oktober01, oktober31, november10))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, riktigBeregnetBeløp, november01, november30, desember01))
+                                .medSimulertPostering(postering(FORELDREPENGER, JUST, K, feilutbetalt, november01, november30, desember01))
                                 .build())
                         .build())
                 .build();
@@ -393,23 +393,23 @@ public class SimuleringResultatTjenesteInntrekkTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Med inntrekk
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, riktigBeregnetBeløp, oktober01, oktober31, november10))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, K, tidligereUtbetaltBeløp, oktober01, oktober31, november10))
-                                .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, D, feilutbetalt, oktober01, oktober31, november10))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, riktigBeregnetBeløp, november01, november30, desember01))
-                                .medSimulertPostering(postering(FORELDREPENGER, JUSTERING, K, feilutbetalt, november01, november30, desember01))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, riktigBeregnetBeløp, oktober01, oktober31, november10))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, K, tidligereUtbetaltBeløp, oktober01, oktober31, november10))
+                                .medSimulertPostering(postering(FORELDREPENGER, JUST, D, feilutbetalt, oktober01, oktober31, november10))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, riktigBeregnetBeløp, november01, november30, desember01))
+                                .medSimulertPostering(postering(FORELDREPENGER, JUST, K, feilutbetalt, november01, november30, desember01))
                                 // Uten inntrekk
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, riktigBeregnetBeløp, oktober01, oktober31, true, november10))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, K, tidligereUtbetaltBeløp, oktober01, oktober31, true, november10))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, feilutbetalt, oktober01, oktober31, true, november10))
-                                .medSimulertPostering(postering(FORELDREPENGER, FEILUTBETALING, D, feilutbetalt, oktober01, oktober31, true, november10))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, riktigBeregnetBeløp, november01, november30, true, desember01))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, riktigBeregnetBeløp, oktober01, oktober31, true, november10))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, K, tidligereUtbetaltBeløp, oktober01, oktober31, true, november10))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, feilutbetalt, oktober01, oktober31, true, november10))
+                                .medSimulertPostering(postering(FORELDREPENGER, FEIL, D, feilutbetalt, oktober01, oktober31, true, november10))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, riktigBeregnetBeløp, november01, november30, true, desember01))
                                 .build())
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.ARBG_ORG).medMottakerNummer("nummer")
                                 .medMottakerNummer("12345678")
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 1000, oktober01, oktober31, november10))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, 1000, november01, november30, desember01))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 1000, oktober01, oktober31, november10))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, 1000, november01, november30, desember01))
                                 .build())
                         .build())
                 .build();
@@ -459,10 +459,10 @@ public class SimuleringResultatTjenesteInntrekkTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Med inntrekk
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, riktigBeregnetBeløp, periodeFom, periodeTom, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, D, feilutbetalt, periodeFom, periodeTom, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, YTELSE, K, tidligereUtbetaltBeløp, periodeFom, periodeTom, now()))
-                                .medSimulertPostering(postering(FORELDREPENGER, FEILUTBETALING, D, feilutbetalt, periodeFom, periodeTom, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, riktigBeregnetBeløp, periodeFom, periodeTom, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, D, feilutbetalt, periodeFom, periodeTom, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, YTEL, K, tidligereUtbetaltBeløp, periodeFom, periodeTom, now()))
+                                .medSimulertPostering(postering(FORELDREPENGER, FEIL, D, feilutbetalt, periodeFom, periodeTom, now()))
                                 .build())
                         .build())
                 .build();

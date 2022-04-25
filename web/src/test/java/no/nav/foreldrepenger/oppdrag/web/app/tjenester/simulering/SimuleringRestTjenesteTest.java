@@ -162,7 +162,7 @@ public class SimuleringRestTjenesteTest {
         bsnd.setLinjeId(BigInteger.ONE);
         bsnd.setAntallSats(BigDecimal.valueOf(15.00));
         bsnd.setSaksbehId("48289");
-        bsnd.setTypeKlasse(PosteringType.YTELSE.getKode());
+        bsnd.setTypeKlasse(PosteringType.YTEL.name());
         bsnd.setFaktiskFom("2018-11-11");
         bsnd.setFaktiskTom("2018-12-11");
         bsnd.setBelop(BigDecimal.valueOf(1000.00));

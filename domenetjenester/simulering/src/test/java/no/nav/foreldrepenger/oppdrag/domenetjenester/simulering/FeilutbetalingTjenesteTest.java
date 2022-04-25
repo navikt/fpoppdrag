@@ -186,7 +186,7 @@ public class FeilutbetalingTjenesteTest {
                 .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
                 .medBetalingType(BetalingType.D)
                 .medBeløp(BigDecimal.valueOf(beløp))
-                .medPosteringType(PosteringType.YTELSE)
+                .medPosteringType(PosteringType.YTEL)
                 .medFom(fom)
                 .medTom(tom).build();
     }
@@ -196,7 +196,7 @@ public class FeilutbetalingTjenesteTest {
                 .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
                 .medBetalingType(BetalingType.D)
                 .medBeløp(BigDecimal.valueOf(beløp))
-                .medPosteringType(PosteringType.FEILUTBETALING)
+                .medPosteringType(PosteringType.FEIL)
                 .medFom(fom)
                 .medTom(tom).build();
     }
@@ -207,7 +207,7 @@ public class FeilutbetalingTjenesteTest {
                 .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
                 .medBetalingType(BetalingType.K)
                 .medBeløp(BigDecimal.valueOf(beløp))
-                .medPosteringType(PosteringType.YTELSE)
+                .medPosteringType(PosteringType.YTEL)
                 .medFom(fom)
                 .medTom(tom).build();
     }
@@ -218,7 +218,7 @@ public class FeilutbetalingTjenesteTest {
                 .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
                 .medBetalingType(BetalingType.D)
                 .medBeløp(BigDecimal.valueOf(beløp))
-                .medPosteringType(PosteringType.YTELSE)
+                .medPosteringType(PosteringType.YTEL)
                 .medFom(fom)
                 .medTom(tom)
                 .build();

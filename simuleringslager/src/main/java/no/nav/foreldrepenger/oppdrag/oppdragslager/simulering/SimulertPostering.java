@@ -18,12 +18,12 @@ import javax.persistence.Table;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseCreateableEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 @Entity(name = "SimulertPostering")
 @Table(name = "SIMULERT_POSTERING")
-public class SimulertPostering extends BaseEntitet {
+public class SimulertPostering extends BaseCreateableEntitet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SIMULERT_POSTERING")
@@ -46,9 +46,9 @@ public class SimulertPostering extends BaseEntitet {
     @Column(name = "beloep", nullable = false)
     private BigDecimal beløp;
 
-    @Convert(converter = PosteringType.KodeverdiConverter.class)
-    @Column(name = "postering_type", nullable = false)
-    private PosteringType posteringType = PosteringType.UDEFINERT;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "postering_type")
+    private PosteringType posteringType = null;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "simulering_mottaker_id", nullable = false)
@@ -121,7 +121,7 @@ public class SimulertPostering extends BaseEntitet {
                 + ", tom=" + tom //$NON-NLS-1$
                 + ", betalingType=" + betalingType //$NON-NLS-1$
                 + ", beløp=" + beløp //$NON-NLS-1$
-                + (posteringType != null ? ", posteringType=" + posteringType.getKode() : "") //$NON-NLS-1$
+                + (posteringType != null ? ", posteringType=" + posteringType : "") //$NON-NLS-1$
                 + ", utenInntrekk=" + utenInntrekk //$NON-NLS-1$
                 + ">"; //$NON-NLS-1$
 

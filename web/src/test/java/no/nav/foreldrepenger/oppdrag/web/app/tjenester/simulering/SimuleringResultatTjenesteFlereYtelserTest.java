@@ -5,7 +5,7 @@ import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.D;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.K;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode.FORELDREPENGER;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode.SYKEPENGER;
-import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.YTELSE;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.YTEL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -76,16 +76,16 @@ public class SimuleringResultatTjenesteFlereYtelserTest {
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Første måned, kun sykepenger
-                                .medSimulertPostering(postering(august_01, august_31, K, YTELSE, SYKEPENGER, 1000))
-                                .medSimulertPostering(postering(august_01, august_31, D, YTELSE, SYKEPENGER, 2000))
+                                .medSimulertPostering(postering(august_01, august_31, K, YTEL, SYKEPENGER, 1000))
+                                .medSimulertPostering(postering(august_01, august_31, D, YTEL, SYKEPENGER, 2000))
                                 // Andre måned, foreldrepenger og sykepenger
-                                .medSimulertPostering(postering(september_01, september_30, K, YTELSE, FORELDREPENGER, 2000))
-                                .medSimulertPostering(postering(september_01, september_30, D, YTELSE, FORELDREPENGER, 7000))
-                                .medSimulertPostering(postering(september_01, september_30, K, YTELSE, SYKEPENGER, 3000))
-                                .medSimulertPostering(postering(september_01, september_30, D, YTELSE, SYKEPENGER, 4000))
+                                .medSimulertPostering(postering(september_01, september_30, K, YTEL, FORELDREPENGER, 2000))
+                                .medSimulertPostering(postering(september_01, september_30, D, YTEL, FORELDREPENGER, 7000))
+                                .medSimulertPostering(postering(september_01, september_30, K, YTEL, SYKEPENGER, 3000))
+                                .medSimulertPostering(postering(september_01, september_30, D, YTEL, SYKEPENGER, 4000))
                                 // Tredje måned, kun foreldrepenger
-                                .medSimulertPostering(postering(oktober_01, oktober_31, K, YTELSE, FORELDREPENGER, 6000))
-                                .medSimulertPostering(postering(oktober_01, oktober_31, D, YTELSE, FORELDREPENGER, 10000))
+                                .medSimulertPostering(postering(oktober_01, oktober_31, K, YTEL, FORELDREPENGER, 6000))
+                                .medSimulertPostering(postering(oktober_01, oktober_31, D, YTEL, FORELDREPENGER, 10000))
                                 .build())
                         .build())
                 .build();

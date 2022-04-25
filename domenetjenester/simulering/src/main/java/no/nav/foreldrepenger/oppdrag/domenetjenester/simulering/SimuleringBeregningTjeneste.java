@@ -282,19 +282,19 @@ public class SimuleringBeregningTjeneste {
 
     private static List<SimulertPostering> bareFeilutbetalingPosteringer(List<SimulertPostering> posteringer) {
         return posteringer.stream()
-                .filter(p -> PosteringType.FEILUTBETALING.equals(p.getPosteringType()))
+                .filter(p -> PosteringType.FEIL.equals(p.getPosteringType()))
                 .collect(Collectors.toList());
     }
 
     static BigDecimal beregnMotregning(List<SimulertPostering> posteringer) {
-        return posteringer.stream().filter(p -> PosteringType.JUSTERING.equals(p.getPosteringType()))
+        return posteringer.stream().filter(p -> PosteringType.JUST.equals(p.getPosteringType()))
                 .map(p -> BetalingType.D.equals(p.getBetalingType()) ? p.getBeløp() : p.getBeløp().negate())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     static BigDecimal beregnFeilutbetaltBeløp(List<SimulertPostering> posteringer) {
         return posteringer.stream()
-                .filter(p -> PosteringType.FEILUTBETALING.equals(p.getPosteringType()))
+                .filter(p -> PosteringType.FEIL.equals(p.getPosteringType()))
                 .filter(p -> BetalingType.D.equals(p.getBetalingType()))
                 .map(SimulertPostering::getBeløp)
                 .reduce(BigDecimal::add)
@@ -303,7 +303,7 @@ public class SimuleringBeregningTjeneste {
 
     static BigDecimal beregnTidligereUtbetaltBeløp(List<SimulertPostering> posteringer) {
         return posteringer.stream()
-                .filter(p -> PosteringType.YTELSE.equals(p.getPosteringType()))
+                .filter(p -> PosteringType.YTEL.equals(p.getPosteringType()))
                 .filter(p -> BetalingType.K.equals(p.getBetalingType()))
                 .map(SimulertPostering::getBeløp)
                 .reduce(BigDecimal::add)
@@ -312,7 +312,7 @@ public class SimuleringBeregningTjeneste {
 
     static BigDecimal beregnNyttBeløp(List<SimulertPostering> posteringer) {
         return posteringer.stream()
-                .filter(p -> PosteringType.YTELSE.equals(p.getPosteringType()))
+                .filter(p -> PosteringType.YTEL.equals(p.getPosteringType()))
                 .filter(p -> BetalingType.D.equals(p.getBetalingType()))
                 .map(SimulertPostering::getBeløp)
                 .reduce(BigDecimal::add)
@@ -320,14 +320,14 @@ public class SimuleringBeregningTjeneste {
     }
 
     private static BigDecimal beregnNyttBeløp(List<SimulertPostering> posteringer, BigDecimal sumFeilutbetalingPosteringer) {
-        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTELSE, BetalingType.D);
+        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTEL, BetalingType.D);
         return sumFeilutbetalingPosteringer.signum() == 1
                 ? sumPosteringer.subtract(sumFeilutbetalingPosteringer)
                 : sumPosteringer;
     }
 
     private static BigDecimal beregnTidligereUtbetaltBeløp(List<SimulertPostering> posteringer, BigDecimal sumFeilutbetalingPosteringer) {
-        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTELSE, BetalingType.K); // 6381
+        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTEL, BetalingType.K); // 6381
         return sumFeilutbetalingPosteringer.signum() == -1
                 ? sumPosteringer.add(sumFeilutbetalingPosteringer)
                 : sumPosteringer;

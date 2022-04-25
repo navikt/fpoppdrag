@@ -76,7 +76,7 @@ public class SimuleringResultatTransformer {
                 .medFom(parseDato(detaljer.getFaktiskFom()))
                 .medTom(parseDato(detaljer.getFaktiskTom()))
                 .medForfallsdato(parseDato(stoppnivaa.getForfall()))
-                .medPosteringType(PosteringType.fraKodeDefaultUdefinert(detaljer.getTypeKlasse()))
+                .medPosteringType(PosteringType.getOrNull(detaljer.getTypeKlasse()))
                 .utenInntrekk(utenInntrekk);
 
         return posteringBuilder.build();

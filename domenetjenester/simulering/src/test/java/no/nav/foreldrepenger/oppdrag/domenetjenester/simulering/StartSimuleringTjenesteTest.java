@@ -192,8 +192,8 @@ public class StartSimuleringTjenesteTest {
         String periodeFom = response.getResponse().getSimulering().getBeregningsPeriode().get(0).getPeriodeFom();
         String periodeTom = response.getResponse().getSimulering().getBeregningsPeriode().get(0).getPeriodeTom();
         BeregningStoppnivaa beregningStoppnivaa1 = response.getResponse().getSimulering().getBeregningsPeriode().get(0).getBeregningStoppnivaa().get(0);
-        beregningStoppnivaa1.getBeregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer(periodeFom, periodeTom, PosteringType.FEILUTBETALING, BigDecimal.valueOf(3500)));
-        beregningStoppnivaa1.getBeregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer(periodeFom, periodeTom, PosteringType.YTELSE, BigDecimal.valueOf(3500)));
+        beregningStoppnivaa1.getBeregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer(periodeFom, periodeTom, PosteringType.FEIL, BigDecimal.valueOf(3500)));
+        beregningStoppnivaa1.getBeregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer(periodeFom, periodeTom, PosteringType.YTEL, BigDecimal.valueOf(3500)));
 
 
         // Legger til inntrekk neste måned
@@ -204,8 +204,8 @@ public class StartSimuleringTjenesteTest {
 
         BeregningStoppnivaa stoppnivå = opprettBeregningStoppnivå(gjelderId, fagsysId, pattern.format(forfallsdato));
         beregningsPeriode.getBeregningStoppnivaa().add(stoppnivå);
-        stoppnivå.getBeregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer(pattern.format(fom), pattern.format(forfallsdato), PosteringType.YTELSE, BigDecimal.valueOf(23500)));
-        stoppnivå.getBeregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer(pattern.format(fom), pattern.format(forfallsdato), PosteringType.JUSTERING, BigDecimal.valueOf(-2786)));
+        stoppnivå.getBeregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer(pattern.format(fom), pattern.format(forfallsdato), PosteringType.YTEL, BigDecimal.valueOf(23500)));
+        stoppnivå.getBeregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer(pattern.format(fom), pattern.format(forfallsdato), PosteringType.JUST, BigDecimal.valueOf(-2786)));
 
 
         ArgumentCaptor<SimulerBeregningRequest> captor = ArgumentCaptor.forClass(SimulerBeregningRequest.class);
@@ -279,7 +279,7 @@ public class StartSimuleringTjenesteTest {
         BeregningStoppnivaa stoppnivaa = opprettBeregningStoppnivå(gjelderId, fagsysId, forfallsdato);
         beregningsPeriode.getBeregningStoppnivaa().add(stoppnivaa);
 
-        BeregningStoppnivaaDetaljer stoppnivaaDetaljer = opprettStoppnivaaDetaljer("2018-10-10", "2018-11-11", PosteringType.YTELSE, BigDecimal.valueOf(12532L));
+        BeregningStoppnivaaDetaljer stoppnivaaDetaljer = opprettStoppnivaaDetaljer("2018-10-10", "2018-11-11", PosteringType.YTEL, BigDecimal.valueOf(12532L));
         stoppnivaa.getBeregningStoppnivaaDetaljer().add(stoppnivaaDetaljer);
 
         return response;
@@ -323,7 +323,7 @@ public class StartSimuleringTjenesteTest {
         stoppnivaaDetaljer.setBostedsenhet("4643");
         stoppnivaaDetaljer.setKlassekode(KlasseKode.FPATORD.getKode());
         stoppnivaaDetaljer.setKlasseKodeBeskrivelse("lsdfskød");
-        stoppnivaaDetaljer.setTypeKlasse(posteringType.getKode());
+        stoppnivaaDetaljer.setTypeKlasse(posteringType.name());
         stoppnivaaDetaljer.setTypeKlasseBeskrivelse("sfas");
 
         return stoppnivaaDetaljer;
