@@ -11,12 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseCreateableEntitet;
 
 
 @Entity(name = "SimuleringResultat")
 @Table(name = "SIMULERING_RESULTAT")
-public class SimuleringResultat extends BaseEntitet {
+public class SimuleringResultat extends BaseCreateableEntitet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SIMULERING_RESULTAT")

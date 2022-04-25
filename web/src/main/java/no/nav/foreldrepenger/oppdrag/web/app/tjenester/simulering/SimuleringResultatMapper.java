@@ -21,7 +21,7 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.Periode;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimulertBeregning;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimulertBeregningPeriode;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimulertBeregningResultat;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.DetaljertSimuleringResultatDto;
@@ -34,7 +34,7 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.Simulering
 
 class SimuleringResultatMapper {
 
-    private HentNavnTjeneste hentNavnTjeneste;
+    private final HentNavnTjeneste hentNavnTjeneste;
     private DetaljertSimuleringResultatDto.Builder simuleringResultatBuilder;
 
     private SimuleringResultatMapper(HentNavnTjeneste hentNavnTjeneste) {
@@ -100,12 +100,12 @@ class SimuleringResultatMapper {
                 .medMottakerType(mottakerType)
                 .medResultatPerFagområde(mapPerFagområde(simulertBeregningPerioder));
 
-        if (!ytelseType.gjelderEngangsstønad()) {
+        if (ytelseType.erIkkeEngangsstønad()) {
             builder.medNesteUtbetalingsperiode(new Periode(mottaker.getNesteUtbetalingsperiodeFom(), mottaker.getNesteUtbetalingsperiodeTom()));
         }
 
         if (MottakerType.BRUKER.equals(mottakerType)) {
-            if (!ytelseType.gjelderEngangsstønad()) {
+            if (ytelseType.erIkkeEngangsstønad()) {
                 builder.medResultatOgMotregningRader(mapResultaterPerMåned(simulertBeregningPerioder));
 
             }
@@ -168,7 +168,7 @@ class SimuleringResultatMapper {
         return finnUnikeFagområder(simulertBeregningPerioder).size() > 1;
     }
 
-    private Set<FagOmrådeKode> finnUnikeFagområder(List<SimulertBeregningPeriode> simulertBeregningPerioder) {
+    private Set<Fagområde> finnUnikeFagområder(List<SimulertBeregningPeriode> simulertBeregningPerioder) {
         return simulertBeregningPerioder
                 .stream()
                 .map(p -> p.getBeregningPerFagområde().keySet())
@@ -212,13 +212,13 @@ class SimuleringResultatMapper {
                 .stream().anyMatch(p -> p.getBeløp() > 0);
     }
 
-    private Map<FagOmrådeKode, Map<RadId, List<SimuleringResultatPerMånedDto>>> mapFelterPerFagområdePerMåned(List<SimulertBeregningPeriode> simulertBeregningPerioder) {
-        Map<FagOmrådeKode, Map<RadId, List<SimuleringResultatPerMånedDto>>> perFagområde = lagTommeResultatRader(simulertBeregningPerioder);
+    private Map<Fagområde, Map<RadId, List<SimuleringResultatPerMånedDto>>> mapFelterPerFagområdePerMåned(List<SimulertBeregningPeriode> simulertBeregningPerioder) {
+        Map<Fagområde, Map<RadId, List<SimuleringResultatPerMånedDto>>> perFagområde = lagTommeResultatRader(simulertBeregningPerioder);
 
         for (SimulertBeregningPeriode sbp : simulertBeregningPerioder) {
             Periode periode = sbp.getPeriode();
-            for (Map.Entry<FagOmrådeKode, SimulertBeregning> entry : sbp.getBeregningPerFagområde().entrySet()) {
-                FagOmrådeKode fagOmråde = entry.getKey();
+            for (Map.Entry<Fagområde, SimulertBeregning> entry : sbp.getBeregningPerFagområde().entrySet()) {
+                Fagområde fagOmråde = entry.getKey();
                 SimulertBeregning beregning = entry.getValue();
                 Map<RadId, List<SimuleringResultatPerMånedDto>> resultatPerFelt = perFagområde.get(fagOmråde);
                 leggTil(resultatPerFelt, RadId.NYTT_BELØP, periode, beregning.getNyttBeregnetBeløp());
@@ -229,7 +229,7 @@ class SimuleringResultatMapper {
         return perFagområde;
     }
 
-    private Map<FagOmrådeKode, Map<RadId, List<SimuleringResultatPerMånedDto>>> lagTommeResultatRader(List<SimulertBeregningPeriode> simulertBeregningPerioder) {
+    private Map<Fagområde, Map<RadId, List<SimuleringResultatPerMånedDto>>> lagTommeResultatRader(List<SimulertBeregningPeriode> simulertBeregningPerioder) {
         return simulertBeregningPerioder.stream()
                 .flatMap(sbp -> sbp.getBeregningPerFagområde().keySet().stream())
                 .distinct()

@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.Periode;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.YtelseUtleder;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 
@@ -59,7 +60,7 @@ public class SimuleringForMottakerDto {
 
     public static class Builder {
 
-        private Map<FagOmrådeKode, Integer> SORTERING = new HashMap<>();
+        private Map<Fagområde, Integer> SORTERING = new HashMap<>();
 
         private SimuleringForMottakerDto kladd = new SimuleringForMottakerDto();
         private YtelseType gjelderYtelsetype;
@@ -109,33 +110,33 @@ public class SimuleringForMottakerDto {
 
         private void initSortering(YtelseType gjelderYtelsetype) {
             //default sortering
-            SORTERING.put(FagOmrådeKode.ENGANGSSTØNAD, 101);
-            SORTERING.put(FagOmrådeKode.SVANGERSKAPSPENGER, 101);
-            SORTERING.put(FagOmrådeKode.SVANGERSKAPSPENGER_ARBEIDSGIVER, 102);
-            SORTERING.put(FagOmrådeKode.FORELDREPENGER, 103);
-            SORTERING.put(FagOmrådeKode.FORELDREPENGER_ARBEIDSGIVER, 104);
-            SORTERING.put(FagOmrådeKode.SYKEPENGER, 105);
-            SORTERING.put(FagOmrådeKode.SYKEPENGER_ARBEIDSGIVER, 106);
-            SORTERING.put(FagOmrådeKode.PLEIEPENGER_V1, 107);
-            SORTERING.put(FagOmrådeKode.PLEIEPENGER_V1_ARBEIDSGIVER, 108);
-            SORTERING.put(FagOmrådeKode.PLEIEPENGER_SYKT_BARN, 109);
-            SORTERING.put(FagOmrådeKode.PLEIEPENGER_SYKT_BARN_ARBEIDSGIVER, 110);
-            SORTERING.put(FagOmrådeKode.PLEIEPENGER_NÆRSTÅENDE, 111);
-            SORTERING.put(FagOmrådeKode.PLEIEPENGER_NÆRSTÅENDE_ARBEIDSGIVER, 112);
-            SORTERING.put(FagOmrådeKode.OMSORGSPENGER, 113);
-            SORTERING.put(FagOmrådeKode.OMSORGSPENGER_ARBEIDSGIVER, 114);
-            SORTERING.put(FagOmrådeKode.OPPLÆRINGSPENGER, 115);
-            SORTERING.put(FagOmrådeKode.OPPLÆRINGSPENGER_ARBEIDSGIVER, 116);
+            SORTERING.put(Fagområde.REFUTG, 101);
+            SORTERING.put(Fagområde.SVP, 101);
+            SORTERING.put(Fagområde.SVPREF, 102);
+            SORTERING.put(Fagområde.FP, 103);
+            SORTERING.put(Fagområde.FPREF, 104);
+            SORTERING.put(Fagområde.SP, 105);
+            SORTERING.put(Fagområde.SPREF, 106);
+            SORTERING.put(Fagområde.OOP, 107);
+            SORTERING.put(Fagområde.OOPREF, 108);
+            SORTERING.put(Fagområde.PB, 109);
+            SORTERING.put(Fagområde.PBREF, 110);
+            SORTERING.put(Fagområde.PN, 111);
+            SORTERING.put(Fagområde.PNREF, 112);
+            SORTERING.put(Fagområde.OM, 113);
+            SORTERING.put(Fagområde.OMREF, 114);
+            SORTERING.put(Fagområde.OPP, 115);
+            SORTERING.put(Fagområde.OPPREF, 116);
 
             //flytter gjeldende ytelsetype først i sorteringen
-            for (FagOmrådeKode fagOmrådeKode : SORTERING.keySet()) {
-                if (fagOmrådeKode.getYtelseType().equals(gjelderYtelsetype)) {
+            for (Fagområde fagOmrådeKode : SORTERING.keySet()) {
+                if (YtelseUtleder.utledFor(fagOmrådeKode).equals(gjelderYtelsetype)) {
                     SORTERING.put(fagOmrådeKode, SORTERING.get(fagOmrådeKode) - 100);
                 }
             }
         }
 
-        private int getSortering(FagOmrådeKode fagomradeKode) {
+        private int getSortering(Fagområde fagomradeKode) {
             return SORTERING.getOrDefault(fagomradeKode, Integer.MAX_VALUE);
         }
 

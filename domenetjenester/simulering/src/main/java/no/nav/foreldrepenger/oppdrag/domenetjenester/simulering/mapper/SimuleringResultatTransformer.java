@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
@@ -72,11 +72,11 @@ public class SimuleringResultatTransformer {
         SimulertPostering.Builder posteringBuilder = SimulertPostering.builder()
                 .medBetalingType(utledBetalingType(detaljer.getBelop()))
                 .medBeløp(detaljer.getBelop())
-                .medFagOmraadeKode(FagOmrådeKode.fraKodeDefaultUdefinert(stoppnivaa.getKodeFagomraade()))
+                .medFagOmraadeKode(Fagområde.fraKode(stoppnivaa.getKodeFagomraade()))
                 .medFom(parseDato(detaljer.getFaktiskFom()))
                 .medTom(parseDato(detaljer.getFaktiskTom()))
                 .medForfallsdato(parseDato(stoppnivaa.getForfall()))
-                .medPosteringType(PosteringType.fraKodeDefaultUdefinert(detaljer.getTypeKlasse()))
+                .medPosteringType(PosteringType.getOrNull(detaljer.getTypeKlasse()))
                 .utenInntrekk(utenInntrekk);
 
         return posteringBuilder.build();
@@ -128,9 +128,9 @@ public class SimuleringResultatTransformer {
 
     BetalingType utledBetalingType(BigDecimal belop) {
         if (belop.compareTo(BigDecimal.ZERO) > 0) {
-            return BetalingType.DEBIT;
+            return BetalingType.D;
         }
-        return BetalingType.KREDIT;
+        return BetalingType.K;
     }
 
     private LocalDate parseDato(String dato) {

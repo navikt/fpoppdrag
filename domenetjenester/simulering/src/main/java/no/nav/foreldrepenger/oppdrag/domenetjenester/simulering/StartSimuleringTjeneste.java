@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -26,7 +25,7 @@ import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.foreldrepenger.oppdrag.OppdragConsumer;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.OppdragMapper;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.SimuleringResultatTransformer;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.BehandlingRef;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
@@ -182,7 +181,7 @@ public class StartSimuleringTjeneste {
 
     private List<SimulerBeregningRequest> finnRequestForBrukerOgSlåAvInntrekk(List<SimulerBeregningRequest> simuleringRequestListe, YtelseType ytelseType) {
         return simuleringRequestListe.stream()
-                .filter(s -> FagOmrådeKode.getFagOmrådeKodeForBrukerForYtelseType(ytelseType).getKode().equals(s.getRequest().getOppdrag().getKodeFagomraade()))
+                .filter(s -> Fagområde.utledFra(ytelseType).name().equals(s.getRequest().getOppdrag().getKodeFagomraade()))
                 .filter(s -> s.getRequest().getOppdrag().getOppdragslinje() != null && !s.getRequest().getOppdrag().getOppdragslinje().isEmpty())
                 .map(this::slåAvInntrekk)
                 .collect(Collectors.toList());
@@ -247,23 +246,27 @@ public class StartSimuleringTjeneste {
     }
 
     private YtelseType bestemYtelseType(Long behandlingId, List<Oppdrag> oppdrag) {
-        List<String> fagOmrådeKoder = oppdrag.stream().map(no.nav.system.os.entiteter.oppdragskjema.Oppdrag::getKodeFagomraade).distinct().collect(Collectors.toList());
+        List<String> fagOmrådeKoder = oppdrag.stream().map(no.nav.system.os.entiteter.oppdragskjema.Oppdrag::getKodeFagomraade).distinct().toList();
         if (fagOmrådeKoder.isEmpty()) {
             LOG.warn("Fant ingen fagområdeKoder for behandlingId={}", behandlingId);
-            return YtelseType.UDEFINERT;
+            throw new IllegalStateException(String.format("Utvikler-feil: Ytelse Type må være satt for behandling: %s", behandlingId));
         }
-        Set<YtelseType> ytelsetyper = fagOmrådeKoder.stream()
-                .map(FagOmrådeKode::fraKode)
-                .map(FagOmrådeKode::getYtelseType)
-                .collect(Collectors.toSet());
+        var ytelsetyper = fagOmrådeKoder.stream()
+                .map(Fagområde::fraKode)
+                .map(YtelseUtleder::utledFor)
+                .distinct()
+                .toList();
+
         if (ytelsetyper.size() > 1) {
-            throw StartSimuleringTjenesteFeil.ikkeUnikYtelseType(behandlingId, fagOmrådeKoder);
+            LOG.warn("Ikke mulig å simulere for flere ytelser sammtidig for behandligId={}", behandlingId);
+            throw new TekniskException("FPO-810466", String.format("Utvikler-feil: Klarer ikke utlede unik ytelsetype for behandlingId=%s fagområdekode=%s", behandlingId, fagOmrådeKoder));
         }
-        YtelseType ytelseType = ytelsetyper.iterator().next();
-        if (ytelseType == YtelseType.UDEFINERT) {
-            throw StartSimuleringTjenesteFeil.manglerMappingMellomFagområdeKodeOgYtleseType(behandlingId, fagOmrådeKoder);
+
+        var ytelseType = ytelsetyper.stream().findFirst();
+        if (ytelseType.isEmpty()) {
+            throw new TekniskException("FPO-852146", String.format("Utvikler-feil: Mangler mapping mellom fagområdekode og ytelsetype for behandlingId=%s fagområdekode=%s", behandlingId, fagOmrådeKoder));
         }
-        return ytelseType;
+        return ytelseType.get();
     }
 
     private List<SimulerBeregningResponse> utførSimulering(List<SimulerBeregningRequest> simuleringRequestListe, List<String> source) {
@@ -359,14 +362,6 @@ public class StartSimuleringTjeneste {
 
         static TekniskException kunneIkkeUnmarshalleOppdragXml(Exception e) {
             return new TekniskException("FPO-832562", "Kunne ikke tolke mottatt oppdrag XML", e);
-        }
-
-        static TekniskException manglerMappingMellomFagområdeKodeOgYtleseType(Long behandlingId, List<String> fagområdeKode) {
-            return new TekniskException("FPO-852146", String.format("Utvikler-feil: Mangler mapping mellom fagområdekode og ytelsetype for behandlingId=%s fagområdekode=%s", behandlingId, fagområdeKode));
-        }
-
-        static TekniskException ikkeUnikYtelseType(Long behandlingId, List<String> fagområdeKode) {
-            return new TekniskException("FPO-810466", String.format("Utvikler-feil: Klarer ikke utlede unik ytelsetype for behandlingId=%s fagområdekode=%s", behandlingId, fagområdeKode));
         }
 
         static TekniskException mangletFagsystemId(Long behandlingId, String periodeFom, String periodeTom) {

@@ -4,20 +4,20 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 
 public class SimulertBeregningPeriode {
     private Periode periode;
     private BigDecimal resultatEtterMotregning = BigDecimal.ZERO;
     private BigDecimal inntrekkNesteMåned = BigDecimal.ZERO;
     private BigDecimal resultat = BigDecimal.ZERO;
-    private Map<FagOmrådeKode, SimulertBeregning> beregningPerFagområde = new HashMap<>();
+    private Map<Fagområde, SimulertBeregning> beregningPerFagområde = new HashMap<>();
 
     public Periode getPeriode() {
         return periode;
     }
 
-    public Map<FagOmrådeKode, SimulertBeregning> getBeregningPerFagområde() {
+    public Map<Fagområde, SimulertBeregning> getBeregningPerFagområde() {
         return beregningPerFagområde;
     }
 
@@ -45,7 +45,7 @@ public class SimulertBeregningPeriode {
             return this;
         }
 
-        public Builder medBeregning(FagOmrådeKode fagOmrådeKode, SimulertBeregning simulertBeregning) {
+        public Builder medBeregning(Fagområde fagOmrådeKode, SimulertBeregning simulertBeregning) {
             kladd.beregningPerFagområde.put(fagOmrådeKode, simulertBeregning);
             return this;
         }

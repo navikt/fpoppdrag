@@ -72,7 +72,7 @@ public class SimuleringResultatTjeneste {
 
     public FeilutbetaltePerioderDto hentFeilutbetaltePerioder(Long behandlingId) {
         Optional<SimuleringGrunnlag> optSimuleringGrunnlag = simuleringRepository.hentSimulertOppdragForBehandling(behandlingId);
-        if (!optSimuleringGrunnlag.isPresent()) {
+        if (optSimuleringGrunnlag.isEmpty()) {
             throw new TekniskException("FPO-319832", String.format("Fant ikke simuleringsresultat for behandlingId=%s", behandlingId));
         }
         SimuleringGrunnlag simuleringGrunnlag = optSimuleringGrunnlag.get();

@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
@@ -99,8 +99,8 @@ public class SimuleringBeregningTjeneste {
             SimulertBeregningPeriode.Builder simulertBeregningBuilder = SimulertBeregningPeriode.builder()
                     .medPeriode(periode);
 
-            Map<FagOmrådeKode, List<SimulertPostering>> posteringerPerFagområde = grupperPerFagområde(entry.getValue());
-            for (Map.Entry<FagOmrådeKode, List<SimulertPostering>> entryPerFagomr : posteringerPerFagområde.entrySet()) {
+            Map<Fagområde, List<SimulertPostering>> posteringerPerFagområde = grupperPerFagområde(entry.getValue());
+            for (Map.Entry<Fagområde, List<SimulertPostering>> entryPerFagomr : posteringerPerFagområde.entrySet()) {
                 SimulertBeregning simulertBeregning = beregnPosteringerPerFagområde(entryPerFagomr.getValue());
                 simulertBeregningBuilder.medBeregning(entryPerFagomr.getKey(), simulertBeregning)
                         .leggTilPåResultat(simulertBeregning.getResultat())
@@ -118,9 +118,9 @@ public class SimuleringBeregningTjeneste {
         oppsummering.setPeriodeFom(finnOppsummertPeriodeFom(beregningsresultat));
         oppsummering.setPeriodeTom(finnOppsummertPeriodeTom(beregningsresultat));
 
-        FagOmrådeKode fagOmrådeKode = FagOmrådeKode.getFagOmrådeKodeForBrukerForYtelseType(ytelseType);
+        Fagområde fagOmrådeKode = Fagområde.utledFra(ytelseType);
 
-        if (!ytelseType.gjelderEngangsstønad()) {
+        if (ytelseType.erIkkeEngangsstønad()) {
             oppsummering.setInntrekkNesteUtbetaling(finnInntrekk(beregningsresultat, fagOmrådeKode));
         }
 
@@ -139,11 +139,11 @@ public class SimuleringBeregningTjeneste {
         return oppsummering;
     }
 
-    BigDecimal finnInntrekk(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, FagOmrådeKode fagOmrådeKode) {
+    BigDecimal finnInntrekk(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, Fagområde fagOmrådeKode) {
         return finnInntrekkSum(beregningsresultat, fagOmrådeKode);
     }
 
-    private static BigDecimal finnInntrekkSum(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, FagOmrådeKode fagOmrådeKode) {
+    private static BigDecimal finnInntrekkSum(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, Fagområde fagOmrådeKode) {
         Optional<Mottaker> mottakerBrukerOpt = beregningsresultat.keySet().stream().filter(m -> m.getMottakerType().equals(MottakerType.BRUKER)).findFirst();
         if (mottakerBrukerOpt.isPresent()) {
             Mottaker mottaker = mottakerBrukerOpt.get();
@@ -153,7 +153,7 @@ public class SimuleringBeregningTjeneste {
         return BigDecimal.ZERO;
     }
 
-    private static BigDecimal finnInntrekkSum(List<SimulertBeregningPeriode> perioder, FagOmrådeKode fagOmrådeKode) {
+    private static BigDecimal finnInntrekkSum(List<SimulertBeregningPeriode> perioder, Fagområde fagOmrådeKode) {
         return perioder.stream()
                 .map(p -> p.getBeregningPerFagområde().get(fagOmrådeKode))
                 .filter(Objects::nonNull)
@@ -162,7 +162,7 @@ public class SimuleringBeregningTjeneste {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private static List<SimulertBeregning> finnBeregningerForBrukerForFagområde(FagOmrådeKode fagOmrådeKode,
+    private static List<SimulertBeregning> finnBeregningerForBrukerForFagområde(Fagområde fagOmrådeKode,
                                                                                 Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat) {
         Optional<Mottaker> mottakerBrukerOpt = beregningsresultat.keySet().stream().filter(m -> m.getMottakerType().equals(MottakerType.BRUKER)).findFirst();
         if (mottakerBrukerOpt.isPresent()) {
@@ -275,27 +275,27 @@ public class SimuleringBeregningTjeneste {
 
     private static BigDecimal summerBeløp(List<SimulertPostering> posteringer) {
         return posteringer.stream()
-                .map(p -> BetalingType.KREDIT.equals(p.getBetalingType()) ? p.getBeløp().negate() : p.getBeløp())
+                .map(p -> BetalingType.K.equals(p.getBetalingType()) ? p.getBeløp().negate() : p.getBeløp())
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
     }
 
     private static List<SimulertPostering> bareFeilutbetalingPosteringer(List<SimulertPostering> posteringer) {
         return posteringer.stream()
-                .filter(p -> PosteringType.FEILUTBETALING.equals(p.getPosteringType()))
+                .filter(p -> PosteringType.FEIL.equals(p.getPosteringType()))
                 .collect(Collectors.toList());
     }
 
     static BigDecimal beregnMotregning(List<SimulertPostering> posteringer) {
-        return posteringer.stream().filter(p -> PosteringType.JUSTERING.equals(p.getPosteringType()))
-                .map(p -> BetalingType.DEBIT.equals(p.getBetalingType()) ? p.getBeløp() : p.getBeløp().negate())
+        return posteringer.stream().filter(p -> PosteringType.JUST.equals(p.getPosteringType()))
+                .map(p -> BetalingType.D.equals(p.getBetalingType()) ? p.getBeløp() : p.getBeløp().negate())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     static BigDecimal beregnFeilutbetaltBeløp(List<SimulertPostering> posteringer) {
         return posteringer.stream()
-                .filter(p -> PosteringType.FEILUTBETALING.equals(p.getPosteringType()))
-                .filter(p -> BetalingType.DEBIT.equals(p.getBetalingType()))
+                .filter(p -> PosteringType.FEIL.equals(p.getPosteringType()))
+                .filter(p -> BetalingType.D.equals(p.getBetalingType()))
                 .map(SimulertPostering::getBeløp)
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
@@ -303,8 +303,8 @@ public class SimuleringBeregningTjeneste {
 
     static BigDecimal beregnTidligereUtbetaltBeløp(List<SimulertPostering> posteringer) {
         return posteringer.stream()
-                .filter(p -> PosteringType.YTELSE.equals(p.getPosteringType()))
-                .filter(p -> BetalingType.KREDIT.equals(p.getBetalingType()))
+                .filter(p -> PosteringType.YTEL.equals(p.getPosteringType()))
+                .filter(p -> BetalingType.K.equals(p.getBetalingType()))
                 .map(SimulertPostering::getBeløp)
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
@@ -312,22 +312,22 @@ public class SimuleringBeregningTjeneste {
 
     static BigDecimal beregnNyttBeløp(List<SimulertPostering> posteringer) {
         return posteringer.stream()
-                .filter(p -> PosteringType.YTELSE.equals(p.getPosteringType()))
-                .filter(p -> BetalingType.DEBIT.equals(p.getBetalingType()))
+                .filter(p -> PosteringType.YTEL.equals(p.getPosteringType()))
+                .filter(p -> BetalingType.D.equals(p.getBetalingType()))
                 .map(SimulertPostering::getBeløp)
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
     }
 
     private static BigDecimal beregnNyttBeløp(List<SimulertPostering> posteringer, BigDecimal sumFeilutbetalingPosteringer) {
-        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTELSE, BetalingType.DEBIT);
+        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTEL, BetalingType.D);
         return sumFeilutbetalingPosteringer.signum() == 1
                 ? sumPosteringer.subtract(sumFeilutbetalingPosteringer)
                 : sumPosteringer;
     }
 
     private static BigDecimal beregnTidligereUtbetaltBeløp(List<SimulertPostering> posteringer, BigDecimal sumFeilutbetalingPosteringer) {
-        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTELSE, BetalingType.KREDIT); // 6381
+        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTEL, BetalingType.K); // 6381
         return sumFeilutbetalingPosteringer.signum() == -1
                 ? sumPosteringer.add(sumFeilutbetalingPosteringer)
                 : sumPosteringer;
@@ -342,7 +342,7 @@ public class SimuleringBeregningTjeneste {
                 .orElse(BigDecimal.ZERO);
     }
 
-    private static Map<FagOmrådeKode, List<SimulertPostering>> grupperPerFagområde(List<SimulertPostering> posteringer) {
+    private static Map<Fagområde, List<SimulertPostering>> grupperPerFagområde(List<SimulertPostering> posteringer) {
         return posteringer.stream()
                 .collect(Collectors.groupingBy(SimulertPostering::getFagOmrådeKode));
     }

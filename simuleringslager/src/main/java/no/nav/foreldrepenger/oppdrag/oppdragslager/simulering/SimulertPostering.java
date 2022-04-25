@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,22 +16,22 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseEntitet;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseCreateableEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 @Entity(name = "SimulertPostering")
 @Table(name = "SIMULERT_POSTERING")
-public class SimulertPostering extends BaseEntitet {
+public class SimulertPostering extends BaseCreateableEntitet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SIMULERT_POSTERING")
     private Long id;
 
-    @Convert(converter = FagOmrådeKode.KodeverdiConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "fag_omraade_kode", nullable = false)
-    private FagOmrådeKode fagOmrådeKode = FagOmrådeKode.UDEFINERT;
+    private Fagområde fagOmrådeKode;
 
     @Column(name = "fom", nullable = false)
     private LocalDate fom;
@@ -37,16 +39,16 @@ public class SimulertPostering extends BaseEntitet {
     @Column(name = "tom", nullable = false)
     private LocalDate tom;
 
-    @Convert(converter = BetalingType.KodeverdiConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "betaling_type", nullable = false)
-    private BetalingType betalingType = BetalingType.UDEFINERT;
+    private BetalingType betalingType;
 
     @Column(name = "beloep", nullable = false)
     private BigDecimal beløp;
 
-    @Convert(converter = PosteringType.KodeverdiConverter.class)
-    @Column(name = "postering_type", nullable = false)
-    private PosteringType posteringType = PosteringType.UDEFINERT;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "postering_type")
+    private PosteringType posteringType = null;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "simulering_mottaker_id", nullable = false)
@@ -71,7 +73,7 @@ public class SimulertPostering extends BaseEntitet {
         return id;
     }
 
-    public FagOmrådeKode getFagOmrådeKode() {
+    public Fagområde getFagOmrådeKode() {
         return fagOmrådeKode;
     }
 
@@ -114,19 +116,19 @@ public class SimulertPostering extends BaseEntitet {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "<id=" + id //$NON-NLS-1$
-                + (fagOmrådeKode != null ? ", fagOmrådeKode=" + fagOmrådeKode.getKode() : "")//$NON-NLS-1$
+                + ", fagOmrådeKode=" + fagOmrådeKode //$NON-NLS-1$
                 + ", fom=" + fom //$NON-NLS-1$
                 + ", tom=" + tom //$NON-NLS-1$
-                + (betalingType != null ? ", betalingType=" + betalingType.getKode() : "") //$NON-NLS-1$
+                + ", betalingType=" + betalingType //$NON-NLS-1$
                 + ", beløp=" + beløp //$NON-NLS-1$
-                + (posteringType != null ? ", posteringType=" + posteringType.getKode() : "") //$NON-NLS-1$
+                + (posteringType != null ? ", posteringType=" + posteringType : "") //$NON-NLS-1$
                 + ", utenInntrekk=" + utenInntrekk //$NON-NLS-1$
                 + ">"; //$NON-NLS-1$
 
     }
 
     public static class Builder {
-        private FagOmrådeKode fagOmrådeKode;
+        private Fagområde fagOmrådeKode;
         private LocalDate fom;
         private LocalDate tom;
         private BetalingType betalingType;
@@ -135,7 +137,7 @@ public class SimulertPostering extends BaseEntitet {
         private LocalDate forfallsdato;
         private boolean utenInntrekk;
 
-        public Builder medFagOmraadeKode(FagOmrådeKode fagOmrådeKode) {
+        public Builder medFagOmraadeKode(Fagområde fagOmrådeKode) {
             this.fagOmrådeKode = fagOmrådeKode;
             return this;
         }

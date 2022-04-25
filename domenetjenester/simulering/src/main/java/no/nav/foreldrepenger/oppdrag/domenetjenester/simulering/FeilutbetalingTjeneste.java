@@ -1,7 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
 import static java.time.temporal.ChronoUnit.DAYS;
-import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.FEILUTBETALING;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.FEIL;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.PeriodeDto;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
@@ -37,12 +37,12 @@ public class FeilutbetalingTjeneste {
                 .filter(m -> m.getMottakerType().equals(MottakerType.BRUKER))
                 .findFirst();
 
-        FagOmrådeKode fagOmrådeKodeForBruker = FagOmrådeKode.getFagOmrådeKodeForBrukerForYtelseType(simuleringGrunnlag.getYtelseType());
+        Fagområde fagOmrådeKodeForBruker = Fagområde.utledFra(simuleringGrunnlag.getYtelseType());
 
         if (mottaker.isPresent()) {
             List<SimulertPostering> posteringer = mottaker.get().getSimulertePosteringerForFeilutbetaling().stream()
                     .filter(p -> fagOmrådeKodeForBruker.equals(p.getFagOmrådeKode()))
-                    .filter(p -> PosteringType.FEILUTBETALING.equals(p.getPosteringType()))
+                    .filter(p -> PosteringType.FEIL.equals(p.getPosteringType()))
                     .collect(Collectors.toList());
 
             List<PeriodeDto> feilutbetaltePerioder = finnFeilutbetaltePerioder(posteringer)
@@ -63,7 +63,7 @@ public class FeilutbetalingTjeneste {
     }
 
     static List<Periode> slåSammenSammenhengendePerioder(List<Periode> periodeListe) {
-        List<Periode> sortertListe = periodeListe.stream().sorted(Comparator.comparing(Periode::getPeriodeFom)).collect(Collectors.toList());
+        List<Periode> sortertListe = periodeListe.stream().sorted(Comparator.comparing(Periode::getPeriodeFom)).toList();
         List<Periode> resultat = new ArrayList<>();
         LocalDate fom = null;
         LocalDate tom = null;
@@ -96,7 +96,7 @@ public class FeilutbetalingTjeneste {
 
         boolean erHverdagerIMellom = førstePeriodeTom.plusDays(1)
                 .datesUntil(p.getPeriodeFom())
-                .anyMatch(d -> !erHelg(d.getDayOfWeek()));
+                .anyMatch(d -> erIkkeHelg(d.getDayOfWeek()));
         return !erHverdagerIMellom;
     }
 
@@ -104,7 +104,7 @@ public class FeilutbetalingTjeneste {
         int antallVirkedager = 0;
         LocalDate dato = fom;
         while (!dato.isAfter(tom)) {
-            if (!erHelg(dato.getDayOfWeek())) {
+            if (erIkkeHelg(dato.getDayOfWeek())) {
                 antallVirkedager++;
             }
             dato = dato.plusDays(1);
@@ -120,8 +120,8 @@ public class FeilutbetalingTjeneste {
         return BigDecimal.ZERO;
     }
 
-    static boolean erHelg(DayOfWeek dag) {
-        return dag.equals(DayOfWeek.SATURDAY) || dag.equals(DayOfWeek.SUNDAY);
+    static boolean erIkkeHelg(DayOfWeek dag) {
+        return !dag.equals(DayOfWeek.SATURDAY) && !dag.equals(DayOfWeek.SUNDAY);
     }
 
 
@@ -132,7 +132,7 @@ public class FeilutbetalingTjeneste {
         Map<YearMonth, List<SimulertPostering>> resultat = new HashMap<>();
 
         for (var entry : posteringerPerMåned.entrySet()) {
-            boolean harFeilutbetaling = entry.getValue().stream().anyMatch(p -> p.getPosteringType().equals(FEILUTBETALING));
+            boolean harFeilutbetaling = entry.getValue().stream().anyMatch(p -> p.getPosteringType().equals(FEIL));
             if (harFeilutbetaling) {
                 resultat.put(entry.getKey(), entry.getValue());
             }

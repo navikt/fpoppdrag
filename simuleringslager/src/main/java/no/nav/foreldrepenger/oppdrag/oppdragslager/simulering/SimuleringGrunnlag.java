@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,6 +30,10 @@ public class SimuleringGrunnlag extends BaseEntitet {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GR_SIMULERING")
     private Long id;
 
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private Long versjon;
+
     @Embedded
     private BehandlingRef eksternReferanse;
 
@@ -42,16 +48,12 @@ public class SimuleringGrunnlag extends BaseEntitet {
     @Column(name = "aktiv", nullable = false)
     private boolean aktiv;
 
-    @Version
-    @Column(name = "versjon", nullable = false)
-    private Long versjon;
-
     @Column(name = "simulering_kjoert_dato", nullable = false, updatable = false)
     private LocalDateTime simuleringKjørtDato = LocalDateTime.now();
 
-    @Convert(converter = YtelseType.KodeverdiConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "ytelse_type", nullable = false)
-    private YtelseType ytelseType = YtelseType.UDEFINERT;
+    private YtelseType ytelseType;
 
     private SimuleringGrunnlag() {
         // Hibernate
@@ -136,7 +138,7 @@ public class SimuleringGrunnlag extends BaseEntitet {
                 + ", simuleringResultat=" + simuleringResultat.getId() //$NON-NLS-1$
                 + ", eksternReferanse=" + eksternReferanse.getBehandlingId() //$NON-NLS-1$
                 + ", aktiv=" + aktiv //$NON-NLS-1$
-                + ", ytelseType=" + ytelseType.getKode() //$NON-NLS-1$
+                + ", ytelseType=" + ytelseType.name() //$NON-NLS-1$
                 + ", versjon=" + versjon //$NON-NLS-1$
                 + ">"; //$NON-NLS-1$
 

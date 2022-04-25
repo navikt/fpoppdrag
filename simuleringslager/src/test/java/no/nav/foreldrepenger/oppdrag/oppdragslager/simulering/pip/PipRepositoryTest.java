@@ -38,7 +38,7 @@ public class PipRepositoryTest {
                 .medSimuleringResultat(SimuleringResultat.builder().build())
                 .medAktørId(aktørId)
                 .medEksternReferanse(new BehandlingRef(behandlingId))
-                .medYtelseType(YtelseType.FORELDREPENGER)
+                .medYtelseType(YtelseType.FP)
                 .build();
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
         Optional<String> aktørIdForBehandling = pipRepository.getAktørIdForBehandling(behandlingId);
