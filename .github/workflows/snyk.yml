@@ -13,7 +13,7 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
-          cache: maven
+          
       - uses: snyk/actions/setup@master
 
       - name: Setup maven
