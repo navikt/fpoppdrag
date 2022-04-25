@@ -2,8 +2,8 @@ package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.D;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.K;
-import static no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode.FORELDREPENGER;
-import static no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode.SYKEPENGER;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde.FP;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde.SP;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.FEIL;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.SKAT;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.JUST;
@@ -25,7 +25,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
@@ -64,13 +64,13 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     private BigDecimal beregnInntrekk(Mottaker mottaker, List<SimulertBeregningPeriode> perioder) {
-        return simuleringBeregningTjeneste.finnInntrekk(Map.of(mottaker, perioder), FagOmrådeKode.FORELDREPENGER);
+        return simuleringBeregningTjeneste.finnInntrekk(Map.of(mottaker, perioder), Fagområde.FP);
     }
 
     private SimulertBeregningPeriode lagPeriodeMedMotregning(Periode periode, int motregning) {
         return SimulertBeregningPeriode.builder()
                 .medPeriode(periode)
-                .medBeregning(FORELDREPENGER, SimulertBeregning.builder().medMotregning(BigDecimal.valueOf(motregning)).build())
+                .medBeregning(FP, SimulertBeregning.builder().medMotregning(BigDecimal.valueOf(motregning)).build())
                 .build();
     }
 
@@ -79,11 +79,11 @@ public class SimuleringBeregningTjenesteInntrekkTest {
 
         // Act
         BigDecimal tidligereUtbetaltBeløp = SimuleringBeregningTjeneste.beregnTidligereUtbetaltBeløp(Arrays.asList(
-                postering("01.09.2018-15.09.2018", FORELDREPENGER, YTEL, K, 3000),
-                postering("16.09.2018-30.09.2018", FORELDREPENGER, YTEL, K, 2000),
-                postering("16.09.2018-30.09.2018", FORELDREPENGER, YTEL, D, 1500),
-                postering("01.09.2018-30.09.2018", FORELDREPENGER, SKAT, K, 100),
-                postering("01.09.2018-30.09.2018", FORELDREPENGER, SKAT, D, 200)));
+                postering("01.09.2018-15.09.2018", FP, YTEL, K, 3000),
+                postering("16.09.2018-30.09.2018", FP, YTEL, K, 2000),
+                postering("16.09.2018-30.09.2018", FP, YTEL, D, 1500),
+                postering("01.09.2018-30.09.2018", FP, SKAT, K, 100),
+                postering("01.09.2018-30.09.2018", FP, SKAT, D, 200)));
 
         //Assert
         assertThat(tidligereUtbetaltBeløp).isEqualTo(BigDecimal.valueOf(5000));
@@ -93,12 +93,12 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     public void skal_ha_at_nytt_beløp_er_sum_av_debetposter_for_ytelse() {
         // Act
         BigDecimal nyttBeløp = SimuleringBeregningTjeneste.beregnNyttBeløp(Arrays.asList(
-                postering("01.09.2018-15.09.2018", FORELDREPENGER, YTEL, K, 3000),
-                postering("16.09.2018-30.09.2018", FORELDREPENGER, YTEL, K, 2000),
-                postering("16.09.2018-30.09.2018", FORELDREPENGER, YTEL, D, 1500),
-                postering("01.09.2018-15.09.2018", FORELDREPENGER, YTEL, D, 1000),
-                postering("01.09.2018-30.09.2018", FORELDREPENGER, SKAT, K, 100),
-                postering("01.09.2018-30.09.2018", FORELDREPENGER, SKAT, D, 200)));
+                postering("01.09.2018-15.09.2018", FP, YTEL, K, 3000),
+                postering("16.09.2018-30.09.2018", FP, YTEL, K, 2000),
+                postering("16.09.2018-30.09.2018", FP, YTEL, D, 1500),
+                postering("01.09.2018-15.09.2018", FP, YTEL, D, 1000),
+                postering("01.09.2018-30.09.2018", FP, SKAT, K, 100),
+                postering("01.09.2018-30.09.2018", FP, SKAT, D, 200)));
 
         // Assert
         assertThat(nyttBeløp).isEqualTo(BigDecimal.valueOf(2500));
@@ -109,11 +109,11 @@ public class SimuleringBeregningTjenesteInntrekkTest {
 
         // Act
         BigDecimal feilutbetaltBeløp = SimuleringBeregningTjeneste.beregnFeilutbetaltBeløp(Arrays.asList(
-                postering("01.09.2018-15.09.2018", FORELDREPENGER, YTEL, D, 1000),
-                postering("16.09.2018-30.09.2018", FORELDREPENGER, YTEL, D, 1500),
-                postering("01.09.2018-30.09.2018", FORELDREPENGER, SKAT, K, 100),
-                postering("01.09.2018-15.09.2018", FORELDREPENGER, FEIL, D, 100),
-                postering("16.09.2018-30.09.2018", FORELDREPENGER, FEIL, D, 200)));
+                postering("01.09.2018-15.09.2018", FP, YTEL, D, 1000),
+                postering("16.09.2018-30.09.2018", FP, YTEL, D, 1500),
+                postering("01.09.2018-30.09.2018", FP, SKAT, K, 100),
+                postering("01.09.2018-15.09.2018", FP, FEIL, D, 100),
+                postering("16.09.2018-30.09.2018", FP, FEIL, D, 200)));
 
         // Assert
         assertThat(feilutbetaltBeløp).isEqualTo(BigDecimal.valueOf(300));
@@ -123,11 +123,11 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     public void skal_beregne_posteringer_pr_måned_og_fagområde_scenario_med_etterbetaling() {
         // Act
         List<SimulertBeregningPeriode> simulertBeregningPerioder = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
-                postering("16.09.2018-30.09.2018", FORELDREPENGER, YTEL, K, 2000),
-                postering("16.09.2018-30.09.2018", FORELDREPENGER, YTEL, D, 1500),
-                postering("01.09.2018-15.09.2018", FORELDREPENGER, YTEL, D, 1000),
-                postering("01.09.2018-30.09.2018", FORELDREPENGER, SKAT, K, 100),
-                postering("01.09.2018-30.09.2018", FORELDREPENGER, SKAT, D, 200)));
+                postering("16.09.2018-30.09.2018", FP, YTEL, K, 2000),
+                postering("16.09.2018-30.09.2018", FP, YTEL, D, 1500),
+                postering("01.09.2018-15.09.2018", FP, YTEL, D, 1000),
+                postering("01.09.2018-30.09.2018", FP, SKAT, K, 100),
+                postering("01.09.2018-30.09.2018", FP, SKAT, D, 200)));
 
         // Assert
         assertThat(simulertBeregningPerioder).hasSize(1);
@@ -135,8 +135,8 @@ public class SimuleringBeregningTjenesteInntrekkTest {
         assertThat(periode.getPeriode().getPeriodeFom()).isEqualTo(LocalDate.of(2018, 9, 1));
         assertThat(periode.getPeriode().getPeriodeTom()).isEqualTo(LocalDate.of(2018, 9, 30));
 
-        assertThat(periode.getBeregningPerFagområde()).containsOnlyKeys(FORELDREPENGER);
-        SimulertBeregning simulertBeregning = periode.getBeregningPerFagområde().get(FORELDREPENGER);
+        assertThat(periode.getBeregningPerFagområde()).containsOnlyKeys(FP);
+        SimulertBeregning simulertBeregning = periode.getBeregningPerFagområde().get(FP);
         assertThat(simulertBeregning.getTidligereUtbetaltBeløp()).isEqualTo(BigDecimal.valueOf(2000));
         assertThat(simulertBeregning.getNyttBeregnetBeløp()).isEqualTo(BigDecimal.valueOf(2500));
         assertThat(simulertBeregning.getDifferanse()).isEqualTo(BigDecimal.valueOf(500));
@@ -150,10 +150,10 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     public void skal_beregne_posteringer_pr_måned_og_fagområde_scenario_med_feilutbetaling() {
         // Act
         List<SimulertBeregningPeriode> simulertBeregningPerioder = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
-                postering("01.09.2017-30.09.2017", FORELDREPENGER, YTEL, D, 8928),
-                postering("06.09.2017-30.09.2017", FORELDREPENGER, YTEL, D, 5958),
-                postering("06.09.2017-30.09.2017", FORELDREPENGER, YTEL, K, 14886),
-                postering("06.09.2017-30.09.2017", FORELDREPENGER, FEIL, D, 8928)));
+                postering("01.09.2017-30.09.2017", FP, YTEL, D, 8928),
+                postering("06.09.2017-30.09.2017", FP, YTEL, D, 5958),
+                postering("06.09.2017-30.09.2017", FP, YTEL, K, 14886),
+                postering("06.09.2017-30.09.2017", FP, FEIL, D, 8928)));
 
         // Assert
         assertThat(simulertBeregningPerioder).hasSize(1);
@@ -161,8 +161,8 @@ public class SimuleringBeregningTjenesteInntrekkTest {
         assertThat(periode.getPeriode().getPeriodeFom()).isEqualTo(LocalDate.of(2017, 9, 1));
         assertThat(periode.getPeriode().getPeriodeTom()).isEqualTo(LocalDate.of(2017, 9, 30));
 
-        assertThat(periode.getBeregningPerFagområde()).containsOnlyKeys(FORELDREPENGER);
-        SimulertBeregning simulertBeregning = periode.getBeregningPerFagområde().get(FORELDREPENGER);
+        assertThat(periode.getBeregningPerFagområde()).containsOnlyKeys(FP);
+        SimulertBeregning simulertBeregning = periode.getBeregningPerFagområde().get(FP);
         assertThat(simulertBeregning.getTidligereUtbetaltBeløp()).isEqualTo(BigDecimal.valueOf(14886));
         assertThat(simulertBeregning.getNyttBeregnetBeløp()).isEqualTo(BigDecimal.valueOf(5958));
         assertThat(simulertBeregning.getDifferanse()).isEqualTo(BigDecimal.valueOf(-8928));
@@ -176,21 +176,21 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     public void skal_beregne_posteringer_pr_måned_og_fagområde_scenario_med_sykepenger_og_foreldrepenger() {
         // Act
         List<SimulertBeregningPeriode> simulertBeregningPerioder = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
-                postering("01.09.2018-30.09.2018", SYKEPENGER, YTEL, D, 4000),
-                postering("01.09.2018-30.09.2018", SYKEPENGER, YTEL, K, 3000),
-                postering("16.09.2018-30.09.2018", FORELDREPENGER, YTEL, K, 2000),
-                postering("16.09.2018-30.09.2018", FORELDREPENGER, YTEL, D, 1500),
-                postering("01.09.2018-15.09.2018", FORELDREPENGER, YTEL, D, 1000)));
+                postering("01.09.2018-30.09.2018", SP, YTEL, D, 4000),
+                postering("01.09.2018-30.09.2018", SP, YTEL, K, 3000),
+                postering("16.09.2018-30.09.2018", FP, YTEL, K, 2000),
+                postering("16.09.2018-30.09.2018", FP, YTEL, D, 1500),
+                postering("01.09.2018-15.09.2018", FP, YTEL, D, 1000)));
 
         // Assert
         assertThat(simulertBeregningPerioder).hasSize(1);
         SimulertBeregningPeriode simulertBeregningPeriode = simulertBeregningPerioder.get(0);
-        assertThat(simulertBeregningPeriode.getBeregningPerFagområde()).containsOnlyKeys(FORELDREPENGER, SYKEPENGER);
+        assertThat(simulertBeregningPeriode.getBeregningPerFagområde()).containsOnlyKeys(FP, SP);
         assertThat(simulertBeregningPeriode.getPeriode().getPeriodeFom()).isEqualTo(LocalDate.of(2018, 9, 1));
         assertThat(simulertBeregningPeriode.getPeriode().getPeriodeTom()).isEqualTo(LocalDate.of(2018, 9, 30));
 
         // Assert - foreldrepenger
-        SimulertBeregning foreldrepengerBeregning = simulertBeregningPeriode.getBeregningPerFagområde().get(FORELDREPENGER);
+        SimulertBeregning foreldrepengerBeregning = simulertBeregningPeriode.getBeregningPerFagområde().get(FP);
         assertThat(foreldrepengerBeregning.getNyttBeregnetBeløp()).isEqualTo(BigDecimal.valueOf(2500));
         assertThat(foreldrepengerBeregning.getTidligereUtbetaltBeløp()).isEqualTo(BigDecimal.valueOf(2000));
         assertThat(foreldrepengerBeregning.getDifferanse()).isEqualTo(BigDecimal.valueOf(500));
@@ -199,7 +199,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
         assertThat(foreldrepengerBeregning.getMotregning()).isEqualTo(BigDecimal.ZERO);
 
         // Assert - sykepenger
-        SimulertBeregning sykepengerBeregning = simulertBeregningPeriode.getBeregningPerFagområde().get(SYKEPENGER);
+        SimulertBeregning sykepengerBeregning = simulertBeregningPeriode.getBeregningPerFagområde().get(SP);
         assertThat(sykepengerBeregning.getNyttBeregnetBeløp()).isEqualTo(BigDecimal.valueOf(4000));
         assertThat(sykepengerBeregning.getTidligereUtbetaltBeløp()).isEqualTo(BigDecimal.valueOf(3000));
         assertThat(sykepengerBeregning.getDifferanse()).isEqualTo(BigDecimal.valueOf(1000));
@@ -211,10 +211,10 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     @Test
     public void skal_summere_justeringskontoer() {
         BigDecimal resultat = SimuleringBeregningTjeneste.beregnMotregning(Arrays.asList(
-                postering("16.09.2018-30.09.2018", FORELDREPENGER, JUST, D, 1000),
-                postering("16.09.2018-30.09.2018", FORELDREPENGER, JUST, K, 500),
-                postering("01.09.2018-15.09.2018", FORELDREPENGER, YTEL, K, 3000),
-                postering("01.09.2018-15.09.2018", FORELDREPENGER, YTEL, D, 1000)));
+                postering("16.09.2018-30.09.2018", FP, JUST, D, 1000),
+                postering("16.09.2018-30.09.2018", FP, JUST, K, 500),
+                postering("01.09.2018-15.09.2018", FP, YTEL, K, 3000),
+                postering("01.09.2018-15.09.2018", FP, YTEL, D, 1000)));
 
         assertThat(resultat).isEqualTo(BigDecimal.valueOf(500));
 
@@ -222,8 +222,8 @@ public class SimuleringBeregningTjenesteInntrekkTest {
         assertThat(SimuleringBeregningTjeneste.beregnMotregning(Collections.emptyList())).isEqualTo(BigDecimal.ZERO);
 
         // Ingen justeringsposter skal gi sum 0
-        assertThat(SimuleringBeregningTjeneste.beregnMotregning(Arrays.asList(postering("01.09.2018-15.09.2018", FORELDREPENGER, YTEL, K, 3000),
-                postering("01.09.2018-15.09.2018", FORELDREPENGER, YTEL, D, 1000)))).isEqualTo(BigDecimal.ZERO);
+        assertThat(SimuleringBeregningTjeneste.beregnMotregning(Arrays.asList(postering("01.09.2018-15.09.2018", FP, YTEL, K, 3000),
+                postering("01.09.2018-15.09.2018", FP, YTEL, D, 1000)))).isEqualTo(BigDecimal.ZERO);
     }
 
     @Test
@@ -238,21 +238,21 @@ public class SimuleringBeregningTjenesteInntrekkTest {
 
         SimulertBeregningPeriode september = SimulertBeregningPeriode.builder()
                 .medPeriode(new Periode(LocalDate.of(2018, 9, 1), LocalDate.of(2018, 9, 30)))
-                .medBeregning(FagOmrådeKode.FORELDREPENGER, SimulertBeregning.builder()
+                .medBeregning(Fagområde.FP, SimulertBeregning.builder()
                         .medEtterbetaling(etterbetaling)
                         .build())
                 .build();
 
         SimulertBeregningPeriode oktober = SimulertBeregningPeriode.builder()
                 .medPeriode(new Periode(LocalDate.of(2018, 10, 1), LocalDate.of(2018, 10, 31)))
-                .medBeregning(FagOmrådeKode.FORELDREPENGER, SimulertBeregning.builder()
+                .medBeregning(Fagområde.FP, SimulertBeregning.builder()
                         .medFeilutbetaltBeløp(feilutbetaltBeløp)
                         .build())
                 .build();
 
         SimulertBeregningPeriode november = SimulertBeregningPeriode.builder()
                 .medPeriode(new Periode(LocalDate.of(2018, 11, 1), LocalDate.of(2018, 11, 30)))
-                .medBeregning(FagOmrådeKode.FORELDREPENGER, SimulertBeregning.builder()
+                .medBeregning(Fagområde.FP, SimulertBeregning.builder()
                         .medMotregning(inntrekkNesteMåned)
                         .build())
                 .build();
@@ -260,7 +260,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
         beregningsresultat.put(mottaker, Arrays.asList(september, oktober, november));
 
         // Act
-        Oppsummering oppsummering = simuleringBeregningTjeneste.opprettOppsummering(beregningsresultat, YtelseType.FORELDREPENGER);
+        Oppsummering oppsummering = simuleringBeregningTjeneste.opprettOppsummering(beregningsresultat, YtelseType.FP);
 
         // Assert
         assertThat(oppsummering.getEtterbetaling()).isEqualTo(etterbetaling);
@@ -280,14 +280,14 @@ public class SimuleringBeregningTjenesteInntrekkTest {
 
         SimulertBeregningPeriode simulertBeregningPeriode = SimulertBeregningPeriode.builder()
                 .medPeriode(new Periode(LocalDate.of(2018, 10, 1), LocalDate.of(2018, 10, 31)))
-                .medBeregning(FagOmrådeKode.ENGANGSSTØNAD, SimulertBeregning.builder()
+                .medBeregning(Fagområde.REFUTG, SimulertBeregning.builder()
                         .medFeilutbetaltBeløp(feilutbetaltBeløp)
                         .build())
                 .build();
         beregningsresultat.put(mottaker, Collections.singletonList(simulertBeregningPeriode));
 
         // Act
-        Oppsummering oppsummering = simuleringBeregningTjeneste.opprettOppsummering(beregningsresultat, YtelseType.ENGANGSTØNAD);
+        Oppsummering oppsummering = simuleringBeregningTjeneste.opprettOppsummering(beregningsresultat, YtelseType.ES);
 
         // Assert
         assertThat(oppsummering.getEtterbetaling()).isEqualTo(BigDecimal.ZERO);
@@ -302,18 +302,18 @@ public class SimuleringBeregningTjenesteInntrekkTest {
         // Act
         List<SimulertBeregningPeriode> resultat = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 // Posteringer for juni, feilutbetaling og inntrekk fra neste måned
-                postering("01.06.2017-19.06.2017", FORELDREPENGER, YTEL, D, 14952),
-                postering("01.06.2017-30.06.2017", FORELDREPENGER, JUST, D, 10680),
-                postering("01.06.2017-30.06.2017", FORELDREPENGER, JUST, D, 10680),
-                postering("01.06.2017-30.06.2017", FORELDREPENGER, YTEL, K, 46992),
-                postering("24.06.2017-30.06.2017", FORELDREPENGER, FEIL, D, 10680),
-                postering("24.06.2017-30.06.2017", FORELDREPENGER, YTEL, D, 10680),
-                postering("01.06.2017-30.06.2017", FORELDREPENGER, JUST, K, 10680),
-                postering("19.06.2017-23.06.2017", FORELDREPENGER, YTEL, D, 10680),
+                postering("01.06.2017-19.06.2017", FP, YTEL, D, 14952),
+                postering("01.06.2017-30.06.2017", FP, JUST, D, 10680),
+                postering("01.06.2017-30.06.2017", FP, JUST, D, 10680),
+                postering("01.06.2017-30.06.2017", FP, YTEL, K, 46992),
+                postering("24.06.2017-30.06.2017", FP, FEIL, D, 10680),
+                postering("24.06.2017-30.06.2017", FP, YTEL, D, 10680),
+                postering("01.06.2017-30.06.2017", FP, JUST, K, 10680),
+                postering("19.06.2017-23.06.2017", FP, YTEL, D, 10680),
 
                 //Posteringer for juli, med inntrekk
-                postering("01.07.2017-31.07.2017", FORELDREPENGER, JUST, K, 10680),
-                postering("03.07.2017-31.07.2017", FORELDREPENGER, YTEL, D, 44856)
+                postering("01.07.2017-31.07.2017", FP, JUST, K, 10680),
+                postering("03.07.2017-31.07.2017", FP, YTEL, D, 44856)
         ));
 
         // Assert
@@ -326,7 +326,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
         assertThat(resultatJuni.getResultat()).isEqualTo(BigDecimal.valueOf(-10680));
 
         assertThat(resultatJuni.getBeregningPerFagområde().keySet()).hasSize(1);
-        SimulertBeregning foreldrepengerJuni = resultatJuni.getBeregningPerFagområde().get(FORELDREPENGER);
+        SimulertBeregning foreldrepengerJuni = resultatJuni.getBeregningPerFagområde().get(FP);
         assertThat(foreldrepengerJuni.getTidligereUtbetaltBeløp()).isEqualTo(BigDecimal.valueOf(46992));
         assertThat(foreldrepengerJuni.getNyttBeregnetBeløp()).isEqualTo(BigDecimal.valueOf(25632));
         assertThat(foreldrepengerJuni.getDifferanse()).isEqualTo(BigDecimal.valueOf(-21360));
@@ -341,7 +341,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
         assertThat(resultatJuli.getResultat()).isEqualTo(BigDecimal.valueOf(34176));
 
         assertThat(resultatJuli.getBeregningPerFagområde().keySet()).hasSize(1);
-        SimulertBeregning foreldrepengerJuli = resultatJuli.getBeregningPerFagområde().get(FORELDREPENGER);
+        SimulertBeregning foreldrepengerJuli = resultatJuli.getBeregningPerFagområde().get(FP);
         assertThat(foreldrepengerJuli.getTidligereUtbetaltBeløp()).isEqualTo(BigDecimal.ZERO);
         assertThat(foreldrepengerJuli.getNyttBeregnetBeløp()).isEqualTo(BigDecimal.valueOf(44856));
         assertThat(foreldrepengerJuli.getDifferanse()).isEqualTo(BigDecimal.valueOf(44856));
@@ -355,14 +355,14 @@ public class SimuleringBeregningTjenesteInntrekkTest {
         // Act
         List<SimulertBeregningPeriode> resultat = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 // Posteringer for foreldrepenger
-                postering("01.09.2017-30.09.2017", FORELDREPENGER, SKAT, K, 5029),
-                postering("01.09.2017-30.09.2017", FORELDREPENGER, JUST, K, 517),
-                postering("06.09.2017-30.09.2017", FORELDREPENGER, YTEL, D, 14886),
+                postering("01.09.2017-30.09.2017", FP, SKAT, K, 5029),
+                postering("01.09.2017-30.09.2017", FP, JUST, K, 517),
+                postering("06.09.2017-30.09.2017", FP, YTEL, D, 14886),
 
                 // Posteringer for sykepenger
-                postering("01.09.2017-05.09.2017", SYKEPENGER, YTEL, D, 1551),
-                postering("01.09.2017-06.09.2017", SYKEPENGER, YTEL, K, 2068),
-                postering("01.09.2017-30.09.2017", SYKEPENGER, JUST, D, 517)
+                postering("01.09.2017-05.09.2017", SP, YTEL, D, 1551),
+                postering("01.09.2017-06.09.2017", SP, YTEL, K, 2068),
+                postering("01.09.2017-30.09.2017", SP, JUST, D, 517)
         ));
 
         // Assert
@@ -376,7 +376,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
         assertThat(periode.getBeregningPerFagområde().keySet()).hasSize(2);
 
         // Sjekker resultat for foreldrepenger
-        SimulertBeregning foreldrepenger = periode.getBeregningPerFagområde().get(FORELDREPENGER);
+        SimulertBeregning foreldrepenger = periode.getBeregningPerFagområde().get(FP);
         assertThat(foreldrepenger.getNyttBeregnetBeløp()).isEqualTo(BigDecimal.valueOf(14886));
         assertThat(foreldrepenger.getTidligereUtbetaltBeløp()).isEqualTo(BigDecimal.ZERO);
         assertThat(foreldrepenger.getDifferanse()).isEqualTo(BigDecimal.valueOf(14886));
@@ -386,7 +386,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
         assertThat(foreldrepenger.getEtterbetaling()).isEqualTo(BigDecimal.valueOf(14369));
 
         // Sjekker resultat for sykepenger
-        SimulertBeregning sykepenger = periode.getBeregningPerFagområde().get(SYKEPENGER);
+        SimulertBeregning sykepenger = periode.getBeregningPerFagområde().get(SP);
         assertThat(sykepenger.getNyttBeregnetBeløp()).isEqualTo(BigDecimal.valueOf(1551));
         assertThat(sykepenger.getTidligereUtbetaltBeløp()).isEqualTo(BigDecimal.valueOf(2068));
         assertThat(sykepenger.getDifferanse()).isEqualTo(BigDecimal.valueOf(-517));
@@ -399,24 +399,24 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     @Test
     public void beregnerPosteringerUtenInntrekk() {
         // Arrange
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder().medYtelseType(YtelseType.FORELDREPENGER)
+        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder().medYtelseType(YtelseType.FP)
                 .medAktørId("1234")
                 .medEksternReferanse(new BehandlingRef(12345L))
                 .medSimuleringKjørtDato(LocalDateTime.now())
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
-                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FORELDREPENGER, YTEL, K, 8000))
-                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FORELDREPENGER, YTEL, D, 7000))
-                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FORELDREPENGER, JUST, D, 1000))
-                                .medSimulertPostering(postering("01.10.2017-30.10.2017", FORELDREPENGER, YTEL, D, 7000))
-                                .medSimulertPostering(postering("01.10.2017-30.10.2017", FORELDREPENGER, JUST, K, 1000))
+                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FP, YTEL, K, 8000))
+                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FP, YTEL, D, 7000))
+                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FP, JUST, D, 1000))
+                                .medSimulertPostering(postering("01.10.2017-30.10.2017", FP, YTEL, D, 7000))
+                                .medSimulertPostering(postering("01.10.2017-30.10.2017", FP, JUST, K, 1000))
                                 // Uten inntrekk
-                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FORELDREPENGER, YTEL, K, 8000, true))
-                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FORELDREPENGER, YTEL, D, 7000, true))
-                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FORELDREPENGER, YTEL, D, 1000, true))
-                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FORELDREPENGER, FEIL, D, 1000, true))
-                                .medSimulertPostering(postering("01.10.2017-30.10.2017", FORELDREPENGER, YTEL, D, 7000, true))
+                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FP, YTEL, K, 8000, true))
+                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FP, YTEL, D, 7000, true))
+                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FP, YTEL, D, 1000, true))
+                                .medSimulertPostering(postering("01.09.2017-30.09.2017", FP, FEIL, D, 1000, true))
+                                .medSimulertPostering(postering("01.10.2017-30.10.2017", FP, YTEL, D, 7000, true))
                                 .build())
                         .build())
                 .build();
@@ -457,22 +457,22 @@ public class SimuleringBeregningTjenesteInntrekkTest {
         SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medSimuleringKjørtDato(LocalDateTime.now())
                 .medEksternReferanse(new BehandlingRef(345L))
-                .medYtelseType(YtelseType.FORELDREPENGER)
+                .medYtelseType(YtelseType.FP)
                 .medAktørId("12345")
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(
                                 SimuleringMottaker.builder()
                                         .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
-                                        .medSimulertPostering(postering("01.09.2018-30.09.2018", FORELDREPENGER, YTEL, D, 5029, idag))
-                                        .medSimulertPostering(postering("01.10.2018-31.10.2018", FORELDREPENGER, YTEL, D, 517, idag))
-                                        .medSimulertPostering(postering("01.11.2018-30.11.2018", FORELDREPENGER, YTEL, D, 14886, idag.plusWeeks(1))) // Neste utbetalingsperiode
+                                        .medSimulertPostering(postering("01.09.2018-30.09.2018", FP, YTEL, D, 5029, idag))
+                                        .medSimulertPostering(postering("01.10.2018-31.10.2018", FP, YTEL, D, 517, idag))
+                                        .medSimulertPostering(postering("01.11.2018-30.11.2018", FP, YTEL, D, 14886, idag.plusWeeks(1))) // Neste utbetalingsperiode
                                         .build())
                         .medSimuleringMottaker(
                                 SimuleringMottaker.builder()
                                         .medMottakerType(MottakerType.ARBG_ORG).medMottakerNummer("nummer")
-                                        .medSimulertPostering(postering("01.10.2018-31.10.2018", FORELDREPENGER, YTEL, D, 5029, idag))
-                                        .medSimulertPostering(postering("01.11.2018-30.11.2018", FORELDREPENGER, YTEL, D, 517, idag))
-                                        .medSimulertPostering(postering("01.12.2018-31.12.2018", FORELDREPENGER, YTEL, D, 14886, idag.plusWeeks(1))) // Neste utbetalingsperiode
+                                        .medSimulertPostering(postering("01.10.2018-31.10.2018", FP, YTEL, D, 5029, idag))
+                                        .medSimulertPostering(postering("01.11.2018-30.11.2018", FP, YTEL, D, 517, idag))
+                                        .medSimulertPostering(postering("01.12.2018-31.12.2018", FP, YTEL, D, 14886, idag.plusWeeks(1))) // Neste utbetalingsperiode
                                         .build())
                         .build())
                 .build();
@@ -499,23 +499,23 @@ public class SimuleringBeregningTjenesteInntrekkTest {
                 .findFirst();
     }
 
-    private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType,
+    private SimulertPostering postering(String periode, Fagområde fagOmrådeKode, PosteringType posteringType,
                                         BetalingType betalingType, int beløp) {
         return postering(periode, fagOmrådeKode, posteringType, betalingType, beløp, false, LocalDate.now());
     }
 
-    private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType,
+    private SimulertPostering postering(String periode, Fagområde fagOmrådeKode, PosteringType posteringType,
                                         BetalingType betalingType, int beløp, LocalDate forfallsdato) {
         return postering(periode, fagOmrådeKode, posteringType, betalingType, beløp, false, forfallsdato);
     }
 
-    private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType,
+    private SimulertPostering postering(String periode, Fagområde fagOmrådeKode, PosteringType posteringType,
                                         BetalingType betalingType, int beløp, boolean utenInntrekk) {
         return postering(periode, fagOmrådeKode, posteringType, betalingType, beløp, utenInntrekk, LocalDate.now());
     }
 
 
-    private SimulertPostering postering(String periode, FagOmrådeKode fagOmrådeKode, PosteringType posteringType,
+    private SimulertPostering postering(String periode, Fagområde fagOmrådeKode, PosteringType posteringType,
                                         BetalingType betalingType, int beløp, boolean utenInntrekk,
                                         LocalDate forfallsdato) {
         DateTimeFormatter datoformat = DateTimeFormatter.ofPattern("dd.MM.yyyy");

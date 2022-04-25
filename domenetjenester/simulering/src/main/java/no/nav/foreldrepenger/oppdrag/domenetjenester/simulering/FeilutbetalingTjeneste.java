@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.PeriodeDto;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
@@ -37,7 +37,7 @@ public class FeilutbetalingTjeneste {
                 .filter(m -> m.getMottakerType().equals(MottakerType.BRUKER))
                 .findFirst();
 
-        FagOmrådeKode fagOmrådeKodeForBruker = FagOmrådeKode.getFagOmrådeKodeForBrukerForYtelseType(simuleringGrunnlag.getYtelseType());
+        Fagområde fagOmrådeKodeForBruker = Fagområde.utledFra(simuleringGrunnlag.getYtelseType());
 
         if (mottaker.isPresent()) {
             List<SimulertPostering> posteringer = mottaker.get().getSimulertePosteringerForFeilutbetaling().stream()

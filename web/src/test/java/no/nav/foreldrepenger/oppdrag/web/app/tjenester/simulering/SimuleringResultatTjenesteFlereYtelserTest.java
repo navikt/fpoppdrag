@@ -3,8 +3,8 @@ package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering;
 
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.D;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.K;
-import static no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode.FORELDREPENGER;
-import static no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode.SYKEPENGER;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde.FP;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde.SP;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.YTEL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -23,7 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
@@ -71,21 +71,21 @@ public class SimuleringResultatTjenesteFlereYtelserTest {
         SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medAktørId(aktørId)
-                .medYtelseType(YtelseType.FORELDREPENGER)
+                .medYtelseType(YtelseType.FP)
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder()
                                 .medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer")
                                 // Første måned, kun sykepenger
-                                .medSimulertPostering(postering(august_01, august_31, K, YTEL, SYKEPENGER, 1000))
-                                .medSimulertPostering(postering(august_01, august_31, D, YTEL, SYKEPENGER, 2000))
+                                .medSimulertPostering(postering(august_01, august_31, K, YTEL, SP, 1000))
+                                .medSimulertPostering(postering(august_01, august_31, D, YTEL, SP, 2000))
                                 // Andre måned, foreldrepenger og sykepenger
-                                .medSimulertPostering(postering(september_01, september_30, K, YTEL, FORELDREPENGER, 2000))
-                                .medSimulertPostering(postering(september_01, september_30, D, YTEL, FORELDREPENGER, 7000))
-                                .medSimulertPostering(postering(september_01, september_30, K, YTEL, SYKEPENGER, 3000))
-                                .medSimulertPostering(postering(september_01, september_30, D, YTEL, SYKEPENGER, 4000))
+                                .medSimulertPostering(postering(september_01, september_30, K, YTEL, FP, 2000))
+                                .medSimulertPostering(postering(september_01, september_30, D, YTEL, FP, 7000))
+                                .medSimulertPostering(postering(september_01, september_30, K, YTEL, SP, 3000))
+                                .medSimulertPostering(postering(september_01, september_30, D, YTEL, SP, 4000))
                                 // Tredje måned, kun foreldrepenger
-                                .medSimulertPostering(postering(oktober_01, oktober_31, K, YTEL, FORELDREPENGER, 6000))
-                                .medSimulertPostering(postering(oktober_01, oktober_31, D, YTEL, FORELDREPENGER, 10000))
+                                .medSimulertPostering(postering(oktober_01, oktober_31, K, YTEL, FP, 6000))
+                                .medSimulertPostering(postering(oktober_01, oktober_31, D, YTEL, FP, 10000))
                                 .build())
                         .build())
                 .build();
@@ -111,7 +111,7 @@ public class SimuleringResultatTjenesteFlereYtelserTest {
 
         // Resultat for foreldrepenger -- Skal være sortert slik at foreldrepenger kommer først
         SimuleringResultatPerFagområdeDto foreldrepenger = mottakerBruker.getResultatPerFagområde().get(0);
-        assertThat(foreldrepenger.getFagOmrådeKode()).isEqualTo(FagOmrådeKode.FORELDREPENGER);
+        assertThat(foreldrepenger.getFagOmrådeKode()).isEqualTo(Fagområde.FP);
         assertThat(foreldrepenger.getRader()).hasSize(3);
         assertThat(foreldrepenger.getRader().get(0).getResultaterPerMåned()).hasSize(2);
         assertThat(foreldrepenger.getRader().get(0).getResultaterPerMåned().get(0).getPeriode().getFom()).isEqualTo(september_01);
@@ -120,7 +120,7 @@ public class SimuleringResultatTjenesteFlereYtelserTest {
 
         // Resultat for sykepenger
         SimuleringResultatPerFagområdeDto sykepenger = mottakerBruker.getResultatPerFagområde().get(1);
-        assertThat(sykepenger.getFagOmrådeKode()).isEqualTo(FagOmrådeKode.SYKEPENGER);
+        assertThat(sykepenger.getFagOmrådeKode()).isEqualTo(Fagområde.SP);
         assertThat(sykepenger.getRader()).hasSize(3);
         assertThat(sykepenger.getRader().get(0).getResultaterPerMåned()).hasSize(2);
         assertThat(sykepenger.getRader().get(0).getResultaterPerMåned().get(0).getPeriode().getFom()).isEqualTo(august_01);
@@ -163,7 +163,7 @@ public class SimuleringResultatTjenesteFlereYtelserTest {
     }
 
     private SimulertPostering postering(LocalDate fom, LocalDate tom, BetalingType betalingType, PosteringType posteringType,
-                                        FagOmrådeKode fagOmrådeKode, int beløp) {
+                                        Fagområde fagOmrådeKode, int beløp) {
         return SimulertPostering.builder()
                 .medFagOmraadeKode(fagOmrådeKode)
                 .medFom(fom)

@@ -16,7 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.BaseCreateableEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
@@ -29,9 +29,9 @@ public class SimulertPostering extends BaseCreateableEntitet {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SIMULERT_POSTERING")
     private Long id;
 
-    @Convert(converter = FagOmrådeKode.KodeverdiConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "fag_omraade_kode", nullable = false)
-    private FagOmrådeKode fagOmrådeKode = FagOmrådeKode.UDEFINERT;
+    private Fagområde fagOmrådeKode;
 
     @Column(name = "fom", nullable = false)
     private LocalDate fom;
@@ -73,7 +73,7 @@ public class SimulertPostering extends BaseCreateableEntitet {
         return id;
     }
 
-    public FagOmrådeKode getFagOmrådeKode() {
+    public Fagområde getFagOmrådeKode() {
         return fagOmrådeKode;
     }
 
@@ -116,7 +116,7 @@ public class SimulertPostering extends BaseCreateableEntitet {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "<id=" + id //$NON-NLS-1$
-                + (fagOmrådeKode != null ? ", fagOmrådeKode=" + fagOmrådeKode.getKode() : "")//$NON-NLS-1$
+                + ", fagOmrådeKode=" + fagOmrådeKode //$NON-NLS-1$
                 + ", fom=" + fom //$NON-NLS-1$
                 + ", tom=" + tom //$NON-NLS-1$
                 + ", betalingType=" + betalingType //$NON-NLS-1$
@@ -128,7 +128,7 @@ public class SimulertPostering extends BaseCreateableEntitet {
     }
 
     public static class Builder {
-        private FagOmrådeKode fagOmrådeKode;
+        private Fagområde fagOmrådeKode;
         private LocalDate fom;
         private LocalDate tom;
         private BetalingType betalingType;
@@ -137,7 +137,7 @@ public class SimulertPostering extends BaseCreateableEntitet {
         private LocalDate forfallsdato;
         private boolean utenInntrekk;
 
-        public Builder medFagOmraadeKode(FagOmrådeKode fagOmrådeKode) {
+        public Builder medFagOmraadeKode(Fagområde fagOmrådeKode) {
             this.fagOmrådeKode = fagOmrådeKode;
             return this;
         }

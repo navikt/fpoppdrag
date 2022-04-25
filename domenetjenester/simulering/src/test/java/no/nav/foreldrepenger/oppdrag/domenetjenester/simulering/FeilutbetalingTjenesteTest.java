@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.PeriodeDto;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
@@ -51,7 +51,7 @@ public class FeilutbetalingTjenesteTest {
         SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(1245L))
                 .medAktørId("789")
-                .medYtelseType(YtelseType.FORELDREPENGER)
+                .medYtelseType(YtelseType.FP)
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(mottaker)
                         .build())
@@ -79,7 +79,7 @@ public class FeilutbetalingTjenesteTest {
         SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(1245L))
                 .medAktørId("789")
-                .medYtelseType(YtelseType.FORELDREPENGER)
+                .medYtelseType(YtelseType.FP)
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(mottaker)
                         .build())
@@ -157,7 +157,7 @@ public class FeilutbetalingTjenesteTest {
         SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(1245L))
                 .medAktørId("789")
-                .medYtelseType(YtelseType.FORELDREPENGER)
+                .medYtelseType(YtelseType.FP)
                 .medSimuleringResultat(SimuleringResultat.builder()
                         .medSimuleringMottaker(SimuleringMottaker.builder().medMottakerType(MottakerType.ARBG_ORG).medMottakerNummer("nummer")
                                 .build())
@@ -183,7 +183,7 @@ public class FeilutbetalingTjenesteTest {
 
     SimulertPostering lagYtelsePostering(LocalDate fom, LocalDate tom, long beløp) {
         return new SimulertPostering.Builder()
-                .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
+                .medFagOmraadeKode(Fagområde.FP)
                 .medBetalingType(BetalingType.D)
                 .medBeløp(BigDecimal.valueOf(beløp))
                 .medPosteringType(PosteringType.YTEL)
@@ -193,7 +193,7 @@ public class FeilutbetalingTjenesteTest {
 
     SimulertPostering lagFeilUtbetalingPostering(LocalDate fom, LocalDate tom, long beløp) {
         return new SimulertPostering.Builder()
-                .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
+                .medFagOmraadeKode(Fagområde.FP)
                 .medBetalingType(BetalingType.D)
                 .medBeløp(BigDecimal.valueOf(beløp))
                 .medPosteringType(PosteringType.FEIL)
@@ -204,7 +204,7 @@ public class FeilutbetalingTjenesteTest {
     // Postering for tidligere utbetalt beløp
     private SimulertPostering opprettKreditPostering(LocalDate fom, LocalDate tom, long beløp) {
         return new SimulertPostering.Builder()
-                .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
+                .medFagOmraadeKode(Fagområde.FP)
                 .medBetalingType(BetalingType.K)
                 .medBeløp(BigDecimal.valueOf(beløp))
                 .medPosteringType(PosteringType.YTEL)
@@ -215,7 +215,7 @@ public class FeilutbetalingTjenesteTest {
     // Postering for nytt beregnet beløp
     private SimulertPostering opprettDebetPostering(LocalDate fom, LocalDate tom, long beløp) {
         return new SimulertPostering.Builder()
-                .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
+                .medFagOmraadeKode(Fagområde.FP)
                 .medBetalingType(BetalingType.D)
                 .medBeløp(BigDecimal.valueOf(beløp))
                 .medPosteringType(PosteringType.YTEL)

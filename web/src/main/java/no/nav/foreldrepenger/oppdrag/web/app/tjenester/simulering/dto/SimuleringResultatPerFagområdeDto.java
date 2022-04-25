@@ -5,14 +5,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 
 public class SimuleringResultatPerFagområdeDto {
 
-    private FagOmrådeKode fagOmrådeKode;
+    private Fagområde fagOmrådeKode;
     private List<SimuleringResultatRadDto> rader = new ArrayList<>();
 
-    public FagOmrådeKode getFagOmrådeKode() {
+    public Fagområde getFagOmrådeKode() {
         return fagOmrådeKode;
     }
 
@@ -23,7 +23,7 @@ public class SimuleringResultatPerFagområdeDto {
     public static class Builder {
         SimuleringResultatPerFagområdeDto kladd = new SimuleringResultatPerFagområdeDto();
 
-        public Builder medFagområdeKode(FagOmrådeKode fagOmrådeKode) {
+        public Builder medFagområdeKode(Fagområde fagOmrådeKode) {
             kladd.fagOmrådeKode = fagOmrådeKode;
             return this;
         }

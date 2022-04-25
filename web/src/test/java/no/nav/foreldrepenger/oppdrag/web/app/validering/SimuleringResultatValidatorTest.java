@@ -17,7 +17,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.dto.SimuleringDetaljerDto;
@@ -30,10 +30,10 @@ public class SimuleringResultatValidatorTest {
     private static final BigDecimal BELØP = BigDecimal.valueOf(100.00);
     private static final String KREDIT_TYPE = BetalingType.K.name();
     private static final String POSTERINGTYPE = PosteringType.JUST.name();
-    private static LocalDate FOM = LocalDate.of(2018, 11, 1);
-    private static LocalDate TOM = LocalDate.of(2018, 11, 30);
-    private static LocalDate FORFALL = TOM.plusDays(14);
-    private static String FAGOMRÅDEKODE = FagOmrådeKode.SYKEPENGER.getKode();
+    private static final LocalDate FOM = LocalDate.of(2018, 11, 1);
+    private static final LocalDate TOM = LocalDate.of(2018, 11, 30);
+    private static final LocalDate FORFALL = TOM.plusDays(14);
+    private static final String FAGOMRÅDEKODE = Fagområde.SP.name();
     private static Validator validator;
 
     @BeforeAll

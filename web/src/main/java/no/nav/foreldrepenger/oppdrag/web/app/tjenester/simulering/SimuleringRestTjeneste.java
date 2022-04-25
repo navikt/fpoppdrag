@@ -37,8 +37,6 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 @Transactional
 public class SimuleringRestTjeneste {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SimuleringRestTjeneste.class);
-
     private SimuleringResultatTjeneste simuleringResultatTjeneste;
     private StartSimuleringTjeneste startSimuleringTjeneste;
 

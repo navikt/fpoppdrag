@@ -31,8 +31,7 @@ import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.OppdragMapper;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.SimuleringResultatTransformer;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
@@ -249,7 +248,7 @@ public class StartSimuleringTjenesteTest {
         // Assert
         Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
         assertThat(grunnlagOpt1).isPresent();
-        assertThat(grunnlagOpt1.get().getYtelseType()).isEqualTo(YtelseType.FORELDREPENGER);
+        assertThat(grunnlagOpt1.get().getYtelseType()).isEqualTo(YtelseType.FP);
     }
 
     private SimulerBeregningResponse lagRespons(String gjelderId, String fagsysId) {
@@ -288,7 +287,7 @@ public class StartSimuleringTjenesteTest {
     private BeregningStoppnivaa opprettBeregningStoppnivå(String gjelderId, String fagsysId, String forfallsdato) {
         BeregningStoppnivaa stoppnivaa = new BeregningStoppnivaa();
 
-        stoppnivaa.setKodeFagomraade(FagOmrådeKode.FORELDREPENGER.getKode());
+        stoppnivaa.setKodeFagomraade(Fagområde.FP.name());
         stoppnivaa.setUtbetalesTilId(gjelderId);
         stoppnivaa.setUtbetalesTilNavn("asfasf");
         stoppnivaa.setBehandlendeEnhet("8052");
@@ -321,8 +320,6 @@ public class StartSimuleringTjenesteTest {
         stoppnivaaDetaljer.setUforeGrad(BigInteger.valueOf(100L));
         stoppnivaaDetaljer.setDelytelseId("3523");
         stoppnivaaDetaljer.setBostedsenhet("4643");
-        stoppnivaaDetaljer.setKlassekode(KlasseKode.FPATORD.getKode());
-        stoppnivaaDetaljer.setKlasseKodeBeskrivelse("lsdfskød");
         stoppnivaaDetaljer.setTypeKlasse(posteringType.name());
         stoppnivaaDetaljer.setTypeKlasseBeskrivelse("sfas");
 

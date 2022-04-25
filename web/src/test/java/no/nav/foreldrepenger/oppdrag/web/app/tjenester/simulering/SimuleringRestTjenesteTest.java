@@ -24,8 +24,7 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.SimuleringResultatTransformer;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.KlasseKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXmlRepository;
@@ -132,7 +131,7 @@ public class SimuleringRestTjenesteTest {
         BeregningStoppnivaa bsn = new BeregningStoppnivaa();
         bsn.setStoppNivaaId(BigInteger.ONE);
         bsn.setUtbetalesTilNavn("bob");
-        bsn.setKodeFagomraade(FagOmrådeKode.FORELDREPENGER.getKode());
+        bsn.setKodeFagomraade(Fagområde.FP.name());
         bsn.setUtbetalesTilId("123456789");
         bsn.setOppdragsId(123421L);
         bsn.setForfall("2018-12-15");
@@ -148,7 +147,6 @@ public class SimuleringRestTjenesteTest {
 
     private BeregningStoppnivaaDetaljer lagBeregningsStoppNivåDetaljer() {
         BeregningStoppnivaaDetaljer bsnd = new BeregningStoppnivaaDetaljer();
-        bsnd.setKlassekode(KlasseKode.FPATFRI.getKode());
         bsnd.setBostedsenhet("8002");
         bsnd.setUforeGrad(BigInteger.ZERO);
         bsnd.setKravhaverId("123456789");

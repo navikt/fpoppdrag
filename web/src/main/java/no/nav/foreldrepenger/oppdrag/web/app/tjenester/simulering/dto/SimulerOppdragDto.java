@@ -67,7 +67,7 @@ public class SimulerOppdragDto implements AbacDto {
     public List<String> getOppdragPrMottakerDecoded() {
         return oppdragPrMottaker.stream()
                 .filter(Objects::nonNull)
-                .map(str -> new String(Base64.getDecoder().decode(str.getBytes(Charset.forName("UTF-8"))), UTF_8))
+                .map(str -> new String(Base64.getDecoder().decode(str.getBytes(UTF_8)), UTF_8))
                 .collect(Collectors.toList());
     }
 
@@ -76,7 +76,7 @@ public class SimulerOppdragDto implements AbacDto {
         Objects.requireNonNull(råXml, "Rå XML kan ikke være null");
         List<String> encoded = råXml.stream()
                 .map(str -> Base64.getEncoder()
-                        .encodeToString(str.getBytes(Charset.forName("UTF-8"))))
+                        .encodeToString(str.getBytes(UTF_8)))
                 .collect(Collectors.toList());
         return new SimulerOppdragDto(behandlingId, encoded);
     }

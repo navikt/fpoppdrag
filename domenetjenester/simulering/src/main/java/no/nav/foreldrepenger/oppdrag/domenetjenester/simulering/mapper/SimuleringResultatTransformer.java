@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
@@ -72,7 +72,7 @@ public class SimuleringResultatTransformer {
         SimulertPostering.Builder posteringBuilder = SimulertPostering.builder()
                 .medBetalingType(utledBetalingType(detaljer.getBelop()))
                 .medBeløp(detaljer.getBelop())
-                .medFagOmraadeKode(FagOmrådeKode.fraKodeDefaultUdefinert(stoppnivaa.getKodeFagomraade()))
+                .medFagOmraadeKode(Fagområde.fraKode(stoppnivaa.getKodeFagomraade()))
                 .medFom(parseDato(detaljer.getFaktiskFom()))
                 .medTom(parseDato(detaljer.getFaktiskTom()))
                 .medForfallsdato(parseDato(stoppnivaa.getForfall()))

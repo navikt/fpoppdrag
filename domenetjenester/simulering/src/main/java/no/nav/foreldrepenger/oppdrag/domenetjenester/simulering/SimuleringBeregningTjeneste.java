@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
@@ -99,8 +99,8 @@ public class SimuleringBeregningTjeneste {
             SimulertBeregningPeriode.Builder simulertBeregningBuilder = SimulertBeregningPeriode.builder()
                     .medPeriode(periode);
 
-            Map<FagOmrådeKode, List<SimulertPostering>> posteringerPerFagområde = grupperPerFagområde(entry.getValue());
-            for (Map.Entry<FagOmrådeKode, List<SimulertPostering>> entryPerFagomr : posteringerPerFagområde.entrySet()) {
+            Map<Fagområde, List<SimulertPostering>> posteringerPerFagområde = grupperPerFagområde(entry.getValue());
+            for (Map.Entry<Fagområde, List<SimulertPostering>> entryPerFagomr : posteringerPerFagområde.entrySet()) {
                 SimulertBeregning simulertBeregning = beregnPosteringerPerFagområde(entryPerFagomr.getValue());
                 simulertBeregningBuilder.medBeregning(entryPerFagomr.getKey(), simulertBeregning)
                         .leggTilPåResultat(simulertBeregning.getResultat())
@@ -118,9 +118,9 @@ public class SimuleringBeregningTjeneste {
         oppsummering.setPeriodeFom(finnOppsummertPeriodeFom(beregningsresultat));
         oppsummering.setPeriodeTom(finnOppsummertPeriodeTom(beregningsresultat));
 
-        FagOmrådeKode fagOmrådeKode = FagOmrådeKode.getFagOmrådeKodeForBrukerForYtelseType(ytelseType);
+        Fagområde fagOmrådeKode = Fagområde.utledFra(ytelseType);
 
-        if (!ytelseType.gjelderEngangsstønad()) {
+        if (ytelseType.erIkkeEngangsstønad()) {
             oppsummering.setInntrekkNesteUtbetaling(finnInntrekk(beregningsresultat, fagOmrådeKode));
         }
 
@@ -139,11 +139,11 @@ public class SimuleringBeregningTjeneste {
         return oppsummering;
     }
 
-    BigDecimal finnInntrekk(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, FagOmrådeKode fagOmrådeKode) {
+    BigDecimal finnInntrekk(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, Fagområde fagOmrådeKode) {
         return finnInntrekkSum(beregningsresultat, fagOmrådeKode);
     }
 
-    private static BigDecimal finnInntrekkSum(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, FagOmrådeKode fagOmrådeKode) {
+    private static BigDecimal finnInntrekkSum(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, Fagområde fagOmrådeKode) {
         Optional<Mottaker> mottakerBrukerOpt = beregningsresultat.keySet().stream().filter(m -> m.getMottakerType().equals(MottakerType.BRUKER)).findFirst();
         if (mottakerBrukerOpt.isPresent()) {
             Mottaker mottaker = mottakerBrukerOpt.get();
@@ -153,7 +153,7 @@ public class SimuleringBeregningTjeneste {
         return BigDecimal.ZERO;
     }
 
-    private static BigDecimal finnInntrekkSum(List<SimulertBeregningPeriode> perioder, FagOmrådeKode fagOmrådeKode) {
+    private static BigDecimal finnInntrekkSum(List<SimulertBeregningPeriode> perioder, Fagområde fagOmrådeKode) {
         return perioder.stream()
                 .map(p -> p.getBeregningPerFagområde().get(fagOmrådeKode))
                 .filter(Objects::nonNull)
@@ -162,7 +162,7 @@ public class SimuleringBeregningTjeneste {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private static List<SimulertBeregning> finnBeregningerForBrukerForFagområde(FagOmrådeKode fagOmrådeKode,
+    private static List<SimulertBeregning> finnBeregningerForBrukerForFagområde(Fagområde fagOmrådeKode,
                                                                                 Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat) {
         Optional<Mottaker> mottakerBrukerOpt = beregningsresultat.keySet().stream().filter(m -> m.getMottakerType().equals(MottakerType.BRUKER)).findFirst();
         if (mottakerBrukerOpt.isPresent()) {
@@ -342,7 +342,7 @@ public class SimuleringBeregningTjeneste {
                 .orElse(BigDecimal.ZERO);
     }
 
-    private static Map<FagOmrådeKode, List<SimulertPostering>> grupperPerFagområde(List<SimulertPostering> posteringer) {
+    private static Map<Fagområde, List<SimulertPostering>> grupperPerFagområde(List<SimulertPostering> posteringer) {
         return posteringer.stream()
                 .collect(Collectors.groupingBy(SimulertPostering::getFagOmrådeKode));
     }

@@ -16,7 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.FagOmrådeKode;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
@@ -92,7 +92,7 @@ public class SimuleringRepositoryTest {
         return SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medAktørId(aktørId)
-                .medYtelseType(YtelseType.FORELDREPENGER)
+                .medYtelseType(YtelseType.FP)
                 .medSimuleringResultat(SimuleringResultat
                         .builder()
                         .medSimuleringMottaker(SimuleringMottaker
@@ -105,7 +105,7 @@ public class SimuleringRepositoryTest {
                                         .medTom(forfallsdato)
                                         .medBeløp(BigDecimal.valueOf(10000))
                                         .medBetalingType(BetalingType.D)
-                                        .medFagOmraadeKode(FagOmrådeKode.FORELDREPENGER)
+                                        .medFagOmraadeKode(Fagområde.FP)
                                         .medPosteringType(PosteringType.YTEL)
                                         .medForfallsdato(forfallsdato)
                                         .build())
