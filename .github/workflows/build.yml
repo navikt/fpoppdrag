@@ -55,11 +55,9 @@ jobs:
           echo "BUILD_VERSION=1.0-$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
 
       - name: Build artifacts & deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }} # Må ha PAT pga avhengighet til private repo: navikt/legacy-avhengigheter
         run: |
           echo "Building artifacts $BUILD_VERSION"
-          mvn jacoco:prepare-agent install -q -e -B -s settings.xml -Drevision=${BUILD_VERSION} -Dfile.encoding=UTF-8
+          mvn verify -q -e -B -s settings.xml -Drevision=${BUILD_VERSION} -Dfile.encoding=UTF-8
           echo "Build artifacts"
 
       - name: Bygg, tag og push Docker image
