@@ -324,7 +324,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.10.1</version>
+                    <version>3.8.1</version>
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
@@ -556,16 +556,5 @@
             <url>https://maven.pkg.github.com/navikt/fpoppdrag</url>
         </repository>
     </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/navikt/fpoppdrag</url>
-        </repository>
-        <repository>
-            <id>legacy</id>
-            <url>https://maven.pkg.github.com/navikt/legacy-avhengigheter</url>
-        </repository>
-    </repositories>
 
 </project>
