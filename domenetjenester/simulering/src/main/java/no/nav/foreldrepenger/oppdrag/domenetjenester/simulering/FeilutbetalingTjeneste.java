@@ -132,7 +132,7 @@ public class FeilutbetalingTjeneste {
         Map<YearMonth, List<SimulertPostering>> resultat = new HashMap<>();
 
         for (var entry : posteringerPerMåned.entrySet()) {
-            boolean harFeilutbetaling = entry.getValue().stream().anyMatch(p -> p.getPosteringType().equals(FEIL));
+            boolean harFeilutbetaling = entry.getValue().stream().anyMatch(p -> FEIL.equals(p.getPosteringType()));
             if (harFeilutbetaling) {
                 resultat.put(entry.getKey(), entry.getValue());
             }

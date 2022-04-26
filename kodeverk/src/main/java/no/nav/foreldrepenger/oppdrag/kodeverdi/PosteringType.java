@@ -19,7 +19,7 @@ public enum PosteringType {
         try {
             return PosteringType.valueOf(kode);
         } catch (IllegalArgumentException ex) {
-            LOG.warn("Finner ikke posteringType for {}", kode);
+            LOG.info("Finner ikke posteringType for {}", kode);
             return null;
         }
     }
