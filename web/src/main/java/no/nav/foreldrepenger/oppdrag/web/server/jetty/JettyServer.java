@@ -173,30 +173,30 @@ public class JettyServer {
     }
 
     private static WebAppContext createContext() throws IOException {
-        var webAppContext = new WebAppContext();
-        webAppContext.setParentLoaderPriority(true);
+        var ctx = new WebAppContext();
+        ctx.setParentLoaderPriority(true);
 
         // må hoppe litt bukk for å hente web.xml fra classpath i stedet for fra filsystem.
         String descriptor;
         try (var resource = Resource.newClassPathResource("/WEB-INF/web.xml")) {
             descriptor = resource.getURI().toURL().toExternalForm();
         }
-        webAppContext.setDescriptor(descriptor);
-        webAppContext.setContextPath(CONTEXT_PATH);
-        webAppContext.setBaseResource(createResourceCollection());
-        webAppContext.setInitParameter("dirAllowed", "false");
-        webAppContext.setAttribute("org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern",
+        ctx.setDescriptor(descriptor);
+        ctx.setContextPath(CONTEXT_PATH);
+        ctx.setBaseResource(createResourceCollection());
+        ctx.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
+        ctx.setAttribute("org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern",
                 "^.*jersey-.*.jar$|^.*felles-.*.jar$");
-        webAppContext.setSecurityHandler(createSecurityHandler());
-        updateMetaData(webAppContext.getMetaData());
-        return webAppContext;
+        ctx.setSecurityHandler(createSecurityHandler());
+        updateMetaData(ctx.getMetaData());
+        ctx.setThrowUnavailableOnStartupException(true);
+        return ctx;
     }
 
     private static ResourceCollection createResourceCollection() {
         return new ResourceCollection(
                 Resource.newClassPathResource("META-INF/resources/webjars/"),
-                Resource.newClassPathResource("/web"),
-                Resource.newClassPathResource("/META-INF/resources")/** i18n */);
+                Resource.newClassPathResource("/web"));
     }
 
     private static SecurityHandler createSecurityHandler() {
