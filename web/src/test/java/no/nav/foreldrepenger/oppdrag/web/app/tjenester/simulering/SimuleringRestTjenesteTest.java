@@ -27,7 +27,6 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.Simulerin
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXmlRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.BehandlingIdDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimulerOppdragDto;
@@ -57,11 +56,10 @@ public class SimuleringRestTjenesteTest {
         PersonTjeneste tpsTjenesteMock = mock(PersonTjeneste.class);
         when(tpsTjenesteMock.hentAktørForFnr(any())).thenReturn(Optional.of(new AktørId(AKTØR_ID)));
         SimuleringRepository simuleringRepository = new SimuleringRepository(entityManager);
-        SimuleringXmlRepository simuleringXmlRepository = new SimuleringXmlRepository(entityManager);
         oppdragConsumerMock = mock(OppdragConsumer.class);
         SimuleringResultatTransformer resultatTransformer = new SimuleringResultatTransformer(tpsTjenesteMock);
         SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
-        StartSimuleringTjeneste startSimuleringTjeneste = new StartSimuleringTjeneste(simuleringXmlRepository,
+        StartSimuleringTjeneste startSimuleringTjeneste = new StartSimuleringTjeneste(
                 simuleringRepository, oppdragConsumerMock, resultatTransformer, simuleringBeregningTjeneste);
         HentNavnTjeneste hentNavnTjeneste = mock(HentNavnTjeneste.class);
         SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjeneste(simuleringRepository,
@@ -91,7 +89,7 @@ public class SimuleringRestTjenesteTest {
         String xml = TestResourceLoader.loadXml("/xml/oppdrag_mottaker.xml");
         SimulerOppdragDto oppdragDto = SimulerOppdragDto.lagDto(BEHANDLING_ID, Collections.singletonList(xml));
 
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(any(SimulerBeregningRequest.class), any())).thenReturn(
+        when(oppdragConsumerMock.hentSimulerBeregningResponse(any(SimulerBeregningRequest.class))).thenReturn(
                 lagRespons());
 
 

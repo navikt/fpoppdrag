@@ -70,19 +70,19 @@ public class JettyServer {
         jettyServer(args).bootStrap();
     }
 
-    private static JettyServer jettyServer(String[] args) {
+    protected static JettyServer jettyServer(String[] args) {
         if (args.length > 0) {
             return new JettyServer(Integer.parseUnsignedInt(args[0]));
         }
         return new JettyServer(ENV.getProperty("server.port", Integer.class, 8080));
     }
 
-    private JettyServer(int serverPort) {
+    protected JettyServer(int serverPort) {
         this.serverPort = serverPort;
         ContextPathHolder.instance(CONTEXT_PATH);
     }
 
-    private void bootStrap() throws Exception {
+    protected void bootStrap() throws Exception {
         konfigurerSikkerhet();
         var dataSource = DataSourceUtil.createDataSource(30);
         konfigurerDataSource(dataSource);

@@ -2,8 +2,6 @@ package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +30,8 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXml;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXmlRepository;
 import no.nav.foreldrepenger.xmlutils.JaxbHelper;
 import no.nav.system.os.entiteter.beregningskjema.Beregning;
-import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaa;
-import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode;
 import no.nav.system.os.entiteter.oppdragskjema.Ompostering;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.ObjectFactory;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest;
@@ -48,12 +42,12 @@ import no.nav.vedtak.exception.TekniskException;
 @ApplicationScoped
 public class StartSimuleringTjeneste {
 
-    private static final Logger logger = LoggerFactory.getLogger(StartSimuleringTjeneste.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StartSimuleringTjeneste.class);
+    private static final Logger SECURE_LOGGER = LoggerFactory.getLogger("secureLogger");
+
     private static final String DEAKTIVER_SIMULERING_DEAKTIVERING = "testing.deaktiver.simulering.deaktivering";
     protected static final String KODE_ENDRING = "ENDR";
 
-    private static final Logger LOG = LoggerFactory.getLogger(StartSimuleringTjeneste.class);
-    private SimuleringXmlRepository simuleringXmlRepository;
     private SimuleringRepository simuleringRepository;
     private OppdragConsumer oppdragConsumer;
     private SimuleringResultatTransformer resultatTransformer;
@@ -64,11 +58,9 @@ public class StartSimuleringTjeneste {
     }
 
     @Inject
-    public StartSimuleringTjeneste(SimuleringXmlRepository simuleringXmlRepository,
-                                   SimuleringRepository simuleringRepository,
+    public StartSimuleringTjeneste(SimuleringRepository simuleringRepository,
                                    OppdragConsumer oppdragConsumer,
                                    SimuleringResultatTransformer resultatTransformer, SimuleringBeregningTjeneste simuleringBeregningTjeneste) {
-        this.simuleringXmlRepository = simuleringXmlRepository;
         this.simuleringRepository = simuleringRepository;
         this.oppdragConsumer = oppdragConsumer;
         this.resultatTransformer = resultatTransformer;
@@ -77,6 +69,7 @@ public class StartSimuleringTjeneste {
 
     private static boolean harIkkeTomRespons(List<SimulerBeregningResponse> simuleringResponsListe) {
         return simuleringResponsListe != null && simuleringResponsListe.stream()
+                .filter(Objects::nonNull)
                 .map(SimulerBeregningResponse::getResponse)
                 .filter(Objects::nonNull)
                 .map(no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.SimulerBeregningResponse::getSimulering)
@@ -112,15 +105,7 @@ public class StartSimuleringTjeneste {
         List<Oppdrag> simuleringOppdragListe = konverterOppdragXmlTilSimuleringOppdrag(oppdragXmlListe);
         List<SimulerBeregningRequest> simuleringRequestListe = opprettBeregningRequestListe(simuleringOppdragListe);
 
-        List<SimuleringXml.Builder> xmlBuilderList = lagSimuleringXmlEntitetBuilder(behandlingId, oppdragXmlListe, simuleringRequestListe);
-        lagreSimuleringXml(xmlBuilderList);
-
-
-        //TODO skal ikke ha ny transaksjon, bruk savepoint istedet.. ønsker å oppnå med dette at requestXML lagres også når det feiler
-        simuleringXmlRepository.nyTransaksjon();
-
-        // send med oppdragXmlListe for debugging av vrange saker
-        List<SimulerBeregningResponse> simuleringResponsListe = utførSimulering(simuleringRequestListe, Collections.emptyList());
+        List<SimulerBeregningResponse> simuleringResponsListe = utførSimulering(simuleringRequestListe);
 
         LOG.info("Simulering svarmeldinger mottatt. behandlingID={} oppdragantall={} totalstørrelseUt={} tidsforbruk={} ms",
                 behandlingId,
@@ -129,13 +114,10 @@ public class StartSimuleringTjeneste {
                 System.currentTimeMillis() - t0);
 
         if (harIkkeTomRespons(simuleringResponsListe)) {
-            oppdaterXmlBuilder(behandlingId, xmlBuilderList, simuleringResponsListe);
-            lagreSimuleringXml(xmlBuilderList);
-
             YtelseType ytelseType = bestemYtelseType(behandlingId, simuleringOppdragListe);
             SimuleringGrunnlag simuleringGrunnlag = transformerTilDatastruktur(behandlingId, simuleringResponsListe, ytelseType);
 
-            utførSimuleringUtenInntrekk(behandlingId, simuleringRequestListe, simuleringGrunnlag);
+            utførSimuleringUtenInntrekk(simuleringRequestListe, simuleringGrunnlag);
 
             simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
         } else {
@@ -148,18 +130,19 @@ public class StartSimuleringTjeneste {
         LOG.info("Fullført simulering. behandlingID={} tidsforbrukTotalt={} ms", behandlingId, System.currentTimeMillis() - t0);
     }
 
-    private void utførSimuleringUtenInntrekk(Long behandlingId, List<SimulerBeregningRequest> simuleringRequestListe, SimuleringGrunnlag simuleringGrunnlag) {
+    private void utførSimuleringUtenInntrekk(List<SimulerBeregningRequest> simuleringRequestListe, SimuleringGrunnlag simuleringGrunnlag) {
         BeregningResultat beregningResultat = simuleringBeregningTjeneste.hentBeregningsresultat(simuleringGrunnlag);
 
         if (erResultatMedInntrekkOgFeilutbetaling(beregningResultat)) {
+            // Vi kommer nok aldri her så logger bare for å sjekke om teorien er riktig.
+            LOG.info("Utfører simulering uten inntrekk.");
             List<SimulerBeregningRequest> requestsForBruker = finnRequestForBrukerOgSlåAvInntrekk(simuleringRequestListe, simuleringGrunnlag.getYtelseType());
 
             if (requestsForBruker.isEmpty()) {
                 throw new IllegalStateException("Utviklerfeil: Skal alltid finne requests for bruker ved simuleringsresultat med inntrekk");
             }
-            List<SimuleringXml.Builder> xmlBuilderListe = lagSimuleringXmlEntitetBuilder(behandlingId, requestsForBruker);
 
-            List<SimulerBeregningResponse> beregningResultater = utførSimulering(requestsForBruker, Collections.emptyList());
+            List<SimulerBeregningResponse> beregningResultater = utførSimulering(requestsForBruker);
 
             for (SimulerBeregningResponse response : beregningResultater) {
                 if (response.getResponse() != null) {
@@ -167,8 +150,6 @@ public class StartSimuleringTjeneste {
                     resultatTransformer.mapSimuleringUtenInntrekk(beregning, simuleringGrunnlag);
                 }
             }
-            oppdaterXmlBuilder(behandlingId, xmlBuilderListe, beregningResultater);
-            lagreSimuleringXml(xmlBuilderListe);
         }
     }
 
@@ -269,14 +250,20 @@ public class StartSimuleringTjeneste {
         return ytelseType.get();
     }
 
-    private List<SimulerBeregningResponse> utførSimulering(List<SimulerBeregningRequest> simuleringRequestListe, List<String> source) {
+    private List<SimulerBeregningResponse> utførSimulering(List<SimulerBeregningRequest> simuleringRequestListe) {
         return simuleringRequestListe.stream()
-                .map(r -> utførSimulering(r, source))
-                .collect(Collectors.toList());
+                .map(this::utførSimulering)
+                .toList();
     }
 
-    private SimulerBeregningResponse utførSimulering(SimulerBeregningRequest simuleringOppdrag, List<String> source) {
-        return oppdragConsumer.hentSimulerBeregningResponse(simuleringOppdrag, source);
+    private SimulerBeregningResponse utførSimulering(SimulerBeregningRequest request) {
+        SimulerBeregningResponse simulerBeregningResponse = null;
+        try {
+            simulerBeregningResponse = oppdragConsumer.hentSimulerBeregningResponse(request);
+        } catch (Exception e) {
+            SECURE_LOGGER.info("Simulering feilet for request={}", request);
+        }
+        return simulerBeregningResponse;
     }
 
     private List<SimulerBeregningRequest> opprettBeregningRequestListe(List<Oppdrag> simuleringOppdragListe) {
@@ -294,53 +281,6 @@ public class StartSimuleringTjeneste {
                 .collect(Collectors.toList());
     }
 
-    private void lagreSimuleringXml(List<SimuleringXml.Builder> builders) {
-        builders.forEach(builder -> simuleringXmlRepository.lagre(builder.build()));
-    }
-
-    private List<SimuleringXml.Builder> lagSimuleringXmlEntitetBuilder(long behandlingId, List<SimulerBeregningRequest> beregningRequestListe) {
-        List<SimuleringXml.Builder> builders = new ArrayList<>();
-        beregningRequestListe.forEach(request -> {
-            String marshalled = SimuleringMarshaller.marshall(behandlingId, request);
-            builders.add(SimuleringXml.builder().medEksternReferanse(behandlingId).medRequest(marshalled));
-        });
-        return builders;
-    }
-
-    private List<SimuleringXml.Builder> lagSimuleringXmlEntitetBuilder(long behandlingId, List<String> fpsakInput, List<SimulerBeregningRequest> beregningRequestListe) {
-        // Begge listene skal være i samme rekkefølge
-        List<SimuleringXml.Builder> builders = lagSimuleringXmlEntitetBuilder(behandlingId, beregningRequestListe);
-        for (int i = 0; i < fpsakInput.size(); i++) {
-            SimuleringXml.Builder builder = builders.get(i);
-            builder.medFpsakInput(fpsakInput.get(i));
-        }
-        return builders;
-    }
-
-    private void oppdaterXmlBuilder(long behandlingId, List<SimuleringXml.Builder> builderList, List<SimulerBeregningResponse> simuleringResponse) {
-        // Begge listene skal være i samme rekkefølge,
-        for (int i = 0; i < builderList.size(); i++) {
-            SimulerBeregningResponse respons = simuleringResponse.get(i);
-            SimuleringXml.Builder builder = builderList.get(i);
-            korrigerForEvtManglendeFagsystemId(behandlingId, respons);
-            builder.medResponse(SimuleringMarshaller.marshall(behandlingId, respons));
-        }
-    }
-
-    private static void korrigerForEvtManglendeFagsystemId(long behandlingId, SimulerBeregningResponse respons) {
-        if (respons == null || respons.getResponse() == null || respons.getResponse().getSimulering() == null) {
-            return;
-        }
-        Beregning simulering = respons.getResponse().getSimulering();
-        for (BeregningsPeriode periode : simulering.getBeregningsPeriode()) {
-            for (BeregningStoppnivaa stoppnivå : periode.getBeregningStoppnivaa()) {
-                if (stoppnivå.getFagsystemId() == null || stoppnivå.getFagsystemId().isEmpty()) {
-                    stoppnivå.setFagsystemId("FEIL-MANGLET"); //setter fagsystemId til for å kunne marshalle
-                    logger.warn(StartSimuleringTjenesteFeil.mangletFagsystemId(behandlingId, periode.getPeriodeFom(), periode.getPeriodeTom()).getMessage());
-                }
-            }
-        }
-    }
 
     private Oppdrag unmarshalOppdragOgKonverter(String oppdrag) {
         try {
@@ -348,7 +288,7 @@ public class StartSimuleringTjeneste {
                     OppdragSkjemaConstants.JAXB_CLASS, oppdrag, OppdragSkjemaConstants.XSD_LOCATION);
             return OppdragMapper.mapTilSimuleringOppdrag(fpOppdrag.getOppdrag110());
         } catch (JAXBException | SAXException | XMLStreamException e) {
-            throw StartSimuleringTjenesteFeil.kunneIkkeUnmarshalleOppdragXml(e);
+            throw new TekniskException("FPO-832562", "Kunne ikke tolke mottatt oppdrag XML", e);
         }
     }
 
@@ -356,17 +296,5 @@ public class StartSimuleringTjeneste {
         SimulerBeregningRequest request = new ObjectFactory().createSimulerBeregningRequest();
         request.setRequest(simulerBeregningRequest);
         return request;
-    }
-
-    private static class StartSimuleringTjenesteFeil {
-
-        static TekniskException kunneIkkeUnmarshalleOppdragXml(Exception e) {
-            return new TekniskException("FPO-832562", "Kunne ikke tolke mottatt oppdrag XML", e);
-        }
-
-        static TekniskException mangletFagsystemId(Long behandlingId, String periodeFom, String periodeTom) {
-            return new TekniskException("FPO-811943", String.format("Manglet fagsystemId i mottat respons for behandlingId=%s periode=%s-%s", behandlingId, periodeFom, periodeTom));
-        }
-
     }
 }
