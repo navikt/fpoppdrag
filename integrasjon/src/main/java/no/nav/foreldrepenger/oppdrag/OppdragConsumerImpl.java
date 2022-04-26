@@ -10,9 +10,6 @@ import java.util.Set;
 
 import javax.xml.ws.WebServiceException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.foreldrepenger.oppdrag.util.XmlStringFieldFikser;
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling;
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerFpService;
@@ -32,8 +29,6 @@ public class OppdragConsumerImpl implements OppdragConsumer {
     private static final LocalTime OPPDRAG_ÅPNINGSTID_SLUTT = LocalTime.of(19, 0);
     static final List<String> TYPISKE_FEILMELDING_NÅR_OPPDRAG_ER_NEDE = Arrays.asList("Unexpected EOF in prolog", "Could not send Message", "Error writing request body to server");
 
-    private static final Logger log = LoggerFactory.getLogger(OppdragConsumerImpl.class);
-
     private SimulerFpService port;
 
     public OppdragConsumerImpl(SimulerFpService port) {
@@ -41,21 +36,19 @@ public class OppdragConsumerImpl implements OppdragConsumer {
     }
 
     @Override
-    public SimulerBeregningResponse hentSimulerBeregningResponse(SimulerBeregningRequest simulerBeregningRequest, List<String> source) {
+    public SimulerBeregningResponse hentSimulerBeregningResponse(SimulerBeregningRequest simulerBeregningRequest) {
         try {
             SimulerBeregningResponse response = port.simulerBeregning(simulerBeregningRequest);
             XmlStringFieldFikser.stripTrailingSpacesFromStrings(response);
             return response;
         } catch (SimulerBeregningFeilUnderBehandling e) {
             FeilUnderBehandling fault = e.getFaultInfo();
-            if (!source.isEmpty())
-                log.warn("Simulering feiler for request {}", source);
-            throw OppdragConsumerFeil.feilUnderBehandlingAvSimulering(fault.getErrorSource(), fault.getErrorType(), fault.getErrorMessage(), fault.getRootCause(), fault.getDateTimeStamp(), e);
+            throw new IntegrasjonException("FPO-845125", String.format("Simulering feilet. Mottok feilmelding fra oppdragsystemet: source='%s' type='%s' message='%s' rootcause='%s' timestamp='%s'", fault.getErrorSource(), fault.getErrorType(), fault.getErrorMessage(), fault.getRootCause(), fault.getDateTimeStamp()), e);
         } catch (WebServiceException e) {
             if (feiletPgaOppdragsystemetUtenforÅpningstid(e)) {
-                throw OppdragConsumerFeil.oppdragsystemetHarNedetid(e);
+                throw new OppdragNedetidException("FPO-273196", "Kallet mot oppdragsystemet feilet. Feilmelding og tidspunktet tilsier at oppdragsystemet har forventet nedetid (utenfor åpningstid).", e);
             }
-            throw OppdragConsumerFeil.feilUnderKallTilSimuleringtjenesten(e);
+            throw new IntegrasjonException("FPO-852145", "Simulering feilet. Fikk uventet feil mot oppdragssytemet", e);
         }
     }
 
@@ -68,24 +61,6 @@ public class OppdragConsumerImpl implements OppdragConsumer {
         return OPPDRAG_ÅPNE_DAGER.contains(nå.getDayOfWeek())
                 && nå.toLocalTime().isAfter(OPPDRAG_ÅPNINGSTID_START)
                 && nå.toLocalTime().isBefore(OPPDRAG_ÅPNINGSTID_SLUTT);
-    }
-
-    private static class OppdragConsumerFeil {
-
-
-        static OppdragNedetidException oppdragsystemetHarNedetid(WebServiceException cause) {
-            return new OppdragNedetidException("FPO-273196", "Kallet mot oppdragsystemet feilet. Feilmelding og tidspunktet tilsier at oppdragsystemet har forventet nedetid (utenfor åpningstid).", cause);
-        }
-
-        static IntegrasjonException feilUnderKallTilSimuleringtjenesten(WebServiceException e) {
-            return new IntegrasjonException("FPO-852145", "Simulering feilet. Fikk uventet feil mot oppdragssytemet", e);
-        }
-
-        static IntegrasjonException feilUnderBehandlingAvSimulering(String source, String errorType, String errorMessage, String rootCause, String dateTimeStamp, Exception e) {
-            return new IntegrasjonException("FPO-845125", String.format("Simulering feilet. Mottok feilmelding fra oppdragsystemet: source='%s' type='%s' message='%s' rootcause='%s' timestamp='%s'", source, errorType, errorMessage, rootCause, dateTimeStamp), e);
-        }
-
-
     }
 
 }

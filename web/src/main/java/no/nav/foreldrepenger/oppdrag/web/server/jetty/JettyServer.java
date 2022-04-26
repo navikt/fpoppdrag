@@ -70,19 +70,19 @@ public class JettyServer {
         jettyServer(args).bootStrap();
     }
 
-    private static JettyServer jettyServer(String[] args) {
+    protected static JettyServer jettyServer(String[] args) {
         if (args.length > 0) {
             return new JettyServer(Integer.parseUnsignedInt(args[0]));
         }
         return new JettyServer(ENV.getProperty("server.port", Integer.class, 8080));
     }
 
-    private JettyServer(int serverPort) {
+    protected JettyServer(int serverPort) {
         this.serverPort = serverPort;
         ContextPathHolder.instance(CONTEXT_PATH);
     }
 
-    private void bootStrap() throws Exception {
+    protected void bootStrap() throws Exception {
         konfigurerSikkerhet();
         var dataSource = DataSourceUtil.createDataSource(30);
         konfigurerDataSource(dataSource);
@@ -173,30 +173,30 @@ public class JettyServer {
     }
 
     private static WebAppContext createContext() throws IOException {
-        var webAppContext = new WebAppContext();
-        webAppContext.setParentLoaderPriority(true);
+        var ctx = new WebAppContext();
+        ctx.setParentLoaderPriority(true);
 
         // må hoppe litt bukk for å hente web.xml fra classpath i stedet for fra filsystem.
         String descriptor;
         try (var resource = Resource.newClassPathResource("/WEB-INF/web.xml")) {
             descriptor = resource.getURI().toURL().toExternalForm();
         }
-        webAppContext.setDescriptor(descriptor);
-        webAppContext.setContextPath(CONTEXT_PATH);
-        webAppContext.setBaseResource(createResourceCollection());
-        webAppContext.setInitParameter("dirAllowed", "false");
-        webAppContext.setAttribute("org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern",
+        ctx.setDescriptor(descriptor);
+        ctx.setContextPath(CONTEXT_PATH);
+        ctx.setBaseResource(createResourceCollection());
+        ctx.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
+        ctx.setAttribute("org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern",
                 "^.*jersey-.*.jar$|^.*felles-.*.jar$");
-        webAppContext.setSecurityHandler(createSecurityHandler());
-        updateMetaData(webAppContext.getMetaData());
-        return webAppContext;
+        ctx.setSecurityHandler(createSecurityHandler());
+        updateMetaData(ctx.getMetaData());
+        ctx.setThrowUnavailableOnStartupException(true);
+        return ctx;
     }
 
     private static ResourceCollection createResourceCollection() {
         return new ResourceCollection(
                 Resource.newClassPathResource("META-INF/resources/webjars/"),
-                Resource.newClassPathResource("/web"),
-                Resource.newClassPathResource("/META-INF/resources")/** i18n */);
+                Resource.newClassPathResource("/web"));
     }
 
     private static SecurityHandler createSecurityHandler() {

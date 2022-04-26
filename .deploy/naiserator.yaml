@@ -51,6 +51,8 @@ spec:
     application:
       enabled: true
   webproxy: true
+  secureLogs:
+    enabled: true
   env:
   {{#each env}}
    - name: {{@key}}

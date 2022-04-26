@@ -9,12 +9,10 @@
     <sequence-generator name="SEQ_GR_SIMULERING" allocation-size="50" sequence-name="SEQ_GR_SIMULERING"/>
     <sequence-generator name="SEQ_SIMULERING_MOTTAKER" allocation-size="50" sequence-name="SEQ_SIMULERING_MOTTAKER"/>
     <sequence-generator name="SEQ_SIMULERT_POSTERING" allocation-size="50" sequence-name="SEQ_SIMULERT_POSTERING"/>
-    <sequence-generator name="SEQ_SIMULERING_XML" allocation-size="50" sequence-name="SEQ_SIMULERING_XML"/>
 
     <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat"/>
     <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag"/>
     <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker"/>
     <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering"/>
-    <entity class="no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringXml"/>
 
 </entity-mappings>
