@@ -320,22 +320,22 @@ public class SimuleringBeregningTjeneste {
     }
 
     private static BigDecimal beregnNyttBeløp(List<SimulertPostering> posteringer, BigDecimal sumFeilutbetalingPosteringer) {
-        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTEL, BetalingType.D);
+        BigDecimal sumPosteringer = summerPosteringer(posteringer, BetalingType.D);
         return sumFeilutbetalingPosteringer.signum() == 1
                 ? sumPosteringer.subtract(sumFeilutbetalingPosteringer)
                 : sumPosteringer;
     }
 
     private static BigDecimal beregnTidligereUtbetaltBeløp(List<SimulertPostering> posteringer, BigDecimal sumFeilutbetalingPosteringer) {
-        BigDecimal sumPosteringer = summerPosteringer(posteringer, PosteringType.YTEL, BetalingType.K); // 6381
+        BigDecimal sumPosteringer = summerPosteringer(posteringer, BetalingType.K); // 6381
         return sumFeilutbetalingPosteringer.signum() == -1
                 ? sumPosteringer.add(sumFeilutbetalingPosteringer)
                 : sumPosteringer;
     }
 
-    private static BigDecimal summerPosteringer(List<SimulertPostering> posteringer, PosteringType posteringType, BetalingType betalingType) {
+    private static BigDecimal summerPosteringer(List<SimulertPostering> posteringer, BetalingType betalingType) {
         return posteringer.stream()
-                .filter(p -> posteringType.equals(p.getPosteringType()))
+                .filter(p -> PosteringType.YTEL.equals(p.getPosteringType()))
                 .filter(p -> betalingType.equals(p.getBetalingType()))
                 .map(SimulertPostering::getBeløp)
                 .reduce(BigDecimal::add)
