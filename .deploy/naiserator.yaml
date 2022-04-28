@@ -47,6 +47,8 @@ spec:
         kvPath: {{oraclesecretpath}}
       - mountPath: /var/run/secrets/nais.io/serviceuser
         kvPath: {{serviceusersecretpath}}
+      - mountPath: /var/run/secrets/nais.io/appdynamics
+        kvPath: /apikey/appdynamics/{{environment}}
   azure:
     application:
       enabled: true
