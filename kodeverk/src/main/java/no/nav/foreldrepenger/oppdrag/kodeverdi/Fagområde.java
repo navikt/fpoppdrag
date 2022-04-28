@@ -4,24 +4,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public enum Fagområde {
-
-    REFUTG, //engangsstønad
-    FP, //foreldrepenger
-    FPREF, //foreldrepenger arbeidsgiver
-    SP, //sykepenger
-    SPREF, //sykepenger_arbeidsgiver
-    SVP, //svangerskapspenger
-    SVPREF, //svangerskapspenger_arbeidsgiver
-    PB, //pleiepenger_sykt_barn
-    PBREF, //pleiepenger_sykt_barn_arbeidsgiver
-    PN, //pleiepenger_nærstående
-    PNREF, //pleiepenger_nærstående_arbeidsgiver
-    OM, //omsorgspenger
-    OMREF, //omsorgspenger_arbeidsgiver
-    OPP, //opplæringspenger
-    OPPREF, //opplæringspenger_arbeidsgiver
-    OOP, //pleiepenger_v1
-    OOPREF, //pleiepenger_v1_arbeidsgiver
+    /** engangsstønad **/
+    REFUTG,
+    /** foreldrepenger **/
+    FP,
+    /** foreldrepenger til arbeidsgiver **/
+    FPREF,
+    /** sykepenger **/
+    SP,
+    /** sykepenger til arbeidsgiver **/
+    SPREF,
+    /** svangerskapspenger **/
+    SVP,
+    /** svangerskapspenger til arbeidsgiver **/
+    SVPREF,
+    /** pleiepenger sykt barn **/
+    PB,
+    /** pleiepenger sykt barn til arbeidsgiver **/
+    PBREF,
+    /** pleiepenger nærstående **/
+    PN,
+    /** pleiepenger nærstående til arbeidsgiver **/
+    PNREF,
+    /** omsorgspenger **/
+    OM,
+    /** omsorgspenger til arbeidsgiver **/
+    OMREF,
+    /** opplæringspenger **/
+    OPP,
+    /** opplæringspenger til arbeidsgiver **/
+    OPPREF,
+    /** pleiepenger_v1 **/
+    OOP,
+    /** pleiepenger_v1 til arbeidsgiver **/
+    OOPREF,
     ;
 
     private static final Logger LOG = LoggerFactory.getLogger(Fagområde.class);

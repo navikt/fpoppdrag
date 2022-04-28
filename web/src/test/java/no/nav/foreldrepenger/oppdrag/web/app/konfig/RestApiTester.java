@@ -17,7 +17,7 @@ import no.nav.foreldrepenger.oppdrag.web.app.ApplicationConfig;
 public class RestApiTester {
 
 
-    static final List<Class<?>> UNNTATT = Collections.singletonList(OpenApiResource.class);
+    static final List<Class<?>> UNNTATT = List.of(OpenApiResource.class);
 
     static Collection<Method> finnAlleRestMetoder() {
         List<Method> liste = new ArrayList<>();
@@ -32,13 +32,7 @@ public class RestApiTester {
     }
 
     static Collection<Class<?>> finnAlleRestTjenester() {
-
-
-        List<Class<?>> klasser = new ArrayList<>();
-
-        klasser.addAll(finnAlleRestTjenester(new ApplicationConfig()));
-
-        return klasser;
+        return new ArrayList<>(finnAlleRestTjenester(new ApplicationConfig()));
     }
 
     static Collection<Class<?>> finnAlleRestTjenester(Application config) {
