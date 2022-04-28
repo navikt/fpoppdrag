@@ -4,10 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public enum PosteringType {
-    YTEL, //ytelse
-    FEIL, //feilutbetaling
-    SKAT, //froskudsskatt
-    JUST, //justering
+    /** ytelse **/
+    YTEL,
+    /** feilutbetaling **/
+    FEIL,
+    /** froskudsskatt **/
+    SKAT,
+    /** justering **/
+    JUST,
     ;
 
     private static final Logger LOG = LoggerFactory.getLogger(PosteringType.class);

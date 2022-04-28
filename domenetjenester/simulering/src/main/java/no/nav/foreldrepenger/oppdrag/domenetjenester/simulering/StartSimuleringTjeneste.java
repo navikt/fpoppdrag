@@ -37,6 +37,7 @@ import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.O
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.Oppdrag;
+import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.Oppdragslinje;
 import no.nav.vedtak.exception.TekniskException;
 
 @ApplicationScoped
@@ -261,9 +262,20 @@ public class StartSimuleringTjeneste {
         try {
             simulerBeregningResponse = oppdragConsumer.hentSimulerBeregningResponse(request);
         } catch (Exception e) {
-            SECURE_LOGGER.info("Simulering feilet for request={}", request);
+            SECURE_LOGGER.info("Simulering feilet for request={}", anonymiser(request));
         }
         return simulerBeregningResponse;
+    }
+
+    private SimulerBeregningRequest anonymiser(SimulerBeregningRequest request) {
+        request.getRequest().getOppdrag().setOppdragGjelderId(" *** ");
+        request.getRequest().getOppdrag().getOppdragslinje().forEach(this::anonymiser);
+        return request;
+    }
+
+    private void anonymiser(Oppdragslinje ol) {
+        if (ol.getRefusjonsInfo() != null) {
+            ol.getRefusjonsInfo().setRefunderesId(" *** ");}
     }
 
     private List<SimulerBeregningRequest> opprettBeregningRequestListe(List<Oppdrag> simuleringOppdragListe) {
