@@ -17,10 +17,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.BehandlingIdDto;
@@ -35,6 +34,7 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Transactional
+@SecurityRequirements(@SecurityRequirement(name = "openIdConnect", scopes = "openid"))
 public class SimuleringRestTjeneste {
 
     private SimuleringResultatTjeneste simuleringResultatTjeneste;

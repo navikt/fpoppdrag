@@ -34,6 +34,8 @@
             <url-pattern>/internal/*</url-pattern>
             <url-pattern>/api/openapi.yaml</url-pattern>
             <url-pattern>/api/openapi.json</url-pattern>
+            <url-pattern>/swagger/*</url-pattern>
+            <url-pattern>/swagger-ui/*</url-pattern>
         </web-resource-collection>
     </security-constraint>
     <security-constraint>

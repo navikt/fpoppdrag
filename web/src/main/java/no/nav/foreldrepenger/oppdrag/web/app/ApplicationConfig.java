@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.oppdrag.web.app;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,8 +18,10 @@ import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.foreldrepenger.oppdrag.web.app.exceptions.ConstraintViolationMapper;
@@ -32,29 +35,18 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.Simulerin
 @ApplicationPath(ApplicationConfig.API_URI)
 public class ApplicationConfig extends Application {
 
-    private static boolean ER_LOKAL_UTVIKLING = Environment.current().isLocal();
+    private static final Environment ENV = Environment.current();
 
     public static final String API_URI = "/api";
 
     public ApplicationConfig() {
         OpenAPI oas = new OpenAPI();
-        Info info = new Info()
-                .title("Vedtaksløsningen - Oppdrag")
-                .version("1.0")
-                .description("REST grensesnitt for FpOppdrag.");
-
-        oas.info(info)
-                .addServersItem(new Server()
-                        .url("/fpoppdrag"));
-//        SecurityScheme ssApiKey = new SecurityScheme();
-//        ssApiKey.in(SecurityScheme.In.HEADER).type(SecurityScheme.Type.APIKEY).name("apiKeyAuth").scheme("bearer");
-//
-//        SecurityScheme openIdConnect = new SecurityScheme();
-//        openIdConnect.type(SecurityScheme.Type.OPENIDCONNECT).openIdConnectUrl("https://isso-q.adeo.no:443/isso/oauth2").name("openIdConnect");
-//
-//
-//        oas.addSecurityItem(new SecurityRequirement().addList("apiKeyAuth"));
-//        oas.addSecurityItem(new SecurityRequirement().addList("openIdConnect"));
+        oas.info(new Info().title("Vedtaksløsningen - Oppdrag")
+                        .version("1.0")
+                        .description("REST grensesnitt for FpOppdrag."))
+                .servers(List.of(new Server().url("/fpoppdrag")))
+                .components(new Components()
+                        .securitySchemes(Map.of("openId", openId())));
 
         SwaggerConfiguration oasConfig = new SwaggerConfiguration()
                 .openAPI(oas)
@@ -63,7 +55,6 @@ public class ApplicationConfig extends Application {
                 .resourcePackages(Stream.of("no.nav")
                         .collect(Collectors.toSet()));
 
-//        oas.getComponents().addSecuritySchemes("test", openIdConnect);
         try {
             new JaxrsOpenApiContextBuilder<>()
                     .openApiConfiguration(oasConfig)
@@ -74,13 +65,20 @@ public class ApplicationConfig extends Application {
         }
     }
 
+    private SecurityScheme openId() {
+        return new SecurityScheme()
+                .type(SecurityScheme.Type.OPENIDCONNECT)
+                .openIdConnectUrl(ENV.getProperty("AZURE_APP_WELL_KNOWN_URL", ENV.getProperty("oidc.open.am.well.known.url")))
+                .name("openIdConnect");
+    }
+
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();
         // eksponert grensesnitt
         classes.add(SimuleringRestTjeneste.class);
 
-        if (ER_LOKAL_UTVIKLING) {
+        if (ENV.isVTP()) {
             classes.add(SimuleringTestRestTjeneste.class);
         }
 
