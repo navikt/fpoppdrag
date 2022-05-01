@@ -56,4 +56,4 @@ jobs:
       - name: Build
         run: |
           echo "Building $BUILD_VERSION"
-          mvn package -q -B -s settings.xml -Drevision=-${BUILD_VERSION}
+          mvn package -q -B -s settings.xml -Drevision=${BUILD_VERSION}

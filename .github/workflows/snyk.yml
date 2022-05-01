@@ -13,7 +13,7 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
-          
+
       - uses: snyk/actions/setup@master
 
       - name: Setup maven
@@ -41,8 +41,9 @@ jobs:
 
       - name: Build
         run: |
-          echo "Building snyk_scan"
-          mvn install -q -B -s settings.xml
+          echo "Building snyk-snapshot"
+          mvn -B -s settings.xml versions:set -DnewVersion=snyk-snapshot
+          mvn install -q -B -s settings.xml -DskipTests
       - name: Run Snyk monitor
         run: >
           snyk monitor
