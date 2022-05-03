@@ -12,6 +12,8 @@ public enum PosteringType {
     SKAT,
     /** justering **/
     JUST,
+    MOTP,
+    TREK,
     ;
 
     private static final Logger LOG = LoggerFactory.getLogger(PosteringType.class);

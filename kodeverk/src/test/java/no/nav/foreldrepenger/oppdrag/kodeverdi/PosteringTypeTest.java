@@ -11,7 +11,7 @@ class PosteringTypeTest {
 
     @Test
     void values() {
-        assertThat(PosteringType.values()).containsAll(List.of(PosteringType.YTEL, PosteringType.FEIL, PosteringType.SKAT, PosteringType.JUST));
+        assertThat(PosteringType.values()).containsAll(List.of(PosteringType.YTEL, PosteringType.FEIL, PosteringType.SKAT, PosteringType.JUST, PosteringType.MOTP, PosteringType.TREK));
     }
 
     @Test
