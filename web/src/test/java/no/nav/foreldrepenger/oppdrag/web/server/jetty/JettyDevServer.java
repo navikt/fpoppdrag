@@ -1,8 +1,5 @@
 package no.nav.foreldrepenger.oppdrag.web.server.jetty;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.foreldrepenger.konfig.Environment;
 
 public class JettyDevServer extends JettyServer {
