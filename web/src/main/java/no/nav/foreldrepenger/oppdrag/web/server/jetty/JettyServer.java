@@ -41,7 +41,7 @@ import org.slf4j.MDC;
 
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.foreldrepenger.oppdrag.web.app.ApplicationConfig;
-import no.nav.foreldrepenger.oppdrag.web.server.jetty.db.DataSourceUtil;
+import no.nav.foreldrepenger.oppdrag.web.server.jetty.db.DatasourceUtil;
 import no.nav.vedtak.isso.IssoApplication;
 import no.nav.vedtak.sikkerhet.ContextPathHolder;
 import no.nav.vedtak.sikkerhet.jaspic.OidcAuthModule;
@@ -84,7 +84,7 @@ public class JettyServer {
 
     protected void bootStrap() throws Exception {
         konfigurerSikkerhet();
-        var dataSource = DataSourceUtil.createDataSource(30);
+        var dataSource = DatasourceUtil.createDataSource(30);
         konfigurerDataSource(dataSource);
         migrerDatabase(dataSource);
         start();
