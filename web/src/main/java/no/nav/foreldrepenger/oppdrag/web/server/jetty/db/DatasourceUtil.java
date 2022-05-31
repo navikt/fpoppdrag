@@ -31,6 +31,6 @@ public class DatasourceUtil {
         HikariDataSource hikariDataSource = new HikariDataSource(config);
         Runtime.getRuntime().addShutdownHook(new Thread(hikariDataSource::close));
 
-        return new HikariDataSource(config);
+        return hikariDataSource;
     }
 }
