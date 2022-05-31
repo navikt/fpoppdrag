@@ -30,8 +30,7 @@
 
         <felles.version>4.1.24</felles.version>
         <!-- Kontrakter -->
-        <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
-        <fp-kontrakter.version>6.1.19</fp-kontrakter.version>
+        <fp-kontrakter.version>6.1.21</fp-kontrakter.version>
 
         <!-- Eksterne -->
         <woodstox.version>6.2.8</woodstox.version>
@@ -112,9 +111,8 @@
             <!-- Kontrakter -->
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
-                <artifactId>okonomistotte-v1</artifactId>
-                <version>${fpoppdrag-kontrakt.version}</version>
-                <classifier>jaxb</classifier>
+                <artifactId>oppdragskjema-v1</artifactId>
+                <version>${fp-kontrakter.version}</version>
             </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
