@@ -15,7 +15,7 @@ import no.nav.vedtak.felles.integrasjon.felles.ws.CallIdOutInterceptor;
 @Dependent
 public class OppdragConsumerConfig {
 
-    private static final String WSDL = "wsdl/no/nav/system/os/eksponering/simulerFpServiceWSBinding.wsdl";
+    private static final String WSDL = "wsdl/no/nav/system/os/eksponering/simulerfpservicewsbinding.wsdl";
     private static final String NAMESPACE = "http://nav.no/system/os/eksponering/simulerFpServiceWSBinding";
     private static final QName SERVICE = new QName(NAMESPACE, "simulerFpService");
     private static final QName PORT = new QName(NAMESPACE, "simulerFpServicePort");
