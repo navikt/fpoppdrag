@@ -125,10 +125,9 @@
             <!-- nav -->
 
             <dependency>
-                <groupId>no.nav.oppdrag.tjenester</groupId>
+                <groupId>no.nav.tjenestespesifikasjoner</groupId>
                 <artifactId>nav-system-os-simuler-fp-service-tjenestespesifikasjon</artifactId>
-                <version>1.0.5</version>
-                <classifier>jaxws</classifier>
+                <version>2594.7c3ac50 </version>
             </dependency>
 
             <dependency>
