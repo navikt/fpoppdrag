@@ -1,5 +1,5 @@
 -- ##################################################
--- ### Opplegg for enhetstester (lokal + jenkins) ###
+-- ### Opplegg for enhetstester (lokal) ###
 -- ##################################################
 DECLARE userexists INTEGER;
 BEGIN

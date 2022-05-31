@@ -6,7 +6,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-bom</artifactId>
-        <version>0.2.7</version>
+        <version>0.3.0</version>
     </parent>
 
     <groupId>no.nav.foreldrepenger.oppdrag</groupId>
@@ -30,8 +30,7 @@
 
         <felles.version>4.1.24</felles.version>
         <!-- Kontrakter -->
-        <fpoppdrag-kontrakt.version>2.0_20190412163011_bb51d0e</fpoppdrag-kontrakt.version>
-        <fp-kontrakter.version>6.1.19</fp-kontrakter.version>
+        <fp-kontrakter.version>6.1.21</fp-kontrakter.version>
 
         <!-- Eksterne -->
         <woodstox.version>6.2.8</woodstox.version>
@@ -112,16 +111,8 @@
             <!-- Kontrakter -->
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
-                <artifactId>fpoppdrag-kontrakt-pom</artifactId>
-                <version>${fpoppdrag-kontrakt.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
-                <artifactId>okonomistotte-v1</artifactId>
-                <version>${fpoppdrag-kontrakt.version}</version>
-                <classifier>jaxb</classifier>
+                <artifactId>oppdragskjema-v1</artifactId>
+                <version>${fp-kontrakter.version}</version>
             </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
@@ -134,10 +125,9 @@
             <!-- nav -->
 
             <dependency>
-                <groupId>no.nav.oppdrag.tjenester</groupId>
+                <groupId>no.nav.tjenestespesifikasjoner</groupId>
                 <artifactId>nav-system-os-simuler-fp-service-tjenestespesifikasjon</artifactId>
-                <version>1.0.5</version>
-                <classifier>jaxws</classifier>
+                <version>2594.7c3ac50 </version>
             </dependency>
 
             <dependency>
