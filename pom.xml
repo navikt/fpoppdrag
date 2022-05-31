@@ -112,13 +112,6 @@
             <!-- Kontrakter -->
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
-                <artifactId>fpoppdrag-kontrakt-pom</artifactId>
-                <version>${fpoppdrag-kontrakt.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
                 <artifactId>okonomistotte-v1</artifactId>
                 <version>${fpoppdrag-kontrakt.version}</version>
                 <classifier>jaxb</classifier>
