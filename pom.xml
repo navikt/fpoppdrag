@@ -28,7 +28,7 @@
         <revision>1.0-SNAPSHOT</revision>
         <java.version>17</java.version>
 
-        <felles.version>4.1.24</felles.version>
+        <felles.version>4.1.28</felles.version>
         <!-- Kontrakter -->
         <fp-kontrakter.version>6.1.21</fp-kontrakter.version>
 
@@ -105,6 +105,16 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
                 <artifactId>felles-integrasjon-bom</artifactId>
+                <version>${felles.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+                <artifactId>ereg-klient</artifactId>
+                <version>${felles.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+                <artifactId>pdl-klient</artifactId>
                 <version>${felles.version}</version>
             </dependency>
 
