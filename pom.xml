@@ -33,7 +33,7 @@
         <fp-kontrakter.version>6.1.21</fp-kontrakter.version>
 
         <!-- Eksterne -->
-        <woodstox.version>6.2.8</woodstox.version>
+        <woodstox.version>6.3.0</woodstox.version>
     </properties>
 
     <dependencyManagement>
