@@ -13,29 +13,28 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 import no.nav.vedtak.sikkerhet.abac.AbacIdToken;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt;
+import no.nav.vedtak.sikkerhet.abac.NavAbacCommonAttributter;
 import no.nav.vedtak.sikkerhet.abac.PdpKlient;
 import no.nav.vedtak.sikkerhet.abac.PdpRequest;
 import no.nav.vedtak.sikkerhet.pdp.PdpConsumer;
 import no.nav.vedtak.sikkerhet.pdp.PdpKlientImpl;
+import no.nav.vedtak.sikkerhet.pdp.xacml.Category;
+import no.nav.vedtak.sikkerhet.pdp.xacml.XacmlRequest;
 import no.nav.vedtak.sikkerhet.pdp.xacml.XacmlRequestBuilder;
-import no.nav.vedtak.sikkerhet.pdp.xacml.XacmlResponseWrapper;
+import no.nav.vedtak.sikkerhet.pdp.xacml.XacmlResponse;
 
 public class XacmlRequestBuilderTjenesteImplTest {
 
@@ -55,7 +54,7 @@ public class XacmlRequestBuilderTjenesteImplTest {
     @Test
     public void kallPdpMedSamlTokenNårIdTokenErSamlToken() throws Exception {
         AbacIdToken idToken = AbacIdToken.withSamlToken("SAML");
-        XacmlResponseWrapper responseWrapper = createResponse("xacml/xacmlresponse.json");
+        var responseWrapper = createResponse("xacml/xacmlresponse.json");
         ArgumentCaptor<XacmlRequestBuilder> captor = ArgumentCaptor.forClass(XacmlRequestBuilder.class);
 
         when(pdpConsumerMock.evaluate(captor.capture())).thenReturn(responseWrapper);
@@ -70,7 +69,7 @@ public class XacmlRequestBuilderTjenesteImplTest {
     @Test
     public void kallPdpUtenFnrResourceHvisPersonlisteErTom() throws FileNotFoundException {
         AbacIdToken idToken = AbacIdToken.withOidcToken(JWT_TOKEN);
-        XacmlResponseWrapper responseWrapper = createResponse("xacml/xacmlresponse.json");
+        var responseWrapper = createResponse("xacml/xacmlresponse.json");
         ArgumentCaptor<XacmlRequestBuilder> captor = ArgumentCaptor.forClass(XacmlRequestBuilder.class);
 
         when(pdpConsumerMock.evaluate(captor.capture())).thenReturn(responseWrapper);
@@ -86,7 +85,7 @@ public class XacmlRequestBuilderTjenesteImplTest {
     @Test
     public void kallPdpMedJwtTokenBodyNårIdTokenErJwtToken() throws Exception {
         AbacIdToken idToken = AbacIdToken.withOidcToken(JWT_TOKEN);
-        XacmlResponseWrapper responseWrapper = createResponse("xacml/xacmlresponse.json");
+        var responseWrapper = createResponse("xacml/xacmlresponse.json");
         ArgumentCaptor<XacmlRequestBuilder> captor = ArgumentCaptor.forClass(XacmlRequestBuilder.class);
 
         when(pdpConsumerMock.evaluate(captor.capture())).thenReturn(responseWrapper);
@@ -102,7 +101,7 @@ public class XacmlRequestBuilderTjenesteImplTest {
     @Test
     public void kallPdpMedFlereAttributtSettNårPersonlisteStørreEnn1() throws FileNotFoundException {
         AbacIdToken idToken = AbacIdToken.withOidcToken(JWT_TOKEN);
-        XacmlResponseWrapper responseWrapper = createResponse("xacml/xacml3response.json");
+        var responseWrapper = createResponse("xacml/xacml3response.json");
         ArgumentCaptor<XacmlRequestBuilder> captor = ArgumentCaptor.forClass(XacmlRequestBuilder.class);
 
         when(pdpConsumerMock.evaluate(captor.capture())).thenReturn(responseWrapper);
@@ -126,7 +125,7 @@ public class XacmlRequestBuilderTjenesteImplTest {
     @Test
     public void sporingsloggListeSkalHaSammeRekkefølgePåidenterSomXacmlRequest() throws FileNotFoundException {
         AbacIdToken idToken = AbacIdToken.withOidcToken(JWT_TOKEN);
-        XacmlResponseWrapper responseWrapper = createResponse("xacml/xacml3response.json");
+        var responseWrapper = createResponse("xacml/xacml3response.json");
         ArgumentCaptor<XacmlRequestBuilder> captor = ArgumentCaptor.forClass(XacmlRequestBuilder.class);
 
         when(pdpConsumerMock.evaluate(captor.capture())).thenReturn(responseWrapper);
@@ -140,13 +139,18 @@ public class XacmlRequestBuilderTjenesteImplTest {
         pdpRequest.put(PdpKlient.ENVIRONMENT_AUTH_TOKEN, idToken);
         pdpKlient.forespørTilgang(pdpRequest);
 
-        JsonObject xacmlRequest = captor.getValue().build();
-        JsonArray resourceArray = xacmlRequest.getJsonObject("Request").getJsonArray("Resource");
+        var xacmlRequest = captor.getValue().build();
+        var resourceArray = xacmlRequest.request().get(Category.Resource);
+        var personArray = resourceArray.stream()
+                .map(XacmlRequest.Attributes::attribute)
+                .flatMap(Collection::stream)
+                .filter(a -> NavAbacCommonAttributter.RESOURCE_FELLES_PERSON_FNR.equals(a.attributeId()))
+                .toList();
 
         List<String> personer = pdpRequest.getListOfString(RESOURCE_FELLES_PERSON_FNR);
 
         for (int i = 0; i < personer.size(); i++) {
-            assertThat(resourceArray.get(i).toString().contains(personer.get(i))).isTrue();
+            assertThat(personArray.get(i).value().toString()).contains(personer.get(i));
         }
     }
 
@@ -159,10 +163,13 @@ public class XacmlRequestBuilderTjenesteImplTest {
     }
 
     @SuppressWarnings("resource")
-    private XacmlResponseWrapper createResponse(String jsonFile) throws FileNotFoundException {
+    private XacmlResponse createResponse(String jsonFile) {
         File file = new File(getClass().getClassLoader().getResource(jsonFile).getFile());
-        JsonReader reader = Json.createReader(new FileReader(file));
-        JsonObject jo = (JsonObject) reader.read();
-        return new XacmlResponseWrapper(jo);
+        try {
+            return DefaultJsonMapper.getObjectMapper().readValue(file, XacmlResponse.class);
+        } catch (Exception e) {
+            //
+        }
+        return null;
     }
 }
