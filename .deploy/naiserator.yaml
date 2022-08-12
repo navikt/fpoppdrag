@@ -52,7 +52,6 @@ spec:
   azure:
     application:
       enabled: true
-  webproxy: true
   secureLogs:
     enabled: true
   env:
