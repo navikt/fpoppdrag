@@ -13,6 +13,8 @@ import javax.ws.rs.core.Application;
 
 import org.glassfish.jersey.server.ServerProperties;
 
+import io.swagger.v3.core.jackson.ModelResolver;
+import io.swagger.v3.core.jackson.TypeNameResolver;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
@@ -32,6 +34,12 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.Simulerin
 @ApplicationPath(ApplicationConfig.API_URI)
 public class ApplicationConfig extends Application {
 
+    static {
+        // config for OpenAPI
+        TypeNameResolver.std.setUseFqn(true);  // use fully-qualified names as schema names
+        ModelResolver.enumsAsRef = true; // use reusable enums (do not inline per api)
+    }
+
     private static boolean ER_LOKAL_UTVIKLING = Environment.current().isLocal();
 
     public static final String API_URI = "/api";
@@ -46,15 +54,6 @@ public class ApplicationConfig extends Application {
         oas.info(info)
                 .addServersItem(new Server()
                         .url("/fpoppdrag"));
-//        SecurityScheme ssApiKey = new SecurityScheme();
-//        ssApiKey.in(SecurityScheme.In.HEADER).type(SecurityScheme.Type.APIKEY).name("apiKeyAuth").scheme("bearer");
-//
-//        SecurityScheme openIdConnect = new SecurityScheme();
-//        openIdConnect.type(SecurityScheme.Type.OPENIDCONNECT).openIdConnectUrl("https://isso-q.adeo.no:443/isso/oauth2").name("openIdConnect");
-//
-//
-//        oas.addSecurityItem(new SecurityRequirement().addList("apiKeyAuth"));
-//        oas.addSecurityItem(new SecurityRequirement().addList("openIdConnect"));
 
         SwaggerConfiguration oasConfig = new SwaggerConfiguration()
                 .openAPI(oas)
@@ -63,7 +62,6 @@ public class ApplicationConfig extends Application {
                 .resourcePackages(Stream.of("no.nav")
                         .collect(Collectors.toSet()));
 
-//        oas.getComponents().addSecuritySchemes("test", openIdConnect);
         try {
             new JaxrsOpenApiContextBuilder<>()
                     .openApiConfiguration(oasConfig)
