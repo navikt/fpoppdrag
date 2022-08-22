@@ -137,7 +137,7 @@
             <dependency>
                 <groupId>no.nav.tjenestespesifikasjoner</groupId>
                 <artifactId>nav-system-os-simuler-fp-service-tjenestespesifikasjon</artifactId>
-                <version>2594.7c3ac50 </version>
+                <version>2596.90425ef </version>
             </dependency>
 
             <dependency>
