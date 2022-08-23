@@ -13,8 +13,6 @@ import javax.ws.rs.core.Application;
 
 import org.glassfish.jersey.server.ServerProperties;
 
-import io.swagger.v3.core.jackson.ModelResolver;
-import io.swagger.v3.core.jackson.TypeNameResolver;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
@@ -33,12 +31,6 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.Simulerin
 
 @ApplicationPath(ApplicationConfig.API_URI)
 public class ApplicationConfig extends Application {
-
-    static {
-        // config for OpenAPI
-        TypeNameResolver.std.setUseFqn(true);  // use fully-qualified names as schema names
-        ModelResolver.enumsAsRef = true; // use reusable enums (do not inline per api)
-    }
 
     private static boolean ER_LOKAL_UTVIKLING = Environment.current().isLocal();
 

@@ -6,8 +6,6 @@
   "minReplicas": "2",
   "maxReplicas": "3",
   "ingresses": [
-    "https://fpoppdrag-q1.nais.preprod.local",
-    "https://app-q1.adeo.no/fpoppdrag",
     "https://fpoppdrag.dev.intern.nav.no/"
   ],
   "env": {

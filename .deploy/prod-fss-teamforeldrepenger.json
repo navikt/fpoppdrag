@@ -6,8 +6,7 @@
   "minReplicas": "2",
   "maxReplicas": "3",
   "ingresses": [
-    "https://fpoppdrag.intern.nav.no/",
-    "https://app.adeo.no/fpoppdrag"
+    "https://fpoppdrag.intern.nav.no/"
   ],
   "env": {
     "APPDYNAMICS_AGENT_ACCOUNT_NAME": "PROD"
