@@ -23,17 +23,24 @@ spec:
       cpu: 250m
       memory: 1Gi
   env:
-    - name: SWAGGER_JSON
-      value: ""
-    - name: BASE_URL
-      value: "/swagger"
+    - name: OAUTH_CLIENT_ID
+      value: b812d3b3-2d93-4e8c-ace8-d0da6b73fcad
+    - name: OAUTH_SCOPES
+      value: openid
+    - name: OAUTH_USE_PKCE
+      value: "true"
     - name: WITH_CREDENTIALS
       value: "true"
     - name: URLS
       value: "[{url: 'https://fpoppdrag.dev.intern.nav.no/fpoppdrag/api/openapi.yaml', name: 'fpoppdrag '},{url: 'https://fpformidling.dev.intern.nav.no/fpformidling/api/openapi.yaml', name: 'fpformidling'},{url: 'https://fptilbake.dev.intern.nav.no/fptilbake/api/openapi.yaml', name: 'fptilbake'}]"
-#  accessPolicy:
-#    inbound:
-#      rules:
-#        - application: fp-frontend
-#        - application: fpsak-redis-exporter
+  azure:
+    application:
+      enabled: true
+      claims:
+        extra:
+          - NAVident
+          - azp_name
+      replyURLs:
+        - https://fpswagger.dev.intern.nav.no/oauth2-redirect.html
+      singlePageApplication: true
 
