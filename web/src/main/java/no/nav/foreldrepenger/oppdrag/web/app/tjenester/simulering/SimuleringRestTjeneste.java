@@ -1,9 +1,5 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering;
 
-import static no.nav.foreldrepenger.oppdrag.web.app.abac.FPOppdragBeskyttetRessursAttributt.FAGSAK;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
-
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -17,9 +13,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.swagger.v3.oas.annotations.Operation;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
@@ -28,6 +21,8 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimulerOpp
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
+import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
 
 @RequestScoped
@@ -53,7 +48,7 @@ public class SimuleringRestTjeneste {
     @POST
     @Path("resultat")
     @Operation(description = "Hent resultat av simulering mot økonomi", summary = ("Returnerer simuleringsresultat."), tags = "simulering")
-    @BeskyttetRessurs(action = READ, resource = FAGSAK)
+    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     public SimuleringResultatDto hentSimuleringResultat(@Valid BehandlingIdDto behandlingIdDto) {
         Optional<SimuleringResultatDto> optionalSimuleringResultatDto = simuleringResultatTjeneste.hentResultatFraSimulering(behandlingIdDto.getBehandlingId());
         return optionalSimuleringResultatDto.orElse(null);
@@ -62,7 +57,7 @@ public class SimuleringRestTjeneste {
     @POST
     @Path("resultat-uten-inntrekk")
     @Operation(description = "Hent detaljert resultat av simulering mot økonomi med og uten inntrekk", summary = ("Returnerer simuleringsresultat."), tags = "simulering")
-    @BeskyttetRessurs(action = READ, resource = FAGSAK)
+    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     public SimuleringDto hentSimuleringResultatMedOgUtenInntrekk(@Valid BehandlingIdDto behandlingIdDto) {
         Optional<SimuleringDto> optionalSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingIdDto.getBehandlingId());
         return optionalSimuleringDto.orElse(null);
@@ -71,7 +66,7 @@ public class SimuleringRestTjeneste {
     @POST
     @Path("start")
     @Operation(description = "Start simulering for behandling med oppdrag", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
-    @BeskyttetRessurs(action = UPDATE, resource = FAGSAK)
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
     public Response startSimulering(@Valid SimulerOppdragDto simulerOppdragDto) {
         final Long behandlingId = simulerOppdragDto.getBehandlingId();
         startSimuleringTjeneste.startSimulering(behandlingId, simulerOppdragDto.getOppdragPrMottakerDecoded());
@@ -82,7 +77,7 @@ public class SimuleringRestTjeneste {
     @POST
     @Path("kanseller")
     @Operation(description = "Kanseller simulering for behandling", summary = ("Deaktiverer simuleringgrunnlag for behandling"), tags = "simulering")
-    @BeskyttetRessurs(action = UPDATE, resource = FAGSAK)
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
     public Response kansellerSimulering(@Valid BehandlingIdDto behandlingIdDto) {
         startSimuleringTjeneste.kansellerSimulering(behandlingIdDto.getBehandlingId());
         return Response.ok().build();
@@ -91,7 +86,7 @@ public class SimuleringRestTjeneste {
     @POST
     @Path("feilutbetalte-perioder")
     @Operation(description = "Hent sum feilutbetaling og simulerte perioder som er feilutbetalte og kan kreves tilbake fra brukeren.", summary = ("Returnerer perioder som er feilutbetalt."), tags = "simulering")
-    @BeskyttetRessurs(action = READ, resource = FAGSAK)
+    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     public FeilutbetaltePerioderDto hentFeilutbetaltePerioderForTilbakekreving(@Valid BehandlingIdDto behandlingIdDto) {
         return simuleringResultatTjeneste.hentFeilutbetaltePerioder(behandlingIdDto.getBehandlingId());
     }
