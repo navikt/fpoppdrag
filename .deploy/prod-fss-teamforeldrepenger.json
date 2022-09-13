@@ -10,6 +10,7 @@
     "https://app.adeo.no/fpoppdrag"
   ],
   "env": {
-    "APPDYNAMICS_AGENT_ACCOUNT_NAME": "PROD"
+    "APPDYNAMICS_AGENT_ACCOUNT_NAME": "PROD",
+    "APPD_ENABLED": "true"
   }
 }
