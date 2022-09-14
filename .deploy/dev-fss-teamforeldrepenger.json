@@ -7,6 +7,7 @@
   "maxReplicas": "2",
   "ingresses": [
     "https://fpoppdrag.dev.intern.nav.no/",
+    "https://fpoppdrag.dev-fss-pub.nais.io",
     "https://app-q1.adeo.no/fpoppdrag"
   ],
   "env": {
