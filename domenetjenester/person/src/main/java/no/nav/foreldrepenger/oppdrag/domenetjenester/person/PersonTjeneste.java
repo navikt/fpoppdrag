@@ -20,7 +20,7 @@ import no.nav.pdl.NavnResponseProjection;
 import no.nav.pdl.PersonResponseProjection;
 import no.nav.vedtak.exception.VLException;
 import no.nav.vedtak.felles.integrasjon.pdl.Pdl;
-import no.nav.vedtak.felles.integrasjon.rest.jersey.Jersey;
+import no.nav.vedtak.felles.integrasjon.rest.NativeClient;
 import no.nav.vedtak.util.LRUCache;
 
 @ApplicationScoped
@@ -38,7 +38,7 @@ public class PersonTjeneste {
     }
 
     @Inject
-    public PersonTjeneste(@Jersey Pdl pdlKlient) {
+    public PersonTjeneste(@NativeClient Pdl pdlKlient) {
         this.pdlKlient = pdlKlient;
         this.cacheIdentTilAktørId = new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);
     }
