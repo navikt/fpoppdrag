@@ -33,10 +33,10 @@ spec:
     cpuThresholdPercentage: 80
   resources:
     limits:
-      cpu: "1100m"
+      cpu: "1500m"
       memory: "1024Mi"
     requests:
-      cpu: "200m"
+      cpu: "1200m"
       memory: "256Mi"
   vault:
     enabled: true
@@ -49,6 +49,13 @@ spec:
         kvPath: {{serviceusersecretpath}}
       - mountPath: /var/run/secrets/nais.io/appdynamics
         kvPath: /apikey/appdynamics/{{environment}}
+  secureLogs:
+    enabled: true
+  env:
+  {{#each env}}
+     - name: {{@key}}
+       value: "{{this}}"
+  {{/each}}
   azure:
     application:
       enabled: true
@@ -56,19 +63,21 @@ spec:
         extra:
           - "NAVident"
           - "azp_name"
+  {{#if AZURE_IAC_RULES}}
   accessPolicy:
-    inbound:
-      rules:
-        - application: fp-frontend-azure
-          cluster: dev-fss
-        - application: fp-frontend-azure
-          cluster: dev-gcp
-        - application: fpsak
-          cluster: dev-fss
-  secureLogs:
-    enabled: true
-  env:
-  {{#each env}}
-   - name: {{@key}}
-     value: "{{this}}"
-  {{/each}}
+      inbound:
+        rules:
+        {{#each AZURE_IAC_RULES}}
+           - application: {{app}}
+             namespace: {{namespace}}
+             cluster: {{cluster}}
+             {{#if scopes}}
+             permissions:
+               scopes:
+               {{#each scopes}}
+                 - "{{this}}"
+               {{/each}}
+             {{/if}}
+        {{/each}}
+  {{/if}}
+
