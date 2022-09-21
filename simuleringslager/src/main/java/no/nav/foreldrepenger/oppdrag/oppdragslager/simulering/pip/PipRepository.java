@@ -1,8 +1,10 @@
 package no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.pip;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -31,12 +33,13 @@ public class PipRepository {
         Query query = entityManager.createNativeQuery(sql);
         query.setParameter("behandlingId", behandlingId);
 
-        @SuppressWarnings("rawtypes")
-        List resultater = query.getResultList();
+        @SuppressWarnings("unchecked")
+        List<String> resultaterRaw = query.getResultList();
+        Set<String> resultater = new HashSet<>(resultaterRaw);
         if (resultater.isEmpty()) {
             return Optional.empty();
         } else if (resultater.size() == 1) {
-            return Optional.of((String) resultater.get(0));
+            return resultater.stream().findFirst();
         } else {
             throw new IllegalStateException("Forventet 0 eller 1 treff etter søk på behandlingId, fikk flere for behandlingId " + behandlingId);
         }
