@@ -28,7 +28,7 @@
         <revision>1.0-SNAPSHOT</revision>
         <java.version>17</java.version>
 
-        <felles.version>4.1.41</felles.version>
+        <felles.version>4.1.48</felles.version>
         <!-- Kontrakter -->
         <fp-kontrakter.version>6.1.25</fp-kontrakter.version>
 
