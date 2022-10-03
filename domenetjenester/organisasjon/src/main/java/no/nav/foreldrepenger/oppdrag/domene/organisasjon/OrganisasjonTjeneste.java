@@ -8,6 +8,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import no.nav.vedtak.felles.integrasjon.organisasjon.OrgInfo;
+import no.nav.vedtak.felles.integrasjon.rest.NativeClient;
 import no.nav.vedtak.util.LRUCache;
 
 @ApplicationScoped
@@ -23,7 +24,7 @@ public class OrganisasjonTjeneste {
     }
 
     @Inject
-    public OrganisasjonTjeneste(OrgInfo organisasjonAdapter) {
+    public OrganisasjonTjeneste(@NativeClient OrgInfo organisasjonAdapter) {
         this.organisasjonAdapter = organisasjonAdapter;
     }
 
