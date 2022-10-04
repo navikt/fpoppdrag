@@ -6,7 +6,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-bom</artifactId>
-        <version>0.3.5</version>
+        <version>0.3.6</version>
     </parent>
 
     <groupId>no.nav.foreldrepenger.oppdrag</groupId>
@@ -28,7 +28,7 @@
         <revision>1.0-SNAPSHOT</revision>
         <java.version>17</java.version>
 
-        <felles.version>4.1.51</felles.version>
+        <felles.version>4.2.1</felles.version>
         <!-- Kontrakter -->
         <fp-kontrakter.version>6.1.27</fp-kontrakter.version>
 

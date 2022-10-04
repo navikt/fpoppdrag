@@ -8,7 +8,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import no.nav.vedtak.felles.integrasjon.organisasjon.OrgInfo;
-import no.nav.vedtak.felles.integrasjon.rest.NativeClient;
 import no.nav.vedtak.util.LRUCache;
 
 @ApplicationScoped
@@ -24,7 +23,7 @@ public class OrganisasjonTjeneste {
     }
 
     @Inject
-    public OrganisasjonTjeneste(@NativeClient OrgInfo organisasjonAdapter) {
+    public OrganisasjonTjeneste(OrgInfo organisasjonAdapter) {
         this.organisasjonAdapter = organisasjonAdapter;
     }
 
@@ -40,7 +39,7 @@ public class OrganisasjonTjeneste {
 
     private OrganisasjonInfo hentOrganisasjonRest(String orgNummer) {
         Objects.requireNonNull(orgNummer, "orgNummer"); // NOSONAR
-        var org = organisasjonAdapter.hentOrganisasjon(orgNummer);
-        return new OrganisasjonInfo(orgNummer, org.getNavn());
+        var org = organisasjonAdapter.hentOrganisasjonNavn(orgNummer);
+        return new OrganisasjonInfo(orgNummer, org);
     }
 }
