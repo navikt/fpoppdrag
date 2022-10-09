@@ -28,7 +28,7 @@
         <revision>1.0-SNAPSHOT</revision>
         <java.version>17</java.version>
 
-        <felles.version>4.2.1</felles.version>
+        <felles.version>4.2.3</felles.version>
         <!-- Kontrakter -->
         <fp-kontrakter.version>6.1.27</fp-kontrakter.version>
 
@@ -114,7 +114,7 @@
             </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-                <artifactId>pdl-klient</artifactId>
+                <artifactId>person-klient</artifactId>
                 <version>${felles.version}</version>
             </dependency>
 

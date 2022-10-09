@@ -23,7 +23,6 @@ import no.nav.pdl.Identliste;
 import no.nav.pdl.Navn;
 import no.nav.pdl.Person;
 import no.nav.vedtak.exception.TekniskException;
-import no.nav.vedtak.felles.integrasjon.pdl.PdlKlient;
 import no.nav.vedtak.felles.integrasjon.person.Persondata;
 
 @ExtendWith(MockitoExtension.class)
