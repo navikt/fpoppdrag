@@ -3,7 +3,7 @@
   "oraclesecretpath": "oracle/data/prod/creds/fpoppdrag_p-fpoppdrag_p",
   "oracleconfigpath": "oracle/data/prod/config/fpoppdrag_p",
   "serviceusersecretpath": "serviceuser/data/prod/srvfpoppdrag",
-  "minReplicas": "2",
+  "minReplicas": "1",
   "maxReplicas": "3",
   "ingresses": [
     "https://fpoppdrag.intern.nav.no/",

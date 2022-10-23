@@ -269,7 +269,7 @@ public class SimuleringBeregningTjeneste {
 
     private static void sanityCheckResultater(List<SimulertPostering> feilutbetalingPosteringer, BigDecimal feilutbetaltBeløp) {
         if (!feilutbetalingPosteringer.isEmpty() && feilutbetaltBeløp.signum() == 0) {
-            LOG.warn("FPO-723664: Har FEIL-posteringer i en måned og summen var 0. Dette er ikke forventet at skjer, bør analyseres.");
+            LOG.info("FPO-723664: Har FEIL-posteringer i en måned og summen var 0. Dette er ikke forventet at skjer, bør analyseres.");
         }
     }
 
