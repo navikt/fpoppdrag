@@ -39,7 +39,7 @@ public class OrganisasjonTjeneste {
 
     private OrganisasjonInfo hentOrganisasjonRest(String orgNummer) {
         Objects.requireNonNull(orgNummer, "orgNummer"); // NOSONAR
-        var org = organisasjonAdapter.hentOrganisasjon(orgNummer);
-        return new OrganisasjonInfo(orgNummer, org.getNavn());
+        var org = organisasjonAdapter.hentOrganisasjonNavn(orgNummer);
+        return new OrganisasjonInfo(orgNummer, org);
     }
 }
