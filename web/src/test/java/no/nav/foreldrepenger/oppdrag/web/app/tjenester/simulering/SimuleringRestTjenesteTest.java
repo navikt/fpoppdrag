@@ -64,7 +64,7 @@ public class SimuleringRestTjenesteTest {
         HentNavnTjeneste hentNavnTjeneste = mock(HentNavnTjeneste.class);
         SimuleringResultatTjeneste simuleringResultatTjeneste = new SimuleringResultatTjeneste(simuleringRepository,
                 hentNavnTjeneste, simuleringBeregningTjeneste);
-        restTjeneste = new SimuleringRestTjeneste(simuleringResultatTjeneste, startSimuleringTjeneste);
+        restTjeneste = new SimuleringRestTjeneste(simuleringResultatTjeneste, startSimuleringTjeneste, null);
     }
 
     @Test

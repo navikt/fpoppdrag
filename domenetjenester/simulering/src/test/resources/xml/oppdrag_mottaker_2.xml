@@ -4,9 +4,9 @@
         <kodeAksjon>1</kodeAksjon>
         <kodeEndring>NY</kodeEndring>
         <kodeFagomraade>FP</kodeFagomraade>
-        <fagsystemId>130158784200</fagsystemId>
+        <fagsystemId>130158784100</fagsystemId>
         <utbetFrekvens>MND</utbetFrekvens>
-        <oppdragGjelderId>16088011020</oppdragGjelderId>
+        <oppdragGjelderId>15088011020</oppdragGjelderId>
         <datoOppdragGjelderFom>2000-01-01</datoOppdragGjelderFom>
         <saksbehId>Z991097</saksbehId>
         <avstemming-115>
@@ -22,7 +22,7 @@
         <oppdrags-linje-150>
             <kodeEndringLinje>NY</kodeEndringLinje>
             <vedtakId>2018-08-16</vedtakId>
-            <delytelseId>130158784200100</delytelseId>
+            <delytelseId>130158784100100</delytelseId>
             <kodeKlassifik>FPATFRI</kodeKlassifik>
             <datoVedtakFom>2018-05-11</datoVedtakFom>
             <datoVedtakTom>2018-05-31</datoVedtakTom>
@@ -31,7 +31,7 @@
             <typeSats>DAG</typeSats>
             <brukKjoreplan>N</brukKjoreplan>
             <saksbehId>Z991097</saksbehId>
-            <utbetalesTilId>16088011020</utbetalesTilId>
+            <utbetalesTilId>15088011020</utbetalesTilId>
             <henvisning>1000202</henvisning>
             <grad-170>
                 <typeGrad>UFOR</typeGrad>

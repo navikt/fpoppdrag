@@ -96,28 +96,33 @@ public class SimuleringMottaker extends BaseCreateableEntitet {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         SimuleringMottaker that = (SimuleringMottaker) o;
         return Objects.equals(mottakerNummer, that.mottakerNummer) &&
-                Objects.equals(mottakerType, that.mottakerType);
+                mottakerType == that.mottakerType &&
+                erListeLik(simulertePosteringer, that.simulertePosteringer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(mottakerNummer, mottakerType);
+        return Objects.hash(mottakerNummer, mottakerType, simulertePosteringer);
+    }
+
+    private boolean erListeLik(List<SimulertPostering> l1, List<SimulertPostering> l2) {
+        if (l1 == null && l2 == null)
+            return true;
+        if (l1 == null || l2 == null)
+            return false;
+        return l1.size() == l2.size() && l2.containsAll(l1);
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + "<id=" + id //$NON-NLS-1$
-                + ", simuleringResultat=" + simuleringResultat.getId() //$NON-NLS-1$
                 + ", mottakerNummer=" + mottakerNummer //$NON-NLS-1$
                 + ", mottakerType=" + mottakerType //$NON-NLS-1$
+                + ", simulertePosteringer=" + simulertePosteringer //$NON-NLS-1$
                 + ">"; //$NON-NLS-1$
     }
 

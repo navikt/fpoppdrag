@@ -30,7 +30,7 @@
 
         <felles.version>4.2.7</felles.version>
         <!-- Kontrakter -->
-        <fp-kontrakter.version>6.1.27</fp-kontrakter.version>
+        <fp-kontrakter.version>6.1.28</fp-kontrakter.version>
 
         <!-- Eksterne -->
         <woodstox.version>6.3.1</woodstox.version>
@@ -119,6 +119,11 @@
             </dependency>
 
             <!-- Kontrakter -->
+            <dependency>
+                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+                <artifactId>fp-ws-proxy-v1</artifactId>
+                <version>${fp-kontrakter.version}</version>
+            </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
                 <artifactId>oppdragskjema-v1</artifactId>

@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.oppdrag.oppdragslager.simulering;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -123,8 +124,28 @@ public class SimulertPostering extends BaseCreateableEntitet {
                 + ", beløp=" + beløp //$NON-NLS-1$
                 + (posteringType != null ? ", posteringType=" + posteringType : "") //$NON-NLS-1$
                 + ", utenInntrekk=" + utenInntrekk //$NON-NLS-1$
+                + ", forfallsdato=" + forfallsdato //$NON-NLS-1$
                 + ">"; //$NON-NLS-1$
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimulertPostering that = (SimulertPostering) o;
+        return utenInntrekk == that.utenInntrekk &&
+                fagOmrådeKode == that.fagOmrådeKode &&
+                Objects.equals(fom, that.fom) &&
+                Objects.equals(tom, that.tom) &&
+                betalingType == that.betalingType &&
+                Objects.equals(beløp, that.beløp) &&
+                posteringType == that.posteringType &&
+                Objects.equals(forfallsdato, that.forfallsdato);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fagOmrådeKode, fom, tom, betalingType, beløp, posteringType, forfallsdato, utenInntrekk);
     }
 
     public static class Builder {
