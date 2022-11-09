@@ -228,7 +228,7 @@ public class StartSimuleringTjeneste {
     }
 
     private YtelseType bestemYtelseType(Long behandlingId, List<Oppdrag> oppdrag) {
-        List<String> fagOmrådeKoder = oppdrag.stream()
+        var fagOmrådeKoder = oppdrag.stream()
                 .map(no.nav.system.os.entiteter.oppdragskjema.Oppdrag::getKodeFagomraade)
                 .distinct()
                 .toList();

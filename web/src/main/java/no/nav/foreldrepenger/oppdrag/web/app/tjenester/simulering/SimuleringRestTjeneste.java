@@ -109,7 +109,7 @@ public class SimuleringRestTjeneste {
     @Path("kanseller")
     @Operation(description = "Kanseller simulering for behandling", summary = ("Deaktiverer simuleringgrunnlag for behandling"), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
-    public Response kansellerSimuleringOld(@Valid BehandlingIdDto behandlingIdDto) {
+    public Response kansellerSimulering(@Valid BehandlingIdDto behandlingIdDto) {
         startSimuleringTjeneste.kansellerSimulering(behandlingIdDto.getBehandlingId());
         return Response.ok().build();
     }

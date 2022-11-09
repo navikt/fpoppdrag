@@ -121,8 +121,7 @@ public class StartSimuleringTjenesteFpWsProxy {
     }
 
     private void utførSimuleringUtenInntrekk(OppdragskontrollDto oppdragskontrollDto, SimuleringGrunnlag simuleringGrunnlag) {
-        BeregningResultat beregningResultat = simuleringBeregningTjeneste.hentBeregningsresultat(simuleringGrunnlag);
-
+        var beregningResultat = simuleringBeregningTjeneste.hentBeregningsresultat(simuleringGrunnlag);
         if (erResultatMedInntrekkOgFeilutbetaling(beregningResultat)) {
             LOG.info("Utfører simulering uten inntrekk.");
             var beregningResultater = utførSimuleringViaFpWsProxy(oppdragskontrollDto, simuleringGrunnlag.getYtelseType(), true);
@@ -133,8 +132,8 @@ public class StartSimuleringTjenesteFpWsProxy {
     }
 
     private boolean erResultatMedInntrekkOgFeilutbetaling(BeregningResultat beregningResultat) {
-        BigDecimal inntrekkNesteUtbetaling = beregningResultat.getOppsummering().getInntrekkNesteUtbetaling();
-        BigDecimal feilutbetaling = beregningResultat.getOppsummering().getFeilutbetaling();
+        var inntrekkNesteUtbetaling = beregningResultat.getOppsummering().getInntrekkNesteUtbetaling();
+        var feilutbetaling = beregningResultat.getOppsummering().getFeilutbetaling();
         return inntrekkNesteUtbetaling != null && inntrekkNesteUtbetaling.compareTo(BigDecimal.ZERO) != 0
                 && feilutbetaling != null && feilutbetaling.compareTo(BigDecimal.ZERO) != 0;
     }
@@ -169,15 +168,15 @@ public class StartSimuleringTjenesteFpWsProxy {
 
     private SimuleringGrunnlag transformerTilDatastruktur(long behandlingId, List<BeregningDto> beregningDtoListe, YtelseType ytelseType) {
         // Finn første gjelderId hvor responsen ikke er en null-verdi
-        String gjelderIdFnr = beregningDtoListe.stream()
+        var gjelderIdFnr = beregningDtoListe.stream()
                 .filter(Objects::nonNull)
                 .map(BeregningDto::gjelderId)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Utvikler-feil: skulle ikke kommet hit med bare null-responser"));
 
-        String gjelderId = resultatTransformer.hentAktørIdHvisFnr(gjelderIdFnr);
+        var gjelderId = resultatTransformer.hentAktørIdHvisFnr(gjelderIdFnr);
 
-        SimuleringResultat.Builder simuleringResultatBuilder = SimuleringResultat.builder();
+        var simuleringResultatBuilder = SimuleringResultat.builder();
 
         Map<String, SimuleringMottaker.Builder> mottakerBuilderMap = new HashMap<>();
         for (var beregningDto : beregningDtoListe) {
@@ -189,13 +188,13 @@ public class StartSimuleringTjenesteFpWsProxy {
         }
         mottakerBuilderMap.forEach((key, builder) -> simuleringResultatBuilder.medSimuleringMottaker(builder.build()));
 
-        SimuleringGrunnlag.Builder simuleringGrunnlagBuilder = SimuleringGrunnlag.builder()
+        return SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medAktørId(gjelderId)
                 .medSimuleringResultat(simuleringResultatBuilder.build())
                 .medSimuleringKjørtDato(LocalDateTime.now())
-                .medYtelseType(ytelseType);
-        return simuleringGrunnlagBuilder.build();
+                .medYtelseType(ytelseType)
+                .build();
     }
 
     public void kansellerSimulering(Long behandlingId) {

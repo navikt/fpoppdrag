@@ -304,62 +304,56 @@ public class StartSimuleringTjenesteFpWsProxyTest {
 
             List<BeregningsPeriodeDto> beregningsPeriodeDtos = new ArrayList<>();
             beregningsPeriodeDtos.add(new BeregningsPeriodeDto("2018-09-01", "2018-09-31", beregningStoppnivaa));
-            var beregning = new BeregningDto(
-                    "dummy",
-                    gjelderId,
-                    "2018-10-10",
-                    "DUMMY",
-                    BigDecimal.valueOf(1234L),
-                    beregningsPeriodeDtos
-            );
+            var beregning = new BeregningDto.Builder()
+                    .gjelderId(gjelderId)
+                    .gjelderNavn("dummy")
+                    .datoBeregnet("2018-10-10")
+                    .kodeFaggruppe("DUMMY")
+                    .belop(BigDecimal.valueOf(1234L))
+                    .beregningsPeriode(beregningsPeriodeDtos)
+                    .build();
             beregningDtos.add(beregning);
         }
         return beregningDtos;
     }
 
     private BeregningStoppnivåDto opprettBeregningStoppnivå(String gjelderId, String fagsysId, String forfallsdato) {
-        return new BeregningStoppnivåDto(
-                Fagområde.FP.name(),
-                BigInteger.ONE,
-                "8052",
-                1234L,
-                fagsysId,
-                null,
-                gjelderId,
-                "asfasf",
-                "U",
-                forfallsdato,
-                false,
-                new ArrayList<>());
+        return new BeregningStoppnivåDto.Builder()
+                .kodeFagomraade(Fagområde.FP.name())
+                .stoppNivaaId(BigInteger.ONE)
+                .behandlendeEnhet("8052")
+                .oppdragsId(1234L)
+                .fagsystemId(fagsysId)
+                .utbetalesTilId(gjelderId)
+                .utbetalesTilNavn("asfasf")
+                .bilagsType("U")
+                .forfall(forfallsdato)
+                .feilkonto(false)
+                .beregningStoppnivaaDetaljer(new ArrayList<>())
+                .build();
     }
 
     private BeregningStoppnivåDetaljerDto opprettStoppnivaaDetaljer(String fom, String tom, PosteringType posteringType, BigDecimal beløp) {
-        return new BeregningStoppnivåDetaljerDto(
-                fom,
-                tom,
-                "1235432",
-                "2",
-                beløp,
-                0L,
-                "2018-12-12",
-                null,
-                false,
-                BigInteger.valueOf(21423L),
-                BigDecimal.valueOf(2254L),
-                "DAG",
-                BigDecimal.valueOf(2542L),
-                "5323",
-                BigInteger.valueOf(100L),
-                null,
-                "3523",
-                "4643",
-                null,
-                null,
-                null,
-                posteringType.name(),
-                "sfas",
-                null
-        );
+        return new BeregningStoppnivåDetaljerDto.Builder()
+                .faktiskFom(fom)
+                .faktiskTom(tom)
+                .kontoStreng("1235432")
+                .behandlingskode("2")
+                .belop(beløp)
+                .trekkVedtakId(0L)
+                .stonadId("2018-12-12")
+                .tilbakeforing(false)
+                .linjeId(BigInteger.valueOf(21423L))
+                .sats(BigDecimal.valueOf(2254L))
+                .typeSats("DAG")
+                .antallSats(BigDecimal.valueOf(2542L))
+                .saksbehId("5323")
+                .uforeGrad(BigInteger.valueOf(100L))
+                .delytelseId("3523")
+                .bostedsenhet("4643")
+                .typeKlasse(posteringType.name())
+                .typeKlasseBeskrivelse("sfas")
+                .build();
     }
 
 }

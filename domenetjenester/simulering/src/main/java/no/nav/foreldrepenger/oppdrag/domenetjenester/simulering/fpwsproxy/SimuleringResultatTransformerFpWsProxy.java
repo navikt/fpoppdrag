@@ -21,7 +21,6 @@ import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 import no.nav.vedtak.exception.TekniskException;
 
 @ApplicationScoped
@@ -51,7 +50,7 @@ public class SimuleringResultatTransformerFpWsProxy {
                 if (mottakerBuilderMap.containsKey(mottakerId)) {
                     mottakerBuilder = mottakerBuilderMap.get(mottakerId);
                 } else {
-                    boolean harSammeAktørIdSomBruker = gjelderAktørId.equals(mottakerId);
+                    var harSammeAktørIdSomBruker = gjelderAktørId.equals(mottakerId);
                     mottakerBuilder = SimuleringMottaker.builder()
                             .medMottakerNummer(mottakerId)
                             .medMottakerType(utledMottakerType(stoppnivaa.utbetalesTilId(), harSammeAktørIdSomBruker));
@@ -68,7 +67,7 @@ public class SimuleringResultatTransformerFpWsProxy {
 
 
     private SimulertPostering mapPostering(boolean utenInntrekk, BeregningStoppnivåDto stoppnivaa, BeregningStoppnivåDetaljerDto detaljer) {
-        SimulertPostering.Builder posteringBuilder = SimulertPostering.builder()
+        return SimulertPostering.builder()
                 .medBetalingType(utledBetalingType(detaljer.belop()))
                 .medBeløp(detaljer.belop())
                 .medFagOmraadeKode(Fagområde.fraKode(stoppnivaa.kodeFagomraade()))
@@ -76,22 +75,21 @@ public class SimuleringResultatTransformerFpWsProxy {
                 .medTom(parseDato(detaljer.faktiskTom()))
                 .medForfallsdato(parseDato(stoppnivaa.forfall()))
                 .medPosteringType(PosteringType.getOrNull(detaljer.typeKlasse()))
-                .utenInntrekk(utenInntrekk);
-
-        return posteringBuilder.build();
+                .utenInntrekk(utenInntrekk)
+                .build();
     }
 
 
     public void mapSimuleringUtenInntrekk(BeregningDto beregning, SimuleringGrunnlag simuleringGrunnlag) {
-        SimuleringMottaker mottaker = simuleringGrunnlag.getSimuleringResultat().getSimuleringMottakere()
-                .stream()
+        var mottaker = simuleringGrunnlag.getSimuleringResultat().getSimuleringMottakere().stream()
                 .filter(m -> m.getMottakerType().equals(MottakerType.BRUKER))
-                .findFirst().orElseThrow(() -> new IllegalStateException("Utviklerfeil: skal ikke komme hit uten at bruker finnes som mottaker"));
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Utviklerfeil: skal ikke komme hit uten at bruker finnes som mottaker"));
 
         for (var periode : beregning.beregningsPeriode()) {
             for (var stoppnivaa : periode.beregningStoppnivaa()) {
                 for (var detaljer : stoppnivaa.beregningStoppnivaaDetaljer()) {
-                    SimulertPostering postering = mapPostering(true, stoppnivaa, detaljer);
+                    var postering = mapPostering(true, stoppnivaa, detaljer);
                     mottaker.leggTilSimulertPostering(postering);
                 }
             }
@@ -103,7 +101,7 @@ public class SimuleringResultatTransformerFpWsProxy {
         if (erOrgNr(orgNrOrFnr)) {
             return orgNrOrFnr.substring(2);
         } else {
-            AktørId aktørId = personTjeneste.hentAktørForFnr(new PersonIdent(orgNrOrFnr))
+            var aktørId = personTjeneste.hentAktørForFnr(new PersonIdent(orgNrOrFnr))
                     .orElseThrow(() -> new TekniskException("FPO-952153", "Fant ikke aktørId for FNR"));
             return aktørId.getId();
         }
@@ -132,8 +130,7 @@ public class SimuleringResultatTransformerFpWsProxy {
         return BetalingType.K;
     }
 
-    private LocalDate parseDato(String dato) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATO_PATTERN);
-        return LocalDate.parse(dato, dtf);
+    private static LocalDate parseDato(String dato) {
+        return LocalDate.parse(dato, DateTimeFormatter.ofPattern(DATO_PATTERN));
     }
 }

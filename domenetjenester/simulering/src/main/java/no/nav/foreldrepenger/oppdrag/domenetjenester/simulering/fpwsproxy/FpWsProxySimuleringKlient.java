@@ -7,9 +7,6 @@ import java.util.List;
 import javax.enterprise.context.Dependent;
 import javax.ws.rs.core.UriBuilder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.foreldrepenger.kontrakter.simulering.request.OppdragskontrollDto;
 import no.nav.foreldrepenger.kontrakter.simulering.respons.BeregningDto;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
@@ -22,8 +19,6 @@ import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 @Dependent
 @RestClientConfig(tokenConfig = TokenFlow.STS_CC, endpointProperty = "fpwsproxy.rs.url", endpointDefault = "http://fp-ws-proxy")
 public class FpWsProxySimuleringKlient {
-
-    private static final Logger LOG = LoggerFactory.getLogger(FpWsProxySimuleringKlient.class);
 
     private final RestClient restClient;
     private final RestConfig restConfig;
