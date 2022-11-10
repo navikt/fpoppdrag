@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.UriBuilder;
 
 import no.nav.foreldrepenger.kontrakter.simulering.request.OppdragskontrollDto;
@@ -16,19 +16,18 @@ import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
-@Dependent
+@ApplicationScoped
 @RestClientConfig(tokenConfig = TokenFlow.STS_CC, endpointProperty = "fpwsproxy.rs.url", endpointDefault = "http://fp-ws-proxy")
 public class FpWsProxySimuleringKlient {
 
     private final RestClient restClient;
     private final RestConfig restConfig;
-
-    private URI endpointStartSimulering;
+    private final URI endpointStartSimulering;
 
     public FpWsProxySimuleringKlient() {
         this.restClient = RestClient.client();
         this.restConfig = RestConfig.forClient(this.getClass());
-        this.endpointStartSimulering = UriBuilder.fromUri(restConfig.fpContextPath()).path("/api/simulering/start").build();
+        this.endpointStartSimulering = UriBuilder.fromUri(restConfig.endpoint()).path("/api/simulering/start").build();
     }
     public List<BeregningDto> utførSimulering(OppdragskontrollDto oppdragskontrollDto, YtelseType ytelseType, boolean utenInntrekk) {
         var target = UriBuilder.fromUri(endpointStartSimulering)

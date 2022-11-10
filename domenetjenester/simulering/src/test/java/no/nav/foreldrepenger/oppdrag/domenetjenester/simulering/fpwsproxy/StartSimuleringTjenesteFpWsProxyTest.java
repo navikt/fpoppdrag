@@ -81,6 +81,12 @@ public class StartSimuleringTjenesteFpWsProxyTest {
         when(tpsTjenesteMock.hentAktørForFnr(any())).thenReturn(Optional.of(new AktørId(AKTØR_ID)));
     }
 
+    @Test
+    void tetetet() {
+        var test =  new FpWsProxySimuleringKlient();
+
+    }
+
 
     @Test
     public void test_skal_deaktivere_forrige_simulering_når_ny_simulering_gir_tomt_resultat() throws Exception {
