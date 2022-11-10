@@ -107,6 +107,7 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
     @SuppressWarnings("rawtypes")
     private static final Map<Class, List<List<Class<? extends Annotation>>>> VALIDERINGSALTERNATIVER = new HashMap<>() {{
         put(String.class, asList(
+                asList(Pattern.class),
                 asList(Pattern.class, Size.class),
                 singletonList(Digits.class)));
         put(Long.class, singletonList(

@@ -14,7 +14,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.time.LocalDate;
@@ -52,12 +51,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Kodeverdi;
-import no.nav.foreldrepenger.oppdrag.web.app.IndexClasses;
 import no.nav.foreldrepenger.oppdrag.web.app.validering.ValidKodeverk;
 
 public class RestApiInputValideringDtoTest extends RestApiTester {
@@ -97,8 +94,7 @@ public class RestApiInputValideringDtoTest extends RestApiTester {
     @SuppressWarnings("rawtypes")
     private static final Map<Class, List<List<Class<? extends Annotation>>>> VALIDERINGSALTERNATIVER = new HashMap<>() {
         {
-            put(String.class,
-                    asList(asList(Pattern.class, Size.class), asList(Pattern.class), singletonList(Digits.class)));
+            put(String.class, asList(asList(Pattern.class, Size.class), asList(Pattern.class), singletonList(Digits.class)));
             put(Long.class, asList(asList(Min.class, Max.class), asList(Digits.class)));
             put(long.class, asList(asList(Min.class, Max.class), asList(Digits.class)));
             put(Integer.class, singletonList(asList(Min.class, Max.class)));
@@ -181,9 +177,7 @@ public class RestApiInputValideringDtoTest extends RestApiTester {
                     "Klassen " + klasse + " er en entitet, kan ikke brukes som DTO. Brukes i " + forrigeKlasse);
         }
 
-        URL klasseLocation = codeSource.getLocation();
-        for (Class<?> subklasse : IndexClasses.getIndexFor(klasseLocation.toURI())
-                .getSubClassesWithAnnotation(klasse, JsonTypeName.class)) {
+        for (Class<?> subklasse : JsonSubTypesUtil.getJsonSubtypes(klasse)) {
             validerRekursivt(besøkteKlasser, subklasse, forrigeKlasse);
         }
         for (Field field : getRelevantFields(klasse)) {

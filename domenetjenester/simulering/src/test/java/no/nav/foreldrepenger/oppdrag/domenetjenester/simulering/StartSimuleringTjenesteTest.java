@@ -21,7 +21,6 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -69,6 +68,7 @@ public class StartSimuleringTjenesteTest {
         when(tpsTjenesteMock.hentAktørForFnr(any())).thenReturn(Optional.of(new AktørId(AKTØR_ID)));
     }
 
+    @Deprecated // Flyttet til fp-ws-proxy
     @Test
     public void test_skalKasteFeilVedUkjentEllerUgyldigXml() {
         assertThatThrownBy(() -> simuleringTjeneste.startSimulering(BEHANDLING_ID_1, Collections.singletonList("abcd")))
@@ -119,7 +119,8 @@ public class StartSimuleringTjenesteTest {
         // Arrange
         String xml = TestResourceLoader.loadXml("/xml/oppdrag_mottaker_2.xml");
 
-        when(oppdragConsumerMock.hentSimulerBeregningResponse(any())).thenReturn(lagRespons("24153532444", "423535"));
+        SimulerBeregningResponse mockRespons = lagRespons("24153532444", "423535");
+        when(oppdragConsumerMock.hentSimulerBeregningResponse(any())).thenReturn(mockRespons);
 
         // Act - Skal gi to beregningsresultater til samme mottaker
         simuleringTjeneste.startSimulering(BEHANDLING_ID_2, Arrays.asList(xml, xml));

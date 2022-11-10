@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.oppdragslager.simulering;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -59,7 +60,28 @@ public class SimuleringResultat extends BaseCreateableEntitet {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<id=" + id + " >"; //$NON-NLS-1$
+        return "SimuleringResultat{" +
+                "simuleringMottakere=" + simuleringMottakere +
+                '}';
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimuleringResultat that = (SimuleringResultat) o;
+        return erSetteneLike(simuleringMottakere, that.simuleringMottakere);
+    }
+
+    private boolean erSetteneLike(Set<SimuleringMottaker> l1, Set<SimuleringMottaker> l2) {
+        if (l1 == null && l2 == null)
+            return true;
+        if (l1 == null || l2 == null)
+            return false;
+        return l1.size() == l2.size() && l2.containsAll(l1);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(simuleringMottakere);
     }
 }

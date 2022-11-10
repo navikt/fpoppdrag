@@ -34,7 +34,7 @@ public class SimuleringBeregningTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimuleringBeregningTjeneste.class);
 
-    BeregningResultat hentBeregningsresultat(SimuleringGrunnlag simuleringGrunnlag) {
+    public BeregningResultat hentBeregningsresultat(SimuleringGrunnlag simuleringGrunnlag) {
         return beregnResultat(simuleringGrunnlag, false)
                 .orElseThrow(() -> new IllegalStateException("Utvikler-feil: Skal alltid ha beregningsresultat."));
     }

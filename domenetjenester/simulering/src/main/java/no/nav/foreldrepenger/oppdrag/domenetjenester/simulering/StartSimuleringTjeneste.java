@@ -228,7 +228,10 @@ public class StartSimuleringTjeneste {
     }
 
     private YtelseType bestemYtelseType(Long behandlingId, List<Oppdrag> oppdrag) {
-        List<String> fagOmrådeKoder = oppdrag.stream().map(no.nav.system.os.entiteter.oppdragskjema.Oppdrag::getKodeFagomraade).distinct().toList();
+        var fagOmrådeKoder = oppdrag.stream()
+                .map(no.nav.system.os.entiteter.oppdragskjema.Oppdrag::getKodeFagomraade)
+                .distinct()
+                .toList();
         if (fagOmrådeKoder.isEmpty()) {
             LOG.warn("Fant ingen fagområdeKoder for behandlingId={}", behandlingId);
             throw new IllegalStateException(String.format("Utvikler-feil: Ytelse Type må være satt for behandling: %s", behandlingId));

@@ -1,0 +1,359 @@
+package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import no.nav.foreldrepenger.kontrakter.simulering.request.KodeEndring;
+import no.nav.foreldrepenger.kontrakter.simulering.request.KodeEndringLinje;
+import no.nav.foreldrepenger.kontrakter.simulering.request.KodeFagområde;
+import no.nav.foreldrepenger.kontrakter.simulering.request.KodeKlassifik;
+import no.nav.foreldrepenger.kontrakter.simulering.request.KodeStatusLinje;
+import no.nav.foreldrepenger.kontrakter.simulering.request.LukketPeriode;
+import no.nav.foreldrepenger.kontrakter.simulering.request.Oppdrag110Dto;
+import no.nav.foreldrepenger.kontrakter.simulering.request.OppdragskontrollDto;
+import no.nav.foreldrepenger.kontrakter.simulering.request.Oppdragslinje150Dto;
+import no.nav.foreldrepenger.kontrakter.simulering.request.Refusjonsinfo156Dto;
+import no.nav.foreldrepenger.kontrakter.simulering.request.SatsDto;
+import no.nav.foreldrepenger.kontrakter.simulering.request.TypeSats;
+import no.nav.foreldrepenger.kontrakter.simulering.request.UtbetalingsgradDto;
+import no.nav.foreldrepenger.kontrakter.simulering.respons.BeregningDto;
+import no.nav.foreldrepenger.kontrakter.simulering.respons.BeregningStoppnivåDetaljerDto;
+import no.nav.foreldrepenger.kontrakter.simulering.respons.BeregningStoppnivåDto;
+import no.nav.foreldrepenger.kontrakter.simulering.respons.BeregningsPeriodeDto;
+import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.OppdragMapper;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
+
+/** TODO:
+ * Aktiver denne når {@link StartSimuleringTjenesteFpWsProxy} tar over for StartSimuleringTjeneste.
+ * Nå har den bare sammenligning med direkte integrasjon aktivert, og ikke noe lagring i databasen.
+ */
+@Disabled
+@ExtendWith(JpaExtension.class)
+public class StartSimuleringTjenesteFpWsProxyTest {
+
+    private static final Long BEHANDLING_ID_1 = 42345L;
+    private static final Long BEHANDLING_ID_2 = 87890L;
+    private static final String AKTØR_ID = "12345678901";
+
+    private SimuleringRepository simuleringRepository;
+    private FpWsProxySimuleringKlient fpWsProxySimuleringKlient = mock(FpWsProxySimuleringKlient.class);
+    private PersonTjeneste tpsTjenesteMock = mock(PersonTjeneste.class);
+    private SimuleringResultatTransformerFpWsProxy resultatTransformer = new SimuleringResultatTransformerFpWsProxy(tpsTjenesteMock);
+
+    private StartSimuleringTjenesteFpWsProxy simuleringTjeneste;
+    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
+
+    @BeforeEach
+    public void setup(EntityManager entityManager) {
+
+        simuleringRepository = new SimuleringRepository(entityManager);
+        simuleringTjeneste = new StartSimuleringTjenesteFpWsProxy(simuleringRepository, fpWsProxySimuleringKlient, resultatTransformer, simuleringBeregningTjeneste);
+        when(tpsTjenesteMock.hentAktørForFnr(any())).thenReturn(Optional.of(new AktørId(AKTØR_ID)));
+    }
+
+
+    @Test
+    public void test_skal_deaktivere_forrige_simulering_når_ny_simulering_gir_tomt_resultat() throws Exception {
+        var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
+        var oppdragskontrollSimulering1 = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
+        when(fpWsProxySimuleringKlient.utførSimulering(any(), any(), anyBoolean())).thenReturn(lagRespons("24153532444", "423535", oppdragskontrollSimulering1));
+        simuleringTjeneste.startSimulering(oppdragskontrollSimulering1);
+
+        Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
+        assertThat(grunnlagOpt1).isPresent();
+        assertThat(grunnlagOpt1.get().isAktiv()).isTrue();
+
+        var oppdrag2 = lagOppdragRefusjon();
+        var oppdragskontrollDtoSimulering2 = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag2));
+        when(fpWsProxySimuleringKlient.utførSimulering(any(), any(), anyBoolean())).thenReturn(null);
+        simuleringTjeneste.startSimulering(oppdragskontrollDtoSimulering2);
+
+        Optional<SimuleringGrunnlag> grunnlagOpt2 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
+        assertThat(grunnlagOpt2).isEmpty();
+    }
+
+    @Test
+    public void test_skal_deaktiver_behandling_med_gitt_behandling() throws Exception {
+        var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
+        OppdragskontrollDto oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
+
+        when(fpWsProxySimuleringKlient.utførSimulering(any(), any(), anyBoolean())).thenReturn(lagRespons("24153532444", "423535", oppdragskontrollDto));
+        simuleringTjeneste.startSimulering(oppdragskontrollDto);
+
+        Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
+        assertThat(grunnlagOpt1).isPresent();
+        assertThat(grunnlagOpt1.get().isAktiv()).isTrue();
+
+        simuleringTjeneste.kansellerSimulering(BEHANDLING_ID_2);
+        Optional<SimuleringGrunnlag> grunnlagOpt2 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
+        assertThat(grunnlagOpt2).isNotPresent();
+    }
+
+    // TODO: Denne feiler på siste assert. Why is that? noe feil i kode eller test?
+    @Test
+    public void mapperFlereBeregningsresultatTilSammeMottaker() throws Exception {
+        // Arrange
+        var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
+        var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1, oppdrag1));
+        List<BeregningDto> mockRespons = lagRespons("24153532444", "423535", oppdragskontrollDto);
+        when(fpWsProxySimuleringKlient.utførSimulering(any(), any(), anyBoolean())).thenReturn(mockRespons);
+
+        // Act - Skal gi to beregningsresultater til samme mottaker
+        simuleringTjeneste.startSimulering(oppdragskontrollDto);
+
+        // Assert
+        Optional<SimuleringGrunnlag> grunnlagOpt = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
+        assertThat(grunnlagOpt).isPresent();
+
+        Set<SimuleringMottaker> mottakere = grunnlagOpt.get().getSimuleringResultat().getSimuleringMottakere();
+        assertThat(mottakere).hasSize(1);
+
+        // To beregningsresultat til samme mottaker med én postering hver
+        assertThat(mottakere.iterator().next().getSimulertePosteringer()).hasSize(2);
+    }
+
+    @Test
+    public void simulerer_for_bruker_uten_inntrekk_dersom_første_resultat_gir_feilutbetaling_og_inntrekk() throws Exception {
+        // Arrange
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern(OppdragMapper.PATTERN);
+        LocalDate forfallsdato = LocalDate.now().plusMonths(1).withDayOfMonth(20);
+        LocalDate fom = forfallsdato.withDayOfMonth(1);
+        String gjelderId = "12345678910";
+        String fagsysId = "423535";
+        var oppdrag = lagOppdrag(Long.parseLong(fagsysId), gjelderId);
+        var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_1, List.of(oppdrag));
+        var response = lagRespons(gjelderId, fagsysId, pattern.format(LocalDate.now()), oppdragskontrollDto);
+
+        // Legger til feilutbetaling
+        var beregningsPeriodeDto = response.get(0).beregningsPeriode().get(0);
+        var periodeFom = beregningsPeriodeDto.periodeFom();
+        var periodeTom = beregningsPeriodeDto.periodeTom();
+        var beregningStoppnivaa1 = beregningsPeriodeDto.beregningStoppnivaa().get(0);
+        beregningStoppnivaa1.beregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer(periodeFom, periodeTom, PosteringType.FEIL, BigDecimal.valueOf(3500)));
+        beregningStoppnivaa1.beregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer(periodeFom, periodeTom, PosteringType.YTEL, BigDecimal.valueOf(3500)));
+
+
+        // Legger til inntrekk neste måned
+        List<BeregningStoppnivåDto> beregningStoppnivåDtoListe = new ArrayList<>();
+        var beregningsPeriode = new BeregningsPeriodeDto(
+                pattern.format(fom),
+                pattern.format(forfallsdato),
+                beregningStoppnivåDtoListe);
+        response.get(0).beregningsPeriode().add(beregningsPeriode);
+
+        var stoppnivå = opprettBeregningStoppnivå(gjelderId, fagsysId, pattern.format(forfallsdato));
+        beregningStoppnivåDtoListe.add(stoppnivå);
+        stoppnivå.beregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer(pattern.format(fom), pattern.format(forfallsdato), PosteringType.YTEL, BigDecimal.valueOf(23500)));
+        stoppnivå.beregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer(pattern.format(fom), pattern.format(forfallsdato), PosteringType.JUST, BigDecimal.valueOf(-2786)));
+
+
+        when(fpWsProxySimuleringKlient.utførSimulering(any(), any(), anyBoolean())).thenReturn(response);
+
+        // Act
+        simuleringTjeneste.startSimulering(oppdragskontrollDto);
+
+        // Assert
+        verify(fpWsProxySimuleringKlient, times(2)).utførSimulering(any(), any(), anyBoolean());
+
+        Optional<SimuleringGrunnlag> simuleringGrunnlag = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_1);
+        assertThat(simuleringGrunnlag).isPresent();
+
+        Set<SimuleringMottaker> simuleringMottakere = simuleringGrunnlag.get().getSimuleringResultat().getSimuleringMottakere();
+        assertThat(simuleringMottakere).hasSize(1);
+
+        SimuleringMottaker mottaker = simuleringMottakere.iterator().next();
+        assertThat(mottaker.getSimulertePosteringer()).hasSize(5);
+        assertThat(mottaker.getSimulertePosteringerUtenInntrekk()).hasSize(5);
+    }
+
+    @Test
+    public void bestemmerYtelseTypeOgLagrerDetPåSimuleringsGrunnlaget() throws Exception {
+        // Arrange
+        var oppdrag = lagOppdrag(130158784200L, "12345678910");
+        var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag));
+        when(fpWsProxySimuleringKlient.utførSimulering(any(), any(), anyBoolean())).thenReturn(lagRespons("24153532444", "423535", oppdragskontrollDto));
+
+        // Act
+        simuleringTjeneste.startSimulering(oppdragskontrollDto);
+
+        // Assert
+        Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
+        assertThat(grunnlagOpt1).isPresent();
+        assertThat(grunnlagOpt1.get().getYtelseType()).isEqualTo(YtelseType.FP);
+    }
+
+
+    private Oppdrag110Dto lagOppdrag(Long fagsystemId, String oppdragGjelderId) { // Skal være relativt lik oppdrag_mottaker_2.xml
+        var avstemming = "2018-08-16-15.36.55.543";
+        List<Oppdragslinje150Dto> oppdragslinje150 = new ArrayList<>();
+        oppdragslinje150.add(lagOppdragslinlje150(oppdragGjelderId, LocalDate.of(2018, 5, 11),
+                        LocalDate.of(2018, 5, 31),
+                        130158784200100L, 135702910101L, 135702910101100L, false));
+        return new Oppdrag110Dto(
+                KodeEndring.NY,
+                KodeFagområde.FP,
+                fagsystemId,
+                oppdragGjelderId,
+                "Z999999",
+                avstemming,
+                null,
+                oppdragslinje150
+        );
+    }
+
+    private Oppdrag110Dto lagOppdragRefusjon() { // Skal være relativt lik oppdrag_mottaker_2.xml
+        var avstemming = "2018-08-16-15.36.55.543";
+        List<Oppdragslinje150Dto> oppdragslinje150 = new ArrayList<>();
+        oppdragslinje150.add(lagOppdragslinlje150("12345678910",
+                        LocalDate.of(2017, 9, 7),
+                        LocalDate.of(2017, 9, 9),
+                        130158784200100L, null, null, true));
+        oppdragslinje150.add(lagOppdragslinlje150("12345678910",
+                        LocalDate.of(2017, 9, 10),
+                        LocalDate.of(2017, 9, 28),
+                        135702910101101L,135702910101L, 135702910101100L, true));
+        oppdragslinje150.add(lagOppdragslinlje150("12345678910",
+                        LocalDate.of(2017, 10, 1),
+                        LocalDate.of(2017, 10, 10),
+                        135702910101101L,135702910101L, 135702910101101L, true));
+        oppdragslinje150.add(lagOppdragslinlje150("12345678910",
+                        LocalDate.of(2018, 5, 1),
+                        LocalDate.of(2018, 5, 31),
+                        135702910101101L,null, null, true));
+        return new Oppdrag110Dto(
+                KodeEndring.NY,
+                KodeFagområde.FPREF,
+                135702910101L,
+                "22067300444",
+                "Z991097",
+                avstemming,
+                null,
+                oppdragslinje150
+        );
+    }
+
+    private static Oppdragslinje150Dto lagOppdragslinlje150(String oppdragGjelderId, LocalDate datoVedtakFom, LocalDate datoVedtakTom,
+                                                            Long delytelseId, Long refFagsystemId, Long refDelytelseId, boolean refusjon) {
+        return new Oppdragslinje150Dto(
+                KodeEndringLinje.NY,
+                "2018-08-16",
+                delytelseId,
+                KodeKlassifik.FPF_FRILANSER,
+                new LukketPeriode(datoVedtakFom, datoVedtakTom),
+                new SatsDto(738),
+                TypeSats.DAG,
+                new UtbetalingsgradDto(100),
+                KodeStatusLinje.OPPH,
+                LocalDate.of(2018, 5, 11),
+                oppdragGjelderId,
+                refDelytelseId,
+                refFagsystemId,
+                lagRefusjonsinfo156(refusjon)
+        );
+    }
+
+    private static Refusjonsinfo156Dto lagRefusjonsinfo156(boolean refusjon) {
+        if (refusjon) {
+            return new Refusjonsinfo156Dto(LocalDate.of(2017, 10, 10), "00973861778", LocalDate.of(2017, 12, 13));
+        }
+        return null;
+    }
+
+
+    private List<BeregningDto> lagRespons(String gjelderId, String fagsysId, OppdragskontrollDto oppdragskontrollDto) {
+        return lagRespons(gjelderId, fagsysId, "2018-10-15", oppdragskontrollDto);
+    }
+
+    private List<BeregningDto> lagRespons(String gjelderId, String fagsysId, String forfallsdato, OppdragskontrollDto oppdragskontrollDto) {
+        List<BeregningDto> beregningDtos = new ArrayList<>();
+        for (var todo : oppdragskontrollDto.oppdrag()) {
+            List<BeregningStoppnivåDto> beregningStoppnivaa = new ArrayList<>();
+            BeregningStoppnivåDto beregningStoppnivåDto = opprettBeregningStoppnivå(gjelderId, fagsysId, forfallsdato);
+            beregningStoppnivåDto.beregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer("2018-10-10", "2018-11-11", PosteringType.YTEL, BigDecimal.valueOf(12532L)));
+            beregningStoppnivaa.add(beregningStoppnivåDto);
+
+            List<BeregningsPeriodeDto> beregningsPeriodeDtos = new ArrayList<>();
+            beregningsPeriodeDtos.add(new BeregningsPeriodeDto("2018-09-01", "2018-09-31", beregningStoppnivaa));
+            var beregning = new BeregningDto.Builder()
+                    .gjelderId(gjelderId)
+                    .gjelderNavn("dummy")
+                    .datoBeregnet("2018-10-10")
+                    .kodeFaggruppe("DUMMY")
+                    .belop(BigDecimal.valueOf(1234L))
+                    .beregningsPeriode(beregningsPeriodeDtos)
+                    .build();
+            beregningDtos.add(beregning);
+        }
+        return beregningDtos;
+    }
+
+    private BeregningStoppnivåDto opprettBeregningStoppnivå(String gjelderId, String fagsysId, String forfallsdato) {
+        return new BeregningStoppnivåDto.Builder()
+                .kodeFagomraade(Fagområde.FP.name())
+                .stoppNivaaId(BigInteger.ONE)
+                .behandlendeEnhet("8052")
+                .oppdragsId(1234L)
+                .fagsystemId(fagsysId)
+                .utbetalesTilId(gjelderId)
+                .utbetalesTilNavn("asfasf")
+                .bilagsType("U")
+                .forfall(forfallsdato)
+                .feilkonto(false)
+                .beregningStoppnivaaDetaljer(new ArrayList<>())
+                .build();
+    }
+
+    private BeregningStoppnivåDetaljerDto opprettStoppnivaaDetaljer(String fom, String tom, PosteringType posteringType, BigDecimal beløp) {
+        return new BeregningStoppnivåDetaljerDto.Builder()
+                .faktiskFom(fom)
+                .faktiskTom(tom)
+                .kontoStreng("1235432")
+                .behandlingskode("2")
+                .belop(beløp)
+                .trekkVedtakId(0L)
+                .stonadId("2018-12-12")
+                .tilbakeforing(false)
+                .linjeId(BigInteger.valueOf(21423L))
+                .sats(BigDecimal.valueOf(2254L))
+                .typeSats("DAG")
+                .antallSats(BigDecimal.valueOf(2542L))
+                .saksbehId("5323")
+                .uforeGrad(BigInteger.valueOf(100L))
+                .delytelseId("3523")
+                .bostedsenhet("4643")
+                .typeKlasse(posteringType.name())
+                .typeKlasseBeskrivelse("sfas")
+                .build();
+    }
+
+}

@@ -13,14 +13,21 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.v3.oas.annotations.Operation;
+import no.nav.foreldrepenger.kontrakter.simulering.request.OppdragskontrollDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy.StartSimuleringTjenesteFpWsProxy;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.BehandlingIdDto;
+import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.OppdragskontrollDtoAbacSupplier;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimulerOppdragDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
@@ -31,18 +38,23 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 @Consumes(MediaType.APPLICATION_JSON)
 @Transactional
 public class SimuleringRestTjeneste {
+    private static final Logger LOG = LoggerFactory.getLogger(SimuleringRestTjeneste.class);
 
     private SimuleringResultatTjeneste simuleringResultatTjeneste;
     private StartSimuleringTjeneste startSimuleringTjeneste;
+    private StartSimuleringTjenesteFpWsProxy startSimuleringTjenesteFpWsProxy;
 
     public SimuleringRestTjeneste() {
         // For CDI
     }
 
     @Inject
-    public SimuleringRestTjeneste(SimuleringResultatTjeneste simuleringResultatTjeneste, StartSimuleringTjeneste startSimuleringTjeneste) {
+    public SimuleringRestTjeneste(SimuleringResultatTjeneste simuleringResultatTjeneste,
+                                  StartSimuleringTjeneste startSimuleringTjeneste,
+                                  StartSimuleringTjenesteFpWsProxy startSimuleringTjenesteFpWsProxy) {
         this.simuleringResultatTjeneste = simuleringResultatTjeneste;
         this.startSimuleringTjeneste = startSimuleringTjeneste;
+        this.startSimuleringTjenesteFpWsProxy = startSimuleringTjenesteFpWsProxy;
     }
 
     @POST
@@ -63,6 +75,26 @@ public class SimuleringRestTjeneste {
         return optionalSimuleringDto.orElse(null);
     }
 
+    /**
+     * NB! Dette endepunktet er under test og vil ikke lagre simuleringsgrunnlag i databasen.
+     * Denne kjøres bare etter den andre er kjørt (og det foreligger et simuleringsgrunnlag) og resultatet fra
+     * simuleringen med direkte integrasjon mot oppdragssystemet vil bli sammenlignet med det fra fp-ws-proxy!
+     * @param oppdragskontrollDto
+     * @return tom 200 respons
+     */
+    @POST
+    @Path("start/v2")
+    @Operation(description = "Start simulering for behandling med oppdrag via fp-ws-proxy og sammenlinger resultat med direkte integrasjon mot oppdragssystemet", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
+    public Response startSimuleringViaFpWsProxyFailSafe(@TilpassetAbacAttributt(supplierClass = OppdragskontrollDtoAbacSupplier.Supplier.class) @Valid OppdragskontrollDto oppdragskontrollDto) {
+        try {
+            startSimuleringTjenesteFpWsProxy.startSimulering(oppdragskontrollDto);
+        } catch (Exception e) {
+            LOG.info("Noe gikk galt med simulering av oppdrag via fp-ws-proxy", e);
+        }
+        return Response.ok().build();
+    }
+
     @POST
     @Path("start")
     @Operation(description = "Start simulering for behandling med oppdrag", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
@@ -70,7 +102,6 @@ public class SimuleringRestTjeneste {
     public Response startSimulering(@Valid SimulerOppdragDto simulerOppdragDto) {
         final Long behandlingId = simulerOppdragDto.getBehandlingId();
         startSimuleringTjeneste.startSimulering(behandlingId, simulerOppdragDto.getOppdragPrMottakerDecoded());
-
         return Response.ok().build();
     }
 

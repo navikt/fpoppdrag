@@ -10,6 +10,7 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.TestResourceLoad
 import no.nav.foreldrepenger.xmlutils.JaxbHelper;
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.Oppdrag;
 
+@Deprecated // Flyttet til fp-ws-proxy
 public class OppdragMapperTest {
 
     @Test

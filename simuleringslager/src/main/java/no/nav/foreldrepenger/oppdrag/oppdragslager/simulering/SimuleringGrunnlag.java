@@ -135,12 +135,28 @@ public class SimuleringGrunnlag extends BaseEntitet {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "<id=" + id //$NON-NLS-1$
-                + ", simuleringResultat=" + simuleringResultat.getId() //$NON-NLS-1$
+                + ", simuleringResultat=" + simuleringResultat //$NON-NLS-1$
                 + ", eksternReferanse=" + eksternReferanse.getBehandlingId() //$NON-NLS-1$
                 + ", aktiv=" + aktiv //$NON-NLS-1$
-                + ", ytelseType=" + ytelseType.name() //$NON-NLS-1$
+                + ", ytelseType=" + ytelseType //$NON-NLS-1$
                 + ", versjon=" + versjon //$NON-NLS-1$
                 + ">"; //$NON-NLS-1$
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimuleringGrunnlag that = (SimuleringGrunnlag) o;
+        return aktiv == that.aktiv &&
+                Objects.equals(eksternReferanse, that.eksternReferanse) &&
+                Objects.equals(aktørId, that.aktørId) &&
+                Objects.equals(simuleringResultat, that.simuleringResultat) &&
+                ytelseType == that.ytelseType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(eksternReferanse, aktørId, simuleringResultat, aktiv, ytelseType);
     }
 }
