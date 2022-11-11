@@ -7,6 +7,7 @@ import javax.xml.namespace.QName;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.feature.LoggingFeature;
+import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.addressing.WSAddressingFeature;
 
@@ -43,17 +44,20 @@ public class OppdragConsumerConfig {
         factoryBean.getFeatures().add(new LoggingFeature());
         factoryBean.getOutInterceptors().add(new CallIdOutInterceptor());
 
+        var port = factoryBean.create(SimulerFpService.class);
+
         if (!ENV.isProd()) {
+            var client = ClientProxy.getClient(port);
             var loggingInInterceptor = new LoggingInInterceptor();
             loggingInInterceptor.setPrettyLogging(true);
             var loggingOutInterceptor = new LoggingOutInterceptor();
             loggingOutInterceptor.setPrettyLogging(true);
-            factoryBean.getInInterceptors().add(loggingInInterceptor);
-            factoryBean.getInFaultInterceptors().add(loggingInInterceptor);
-            factoryBean.getOutInterceptors().add(loggingOutInterceptor);
-            factoryBean.getOutFaultInterceptors().add(loggingInInterceptor);
+            client.getInInterceptors().add(loggingInInterceptor);
+            client.getInFaultInterceptors().add(loggingInInterceptor);
+            client.getOutInterceptors().add(loggingOutInterceptor);
+            client.getOutFaultInterceptors().add(loggingInInterceptor);
         }
-        return factoryBean.create(SimulerFpService.class);
+        return port;
     }
 
     public String getEndpointUrl() {
