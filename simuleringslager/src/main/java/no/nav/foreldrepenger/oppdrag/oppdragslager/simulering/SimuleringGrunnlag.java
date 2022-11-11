@@ -137,9 +137,9 @@ public class SimuleringGrunnlag extends BaseEntitet {
         return getClass().getSimpleName() + "<id=" + id //$NON-NLS-1$
                 + ", simuleringResultat=" + simuleringResultat //$NON-NLS-1$
                 + ", eksternReferanse=" + eksternReferanse.getBehandlingId() //$NON-NLS-1$
-                //+ ", aktiv=" + aktiv //$NON-NLS-1$ // TODO: Vi lagrer ikke simuleringsgrunnlag fra fpwsproxy hvor denne settes til true/false
+                + ", aktiv=" + aktiv //$NON-NLS-1$
                 + ", ytelseType=" + ytelseType //$NON-NLS-1$
-                // + ", versjon=" + versjon //$NON-NLS-1$ // TODO: Ikke sjekk versjon ved sammeligning. Fjern etter sammenlingen er ferdig
+                + ", versjon=" + versjon //$NON-NLS-1$
                 + ">"; //$NON-NLS-1$
     }
 
@@ -148,8 +148,7 @@ public class SimuleringGrunnlag extends BaseEntitet {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SimuleringGrunnlag that = (SimuleringGrunnlag) o;
-        return aktiv == that.aktiv &&
-                Objects.equals(eksternReferanse, that.eksternReferanse) &&
+        return Objects.equals(eksternReferanse, that.eksternReferanse) &&
                 Objects.equals(aktørId, that.aktørId) &&
                 Objects.equals(simuleringResultat, that.simuleringResultat) &&
                 ytelseType == that.ytelseType;
@@ -157,6 +156,6 @@ public class SimuleringGrunnlag extends BaseEntitet {
 
     @Override
     public int hashCode() {
-        return Objects.hash(eksternReferanse, aktørId, simuleringResultat, aktiv, ytelseType);
+        return Objects.hash(eksternReferanse, aktørId, simuleringResultat, ytelseType);
     }
 }
