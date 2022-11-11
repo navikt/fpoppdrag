@@ -138,7 +138,7 @@ public class SimulertPostering extends BaseCreateableEntitet {
                 Objects.equals(fom, that.fom) &&
                 Objects.equals(tom, that.tom) &&
                 betalingType == that.betalingType &&
-                Objects.equals(beløp, that.beløp) &&
+                (beløp != null && that.beløp != null &&  beløp.compareTo(that.beløp) == 0) &&
                 posteringType == that.posteringType &&
                 Objects.equals(forfallsdato, that.forfallsdato);
     }

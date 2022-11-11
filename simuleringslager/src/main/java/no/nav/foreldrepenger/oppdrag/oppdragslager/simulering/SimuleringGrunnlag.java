@@ -137,9 +137,9 @@ public class SimuleringGrunnlag extends BaseEntitet {
         return getClass().getSimpleName() + "<id=" + id //$NON-NLS-1$
                 + ", simuleringResultat=" + simuleringResultat //$NON-NLS-1$
                 + ", eksternReferanse=" + eksternReferanse.getBehandlingId() //$NON-NLS-1$
-                + ", aktiv=" + aktiv //$NON-NLS-1$
+                //+ ", aktiv=" + aktiv //$NON-NLS-1$ // TODO: Vi lagrer ikke simuleringsgrunnlag fra fpwsproxy hvor denne settes til true/false
                 + ", ytelseType=" + ytelseType //$NON-NLS-1$
-                + ", versjon=" + versjon //$NON-NLS-1$
+                // + ", versjon=" + versjon //$NON-NLS-1$ // TODO: Ikke sjekk versjon ved sammeligning. Fjern etter sammenlingen er ferdig
                 + ">"; //$NON-NLS-1$
     }
 

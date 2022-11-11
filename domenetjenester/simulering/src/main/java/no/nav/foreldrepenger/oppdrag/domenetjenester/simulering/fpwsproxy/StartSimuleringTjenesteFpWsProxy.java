@@ -81,14 +81,15 @@ public class StartSimuleringTjenesteFpWsProxy {
 
             Optional<SimuleringGrunnlag> simuleringGrunnlagFraDirekteIntegrasjon = simuleringRepository.hentSimulertOppdragForBehandling(behandlingId);
             if (simuleringGrunnlagFraDirekteIntegrasjon.isEmpty()) {
-                throw new IllegalStateException("Utvikler-feil: Må kalle normalt /simulering/start endepunkt før /simulering/start/v2!");
+                throw new IllegalStateException("Utvikler-feil: Må kalle /simulering/start endepunkt før /simulering/start/v2 pga sammenligning!");
             }
-            if (!simuleringGrunnlagFraDirekteIntegrasjon.get().equals(simuleringGrunnlag)) {
+            var simuleringGrunnlagOpprinnelig = simuleringGrunnlagFraDirekteIntegrasjon.get();
+            if (!simuleringGrunnlagOpprinnelig.equals(simuleringGrunnlag)) {
                 LOG.info("AVVIK FUNNET: Simuleringsgrunnlaget fra direkte integrasjon med oppdragsystemet er forskjellig fra simulering mottatt gjennom fp-ws-proxy. Sjekk secure logs for mer info");
                 SECURE_LOGGER.info("""
                     AVVIK: : Direkte via oppdragsystemet: {}
                     Fp-ws-proxy: {}
-                    """, simuleringGrunnlagFraDirekteIntegrasjon, simuleringGrunnlag);
+                    """, simuleringGrunnlagOpprinnelig, simuleringGrunnlag);
             } else {
                 LOG.info("Ingen avvik funnet melllom direkte integrasjon mot oppdragsystemet og via fp-ws-proxy.");
             }
