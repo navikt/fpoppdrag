@@ -41,7 +41,9 @@ public class OppdragConsumerConfig {
         factoryBean.setServiceClass(SimulerFpService.class);
         factoryBean.setAddress(endpointUrl);
         factoryBean.getFeatures().add(new WSAddressingFeature());
-        factoryBean.getFeatures().add(new LoggingFeature());
+        if (ENV.isProd()) {
+            factoryBean.getFeatures().add(new LoggingFeature());
+        }
         factoryBean.getOutInterceptors().add(new CallIdOutInterceptor());
 
         var port = factoryBean.create(SimulerFpService.class);

@@ -9,4 +9,5 @@
     <logger name="org.apache.cxf.common.logging" level="debug" />
     <logger name="org.apache.cxf.ext.logging" level="debug" />
     <logger name="org.apache.cxf.logging" level="debug" />
+    <logger name="org.apache.cxf.services" level="debug" />
 </included>
