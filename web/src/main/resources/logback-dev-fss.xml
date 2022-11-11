@@ -6,4 +6,7 @@
     <logger name="no.nav.vedtak.felles.integrasjon.rest.jersey.HeaderLoggingRequestInterceptor" level="trace"/>
     <logger name="no.nav.vedtak.felles.integrasjon.rest.jersey.HeaderLoggingResponseInterceptor" level="trace"/>
     <logger name="no.nav.vedtak.felles.integrasjon.rest.jersey.HeaderLoggingFilter" level="trace"/>
+    <logger name="org.apache.cxf.common.logging" level="debug" />
+    <logger name="org.apache.cxf.ext.logging" level="debug" />
+    <logger name="org.apache.cxf.logging" level="debug" />
 </included>
