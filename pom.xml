@@ -30,7 +30,7 @@
 
         <felles.version>4.2.7</felles.version>
         <!-- Kontrakter -->
-        <fp-kontrakter.version>6.1.28</fp-kontrakter.version>
+        <fp-kontrakter.version>6.1.30</fp-kontrakter.version>
 
         <!-- Eksterne -->
         <woodstox.version>6.4.0</woodstox.version>
