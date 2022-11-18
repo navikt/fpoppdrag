@@ -10,6 +10,7 @@ import javax.ws.rs.core.UriBuilder;
 import no.nav.foreldrepenger.kontrakter.simulering.request.OppdragskontrollDto;
 import no.nav.foreldrepenger.kontrakter.simulering.respons.BeregningDto;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
+import no.nav.vedtak.felles.integrasjon.rest.FpApplication;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
@@ -17,7 +18,7 @@ import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 @ApplicationScoped
-@RestClientConfig(tokenConfig = TokenFlow.STS_CC, endpointProperty = "fpwsproxy.rs.url", endpointDefault = "http://fp-ws-proxy")
+@RestClientConfig(tokenConfig = TokenFlow.STS_CC, application = FpApplication.FPWSPROXY)
 public class FpWsProxySimuleringKlient {
 
     private final RestClient restClient;
@@ -27,7 +28,7 @@ public class FpWsProxySimuleringKlient {
     public FpWsProxySimuleringKlient() {
         this.restClient = RestClient.client();
         this.restConfig = RestConfig.forClient(this.getClass());
-        this.endpointStartSimulering = UriBuilder.fromUri(restConfig.endpoint()).path("/api/simulering/start").build();
+        this.endpointStartSimulering = UriBuilder.fromUri(restConfig.endpoint()).path("/simulering/start").build();
     }
     public List<BeregningDto> utførSimulering(OppdragskontrollDto oppdragskontrollDto, YtelseType ytelseType, boolean utenInntrekk) {
         var target = UriBuilder.fromUri(endpointStartSimulering)
