@@ -28,9 +28,9 @@
         <revision>1.0-SNAPSHOT</revision>
         <java.version>17</java.version>
 
-        <felles.version>4.2.9</felles.version>
+        <felles.version>4.2.10</felles.version>
         <!-- Kontrakter -->
-        <fp-kontrakter.version>6.1.28</fp-kontrakter.version>
+        <fp-kontrakter.version>6.1.30</fp-kontrakter.version>
 
         <!-- Eksterne -->
         <woodstox.version>6.4.0</woodstox.version>
