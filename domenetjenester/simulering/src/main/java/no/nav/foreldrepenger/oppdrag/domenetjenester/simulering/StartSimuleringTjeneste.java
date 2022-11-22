@@ -266,6 +266,7 @@ public class StartSimuleringTjeneste {
             simulerBeregningResponse = oppdragConsumer.hentSimulerBeregningResponse(request);
         } catch (Exception e) {
             SECURE_LOGGER.info("Simulering feilet for request={}", anonymiser(request));
+            throw e;
         }
         return simulerBeregningResponse;
     }
