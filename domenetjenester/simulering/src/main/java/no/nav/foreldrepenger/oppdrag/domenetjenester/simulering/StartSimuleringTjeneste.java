@@ -261,14 +261,12 @@ public class StartSimuleringTjeneste {
     }
 
     private SimulerBeregningResponse utførSimulering(SimulerBeregningRequest request) {
-        SimulerBeregningResponse simulerBeregningResponse = null;
         try {
-            simulerBeregningResponse = oppdragConsumer.hentSimulerBeregningResponse(request);
+            return oppdragConsumer.hentSimulerBeregningResponse(request);
         } catch (Exception e) {
             SECURE_LOGGER.info("Simulering feilet for request={}", anonymiser(request));
             throw e;
         }
-        return simulerBeregningResponse;
     }
 
     private SimulerBeregningRequest anonymiser(SimulerBeregningRequest request) {
