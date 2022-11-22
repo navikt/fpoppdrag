@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import no.nav.foreldrepenger.oppdrag.OppdragNedetidException;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy.OppdragNedetidFpWsProxyException;
 import no.nav.vedtak.exception.FunksjonellException;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.felles.jpa.TomtResultatException;
@@ -31,11 +32,22 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<Throwable> {
             if (feil instanceof ManglerTilgangException) {
                 return ikkeTilgang(getExceptionMelding(feil));
             }
+            if (feil instanceof OppdragNedetidFpWsProxyException) {
+                return oppdragNedetid(getExceptionMelding(feil));
+            }
             loggTilApplikasjonslogg(feil);
             return serverError(getExceptionFullFeilmelding(feil));
         } finally {
             MDC.remove("prosess"); //$NON-NLS-1$
         }
+    }
+
+    private Response oppdragNedetid(String feilmelding) {
+        return Response
+                .status(Response.Status.SERVICE_UNAVAILABLE)
+                .entity(new FeilDto(FeilType.OPPDRAG_FORVENTET_NEDETID, feilmelding))
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 
     private static Response handleTomtResultatFeil(String feilmelding) {
