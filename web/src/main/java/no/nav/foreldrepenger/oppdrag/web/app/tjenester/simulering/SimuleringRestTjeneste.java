@@ -75,26 +75,16 @@ public class SimuleringRestTjeneste {
         return optionalSimuleringDto.orElse(null);
     }
 
-    /**
-     * NB! Dette endepunktet er under test og vil ikke lagre simuleringsgrunnlag i databasen.
-     * Denne kjøres bare etter den andre er kjørt (og det foreligger et simuleringsgrunnlag) og resultatet fra
-     * simuleringen med direkte integrasjon mot oppdragssystemet vil bli sammenlignet med det fra fp-ws-proxy!
-     * @param oppdragskontrollDto
-     * @return tom 200 respons
-     */
     @POST
     @Path("start/v2")
-    @Operation(description = "Start simulering for behandling med oppdrag via fp-ws-proxy og sammenlinger resultat med direkte integrasjon mot oppdragssystemet", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
+    @Operation(description = "Start simulering for behandling med oppdrag via fpwsproxy", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
-    public Response startSimuleringViaFpWsProxyFailSafe(@TilpassetAbacAttributt(supplierClass = OppdragskontrollDtoAbacSupplier.Supplier.class) @Valid OppdragskontrollDto oppdragskontrollDto) {
-        try {
-            startSimuleringTjenesteFpWsProxy.startSimulering(oppdragskontrollDto);
-        } catch (Exception e) {
-            LOG.info("Noe gikk galt med simulering av oppdrag via fp-ws-proxy", e);
-        }
+    public Response startSimuleringViaFpwsproxy(@TilpassetAbacAttributt(supplierClass = OppdragskontrollDtoAbacSupplier.Supplier.class) @Valid OppdragskontrollDto oppdragskontrollDto) {
+        startSimuleringTjenesteFpWsProxy.startSimulering(oppdragskontrollDto);
         return Response.ok().build();
     }
 
+    @Deprecated
     @POST
     @Path("start")
     @Operation(description = "Start simulering for behandling med oppdrag", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
