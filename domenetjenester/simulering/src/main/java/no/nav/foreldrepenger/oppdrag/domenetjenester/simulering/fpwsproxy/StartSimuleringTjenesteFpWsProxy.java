@@ -111,7 +111,7 @@ public class StartSimuleringTjenesteFpWsProxy {
     }
 
     private List<BeregningDto> utførSimuleringViaFpWsProxy(OppdragskontrollDto oppdragskontrollDto, YtelseType ytelseType, boolean utenInntrekk) {
-        return fpWsProxySimuleringKlient.utførSimulering(oppdragskontrollDto, ytelseType, utenInntrekk);
+        return fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(oppdragskontrollDto, ytelseType, utenInntrekk);
     }
 
     private static boolean harIkkeTomRespons(List<BeregningDto> beregningDtoListe) {

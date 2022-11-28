@@ -86,7 +86,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
     public void test_skal_deaktivere_forrige_simulering_når_ny_simulering_gir_tomt_resultat() throws Exception {
         var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
         var oppdragskontrollSimulering1 = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
-        when(fpWsProxySimuleringKlient.utførSimulering(any(), any(), anyBoolean())).thenReturn(lagRespons("24153532444", "423535", oppdragskontrollSimulering1));
+        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("24153532444", "423535", oppdragskontrollSimulering1));
         simuleringTjeneste.startSimulering(oppdragskontrollSimulering1);
 
         Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
@@ -95,7 +95,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
 
         var oppdrag2 = lagOppdragRefusjon();
         var oppdragskontrollDtoSimulering2 = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag2));
-        when(fpWsProxySimuleringKlient.utførSimulering(any(), any(), anyBoolean())).thenReturn(null);
+        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(null);
         simuleringTjeneste.startSimulering(oppdragskontrollDtoSimulering2);
 
         Optional<SimuleringGrunnlag> grunnlagOpt2 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
@@ -107,7 +107,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
         var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
         OppdragskontrollDto oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
 
-        when(fpWsProxySimuleringKlient.utførSimulering(any(), any(), anyBoolean())).thenReturn(lagRespons("24153532444", "423535", oppdragskontrollDto));
+        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("24153532444", "423535", oppdragskontrollDto));
         simuleringTjeneste.startSimulering(oppdragskontrollDto);
 
         Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
@@ -126,7 +126,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
         var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
         var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1, oppdrag1));
         List<BeregningDto> mockRespons = lagRespons("24153532444", "423535", oppdragskontrollDto);
-        when(fpWsProxySimuleringKlient.utførSimulering(any(), any(), anyBoolean())).thenReturn(mockRespons);
+        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(mockRespons);
 
         // Act - Skal gi to beregningsresultater til samme mottaker
         simuleringTjeneste.startSimulering(oppdragskontrollDto);
@@ -177,13 +177,13 @@ public class StartSimuleringTjenesteFpWsProxyTest {
         stoppnivå.beregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer(pattern.format(fom), pattern.format(forfallsdato), PosteringType.JUST, BigDecimal.valueOf(-2786)));
 
 
-        when(fpWsProxySimuleringKlient.utførSimulering(any(), any(), anyBoolean())).thenReturn(response);
+        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(response);
 
         // Act
         simuleringTjeneste.startSimulering(oppdragskontrollDto);
 
         // Assert
-        verify(fpWsProxySimuleringKlient, times(2)).utførSimulering(any(), any(), anyBoolean());
+        verify(fpWsProxySimuleringKlient, times(2)).utførSimuleringMedExceptionHandling(any(), any(), anyBoolean());
 
         Optional<SimuleringGrunnlag> simuleringGrunnlag = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_1);
         assertThat(simuleringGrunnlag).isPresent();
@@ -201,7 +201,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
         // Arrange
         var oppdrag = lagOppdrag(130158784200L, "12345678910");
         var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag));
-        when(fpWsProxySimuleringKlient.utførSimulering(any(), any(), anyBoolean())).thenReturn(lagRespons("24153532444", "423535", oppdragskontrollDto));
+        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("24153532444", "423535", oppdragskontrollDto));
 
         // Act
         simuleringTjeneste.startSimulering(oppdragskontrollDto);
