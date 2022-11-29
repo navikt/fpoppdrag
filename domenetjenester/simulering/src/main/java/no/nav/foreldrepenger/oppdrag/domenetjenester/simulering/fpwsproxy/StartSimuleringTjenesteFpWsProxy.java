@@ -34,7 +34,6 @@ import no.nav.vedtak.exception.TekniskException;
 public class StartSimuleringTjenesteFpWsProxy {
 
     private static final Logger LOG = LoggerFactory.getLogger(StartSimuleringTjenesteFpWsProxy.class);
-    private static final Logger SECURE_LOGGER = LoggerFactory.getLogger("secureLogger");
 
     private static final String DEAKTIVER_SIMULERING_DEAKTIVERING = "testing.deaktiver.simulering.deaktivering";
 
@@ -75,32 +74,12 @@ public class StartSimuleringTjenesteFpWsProxy {
 
             utførSimuleringUtenInntrekk(oppdragskontrollDto, simuleringGrunnlag);
 
-            // Vi har kjørt simuleringen ved direkte integrasjon og har et simuleringsgrunnlag liggende i databasen for behanldingsID
-            // Vi henter opp dette og sammenligner dette med det grunnlaget vi får her.
-            // Vi logger avvik og lagrer ikke noe i databasen.
-
-            Optional<SimuleringGrunnlag> simuleringGrunnlagFraDirekteIntegrasjon = simuleringRepository.hentSimulertOppdragForBehandling(behandlingId);
-            if (simuleringGrunnlagFraDirekteIntegrasjon.isEmpty()) {
-                throw new IllegalStateException("Utvikler-feil: Må kalle /simulering/start endepunkt før /simulering/start/v2 pga sammenligning!");
-            }
-            var simuleringGrunnlagOpprinnelig = simuleringGrunnlagFraDirekteIntegrasjon.get();
-            if (!simuleringGrunnlagOpprinnelig.equals(simuleringGrunnlag)) {
-                LOG.info("AVVIK FUNNET: Simuleringsgrunnlaget fra direkte integrasjon med oppdragsystemet er forskjellig fra simulering mottatt gjennom fp-ws-proxy. Sjekk secure logs for mer info");
-                SECURE_LOGGER.info("""
-                    AVVIK: : Direkte via oppdragsystemet: {}
-                    Fp-ws-proxy: {}
-                    """, simuleringGrunnlagOpprinnelig, simuleringGrunnlag);
-            } else {
-                LOG.info("Ingen avvik funnet melllom direkte integrasjon mot oppdragsystemet og via fp-ws-proxy.");
-            }
-
-            // simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag); // Her skal vi bare sammenligne, og ikke endre noe i databasen!
+            simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
         } else {
             // Deaktiverer forrige simuleringgrunnlag hvis den nye simuleringen returnerer et tomt svar
             // f.eks. oppdrag finnes fra før, tom respons fra øk, FeilUnderBehandling som ikke er error
             // for å unngå å sende simuleringsresultat for forrige simulering når den nye simuleringen returnerer tomt resultat
-
-            // deaktiverBehandling(behandlingId); // Her skal vi bare sammenligne, og ikke endre noe i databasen!
+            deaktiverBehandling(behandlingId);
 
         }
         LOG.info("Fullført simulering. behandlingID={} tidsforbrukTotalt={} ms", behandlingId, System.currentTimeMillis() - t0);
@@ -208,7 +187,7 @@ public class StartSimuleringTjenesteFpWsProxy {
             Optional<SimuleringGrunnlag> eksisterende = simuleringRepository.hentSimulertOppdragForBehandling(behandlingId);
             eksisterende.ifPresent(grunnlag -> {
                 LOG.info("Deaktiverer simulering for behandling {}", behandlingId);
-//                simuleringRepository.deaktiverSimuleringGrunnlag(grunnlag);
+                simuleringRepository.deaktiverSimuleringGrunnlag(grunnlag);
             });
         }
     }

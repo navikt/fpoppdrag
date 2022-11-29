@@ -20,7 +20,6 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -53,11 +52,6 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 
-/** TODO:
- * Aktiver denne når {@link StartSimuleringTjenesteFpWsProxy} tar over for StartSimuleringTjeneste.
- * Nå har den bare sammenligning med direkte integrasjon aktivert, og ikke noe lagring i databasen.
- */
-@Disabled
 @ExtendWith(JpaExtension.class)
 public class StartSimuleringTjenesteFpWsProxyTest {
 
