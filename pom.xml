@@ -18,7 +18,6 @@
     <modules>
         <module>migreringer</module>
         <module>kodeverk</module>
-        <module>integrasjon</module>
         <module>simuleringslager</module>
         <module>domenetjenester</module>
         <module>web</module>
@@ -31,9 +30,6 @@
         <felles.version>4.2.12</felles.version>
         <!-- Kontrakter -->
         <fp-kontrakter.version>6.1.30</fp-kontrakter.version>
-
-        <!-- Eksterne -->
-        <woodstox.version>6.4.0</woodstox.version>
     </properties>
 
     <dependencyManagement>
@@ -41,11 +37,6 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.oppdrag</groupId>
                 <artifactId>kodeverk</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-                <artifactId>integrasjon</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -126,30 +117,10 @@
             </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
-                <artifactId>oppdragskjema-v1</artifactId>
-                <version>${fp-kontrakter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
                 <artifactId>fp-kontrakter-root</artifactId>
                 <version>${fp-kontrakter.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
-            </dependency>
-
-            <!-- nav -->
-
-            <dependency>
-                <groupId>no.nav.tjenestespesifikasjoner</groupId>
-                <artifactId>nav-system-os-simuler-fp-service-tjenestespesifikasjon</artifactId>
-                <version>2594.7c3ac50 </version>
-            </dependency>
-
-            <dependency>
-                <!-- Transitive avhengighet resolution for å sikre bestemt versjon -->
-                <groupId>com.fasterxml.woodstox</groupId>
-                <artifactId>woodstox-core</artifactId>
-                <version>${woodstox.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

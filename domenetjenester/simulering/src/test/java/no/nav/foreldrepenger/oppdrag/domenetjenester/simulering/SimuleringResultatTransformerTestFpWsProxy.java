@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper;
+package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +17,7 @@ import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 
-public class SimuleringResultatTransformerTest {
+public class SimuleringResultatTransformerTestFpWsProxy {
 
     PersonTjeneste tpsTjeneste = mock(PersonTjeneste.class);
     SimuleringResultatTransformer simuleringResultatTransformer = new SimuleringResultatTransformer(tpsTjeneste);

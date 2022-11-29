@@ -20,10 +20,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import no.nav.foreldrepenger.kontrakter.simulering.request.OppdragskontrollDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy.StartSimuleringTjenesteFpWsProxy;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.BehandlingIdDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.OppdragskontrollDtoAbacSupplier;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimulerOppdragDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
@@ -41,8 +39,7 @@ public class SimuleringRestTjeneste {
     private static final Logger LOG = LoggerFactory.getLogger(SimuleringRestTjeneste.class);
 
     private SimuleringResultatTjeneste simuleringResultatTjeneste;
-    private StartSimuleringTjeneste startSimuleringTjeneste;
-    private StartSimuleringTjenesteFpWsProxy startSimuleringTjenesteFpWsProxy;
+    private StartSimuleringTjeneste startSimuleringTjenesteFpWsProxy;
 
     public SimuleringRestTjeneste() {
         // For CDI
@@ -50,10 +47,8 @@ public class SimuleringRestTjeneste {
 
     @Inject
     public SimuleringRestTjeneste(SimuleringResultatTjeneste simuleringResultatTjeneste,
-                                  StartSimuleringTjeneste startSimuleringTjeneste,
-                                  StartSimuleringTjenesteFpWsProxy startSimuleringTjenesteFpWsProxy) {
+                                  StartSimuleringTjeneste startSimuleringTjenesteFpWsProxy) {
         this.simuleringResultatTjeneste = simuleringResultatTjeneste;
-        this.startSimuleringTjeneste = startSimuleringTjeneste;
         this.startSimuleringTjenesteFpWsProxy = startSimuleringTjenesteFpWsProxy;
     }
 
@@ -75,23 +70,21 @@ public class SimuleringRestTjeneste {
         return optionalSimuleringDto.orElse(null);
     }
 
+    @Deprecated
     @POST
     @Path("start/v2")
     @Operation(description = "Start simulering for behandling med oppdrag via fpwsproxy", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
     public Response startSimuleringViaFpwsproxy(@TilpassetAbacAttributt(supplierClass = OppdragskontrollDtoAbacSupplier.Supplier.class) @Valid OppdragskontrollDto oppdragskontrollDto) {
-        startSimuleringTjenesteFpWsProxy.startSimulering(oppdragskontrollDto);
-        return Response.ok().build();
+        return startSimulering(oppdragskontrollDto);
     }
 
-    @Deprecated
     @POST
     @Path("start")
-    @Operation(description = "Start simulering for behandling med oppdrag", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
+    @Operation(description = "Start simulering for behandling med oppdrag via fpwsproxy", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
-    public Response startSimulering(@Valid SimulerOppdragDto simulerOppdragDto) {
-        final Long behandlingId = simulerOppdragDto.getBehandlingId();
-        startSimuleringTjeneste.startSimulering(behandlingId, simulerOppdragDto.getOppdragPrMottakerDecoded());
+    public Response startSimulering(@TilpassetAbacAttributt(supplierClass = OppdragskontrollDtoAbacSupplier.Supplier.class) @Valid OppdragskontrollDto oppdragskontrollDto) {
+        startSimuleringTjenesteFpWsProxy.startSimulering(oppdragskontrollDto);
         return Response.ok().build();
     }
 
@@ -100,7 +93,7 @@ public class SimuleringRestTjeneste {
     @Operation(description = "Kanseller simulering for behandling", summary = ("Deaktiverer simuleringgrunnlag for behandling"), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
     public Response kansellerSimulering(@Valid BehandlingIdDto behandlingIdDto) {
-        startSimuleringTjeneste.kansellerSimulering(behandlingIdDto.getBehandlingId());
+        startSimuleringTjenesteFpWsProxy.kansellerSimulering(behandlingIdDto.getBehandlingId());
         return Response.ok().build();
     }
 

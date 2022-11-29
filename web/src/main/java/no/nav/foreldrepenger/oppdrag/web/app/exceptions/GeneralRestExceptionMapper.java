@@ -9,8 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import no.nav.foreldrepenger.oppdrag.OppdragNedetidException;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy.OppdragNedetidFpWsProxyException;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy.OppdragNedetidException;
 import no.nav.vedtak.exception.FunksjonellException;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.felles.jpa.TomtResultatException;
@@ -32,7 +31,7 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<Throwable> {
             if (feil instanceof ManglerTilgangException) {
                 return ikkeTilgang(getExceptionMelding(feil));
             }
-            if (feil instanceof OppdragNedetidFpWsProxyException) {
+            if (feil instanceof OppdragNedetidException) {
                 return oppdragNedetid(getExceptionMelding(feil));
             }
             loggTilApplikasjonslogg(feil);
