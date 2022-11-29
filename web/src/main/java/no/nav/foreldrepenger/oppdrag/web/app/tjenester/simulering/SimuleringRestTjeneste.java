@@ -13,9 +13,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.swagger.v3.oas.annotations.Operation;
 import no.nav.foreldrepenger.kontrakter.simulering.request.OppdragskontrollDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
@@ -36,7 +33,6 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 @Consumes(MediaType.APPLICATION_JSON)
 @Transactional
 public class SimuleringRestTjeneste {
-    private static final Logger LOG = LoggerFactory.getLogger(SimuleringRestTjeneste.class);
 
     private SimuleringResultatTjeneste simuleringResultatTjeneste;
     private StartSimuleringTjeneste startSimuleringTjenesteFpWsProxy;
@@ -68,15 +64,6 @@ public class SimuleringRestTjeneste {
     public SimuleringDto hentSimuleringResultatMedOgUtenInntrekk(@Valid BehandlingIdDto behandlingIdDto) {
         Optional<SimuleringDto> optionalSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingIdDto.getBehandlingId());
         return optionalSimuleringDto.orElse(null);
-    }
-
-    @Deprecated
-    @POST
-    @Path("start/v2")
-    @Operation(description = "Start simulering for behandling med oppdrag via fpwsproxy", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
-    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
-    public Response startSimuleringViaFpwsproxy(@TilpassetAbacAttributt(supplierClass = OppdragskontrollDtoAbacSupplier.Supplier.class) @Valid OppdragskontrollDto oppdragskontrollDto) {
-        return startSimulering(oppdragskontrollDto);
     }
 
     @POST

@@ -24,8 +24,6 @@
             <artifactId>simuleringslager</artifactId>
             <scope>provided</scope>
         </dependency>
-
-
     </dependencies>
 
 </project>
