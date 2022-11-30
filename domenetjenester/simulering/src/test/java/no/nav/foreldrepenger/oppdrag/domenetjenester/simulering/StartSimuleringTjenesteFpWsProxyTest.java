@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy;
+package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,8 +42,7 @@ import no.nav.foreldrepenger.kontrakter.simulering.respons.BeregningStoppnivåDt
 import no.nav.foreldrepenger.kontrakter.simulering.respons.BeregningsPeriodeDto;
 import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.mapper.OppdragMapper;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy.FpWsProxySimuleringKlient;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
@@ -62,19 +61,23 @@ public class StartSimuleringTjenesteFpWsProxyTest {
     private SimuleringRepository simuleringRepository;
     private FpWsProxySimuleringKlient fpWsProxySimuleringKlient = mock(FpWsProxySimuleringKlient.class);
     private PersonTjeneste tpsTjenesteMock = mock(PersonTjeneste.class);
-    private SimuleringResultatTransformerFpWsProxy resultatTransformer = new SimuleringResultatTransformerFpWsProxy(tpsTjenesteMock);
+    private SimuleringResultatTransformer resultatTransformer = new SimuleringResultatTransformer(tpsTjenesteMock);
 
-    private StartSimuleringTjenesteFpWsProxy simuleringTjeneste;
+    private StartSimuleringTjeneste simuleringTjeneste;
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
 
     @BeforeEach
     public void setup(EntityManager entityManager) {
 
         simuleringRepository = new SimuleringRepository(entityManager);
-        simuleringTjeneste = new StartSimuleringTjenesteFpWsProxy(simuleringRepository, fpWsProxySimuleringKlient, resultatTransformer, simuleringBeregningTjeneste);
+        simuleringTjeneste = new StartSimuleringTjeneste(simuleringRepository, fpWsProxySimuleringKlient, resultatTransformer, simuleringBeregningTjeneste);
         when(tpsTjenesteMock.hentAktørForFnr(any())).thenReturn(Optional.of(new AktørId(AKTØR_ID)));
     }
 
+
+    // TODO:
+    //  test_skalReturnereStatus200VedGyldigOppdragXml
+    //  test_skalReturnereFeilVedUgyldigOppdragXml
 
     @Test
     public void test_skal_deaktivere_forrige_simulering_når_ny_simulering_gir_tomt_resultat() throws Exception {
@@ -139,7 +142,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
     @Test
     public void simulerer_for_bruker_uten_inntrekk_dersom_første_resultat_gir_feilutbetaling_og_inntrekk() throws Exception {
         // Arrange
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern(OppdragMapper.PATTERN);
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate forfallsdato = LocalDate.now().plusMonths(1).withDayOfMonth(20);
         LocalDate fom = forfallsdato.withDayOfMonth(1);
         String gjelderId = "12345678910";
@@ -207,7 +210,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
     }
 
 
-    private Oppdrag110Dto lagOppdrag(Long fagsystemId, String oppdragGjelderId) { // Skal være relativt lik oppdrag_mottaker_2.xml
+    public static Oppdrag110Dto lagOppdrag(Long fagsystemId, String oppdragGjelderId) { // Skal være relativt lik oppdrag_mottaker_2.xml
         var avstemming = "2018-08-16-15.36.55.543";
         List<Oppdragslinje150Dto> oppdragslinje150 = new ArrayList<>();
         oppdragslinje150.add(lagOppdragslinlje150(oppdragGjelderId, LocalDate.of(2018, 5, 11),
@@ -225,7 +228,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
         );
     }
 
-    private Oppdrag110Dto lagOppdragRefusjon() { // Skal være relativt lik oppdrag_mottaker_2.xml
+    private static Oppdrag110Dto lagOppdragRefusjon() { // Skal være relativt lik oppdrag_mottaker_2.xml
         var avstemming = "2018-08-16-15.36.55.543";
         List<Oppdragslinje150Dto> oppdragslinje150 = new ArrayList<>();
         oppdragslinje150.add(lagOppdragslinlje150("12345678910",

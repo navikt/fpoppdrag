@@ -4,7 +4,7 @@ import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_MULT_CHOICE;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
-import static no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy.FeilType.OPPDRAG_FORVENTET_NEDETID;
+import static no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy.FpWsProxySimuleringKlient.FeilType.OPPDRAG_FORVENTET_NEDETID;
 import static no.nav.vedtak.mapper.json.DefaultJsonMapper.fromJson;
 
 import java.net.URI;
@@ -61,7 +61,7 @@ public class FpWsProxySimuleringKlient {
             throw new ManglerTilgangException("F-468816", "Mangler tilgang. Fikk http-kode 403 fra server");
         } else {
             if (status == HTTP_UNAVAILABLE && erDetForventetNedetid(body)) { // fpwsproxy kaster 503 feil ved nedetid av OS
-                throw new OppdragNedetidFpWsProxyException();
+                throw new OppdragNedetidException();
             }
             throw new IntegrasjonException("F-468817", String.format("Uventet respons %s fra FpWsProxy. Sjekk loggen til fpwsproxy for mer info.", status));
         }
@@ -73,5 +73,17 @@ public class FpWsProxySimuleringKlient {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    // TODO: Konsolider FeilDto fra web modul. Flytt til felles? kontrakter?
+    public record FeilDto(FeilType type) {
+    }
+
+    public enum FeilType {
+        MANGLER_TILGANG_FEIL,
+        TOMT_RESULTAT_FEIL,
+        OPPDRAG_FORVENTET_NEDETID,
+        GENERELL_FEIL,
+        ;
     }
 }

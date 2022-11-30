@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy;
+package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,18 +24,18 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
 import no.nav.vedtak.exception.TekniskException;
 
 @ApplicationScoped
-public class SimuleringResultatTransformerFpWsProxy {
+public class SimuleringResultatTransformer {
 
     private static final String DATO_PATTERN = "yyyy-MM-dd";
 
     private PersonTjeneste personTjeneste;
 
-    public SimuleringResultatTransformerFpWsProxy() {
+    public SimuleringResultatTransformer() {
         // CDI
     }
 
     @Inject
-    public SimuleringResultatTransformerFpWsProxy(PersonTjeneste personTjeneste) {
+    public SimuleringResultatTransformer(PersonTjeneste personTjeneste) {
         Objects.requireNonNull(personTjeneste, "Mangler tpstjeneste");
         this.personTjeneste = personTjeneste;
     }
