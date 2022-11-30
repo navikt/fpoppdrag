@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -67,8 +66,8 @@ public class StartSimuleringTjeneste {
                 System.currentTimeMillis() - t0);
 
         if (harIkkeTomRespons(simuleringResponsListe)) {
-            YtelseType ytelseType = bestemYtelseType(behandlingId, oppdragskontrollDto.oppdrag());
-            SimuleringGrunnlag simuleringGrunnlag = transformerTilDatastruktur(behandlingId, simuleringResponsListe, ytelseType);
+            var ytelseType = bestemYtelseType(behandlingId, oppdragskontrollDto.oppdrag());
+            var simuleringGrunnlag = transformerTilDatastruktur(behandlingId, simuleringResponsListe, ytelseType);
 
             utførSimuleringUtenInntrekk(oppdragskontrollDto, simuleringGrunnlag);
 
@@ -180,9 +179,9 @@ public class StartSimuleringTjeneste {
     }
 
     private void deaktiverBehandling(long behandlingId) {
-        String deaktiverForLokalTesting = Environment.current().getProperty(DEAKTIVER_SIMULERING_DEAKTIVERING);
+        var deaktiverForLokalTesting = Environment.current().getProperty(DEAKTIVER_SIMULERING_DEAKTIVERING);
         if (deaktiverForLokalTesting == null || "false".equalsIgnoreCase(deaktiverForLokalTesting)) {
-            Optional<SimuleringGrunnlag> eksisterende = simuleringRepository.hentSimulertOppdragForBehandling(behandlingId);
+            var eksisterende = simuleringRepository.hentSimulertOppdragForBehandling(behandlingId);
             eksisterende.ifPresent(grunnlag -> {
                 LOG.info("Deaktiverer simulering for behandling {}", behandlingId);
                 simuleringRepository.deaktiverSimuleringGrunnlag(grunnlag);

@@ -58,13 +58,12 @@ public class StartSimuleringTjenesteFpWsProxyTest {
     private static final Long BEHANDLING_ID_2 = 87890L;
     private static final String AKTØR_ID = "12345678901";
 
+    private final FpWsProxySimuleringKlient fpWsProxySimuleringKlient = mock(FpWsProxySimuleringKlient.class);
+    private final PersonTjeneste tpsTjenesteMock = mock(PersonTjeneste.class);
+    private final SimuleringResultatTransformer resultatTransformer = new SimuleringResultatTransformer(tpsTjenesteMock);
+    private final SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
     private SimuleringRepository simuleringRepository;
-    private FpWsProxySimuleringKlient fpWsProxySimuleringKlient = mock(FpWsProxySimuleringKlient.class);
-    private PersonTjeneste tpsTjenesteMock = mock(PersonTjeneste.class);
-    private SimuleringResultatTransformer resultatTransformer = new SimuleringResultatTransformer(tpsTjenesteMock);
-
     private StartSimuleringTjeneste simuleringTjeneste;
-    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
 
     @BeforeEach
     public void setup(EntityManager entityManager) {
@@ -74,13 +73,8 @@ public class StartSimuleringTjenesteFpWsProxyTest {
         when(tpsTjenesteMock.hentAktørForFnr(any())).thenReturn(Optional.of(new AktørId(AKTØR_ID)));
     }
 
-
-    // TODO:
-    //  test_skalReturnereStatus200VedGyldigOppdragXml
-    //  test_skalReturnereFeilVedUgyldigOppdragXml
-
     @Test
-    public void test_skal_deaktivere_forrige_simulering_når_ny_simulering_gir_tomt_resultat() throws Exception {
+    void test_skal_deaktivere_forrige_simulering_når_ny_simulering_gir_tomt_resultat() throws Exception {
         var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
         var oppdragskontrollSimulering1 = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
         when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("24153532444", "423535", oppdragskontrollSimulering1));
@@ -100,7 +94,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
     }
 
     @Test
-    public void test_skal_deaktiver_behandling_med_gitt_behandling() throws Exception {
+    void test_skal_deaktiver_behandling_med_gitt_behandling() {
         var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
         OppdragskontrollDto oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
 
@@ -116,9 +110,8 @@ public class StartSimuleringTjenesteFpWsProxyTest {
         assertThat(grunnlagOpt2).isNotPresent();
     }
 
-    // TODO: Denne feiler på siste assert. Why is that? noe feil i kode eller test?
     @Test
-    public void mapperFlereBeregningsresultatTilSammeMottaker() throws Exception {
+    void mapperFlereBeregningsresultatTilSammeMottaker() {
         // Arrange
         var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
         var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1, oppdrag1));
@@ -140,7 +133,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
     }
 
     @Test
-    public void simulerer_for_bruker_uten_inntrekk_dersom_første_resultat_gir_feilutbetaling_og_inntrekk() throws Exception {
+    void simulerer_for_bruker_uten_inntrekk_dersom_første_resultat_gir_feilutbetaling_og_inntrekk() {
         // Arrange
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate forfallsdato = LocalDate.now().plusMonths(1).withDayOfMonth(20);
@@ -194,7 +187,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
     }
 
     @Test
-    public void bestemmerYtelseTypeOgLagrerDetPåSimuleringsGrunnlaget() throws Exception {
+    void bestemmerYtelseTypeOgLagrerDetPåSimuleringsGrunnlaget() {
         // Arrange
         var oppdrag = lagOppdrag(130158784200L, "12345678910");
         var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag));
