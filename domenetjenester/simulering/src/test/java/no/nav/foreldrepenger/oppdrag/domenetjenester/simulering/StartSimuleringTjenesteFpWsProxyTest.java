@@ -204,7 +204,6 @@ public class StartSimuleringTjenesteFpWsProxyTest {
 
 
     public static Oppdrag110Dto lagOppdrag(Long fagsystemId, String oppdragGjelderId) { // Skal være relativt lik oppdrag_mottaker_2.xml
-        var avstemming = "2018-08-16-15.36.55.543";
         List<Oppdragslinje150Dto> oppdragslinje150 = new ArrayList<>();
         oppdragslinje150.add(lagOppdragslinlje150(oppdragGjelderId, LocalDate.of(2018, 5, 11),
                         LocalDate.of(2018, 5, 31),
@@ -215,14 +214,12 @@ public class StartSimuleringTjenesteFpWsProxyTest {
                 fagsystemId,
                 oppdragGjelderId,
                 "Z999999",
-                avstemming,
                 null,
                 oppdragslinje150
         );
     }
 
     private static Oppdrag110Dto lagOppdragRefusjon() { // Skal være relativt lik oppdrag_mottaker_2.xml
-        var avstemming = "2018-08-16-15.36.55.543";
         List<Oppdragslinje150Dto> oppdragslinje150 = new ArrayList<>();
         oppdragslinje150.add(lagOppdragslinlje150("12345678910",
                         LocalDate.of(2017, 9, 7),
@@ -246,7 +243,6 @@ public class StartSimuleringTjenesteFpWsProxyTest {
                 135702910101L,
                 "22067300444",
                 "Z991097",
-                avstemming,
                 null,
                 oppdragslinje150
         );
