@@ -40,8 +40,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.ws.rs.core.Context;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -55,16 +53,6 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
     }
 
     private Function<Method, String> printKlasseOgMetodeNavn = (method -> String.format("%s.%s", method.getDeclaringClass(), method.getName()));
-
-    @BeforeEach
-    public void setup() {
-        System.setProperty("loadbalancer.url", "http://localhost:8070");
-    }
-
-    @AfterEach
-    public void cleanup() {
-        System.clearProperty("loadbalancer.url");
-    }
 
     /**
      * IKKE ignorer denne testen, den sørger for at inputvalidering er i orden for REST_MED_INNTEKTSMELDING-grensesnittene
