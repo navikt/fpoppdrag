@@ -9,9 +9,9 @@ import java.util.Objects;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.nav.foreldrepenger.kontrakter.simulering.respons.BeregningDto;
-import no.nav.foreldrepenger.kontrakter.simulering.respons.BeregningStoppnivåDetaljerDto;
-import no.nav.foreldrepenger.kontrakter.simulering.respons.BeregningStoppnivåDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningStoppnivåDetaljerDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningStoppnivåDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
