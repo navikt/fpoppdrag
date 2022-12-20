@@ -2,7 +2,7 @@ package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto;
 
 import java.util.function.Function;
 
-import no.nav.foreldrepenger.kontrakter.simulering.request.OppdragskontrollDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.OppdragskontrollDto;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 
