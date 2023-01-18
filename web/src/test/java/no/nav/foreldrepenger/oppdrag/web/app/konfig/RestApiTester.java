@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,7 +11,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
-import no.nav.foreldrepenger.oppdrag.web.app.ApplicationConfig;
 
 public class RestApiTester {
 
@@ -32,7 +30,7 @@ public class RestApiTester {
     }
 
     static Collection<Class<?>> finnAlleRestTjenester() {
-        return new ArrayList<>(finnAlleRestTjenester(new ApplicationConfig()));
+        return new ArrayList<>(finnAlleRestTjenester(new ApiConfig()));
     }
 
     static Collection<Class<?>> finnAlleRestTjenester(Application config) {

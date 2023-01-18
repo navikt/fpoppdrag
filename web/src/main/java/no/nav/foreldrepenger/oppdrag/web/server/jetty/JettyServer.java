@@ -30,7 +30,6 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.eclipse.jetty.webapp.MetaData;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.flywaydb.core.Flyway;
@@ -40,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import no.nav.foreldrepenger.konfig.Environment;
-import no.nav.foreldrepenger.oppdrag.web.app.ApplicationConfig;
+import no.nav.foreldrepenger.oppdrag.web.app.konfig.ApiConfig;
 import no.nav.foreldrepenger.oppdrag.web.server.jetty.db.DatasourceUtil;
 import no.nav.vedtak.sikkerhet.jaspic.OidcAuthModule;
 
@@ -179,20 +178,18 @@ public class JettyServer {
         }
         ctx.setDescriptor(descriptor);
         ctx.setContextPath(CONTEXT_PATH);
-        ctx.setBaseResource(createResourceCollection());
+        ctx.setResourceBase(".");
         ctx.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
         ctx.setAttribute("org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern",
                 "^.*jersey-.*.jar$|^.*felles-.*.jar$");
+
+        ctx.addEventListener(new org.jboss.weld.environment.servlet.BeanManagerResourceBindingListener());
+        ctx.addEventListener(new org.jboss.weld.environment.servlet.Listener());
+
         ctx.setSecurityHandler(createSecurityHandler());
         updateMetaData(ctx.getMetaData());
         ctx.setThrowUnavailableOnStartupException(true);
         return ctx;
-    }
-
-    private static ResourceCollection createResourceCollection() {
-        return new ResourceCollection(
-                Resource.newClassPathResource("META-INF/resources/webjars/"),
-                Resource.newClassPathResource("/web"));
     }
 
     private static SecurityHandler createSecurityHandler() {
@@ -217,7 +214,7 @@ public class JettyServer {
     }
 
     private static List<Class<?>> getWebInfClasses() {
-        return List.of(ApplicationConfig.class);
+        return List.of(ApiConfig.class);
     }
 
     private Integer getServerPort() {

@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.oppdrag.web.app;
+package no.nav.foreldrepenger.oppdrag.web.app.konfig;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -28,39 +27,37 @@ import no.nav.foreldrepenger.oppdrag.web.app.exceptions.JsonParseExceptionMapper
 import no.nav.foreldrepenger.oppdrag.web.app.jackson.JacksonJsonConfig;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.SimuleringRestTjeneste;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.SimuleringTestRestTjeneste;
+import no.nav.vedtak.exception.TekniskException;
 
-@ApplicationPath(ApplicationConfig.API_URI)
-public class ApplicationConfig extends Application {
+@ApplicationPath(ApiConfig.API_URI)
+public class ApiConfig extends Application {
 
-    private static boolean ER_LOKAL_UTVIKLING = Environment.current().isLocal();
+    private static final Environment ENV = Environment.current();
 
     public static final String API_URI = "/api";
 
-    public ApplicationConfig() {
+    public ApiConfig() {
         OpenAPI oas = new OpenAPI();
         Info info = new Info()
                 .title("Vedtaksløsningen - Oppdrag")
                 .version("1.0")
-                .description("REST grensesnitt for FpOppdrag.");
+                .description("REST grensesnitt for fp-oppdrag.");
 
         oas.info(info)
                 .addServersItem(new Server()
-                        .url("/fpoppdrag"));
+                        .url(ENV.getProperty("context.path", "/fpoppdrag")));
 
         SwaggerConfiguration oasConfig = new SwaggerConfiguration()
                 .openAPI(oas)
                 .prettyPrint(true)
-                .scannerClass("io.swagger.v3.jaxrs2.integration.JaxrsAnnotationScanner")
-                .resourcePackages(Stream.of("no.nav")
-                        .collect(Collectors.toSet()));
-
+                .resourceClasses(getClasses().stream().map(Class::getName).collect(Collectors.toSet()));
         try {
             new JaxrsOpenApiContextBuilder<>()
                     .openApiConfiguration(oasConfig)
                     .buildContext(true)
                     .read();
         } catch (OpenApiConfigurationException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new TekniskException("OPEN-API", e.getMessage(), e);
         }
     }
 
@@ -70,7 +67,7 @@ public class ApplicationConfig extends Application {
         // eksponert grensesnitt
         classes.add(SimuleringRestTjeneste.class);
 
-        if (ER_LOKAL_UTVIKLING) {
+        if (ENV.isLocal()) {
             classes.add(SimuleringTestRestTjeneste.class);
         }
 

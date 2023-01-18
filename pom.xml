@@ -6,7 +6,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-bom</artifactId>
-        <version>0.3.10</version>
+        <version>0.4.0</version>
     </parent>
 
     <groupId>no.nav.foreldrepenger.oppdrag</groupId>
@@ -27,13 +27,21 @@
         <revision>1.0-SNAPSHOT</revision>
         <java.version>17</java.version>
 
-        <felles.version>4.2.16</felles.version>
+        <felles.version>4.2.19</felles.version>
         <!-- Kontrakter -->
-        <fp-kontrakter.version>6.2.1</fp-kontrakter.version>
+        <fp-kontrakter.version>6.2.6</fp-kontrakter.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles</groupId>
+                <artifactId>fp-bom</artifactId>
+                <version>0.4.0</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
             <dependency>
                 <groupId>no.nav.foreldrepenger.oppdrag</groupId>
                 <artifactId>kodeverk</artifactId>
