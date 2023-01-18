@@ -8,11 +8,11 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 
-public class InternalApplicationTest {
+public class InternalApiConfigTest {
 
     @Test
     public void getClasses() {
-        InternalApplication app = new InternalApplication();
+        InternalApiConfig app = new InternalApiConfig();
         Set<Class<?>> classes = app.getClasses();
         assertThat(classes).hasSize(2);
     }
