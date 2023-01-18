@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -33,7 +32,7 @@ import no.nav.vedtak.exception.TekniskException;
 @ApplicationPath(ApiConfig.API_URI)
 public class ApiConfig extends Application {
 
-    private static boolean ER_LOKAL_UTVIKLING = Environment.current().isLocal();
+    private static final Environment ENV = Environment.current();
 
     public static final String API_URI = "/api";
 
@@ -46,7 +45,7 @@ public class ApiConfig extends Application {
 
         oas.info(info)
                 .addServersItem(new Server()
-                        .url("/fpoppdrag"));
+                        .url(ENV.getProperty("context.path", "/fpoppdrag")));
 
         SwaggerConfiguration oasConfig = new SwaggerConfiguration()
                 .openAPI(oas)
@@ -58,7 +57,7 @@ public class ApiConfig extends Application {
                     .buildContext(true)
                     .read();
         } catch (OpenApiConfigurationException e) {
-            throw new TekniskException("OPENAPI", e.getMessage(), e);
+            throw new TekniskException("OPEN-API", e.getMessage(), e);
         }
     }
 
@@ -68,7 +67,7 @@ public class ApiConfig extends Application {
         // eksponert grensesnitt
         classes.add(SimuleringRestTjeneste.class);
 
-        if (ER_LOKAL_UTVIKLING) {
+        if (ENV.isLocal()) {
             classes.add(SimuleringTestRestTjeneste.class);
         }
 
