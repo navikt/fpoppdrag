@@ -7,11 +7,9 @@
   "maxReplicas": "2",
   "ingresses": [
     "https://fpoppdrag.dev.intern.nav.no/",
-    "https://fpoppdrag.dev-fss-pub.nais.io",
-    "https://app-q1.adeo.no/fpoppdrag"
+    "https://fpoppdrag.dev-fss-pub.nais.io"
   ],
   "env": {
-    "APPDYNAMICS_AGENT_ACCOUNT_NAME": "NON-PROD",
     "APPD_ENABLED": "false"
   },
   "AZURE_IAC_RULES": [
