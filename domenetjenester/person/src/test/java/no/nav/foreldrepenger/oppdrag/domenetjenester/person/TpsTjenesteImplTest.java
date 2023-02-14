@@ -26,7 +26,7 @@ import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.person.Persondata;
 
 @ExtendWith(MockitoExtension.class)
-public class TpsTjenesteImplTest {
+class TpsTjenesteImplTest {
 
     @Mock
     private Persondata pdlKlient;
@@ -38,45 +38,44 @@ public class TpsTjenesteImplTest {
     }
 
     @Test
-    public void finnerAktørIdForFnr() {
+    void finnerAktørIdForFnr() {
         // Arrange
-        AktørId aktørId = new AktørId("12345");
-        String fnr = "24069305608";
+        var aktørId = new AktørId("12345");
+        var fnr = "12345678910";
 
         when(pdlKlient.hentIdenter(any(), any())).thenReturn(new Identliste(List.of(new IdentInformasjon(aktørId.getId(), IdentGruppe.AKTORID, false))));
         ;
 
         // Act
-        Optional<AktørId> funnetAktørId = tpsTjeneste.hentAktørForFnr(PersonIdent.fra(fnr));
+        var funnetAktørId = tpsTjeneste.hentAktørForFnr(PersonIdent.fra(fnr));
 
         // Assert
-        assertThat(funnetAktørId).isPresent();
-        assertThat(funnetAktørId.get()).isEqualTo(aktørId);
+        assertThat(funnetAktørId).contains(aktørId);
     }
 
     @Test
-    public void finnerPersonInfoForAktørId() {
+    void finnerPersonInfoForAktørId() {
         // Arrange
-        String fnr = "24069305608";
-        String navn = "Nasse Nøff";
+        var fnr = "12345678910";
+        var navn = "Nasse Nøff";
 
-        Person person = new Person();
-        Navn navnPdl = new Navn("Nøff", null, "Nasse", "Nasse Nøff", null, null, null, null);
+        var person = new Person();
+        var navnPdl = new Navn("Nøff", null, "Nasse", "Nasse Nøff", null, null, null, null);
         person.setNavn(List.of(navnPdl));
 
         when(pdlKlient.hentPerson(any(), any())).thenReturn(person);
 
         // Act
-        String personinfo = tpsTjeneste.hentNavnFor(new PersonIdent(fnr)).orElse(null);
+        var personinfo = tpsTjeneste.hentNavnFor(new PersonIdent(fnr)).orElse(null);
 
         // Assert
         assertThat(personinfo).isEqualTo(navn);
     }
 
     @Test
-    public void kasterExceptionPersonIkkeFunnetSomHåndteres() {
+    void kasterExceptionPersonIkkeFunnetSomHåndteres() {
         // Arrange
-        String fnr = "24069305608";
+        var fnr = "12345678910";
         var unntak = Mockito.mock(TekniskException.class);
         when(unntak.getKode()).thenReturn(PdlKlient.PDL_KLIENT_NOT_FOUND_KODE);
 
@@ -88,9 +87,9 @@ public class TpsTjenesteImplTest {
     }
 
     @Test
-    public void kasterExceptionSomIkkeHåndteresForAndreTilfelle() {
+    void kasterExceptionSomIkkeHåndteresForAndreTilfelle() {
         // Arrange
-        PersonIdent fnr = new PersonIdent("24069305608");
+        var fnr = new PersonIdent("12345678910");
         var unntak = Mockito.mock(TekniskException.class);
         when(unntak.getKode()).thenReturn("Ukjent");
 

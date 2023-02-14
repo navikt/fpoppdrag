@@ -47,15 +47,16 @@ import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.Simulering
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatRadDto;
 
 @ExtendWith(JpaExtension.class)
-public class SimuleringResultatTjenesteTest {
+class SimuleringResultatTjenesteTest {
 
     private SimuleringRepository simuleringRepository;
 
-    private HentNavnTjeneste hentNavnTjeneste = Mockito.mock(HentNavnTjeneste.class);
-    private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
+    private final HentNavnTjeneste hentNavnTjeneste = Mockito.mock(HentNavnTjeneste.class);
+    private final SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
+    private final String aktørId = "0123456789";
+
     private SimuleringResultatTjeneste simuleringResultatTjeneste;
 
-    private String aktørId = "0";
 
     @BeforeEach
     void setUp(EntityManager entityManager) {
@@ -65,15 +66,15 @@ public class SimuleringResultatTjenesteTest {
     }
 
     @Test
-    public void henter_simulering_resultat_etterbetaling_en_mottaker_ett_fagområde() {
+    void henter_simulering_resultat_etterbetaling_en_mottaker_ett_fagområde() {
         // Arrange
-        Long behandlingId = 123L;
-        LocalDate nesteForfallsdato = finnNesteForfallsdatoBasertPåDagensDato();
-        LocalDate startDato = nesteForfallsdato.minusMonths(2).withDayOfMonth(1);
-        LocalDate andreMåned = startDato.plusMonths(1);
-        LocalDate nesteMåned = nesteForfallsdato.withDayOfMonth(1);
+        var behandlingId = 123L;
+        var nesteForfallsdato = finnNesteForfallsdatoBasertPåDagensDato();
+        var startDato = nesteForfallsdato.minusMonths(2).withDayOfMonth(1);
+        var andreMåned = startDato.plusMonths(1);
+        var nesteMåned = nesteForfallsdato.withDayOfMonth(1);
 
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medAktørId(aktørId)
                 .medYtelseType(YtelseType.FP)
@@ -117,36 +118,35 @@ public class SimuleringResultatTjenesteTest {
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
 
         // Act
-        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
-                behandlingId);
+        var simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
 
         // Assert
         assertThat(simuleringDto).isPresent();
-        DetaljertSimuleringResultatDto simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
+        var simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
 
         assertThat(simuleringResultatDto.isIngenPerioderMedAvvik()).isFalse();
         assertThat(simuleringResultatDto.getPeriodeFom()).isEqualTo(startDato);
         assertThat(simuleringResultatDto.getPeriodeTom()).isEqualTo(nesteMåned.minusDays(1));
         assertThat(simuleringResultatDto.getSumEtterbetaling()).isEqualTo(6000);
-        assertThat(simuleringResultatDto.getSumFeilutbetaling()).isEqualTo(0);
-        assertThat(simuleringResultatDto.getSumInntrekk()).isEqualTo(0);
+        assertThat(simuleringResultatDto.getSumFeilutbetaling()).isZero();
+        assertThat(simuleringResultatDto.getSumInntrekk()).isZero();
         assertThat(simuleringResultatDto.getPerioderPerMottaker()).hasSize(1);
 
-        SimuleringForMottakerDto mottakerDto = simuleringResultatDto.getPerioderPerMottaker().get(0);
+        var mottakerDto = simuleringResultatDto.getPerioderPerMottaker().get(0);
         assertThat(mottakerDto.getMottakerType()).isEqualTo(MottakerType.BRUKER);
 
         assertThat(mottakerDto.getResultatOgMotregningRader()).hasSize(2);
 
         // Inntrekk - skal være sortert i riktig rekkefølge
-        SimuleringResultatRadDto inntrekk = mottakerDto.getResultatOgMotregningRader().get(0);
+        var inntrekk = mottakerDto.getResultatOgMotregningRader().get(0);
         assertThat(inntrekk.getFeltnavn()).isEqualTo(RadId.INNTREKK_NESTE_MÅNED);
         assertThat(inntrekk.getResultaterPerMåned()).hasSize(3);
-        assertThat(inntrekk.getResultaterPerMåned().get(0).getBeløp()).isEqualTo(0);
-        assertThat(inntrekk.getResultaterPerMåned().get(1).getBeløp()).isEqualTo(0);
-        assertThat(inntrekk.getResultaterPerMåned().get(2).getBeløp()).isEqualTo(0);
+        assertThat(inntrekk.getResultaterPerMåned().get(0).getBeløp()).isZero();
+        assertThat(inntrekk.getResultaterPerMåned().get(1).getBeløp()).isZero();
+        assertThat(inntrekk.getResultaterPerMåned().get(2).getBeløp()).isZero();
 
         // Resultat
-        SimuleringResultatRadDto resultat = mottakerDto.getResultatOgMotregningRader().get(1);
+        var resultat = mottakerDto.getResultatOgMotregningRader().get(1);
         assertThat(resultat.getFeltnavn()).isEqualTo(RadId.RESULTAT);
         assertThat(resultat.getResultaterPerMåned()).hasSize(3);
         assertThat(resultat.getResultaterPerMåned().get(0).getBeløp()).isEqualTo(2000);
@@ -160,7 +160,7 @@ public class SimuleringResultatTjenesteTest {
         assertThat(mottakerDto.getResultatPerFagområde().get(0).getRader()).hasSize(3);
 
         // Nytt beløp - skal være sortert i riktig rekkefølge
-        SimuleringResultatRadDto nyttBeløp = mottakerDto.getResultatPerFagområde().get(0).getRader().get(0);
+        var nyttBeløp = mottakerDto.getResultatPerFagområde().get(0).getRader().get(0);
         assertThat(nyttBeløp.getFeltnavn()).isEqualTo(RadId.NYTT_BELØP);
         assertThat(nyttBeløp.getResultaterPerMåned()).hasSize(3);
         // Assert første periode (skal returneres sortert)
@@ -178,7 +178,7 @@ public class SimuleringResultatTjenesteTest {
         assertThat(nyttBeløp.getResultaterPerMåned().get(2).getBeløp()).isEqualTo(10000);
 
         // Tidligere utbetalt
-        SimuleringResultatRadDto tidligereUtbetalt = mottakerDto.getResultatPerFagområde().get(0).getRader().get(1);
+        var tidligereUtbetalt = mottakerDto.getResultatPerFagområde().get(0).getRader().get(1);
         assertThat(tidligereUtbetalt.getFeltnavn()).isEqualTo(RadId.TIDLIGERE_UTBETALT);
         assertThat(tidligereUtbetalt.getResultaterPerMåned()).hasSize(3);
         // Assert første periode (skal returneres sortert)
@@ -195,11 +195,11 @@ public class SimuleringResultatTjenesteTest {
         assertThat(tidligereUtbetalt.getResultaterPerMåned().get(2).getPeriode().getFom()).isEqualTo(nesteMåned);
         assertThat(tidligereUtbetalt.getResultaterPerMåned().get(2).getPeriode().getTom()).isEqualTo(
                 nesteMåned.plusMonths(1).minusDays(1));
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(2).getBeløp()).isEqualTo(0);
+        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(2).getBeløp()).isZero();
 
 
         // Differanse
-        SimuleringResultatRadDto differanse = mottakerDto.getResultatPerFagområde().get(0).getRader().get(2);
+        var differanse = mottakerDto.getResultatPerFagområde().get(0).getRader().get(2);
         assertThat(differanse.getFeltnavn()).isEqualTo(RadId.DIFFERANSE);
         assertThat(differanse.getResultaterPerMåned()).hasSize(3);
         // Assert første periode (skal returneres sortert)
@@ -218,24 +218,24 @@ public class SimuleringResultatTjenesteTest {
     }
 
     @Test
-    public void henterSimuleringResultatFlereMottakere() {
+    void henterSimuleringResultatFlereMottakere() {
         // Arrange
-        Long behandlingId = 123L;
-        LocalDate nesteForfallsdato = finnNesteForfallsdatoBasertPåDagensDato();
-        LocalDate startDato = nesteForfallsdato.minusMonths(2).withDayOfMonth(1);
-        LocalDate andreMåned = startDato.plusMonths(1);
+        var behandlingId = 123L;
+        var nesteForfallsdato = finnNesteForfallsdatoBasertPåDagensDato();
+        var startDato = nesteForfallsdato.minusMonths(2).withDayOfMonth(1);
+        var andreMåned = startDato.plusMonths(1);
 
-        String fnrArbgiv = "24069305608";
-        String navn = "Onkel Skrue";
-        AktørId aktørIdArbgiver = new AktørId("1111111111111");
+        var fnrArbgiv = "12345678999";
+        var navn = "Onkel Skrue";
+        var aktørIdArbgiver = new AktørId("1111111111111");
 
-        String orgnr = "973861778";
-        String orgName = "STATOIL ASA AVD STATOIL SOKKELVIRKSOMHET";
+        var orgnr = "999999999";
+        var orgName = "TEST BEDRIFT AS";
         when(hentNavnTjeneste.hentAktørIdGittFnr(fnrArbgiv)).thenReturn(aktørIdArbgiver);
         when(hentNavnTjeneste.hentNavnGittFnr(fnrArbgiv)).thenReturn(navn);
         when(hentNavnTjeneste.hentNavnGittOrgnummer(orgnr)).thenReturn(orgName);
 
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medAktørId(aktørId)
                 .medYtelseType(YtelseType.FP)
@@ -270,38 +270,37 @@ public class SimuleringResultatTjenesteTest {
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
 
         // Act
-        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
-                behandlingId);
+        var simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
 
         // Assert
         assertThat(simuleringDto).isPresent();
-        DetaljertSimuleringResultatDto simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
+        var simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
 
         assertThat(simuleringResultatDto.isIngenPerioderMedAvvik()).isFalse();
         assertThat(simuleringResultatDto.getPeriodeFom()).isEqualTo(startDato);
         assertThat(simuleringResultatDto.getPeriodeTom()).isEqualTo(andreMåned.minusDays(1));
-        assertThat(simuleringResultatDto.getSumFeilutbetaling()).isEqualTo(0);
-        assertThat(simuleringResultatDto.getSumInntrekk()).isEqualTo(0);
+        assertThat(simuleringResultatDto.getSumFeilutbetaling()).isZero();
+        assertThat(simuleringResultatDto.getSumInntrekk()).isZero();
         assertThat(simuleringResultatDto.getSumEtterbetaling()).isEqualTo(2000);
 
         assertThat(simuleringResultatDto.getPerioderPerMottaker()).hasSize(3);
 
         // Mottaker = bruker
-        Optional<SimuleringForMottakerDto> brukerOptional = simuleringResultatDto.getPerioderPerMottaker()
+        var brukerOptional = simuleringResultatDto.getPerioderPerMottaker()
                 .stream()
                 .filter(p -> p.getMottakerType().equals(MottakerType.BRUKER))
                 .findFirst();
         assertThat(brukerOptional).isPresent();
-        SimuleringForMottakerDto bruker = brukerOptional.get();
+        var bruker = brukerOptional.get();
         assertThat(bruker.getResultatPerFagområde()).hasSize(1);
-        SimuleringResultatPerFagområdeDto perFagområdeDto = bruker.getResultatPerFagområde().get(0);
+        var perFagområdeDto = bruker.getResultatPerFagområde().get(0);
         assertThat(perFagområdeDto.getFagOmrådeKode()).isEqualTo(Fagområde.FP);
         assertThat(perFagområdeDto.getRader()).hasSize(3);
 
         assertThat(bruker.getResultatOgMotregningRader()).hasSize(2);
         assertThat(bruker.getResultatOgMotregningRader().get(0).getFeltnavn()).isEqualTo(RadId.INNTREKK_NESTE_MÅNED);
         assertThat(bruker.getResultatOgMotregningRader().get(0).getResultaterPerMåned()).hasSize(1);
-        assertThat(bruker.getResultatOgMotregningRader().get(0).getResultaterPerMåned().get(0).getBeløp()).isEqualTo(0);
+        assertThat(bruker.getResultatOgMotregningRader().get(0).getResultaterPerMåned().get(0).getBeløp()).isZero();
         assertThat(bruker.getResultatOgMotregningRader()
                 .get(0)
                 .getResultaterPerMåned()
@@ -334,59 +333,58 @@ public class SimuleringResultatTjenesteTest {
 
 
         // Mottaker = arbeidsgiver med fnr
-        Optional<SimuleringForMottakerDto> arbgivPrivOptional = simuleringResultatDto.getPerioderPerMottaker()
+        var  arbgivPrivOptional = simuleringResultatDto.getPerioderPerMottaker()
                 .stream()
                 .filter(p -> p.getMottakerType().equals(MottakerType.ARBG_PRIV))
                 .findFirst();
         assertThat(arbgivPrivOptional).isPresent();
-        SimuleringForMottakerDto arbgivPriv = arbgivPrivOptional.get();
+        var arbgivPriv = arbgivPrivOptional.get();
         assertThat(arbgivPriv.getMottakerNavn()).isEqualTo(navn);
         assertThat(arbgivPriv.getMottakerNummer()).isEqualTo(fnrArbgiv);
         assertThat(arbgivPriv.getMottakerIdentifikator()).isEqualTo(aktørIdArbgiver.getId());
         assertThat(arbgivPriv.getResultatPerFagområde()).hasSize(1);
-        SimuleringResultatPerFagområdeDto perFagområdeDto1 = arbgivPriv.getResultatPerFagområde().get(0);
+        var perFagområdeDto1 = arbgivPriv.getResultatPerFagområde().get(0);
 
         assertThat(perFagområdeDto1.getFagOmrådeKode()).isEqualTo(Fagområde.FPREF);
         assertThat(perFagområdeDto1.getRader()).hasSize(3);
-        assertThat(arbgivPriv.getResultatOgMotregningRader()).hasSize(0);
+        assertThat(arbgivPriv.getResultatOgMotregningRader()).isEmpty();
 
 
         // Mottaker = arbeidsgiver med orgnr
-        Optional<SimuleringForMottakerDto> arbgivOrgnrOptional = simuleringResultatDto.getPerioderPerMottaker()
+        var arbgivOrgnrOptional = simuleringResultatDto.getPerioderPerMottaker()
                 .stream()
                 .filter(p -> p.getMottakerType().equals(MottakerType.ARBG_ORG))
                 .findFirst();
         assertThat(arbgivOrgnrOptional).isPresent();
-        SimuleringForMottakerDto arbgivOrgnr = arbgivOrgnrOptional.get();
+        var arbgivOrgnr = arbgivOrgnrOptional.get();
         assertThat(arbgivOrgnr.getMottakerNavn()).isEqualToIgnoringCase(orgName);
         assertThat(arbgivOrgnr.getMottakerNummer()).isEqualTo(orgnr);
         assertThat(arbgivOrgnr.getMottakerIdentifikator()).isEqualTo(orgnr);
         assertThat(arbgivOrgnr.getResultatPerFagområde()).hasSize(1);
-        SimuleringResultatPerFagområdeDto perFagområdeDto2 = arbgivOrgnr.getResultatPerFagområde().get(0);
+        var perFagområdeDto2 = arbgivOrgnr.getResultatPerFagområde().get(0);
 
         assertThat(perFagområdeDto2.getFagOmrådeKode()).isEqualTo(Fagområde.FPREF);
         assertThat(perFagområdeDto2.getRader()).hasSize(1);
-        assertThat(arbgivOrgnr.getResultatOgMotregningRader()).hasSize(0);
+        assertThat(arbgivOrgnr.getResultatOgMotregningRader()).isEmpty();
     }
 
     @Test
-    public void finnerSumKunForFagområdeForeldrepengerOgHvisMottakerErBruker() {
+    void finnerSumKunForFagområdeForeldrepengerOgHvisMottakerErBruker() {
         // Arrange
-        Long behandlingId = 123L;
-        LocalDate nesteForfallsdato = finnNesteForfallsdatoBasertPåDagensDato();
-        LocalDate startDato = nesteForfallsdato.minusMonths(2).withDayOfMonth(1);
-        LocalDate andreMåned = startDato.plusMonths(1);
+        var behandlingId = 123L;
+        var nesteForfallsdato = finnNesteForfallsdatoBasertPåDagensDato();
+        var startDato = nesteForfallsdato.minusMonths(2).withDayOfMonth(1);
+        var andreMåned = startDato.plusMonths(1);
 
-        String fnrArbgiv = "24069305608";
-        String navn = "Onkel Skrue";
-        AktørId aktørIdArbgiver = new AktørId("1111111111111");
-
-        String orgnr = "973861778";
+        var fnrArbgiv = "12345678910";
+        var navn = "Onkel Skrue";
+        var aktørIdArbgiver = new AktørId("1111111111111");
+        var orgnr = "999999999";
 
         when(hentNavnTjeneste.hentAktørIdGittFnr(fnrArbgiv)).thenReturn(aktørIdArbgiver);
         when(hentNavnTjeneste.hentNavnGittFnr(fnrArbgiv)).thenReturn(navn);
 
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medAktørId(aktørId)
                 .medYtelseType(YtelseType.FP)
@@ -423,23 +421,22 @@ public class SimuleringResultatTjenesteTest {
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
 
         // Act
-        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
-                behandlingId);
-        assertThat(simuleringDto).isPresent();
+        var simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
 
-        DetaljertSimuleringResultatDto simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
-        assertThat(simuleringResultatDto.getSumFeilutbetaling()).isEqualTo(0);
+        assertThat(simuleringDto).isPresent();
+        var simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
+        assertThat(simuleringResultatDto.getSumFeilutbetaling()).isZero();
         assertThat(simuleringResultatDto.getPerioderPerMottaker()).hasSize(3);
     }
 
     @Test
-    public void skalIkkeHaInntrekkOgNesteUtbetalingsperiodeVedEngangsstønad() {
+    void skalIkkeHaInntrekkOgNesteUtbetalingsperiodeVedEngangsstønad() {
         // Arrange
-        Long behandlingId = 123456L;
-        LocalDate datoKjøres = finnNesteForfallsdatoBasertPåDagensDato();
-        LocalDate startDato = datoKjøres.minusMonths(1).withDayOfMonth(1);
+        var behandlingId = 123456L;
+        var datoKjøres = finnNesteForfallsdatoBasertPåDagensDato();
+        var startDato = datoKjøres.minusMonths(1).withDayOfMonth(1);
 
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medAktørId(aktørId)
                 .medYtelseType(YtelseType.ES)
@@ -462,12 +459,11 @@ public class SimuleringResultatTjenesteTest {
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
 
         // Act
-        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
-                behandlingId);
+        var simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
 
         // Assert
         assertThat(simuleringDto).isPresent();
-        DetaljertSimuleringResultatDto simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
+        var simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
         assertThat(simuleringResultatDto.getSumInntrekk()).isNull();
         assertThat(simuleringResultatDto.getPerioderPerMottaker()).hasSize(1);
         assertThat(simuleringResultatDto.getPerioderPerMottaker().get(0).getNesteUtbPeriodeFom()).isNull();
@@ -475,12 +471,12 @@ public class SimuleringResultatTjenesteTest {
     }
 
     @Test
-    public void skalTrunkereDesimalerPåBeløp() {
+    void skalTrunkereDesimalerPåBeløp() {
         // Arrange
-        Long behandlingId = 123456L;
-        LocalDate førsteAugust2018 = LocalDate.of(2018, 8, 01);
+        var behandlingId = 123456L;
+        var førsteAugust2018 = LocalDate.of(2018, 8, 01);
 
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medAktørId(aktørId)
                 .medYtelseType(YtelseType.FP)
@@ -500,8 +496,7 @@ public class SimuleringResultatTjenesteTest {
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
 
         // Act
-        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
-                behandlingId);
+        var simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
 
         // Assert
         assertThat(simuleringDto).isPresent();
@@ -509,20 +504,20 @@ public class SimuleringResultatTjenesteTest {
     }
 
     @Test
-    public void viserRiktigNesteUtbetalingsperiodeNårArbeidsgiverHarFlereForfallsdatoerFremITid() {
+    void viserRiktigNesteUtbetalingsperiodeNårArbeidsgiverHarFlereForfallsdatoerFremITid() {
         // Arrange
-        Long behandlingId = 887755L;
+        var behandlingId = 887755L;
 
-        LocalDate januar01 = LocalDate.of(2019, 1, 1);
-        LocalDate januar31 = LocalDate.of(2019, 1, 31);
-        LocalDate januar23 = LocalDate.of(2019, 1, 23);
+        var januar01 = LocalDate.of(2019, 1, 1);
+        var januar31 = LocalDate.of(2019, 1, 31);
+        var januar23 = LocalDate.of(2019, 1, 23);
 
-        LocalDate februar01 = LocalDate.of(2019, 2, 1);
-        LocalDate februar28 = LocalDate.of(2019, 2, 28);
+        var februar01 = LocalDate.of(2019, 2, 1);
+        var februar28 = LocalDate.of(2019, 2, 28);
 
-        LocalDateTime simuleringKjørtDato = LocalDate.of(2019, 1, 17).atStartOfDay();
+        var simuleringKjørtDato = LocalDate.of(2019, 1, 17).atStartOfDay();
 
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medAktørId(aktørId)
                 .medYtelseType(YtelseType.FP)
@@ -548,37 +543,36 @@ public class SimuleringResultatTjenesteTest {
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
 
         // Act
-        Optional<SimuleringDto> optSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
-                behandlingId);
+        var optSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
 
         // Assert
         assertThat(optSimuleringDto).isPresent();
-        DetaljertSimuleringResultatDto simuleringResultat = optSimuleringDto.get().getSimuleringResultat();
+        var simuleringResultat = optSimuleringDto.get().getSimuleringResultat();
         assertThat(simuleringResultat.isIngenPerioderMedAvvik()).isTrue();
         assertThat(simuleringResultat.getPerioderPerMottaker()).hasSize(2);
 
         // Sjekker neste utbetalingsperiode for Bruker
-        SimuleringForMottakerDto mottakerBruker = simuleringResultat.getPerioderPerMottaker().get(0);
+        var mottakerBruker = simuleringResultat.getPerioderPerMottaker().get(0);
         assertThat(mottakerBruker.getMottakerType()).isEqualTo(MottakerType.BRUKER);
         assertThat(mottakerBruker.getNesteUtbPeriodeFom()).isEqualTo(januar01);
         assertThat(mottakerBruker.getNestUtbPeriodeTom()).isEqualTo(januar31);
 
         // Sjekker neste utbetalingsperiode for arbeidsgiver
-        SimuleringForMottakerDto mottakerArbgiv = simuleringResultat.getPerioderPerMottaker().get(1);
+        var mottakerArbgiv = simuleringResultat.getPerioderPerMottaker().get(1);
         assertThat(mottakerArbgiv.getMottakerType()).isEqualTo(MottakerType.ARBG_ORG);
         assertThat(mottakerArbgiv.getNesteUtbPeriodeFom()).isEqualTo(februar01);
         assertThat(mottakerArbgiv.getNestUtbPeriodeTom()).isEqualTo(februar28);
     }
 
     @Test
-    public void ingenPerioderMedAvvikDersomKunFremtidigRefusjonTilArbeidsgiver() {
+    void ingenPerioderMedAvvikDersomKunFremtidigRefusjonTilArbeidsgiver() {
         // Arrange
-        Long behandlingId = 887755L;
-        LocalDate februar01 = LocalDate.of(2019, 2, 1);
-        LocalDate februar28 = LocalDate.of(2019, 2, 28);
-        LocalDateTime simuleringKjørtDato = LocalDate.of(2019, 1, 17).atStartOfDay();
+        var behandlingId = 887755L;
+        var februar01 = LocalDate.of(2019, 2, 1);
+        var februar28 = LocalDate.of(2019, 2, 28);
+        var simuleringKjørtDato = LocalDate.of(2019, 1, 17).atStartOfDay();
 
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medAktørId(aktørId)
                 .medSimuleringKjørtDato(simuleringKjørtDato)
@@ -596,25 +590,24 @@ public class SimuleringResultatTjenesteTest {
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
 
         // Act
-        Optional<SimuleringDto> optSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(
-                behandlingId);
+        var optSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
 
         // Assert
         assertThat(optSimuleringDto).isPresent();
-        SimuleringDto simuleringDto = optSimuleringDto.get();
+        var simuleringDto = optSimuleringDto.get();
         assertThat(simuleringDto.getSimuleringResultat().isIngenPerioderMedAvvik()).isTrue();
     }
 
     @Test
-    public void henterSumFeilutbetaling() {
+    void henterSumFeilutbetaling() {
         // Arrange
-        Long behandlingId = 887755L;
-        LocalDate februar01 = LocalDate.of(2019, 2, 1);
-        LocalDate februar28 = LocalDate.of(2019, 2, 28);
-        LocalDateTime simuleringKjørtDato = LocalDate.of(2019, 3, 5).atStartOfDay();
+        var behandlingId = 887755L;
+        var februar01 = LocalDate.of(2019, 2, 1);
+        var februar28 = LocalDate.of(2019, 2, 28);
+        var simuleringKjørtDato = LocalDate.of(2019, 3, 5).atStartOfDay();
+        var feilutbetaltBeløp = 12000;
 
-        int feilutbetaltBeløp = 12000;
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medAktørId(aktørId)
                 .medSimuleringKjørtDato(simuleringKjørtDato)
@@ -640,8 +633,7 @@ public class SimuleringResultatTjenesteTest {
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
 
         // Act
-        FeilutbetaltePerioderDto feilutbetaltePerioderDto = simuleringResultatTjeneste.hentFeilutbetaltePerioder(
-                behandlingId);
+        var feilutbetaltePerioderDto = simuleringResultatTjeneste.hentFeilutbetaltePerioder(behandlingId);
 
         // Assert
         assertThat(feilutbetaltePerioderDto.getSumFeilutbetaling()).isEqualTo(feilutbetaltBeløp);

@@ -18,77 +18,77 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 import no.nav.vedtak.exception.IntegrasjonException;
 
-public class HentNavnTjenesteTest {
+class HentNavnTjenesteTest {
 
-    private PersonTjeneste tpsTjeneste = mock(PersonTjeneste.class);
-    private OrganisasjonTjeneste organisasjonTjeneste = mock(OrganisasjonTjeneste.class);
-    private HentNavnTjeneste hentNavnTjeneste = new HentNavnTjeneste(tpsTjeneste, organisasjonTjeneste);
+    private final PersonTjeneste tpsTjeneste = mock(PersonTjeneste.class);
+    private final OrganisasjonTjeneste organisasjonTjeneste = mock(OrganisasjonTjeneste.class);
+    private final HentNavnTjeneste hentNavnTjeneste = new HentNavnTjeneste(tpsTjeneste, organisasjonTjeneste);
 
     @Test
-    public void henterNavnGittFnr() {
+    void henterNavnGittFnr() {
         // Arrange
-        String fnr = "08069649719";
-        AktørId aktørId = new AktørId("998877");
-        String navn = "Dolly Duck";
-        PersonIdent personIdent = new PersonIdent(fnr);
+        var fnr = "12345678910";
+        var aktørId = new AktørId("998877");
+        var navn = "Dolly Duck";
+        var personIdent = new PersonIdent(fnr);
 
-        when(tpsTjeneste.hentAktørForFnr(eq(personIdent))).thenReturn(Optional.of(aktørId));
-        when(tpsTjeneste.hentNavnFor(eq(personIdent))).thenReturn(Optional.of(navn));
+        when(tpsTjeneste.hentAktørForFnr(personIdent)).thenReturn(Optional.of(aktørId));
+        when(tpsTjeneste.hentNavnFor(personIdent)).thenReturn(Optional.of(navn));
 
         // Act
-        String hentetNavn = hentNavnTjeneste.hentNavnGittFnr(fnr);
+        var hentetNavn = hentNavnTjeneste.hentNavnGittFnr(fnr);
 
         // Assert
         assertThat(hentetNavn).isEqualTo(navn);
     }
 
     @Test
-    public void kasterFeilHvisAktørIkkeFinnes() {
+    void kasterFeilHvisAktørIkkeFinnes() {
         // Arrange
-        String fnr = "08069649719";
-        PersonIdent personIdent = new PersonIdent(fnr);
-        when(tpsTjeneste.hentAktørForFnr(eq(personIdent))).thenReturn(Optional.empty());
+        var fnr = "12345678910";
+        var personIdent = new PersonIdent(fnr);
+        when(tpsTjeneste.hentAktørForFnr(personIdent)).thenReturn(Optional.empty());
 
         // Act
         assertThat(hentNavnTjeneste.hentNavnGittFnr(fnr)).isEqualTo("Ukjent navn");
     }
 
     @Test
-    public void kasterFeilHvisPersoninfoIkkeFinnes() {
+    void kasterFeilHvisPersoninfoIkkeFinnes() {
         // Arrange
-        String fnr = "08069649719";
-        AktørId aktørId = new AktørId("998877");
-        PersonIdent personIdent = new PersonIdent(fnr);
+        var fnr = "12345678910";
+        var aktørId = new AktørId("998877");
+        var personIdent = new PersonIdent(fnr);
 
-        when(tpsTjeneste.hentAktørForFnr(eq(personIdent))).thenReturn(Optional.of(aktørId));
-        when(tpsTjeneste.hentNavnFor(eq(personIdent))).thenReturn(null);
+        when(tpsTjeneste.hentAktørForFnr(personIdent)).thenReturn(Optional.of(aktørId));
+        when(tpsTjeneste.hentNavnFor(personIdent)).thenReturn(null);
 
         // Act
         assertThrows(Exception.class, () -> hentNavnTjeneste.hentNavnGittFnr(fnr));
     }
 
     @Test
-    public void henterNavnGittOrgnr() {
+    void henterNavnGittOrgnr() {
         // Arrange
-        String orgnr = "956321487";
-        String navn = "Arbeidsgiver";
-        OrganisasjonInfo organisasjonInfo = new OrganisasjonInfo(orgnr, navn);
+        var orgnr = "999999999";
+        var navn = "Arbeidsgiver";
+        var organisasjonInfo = new OrganisasjonInfo(orgnr, navn);
 
-        when(organisasjonTjeneste.hentOrganisasjonInfo(eq(orgnr))).thenReturn(Optional.of(organisasjonInfo));
+        when(organisasjonTjeneste.hentOrganisasjonInfo(orgnr)).thenReturn(Optional.of(organisasjonInfo));
 
         // Act
-        String hentetNavn = hentNavnTjeneste.hentNavnGittOrgnummer(orgnr);
+        var hentetNavn = hentNavnTjeneste.hentNavnGittOrgnummer(orgnr);
 
         // Assert
         assertThat(hentetNavn).isEqualTo(navn);
     }
 
     @Test
-    public void kasterFeilHvisOrganisasjonsinfoIkkeFinnes() {
+    void kasterFeilHvisOrganisasjonsinfoIkkeFinnes() {
         // Arrange
-        String orgnr = "956321487";
+        var orgnr = "999999999";
 
-        when(organisasjonTjeneste.hentOrganisasjonInfo(eq(orgnr))).thenReturn(Optional.empty());
+        when(organisasjonTjeneste.hentOrganisasjonInfo(orgnr)).thenReturn(Optional.empty());
 
         // Act
         assertThrows(IntegrasjonException.class, () -> hentNavnTjeneste.hentNavnGittOrgnummer(orgnr));

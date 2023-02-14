@@ -52,7 +52,7 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringReposito
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 
 @ExtendWith(JpaExtension.class)
-public class StartSimuleringTjenesteFpWsProxyTest {
+public class StartSimuleringTjenesteTest {
 
     private static final Long BEHANDLING_ID_1 = 42345L;
     private static final Long BEHANDLING_ID_2 = 87890L;
@@ -77,7 +77,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
     void test_skal_deaktivere_forrige_simulering_når_ny_simulering_gir_tomt_resultat() throws Exception {
         var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
         var oppdragskontrollSimulering1 = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
-        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("24153532444", "423535", oppdragskontrollSimulering1));
+        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("12345678999", "423535", oppdragskontrollSimulering1));
         simuleringTjeneste.startSimulering(oppdragskontrollSimulering1);
 
         Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
@@ -98,7 +98,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
         var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
         OppdragskontrollDto oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
 
-        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("24153532444", "423535", oppdragskontrollDto));
+        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("12345678999", "423535", oppdragskontrollDto));
         simuleringTjeneste.startSimulering(oppdragskontrollDto);
 
         Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
@@ -115,7 +115,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
         // Arrange
         var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
         var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1, oppdrag1));
-        List<BeregningDto> mockRespons = lagRespons("24153532444", "423535", oppdragskontrollDto);
+        List<BeregningDto> mockRespons = lagRespons("12345678999", "423535", oppdragskontrollDto);
         when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(mockRespons);
 
         // Act - Skal gi to beregningsresultater til samme mottaker
@@ -191,7 +191,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
         // Arrange
         var oppdrag = lagOppdrag(130158784200L, "12345678910");
         var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag));
-        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("24153532444", "423535", oppdragskontrollDto));
+        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("12345678999", "423535", oppdragskontrollDto));
 
         // Act
         simuleringTjeneste.startSimulering(oppdragskontrollDto);
@@ -241,7 +241,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
                 KodeEndring.NY,
                 KodeFagområde.FPREF,
                 135702910101L,
-                "22067300444",
+                "12345678999",
                 "Z991097",
                 null,
                 oppdragslinje150
@@ -270,7 +270,7 @@ public class StartSimuleringTjenesteFpWsProxyTest {
 
     private static Refusjonsinfo156Dto lagRefusjonsinfo156(boolean refusjon) {
         if (refusjon) {
-            return new Refusjonsinfo156Dto(LocalDate.of(2017, 10, 10), "00973861778", LocalDate.of(2017, 12, 13));
+            return new Refusjonsinfo156Dto(LocalDate.of(2017, 10, 10), "12345678910", LocalDate.of(2017, 12, 13));
         }
         return null;
     }
