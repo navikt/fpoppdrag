@@ -3,9 +3,11 @@ package no.nav.foreldrepenger.oppdrag.web.app.startupinfo;
 import javax.enterprise.inject.spi.CDI;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.NaisRestTjeneste;
 
+@WebListener
 public class AppStartupServletContextListener implements ServletContextListener {
 
 

@@ -1,11 +1,11 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
-@ApplicationScoped
+@WebListener
 public class ApplicationContextListener implements ServletContextListener {
 
     @Inject
