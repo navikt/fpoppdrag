@@ -1,5 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.web.server.jetty;
 
+import static org.eclipse.jetty.webapp.MetaInfConfiguration.CONTAINER_JAR_PATTERN;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,7 +15,6 @@ import javax.sql.DataSource;
 
 import org.eclipse.jetty.jaas.JAASLoginService;
 import org.eclipse.jetty.plus.jndi.EnvEntry;
-import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.DefaultIdentityService;
 import org.eclipse.jetty.security.SecurityHandler;
@@ -28,9 +29,9 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.webapp.MetaData;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
@@ -39,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import no.nav.foreldrepenger.konfig.Environment;
-import no.nav.foreldrepenger.oppdrag.web.app.konfig.ApiConfig;
 import no.nav.foreldrepenger.oppdrag.web.server.jetty.db.DatasourceUtil;
 import no.nav.vedtak.sikkerhet.jaspic.OidcAuthModule;
 
@@ -49,17 +49,9 @@ public class JettyServer {
     private static final Logger LOG = LoggerFactory.getLogger(JettyServer.class);
 
     private static final String CONTEXT_PATH = ENV.getProperty("context.path", "/fpoppdrag");
+    private static final String JETTY_SCAN_LOCATIONS = "^.*jersey-.*\\.jar$|^.*felles-.*\\.jar$|^.*/app\\.jar$";
+    private static final String JETTY_LOCAL_CLASSES = "^.*/target/classes/|";
 
-    /**
-     * Legges først slik at alltid resetter context før prosesserer nye requests.
-     * Kjøres først så ikke risikerer andre har satt Request#setHandled(true).
-     */
-    static final class ResetLogContextHandler extends AbstractHandler {
-        @Override
-        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-            MDC.clear();
-        }
-    }
 
     private final Integer serverPort;
 
@@ -100,8 +92,8 @@ public class JettyServer {
     }
 
     private static void initTrustStore() {
-        final String trustStorePathProp = "javax.net.ssl.trustStore";
-        final String trustStorePasswordProp = "javax.net.ssl.trustStorePassword";
+        final var trustStorePathProp = "javax.net.ssl.trustStore";
+        final var trustStorePasswordProp = "javax.net.ssl.trustStorePassword";
 
         var defaultLocation = ENV.getProperty("user.home", ".") + "/.modig/truststore.jks";
         var storePath = ENV.getProperty(trustStorePathProp, defaultLocation);
@@ -138,7 +130,7 @@ public class JettyServer {
     private void start() throws Exception {
         var server = new Server(getServerPort());
         server.setConnectors(createConnectors(server).toArray(new Connector[]{}));
-        var handlers = new HandlerList(new ResetLogContextHandler(), createRewriteHandler(), createContext());
+        var handlers = new HandlerList(new ResetLogContextHandler(), createContext());
         server.setHandler(handlers);
         server.start();
         server.join();
@@ -159,15 +151,7 @@ public class JettyServer {
         return httpConfig;
     }
 
-    private RewriteHandler createRewriteHandler() {
-        var rewriteHandler = new RewriteHandler();
-        rewriteHandler.setRewriteRequestURI(true);
-        rewriteHandler.setRewritePathInfo(false);
-        rewriteHandler.setOriginalPathAttribute("requestedPath");
-        return rewriteHandler;
-    }
-
-    private static WebAppContext createContext() throws IOException {
+    private static ContextHandler createContext() throws IOException {
         var ctx = new WebAppContext();
         ctx.setParentLoaderPriority(true);
 
@@ -177,17 +161,19 @@ public class JettyServer {
             descriptor = resource.getURI().toURL().toExternalForm();
         }
         ctx.setDescriptor(descriptor);
+
         ctx.setContextPath(CONTEXT_PATH);
         ctx.setResourceBase(".");
         ctx.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
-        ctx.setAttribute("org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern",
-                "^.*jersey-.*.jar$|^.*felles-.*.jar$");
 
-        ctx.addEventListener(new org.jboss.weld.environment.servlet.BeanManagerResourceBindingListener());
+        // Scanns the CLASSPATH for classes and jars.
+        ctx.setAttribute(CONTAINER_JAR_PATTERN, String.format("%s%s", ENV.isLocal() ? JETTY_LOCAL_CLASSES : "", JETTY_SCAN_LOCATIONS));
+
+
         ctx.addEventListener(new org.jboss.weld.environment.servlet.Listener());
+        ctx.addEventListener(new org.jboss.weld.environment.servlet.BeanManagerResourceBindingListener());
 
         ctx.setSecurityHandler(createSecurityHandler());
-        updateMetaData(ctx.getMetaData());
         ctx.setThrowUnavailableOnStartupException(true);
         return ctx;
     }
@@ -203,21 +189,18 @@ public class JettyServer {
         return securityHandler;
     }
 
-    private static void updateMetaData(MetaData metaData) {
-        // Find path to class-files while starting jetty from development environment.
-        var resources = getWebInfClasses().stream()
-                .map(c -> Resource.newResource(c.getProtectionDomain().getCodeSource().getLocation()))
-                .distinct()
-                .toList();
-
-        metaData.setWebInfClassesResources(resources);
-    }
-
-    private static List<Class<?>> getWebInfClasses() {
-        return List.of(ApiConfig.class);
-    }
-
     private Integer getServerPort() {
         return this.serverPort;
+    }
+
+    /**
+     * Legges først slik at alltid resetter context før prosesserer nye requests.
+     * Kjøres først så ikke risikerer andre har satt Request#setHandled(true).
+     */
+    static final class ResetLogContextHandler extends AbstractHandler {
+        @Override
+        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+            MDC.clear();
+        }
     }
 }
