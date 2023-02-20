@@ -5,10 +5,7 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-
-import no.nav.vedtak.sikkerhet.context.SubjectHandler;
 
 @MappedSuperclass
 public class BaseEntitet extends BaseCreateableEntitet implements Serializable {
