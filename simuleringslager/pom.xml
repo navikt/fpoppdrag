@@ -25,8 +25,8 @@
 
         <!-- Foreldrepengeprosjektet -->
         <dependency>
-            <groupId>no.nav.foreldrepenger.felles.sikkerhet</groupId>
-            <artifactId>felles-sikkerhet</artifactId>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-kontekst</artifactId>
             <scope>provided</scope>
         </dependency>
         <!-- NAV -->
