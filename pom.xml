@@ -28,7 +28,7 @@
 
         <felles.version>4.2.23</felles.version>
         <!-- Kontrakter -->
-        <fp-kontrakter.version>6.2.9</fp-kontrakter.version>
+        <fp-kontrakter.version>6.2.10</fp-kontrakter.version>
     </properties>
 
     <dependencyManagement>
