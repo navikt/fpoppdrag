@@ -26,7 +26,7 @@
     <properties>
         <revision>1.0-SNAPSHOT</revision>
 
-        <felles.version>4.2.25</felles.version>
+        <felles.version>4.2.26</felles.version>
         <!-- Kontrakter -->
         <fp-kontrakter.version>6.2.10</fp-kontrakter.version>
     </properties>
