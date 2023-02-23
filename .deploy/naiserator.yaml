@@ -1,0 +1,87 @@
+kind: Application
+apiVersion: nais.io/v1alpha1
+metadata:
+  name: fpoppdrag
+  namespace: teamforeldrepenger
+  labels:
+    team: teamforeldrepenger
+spec:
+  image: {{image}}
+  port: 8080
+  ingresses:
+  {{#each ingresses as |url|}}
+      - {{url}}
+  {{/each}}
+  liveness:
+    path: /fpoppdrag/internal/health/isAlive
+    initialDelay: 30
+    timeout: 5
+    periodSeconds: 10
+    failureThreshold: 27
+  readiness:
+    path: /fpoppdrag/internal/health/isReady
+    initialDelay: 30
+    timeout: 5
+    periodSeconds: 10
+    failureThreshold: 27
+  prometheus:
+    enabled: true
+    path: /fpoppdrag/internal/metrics/prometheus
+  replicas:
+    min: {{minReplicas}}
+    max: {{maxReplicas}}
+    cpuThresholdPercentage: 80
+  resources:
+    limits:
+      cpu: "1500m"
+      memory: "1024Mi"
+    requests:
+      cpu: "1200m"
+      memory: "256Mi"
+  vault:
+    enabled: true
+    paths:
+      - mountPath: /var/run/secrets/nais.io/defaultDSconfig
+        kvPath: {{oracleconfigpath}}
+      - mountPath: /var/run/secrets/nais.io/defaultDS
+        kvPath: {{oraclesecretpath}}
+      - mountPath: /var/run/secrets/nais.io/serviceuser
+        kvPath: {{serviceusersecretpath}}
+      - mountPath: /var/run/secrets/nais.io/appdynamics
+        kvPath: /apikey/appdynamics/{{environment}}
+  secureLogs:
+    enabled: true
+  env:
+  {{#each env}}
+     - name: {{@key}}
+       value: "{{this}}"
+  {{/each}}
+  azure:
+    application:
+      enabled: true
+      claims:
+        extra:
+          - "NAVident"
+          - "azp_name"
+        groups:
+          {{#each groups as |group|}}
+          - id: "{{group}}"
+          {{/each}}
+  {{#if AZURE_IAC_RULES}}
+  accessPolicy:
+    inbound:
+      rules:
+      {{#each AZURE_IAC_RULES}}
+         - application: {{app}}
+           namespace: {{namespace}}
+           cluster: {{cluster}}
+           {{#if scopes}}
+           permissions:
+             scopes:
+             {{#each scopes}}
+               - "{{this}}"
+             {{/each}}
+           {{/if}}
+      {{/each}}
+  {{/if}}
+

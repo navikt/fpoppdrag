@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  oracle:
+    image: ghcr.io/navikt/oracle-foreldrepenger:18-migrert
+    environment:
+      - ORACLE_RANDOM_PASSWORD=true
+    shm_size: 3gb
+    ports:
+      - "1521:1521"
+    volumes:
+      - ./oracle-init:/docker-entrypoint-initdb.d/
+    container_name: oraclefpoppdrag
