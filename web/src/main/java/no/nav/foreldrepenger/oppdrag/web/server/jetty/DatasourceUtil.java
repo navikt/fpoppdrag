@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.oppdrag.web.server.jetty.db;
+package no.nav.foreldrepenger.oppdrag.web.server.jetty;
 
 import java.util.Properties;
 
@@ -8,11 +8,11 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.micrometer.core.instrument.Metrics;
 import no.nav.foreldrepenger.konfig.Environment;
 
-public class DatasourceUtil {
+class DatasourceUtil {
     private static final Environment ENV = Environment.current();
 
-    public static HikariDataSource createDataSource(int maxPoolSize) {
-        HikariConfig config = new HikariConfig();
+    static HikariDataSource createDataSource(int maxPoolSize) {
+        var config = new HikariConfig();
         config.setJdbcUrl(ENV.getRequiredProperty("defaultDS.url"));
         config.setUsername(ENV.getRequiredProperty("defaultDS.username"));
         config.setPassword(ENV.getRequiredProperty("defaultDS.password"));
@@ -23,12 +23,9 @@ public class DatasourceUtil {
         config.setDriverClassName("oracle.jdbc.OracleDriver");
         config.setMetricRegistry(Metrics.globalRegistry);
 
-        Properties dsProperties = new Properties();
+        var dsProperties = new Properties();
         config.setDataSourceProperties(dsProperties);
 
-        HikariDataSource hikariDataSource = new HikariDataSource(config);
-        Runtime.getRuntime().addShutdownHook(new Thread(hikariDataSource::close));
-
-        return hikariDataSource;
+        return new HikariDataSource(config);
     }
 }

@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import no.nav.foreldrepenger.konfig.Environment;
-import no.nav.foreldrepenger.oppdrag.web.server.jetty.db.DatasourceUtil;
 import no.nav.vedtak.sikkerhet.jaspic.OidcAuthModule;
 
 public class JettyServer {

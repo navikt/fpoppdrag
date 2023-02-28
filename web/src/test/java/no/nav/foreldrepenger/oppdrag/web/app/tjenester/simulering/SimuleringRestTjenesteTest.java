@@ -12,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.BehandlingIdDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatDto;
 
