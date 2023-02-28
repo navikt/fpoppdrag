@@ -14,16 +14,19 @@ spec:
   {{/each}}
   liveness:
     path: /fpoppdrag/internal/health/isAlive
-    initialDelay: 30
-    timeout: 5
+    initialDelay: 10
     periodSeconds: 10
-    failureThreshold: 27
+    failureThreshold: 20
+    timeout: 3
   readiness:
     path: /fpoppdrag/internal/health/isReady
-    initialDelay: 30
-    timeout: 5
+    initialDelay: 10
     periodSeconds: 10
-    failureThreshold: 27
+    failureThreshold: 20
+    timeout: 3
+  preStopHook:
+    http:
+      path: /fpoppdrag/internal/health/preStop
   prometheus:
     enabled: true
     path: /fpoppdrag/internal/metrics/prometheus

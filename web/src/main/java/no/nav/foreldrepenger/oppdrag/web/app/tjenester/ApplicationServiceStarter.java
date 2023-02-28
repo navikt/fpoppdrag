@@ -1,10 +1,11 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import static java.util.concurrent.CompletableFuture.runAsync;
+
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -15,53 +16,55 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.prometheus.client.hotspot.DefaultExports;
-import no.nav.vedtak.apptjeneste.AppServiceHandler;
+import no.nav.vedtak.log.metrics.Controllable;
 
 @ApplicationScoped
 public class ApplicationServiceStarter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationServiceStarter.class);
-    private Map<AppServiceHandler, AtomicBoolean> serviceMap = new HashMap<>();
+    private Set<Controllable> services;
 
     ApplicationServiceStarter() {
         // CDI
     }
 
     @Inject
-    public ApplicationServiceStarter(@Any Instance<AppServiceHandler> serviceHandlers) {
-        serviceHandlers.forEach(handler -> serviceMap.put(handler, new AtomicBoolean()));
+    public ApplicationServiceStarter(@Any Instance<Controllable> services) {
+        this(services.stream().collect(Collectors.toSet()));
+    }
+
+    ApplicationServiceStarter(Controllable service) {
+        this(Set.of(service));
+    }
+
+    ApplicationServiceStarter(Set<Controllable> services) {
+        this.services = services;
     }
 
     public void startServices() {
+        // Prometheus
         DefaultExports.initialize();
-        serviceMap.forEach((key, value) -> {
-            if (value.compareAndSet(false, true)) {
-                LOGGER.info("starter service: {}", key.getClass().getSimpleName());
-                key.start();
-            }
-        });
+
+        // Services
+        LOGGER.info("Starter {} services", services.size());
+        CompletableFuture.allOf(services.stream().map(service -> runAsync(service::start)).toArray(CompletableFuture[]::new)).join();
+        LOGGER.info("Startet {} services", services.size());
     }
 
     public void stopServices() {
-        List<Thread> threadList = new ArrayList<>();
-        serviceMap.forEach((key, value) -> {
-            if (value.compareAndSet(true, false)) {
-                LOGGER.info("stopper service: {}", key.getClass().getSimpleName());
-                Thread t = new Thread(key::stop);
-                t.start();
-                threadList.add(t);
-            }
-        });
-        while (!threadList.isEmpty()) {
-            Thread t = threadList.get(0);
-            try {
-                t.join(31000);
-                threadList.remove(t);
-            } catch (InterruptedException e) {
-                LOGGER.warn(e.getMessage());
-                t.interrupt();
-            }
-        }
+        LOGGER.info("Stopper {} services", services.size());
+        CompletableFuture.allOf(services.stream().map(service -> runAsync(service::stop)).toArray(CompletableFuture[]::new))
+            .orTimeout(31, TimeUnit.SECONDS)
+            .join();
+        LOGGER.info("Stoppet {} services", services.size());
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [services=" + services
+            .stream()
+            .map(Object::getClass)
+            .map(Class::getSimpleName)
+            .collect(Collectors.joining(", ")) + "]";
+    }
 }

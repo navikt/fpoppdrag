@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.oppdrag.web.app.tjenester;
+package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
