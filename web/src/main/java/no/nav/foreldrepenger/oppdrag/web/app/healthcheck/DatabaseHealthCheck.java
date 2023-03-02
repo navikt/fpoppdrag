@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.oppdrag.web.app.selftest;
+package no.nav.foreldrepenger.oppdrag.web.app.healthcheck;
 
 import java.sql.SQLException;
 

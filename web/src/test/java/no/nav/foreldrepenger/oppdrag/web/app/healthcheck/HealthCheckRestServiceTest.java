@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.oppdrag.web.app.tjenester;
+package no.nav.foreldrepenger.oppdrag.web.app.healthcheck;
 
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.OK;
@@ -8,13 +8,14 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import no.nav.foreldrepenger.oppdrag.web.app.tjenester.ApplicationServiceStarter;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import no.nav.foreldrepenger.oppdrag.web.app.selftest.HealthCheckRestService;
 import no.nav.vedtak.log.metrics.LivenessAware;
 import no.nav.vedtak.log.metrics.ReadinessAware;
 
