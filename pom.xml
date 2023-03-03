@@ -26,6 +26,7 @@
     <properties>
         <revision>1.0-SNAPSHOT</revision>
 
+        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
         <sonar.projectName>fp-oppdrag</sonar.projectName>
         <sonar.projectKey>navikt_fpoppdrag</sonar.projectKey>
 
