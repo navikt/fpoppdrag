@@ -32,11 +32,11 @@ class SimuleringRestTjenesteTest {
 
     @Test
     void returnererNullDersomSimuleringForBehandlingIkkeFinnes() {
-        SimuleringDto simuleringDto = restTjeneste.hentSimuleringResultatMedOgUtenInntrekk(
+        var simuleringDto = restTjeneste.hentSimuleringResultatMedOgUtenInntrekk(
                 new BehandlingIdDto("12345"));
         assertThat(simuleringDto).isNull();
 
-        SimuleringResultatDto simuleringResultatDto = restTjeneste.hentSimuleringResultat(new BehandlingIdDto("12345"));
+        var simuleringResultatDto = restTjeneste.hentSimuleringResultat(new BehandlingIdDto("12345"));
         assertThat(simuleringResultatDto).isNull();
     }
 
