@@ -1,4 +1,4 @@
-Foreldrepenger Vedtaksløsning (FP-OPPDRAG)
+FP-OPPDRAG
 ===============
 [![Bygg og deploy](https://github.com/navikt/fpoppdrag/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/navikt/fpoppdrag/actions/workflows/build.yml)
 [![Promote](https://github.com/navikt/fpoppdrag/actions/workflows/promote.yml/badge.svg?branch=master)](https://github.com/navikt/fpoppdrag/actions/workflows/promote.yml)
