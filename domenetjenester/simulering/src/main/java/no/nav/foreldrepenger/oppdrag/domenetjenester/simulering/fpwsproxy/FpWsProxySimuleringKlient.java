@@ -30,7 +30,7 @@ import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 @ApplicationScoped
-@RestClientConfig(tokenConfig = TokenFlow.STS_CC, application = FpApplication.FPWSPROXY)
+@RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, application = FpApplication.FPWSPROXY)
 public class FpWsProxySimuleringKlient {
 
     private final RestClient restClient;
