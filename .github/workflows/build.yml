@@ -9,14 +9,18 @@ on:
       - '.gitignore'
       - '.editorconfig'
       - '.java-version'
-      - 'LICENCE'
+      - 'LICENSE'
       - 'CODEOWNERS'
+      - 'docs/**'
+      - '.oracle/**'
+      - '.github/*.yml'
 
 jobs:
   build-app:
     name: Build
     uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@main
     with:
+      sonar-scan: true
       build-image: ${{ github.ref_name == 'master' }} # default: true
       push-image: ${{ github.ref_name == 'master' }} # default: false
     secrets: inherit

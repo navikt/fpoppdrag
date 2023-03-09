@@ -12,7 +12,6 @@ import static org.mockito.Mockito.mock;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
@@ -33,16 +32,11 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.DetaljertSimuleringResultatDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.RadId;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringForMottakerDto;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatPerFagområdeDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatPerMånedDto;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatRadDto;
 
 @ExtendWith(JpaExtension.class)
-public class SimuleringResultatTjenesteFlereYtelserTest {
+class SimuleringResultatTjenesteFlereYtelserTest {
 
     private SimuleringRepository simuleringRepository;
 
@@ -58,17 +52,17 @@ public class SimuleringResultatTjenesteFlereYtelserTest {
     }
 
     @Test
-    public void henterResultatForFlereYtelser() {
+    void henterResultatForFlereYtelser() {
         // Arrange
-        Long behandlingId = 123L;
-        LocalDate august_01 = LocalDate.of(2018, 8, 1);
-        LocalDate august_31 = august_01.plusMonths(1).minusDays(1);
-        LocalDate september_01 = august_01.plusMonths(1);
-        LocalDate september_30 = september_01.plusMonths(1).minusDays(1);
-        LocalDate oktober_01 = september_01.plusMonths(1);
-        LocalDate oktober_31 = oktober_01.plusMonths(1).minusDays(1);
+        var behandlingId = 123L;
+        var august_01 = LocalDate.of(2018, 8, 1);
+        var august_31 = august_01.plusMonths(1).minusDays(1);
+        var september_01 = august_01.plusMonths(1);
+        var september_30 = september_01.plusMonths(1).minusDays(1);
+        var oktober_01 = september_01.plusMonths(1);
+        var oktober_31 = oktober_01.plusMonths(1).minusDays(1);
 
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medAktørId(aktørId)
                 .medYtelseType(YtelseType.FP)
@@ -93,24 +87,24 @@ public class SimuleringResultatTjenesteFlereYtelserTest {
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
 
         // Act
-        Optional<SimuleringDto> simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
+        var simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
 
         // Assert
         assertThat(simuleringDto).isPresent();
-        DetaljertSimuleringResultatDto simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
+        var simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
         assertThat(simuleringResultatDto.isIngenPerioderMedAvvik()).isFalse();
         assertThat(simuleringResultatDto.getPeriodeFom()).isEqualTo(august_01);
         assertThat(simuleringResultatDto.getPeriodeTom()).isEqualTo(oktober_31);
         assertThat(simuleringResultatDto.getSumEtterbetaling()).isEqualTo(9000); // Kun foreldrepenger
-        assertThat(simuleringResultatDto.getSumInntrekk()).isEqualTo(0);
-        assertThat(simuleringResultatDto.getSumFeilutbetaling()).isEqualTo(0);
+        assertThat(simuleringResultatDto.getSumInntrekk()).isZero();
+        assertThat(simuleringResultatDto.getSumFeilutbetaling()).isZero();
 
         assertThat(simuleringResultatDto.getPerioderPerMottaker()).hasSize(1);
-        SimuleringForMottakerDto mottakerBruker = simuleringResultatDto.getPerioderPerMottaker().get(0);
+        var mottakerBruker = simuleringResultatDto.getPerioderPerMottaker().get(0);
         assertThat(mottakerBruker.getResultatPerFagområde()).hasSize(2);
 
         // Resultat for foreldrepenger -- Skal være sortert slik at foreldrepenger kommer først
-        SimuleringResultatPerFagområdeDto foreldrepenger = mottakerBruker.getResultatPerFagområde().get(0);
+        var foreldrepenger = mottakerBruker.getResultatPerFagområde().get(0);
         assertThat(foreldrepenger.getFagOmrådeKode()).isEqualTo(Fagområde.FP);
         assertThat(foreldrepenger.getRader()).hasSize(3);
         assertThat(foreldrepenger.getRader().get(0).getResultaterPerMåned()).hasSize(2);
@@ -119,16 +113,16 @@ public class SimuleringResultatTjenesteFlereYtelserTest {
 
 
         // Resultat for sykepenger
-        SimuleringResultatPerFagområdeDto sykepenger = mottakerBruker.getResultatPerFagområde().get(1);
+        var sykepenger = mottakerBruker.getResultatPerFagområde().get(1);
         assertThat(sykepenger.getFagOmrådeKode()).isEqualTo(Fagområde.SP);
         assertThat(sykepenger.getRader()).hasSize(3);
         assertThat(sykepenger.getRader().get(0).getResultaterPerMåned()).hasSize(2);
         assertThat(sykepenger.getRader().get(0).getResultaterPerMåned().get(0).getPeriode().getFom()).isEqualTo(august_01);
         assertThat(sykepenger.getRader().get(0).getResultaterPerMåned().get(1).getPeriode().getFom()).isEqualTo(september_01);
 
-        List<SimuleringResultatRadDto> resultatOgMotregningRader = mottakerBruker.getResultatOgMotregningRader();
+        var resultatOgMotregningRader = mottakerBruker.getResultatOgMotregningRader();
         assertThat(resultatOgMotregningRader).hasSize(3);
-        SimuleringResultatRadDto resEtterMotregning = resultatOgMotregningRader.get(0);
+        var resEtterMotregning = resultatOgMotregningRader.get(0);
         assertThat(resEtterMotregning.getFeltnavn()).isEqualTo(RadId.RESULTAT_ETTER_MOTREGNING);
         assertThat(resEtterMotregning.getResultaterPerMåned()).hasSize(3);
         verifiserPeriode(resEtterMotregning.getResultaterPerMåned().get(0), august_01, august_31, 1000);
@@ -136,12 +130,12 @@ public class SimuleringResultatTjenesteFlereYtelserTest {
         verifiserPeriode(resEtterMotregning.getResultaterPerMåned().get(2), oktober_01, oktober_31, 4000);
 
 
-        SimuleringResultatRadDto inntrekk = resultatOgMotregningRader.get(1);
+        var inntrekk = resultatOgMotregningRader.get(1);
         assertThat(inntrekk.getFeltnavn()).isEqualTo(RadId.INNTREKK_NESTE_MÅNED);
         assertThat(inntrekk.getResultaterPerMåned()).hasSize(3);
         verifiserAtAlleBeløpEr0(inntrekk.getResultaterPerMåned());
 
-        SimuleringResultatRadDto resultat = resultatOgMotregningRader.get(2);
+        var resultat = resultatOgMotregningRader.get(2);
         assertThat(resultat.getFeltnavn()).isEqualTo(RadId.RESULTAT);
         assertThat(resultat.getResultaterPerMåned()).hasSize(3);
         verifiserPeriode(resultat.getResultaterPerMåned().get(0), august_01, august_31, 1000);
@@ -158,7 +152,7 @@ public class SimuleringResultatTjenesteFlereYtelserTest {
 
     private void verifiserAtAlleBeløpEr0(List<SimuleringResultatPerMånedDto> resultaterPerMåned) {
         for (SimuleringResultatPerMånedDto simuleringResultatPerMånedDto : resultaterPerMåned) {
-            assertThat(simuleringResultatPerMånedDto.getBeløp()).isEqualTo(0);
+            assertThat(simuleringResultatPerMånedDto.getBeløp()).isZero();
         }
     }
 

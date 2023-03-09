@@ -13,7 +13,7 @@
     <artifactId>fpoppdrag</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
-    <name>FP Oppdrag :: Root</name>
+    <name>Fpoppdrag :: Root</name>
 
     <modules>
         <module>migreringer</module>
@@ -26,9 +26,12 @@
     <properties>
         <revision>1.0-SNAPSHOT</revision>
 
-        <felles.version>4.2.26</felles.version>
-        <!-- Kontrakter -->
-        <fp-kontrakter.version>6.2.11</fp-kontrakter.version>
+        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+        <sonar.projectName>fp-oppdrag</sonar.projectName>
+        <sonar.projectKey>navikt_fpoppdrag</sonar.projectKey>
+
+        <felles.version>4.2.31</felles.version>
+        <fp-kontrakter.version>6.2.12</fp-kontrakter.version>
     </properties>
 
     <dependencyManagement>

@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.oppdrag.web.app.selftest;
+package no.nav.foreldrepenger.oppdrag.web.app.healthcheck;
 
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import static javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE;
@@ -87,7 +87,6 @@ public class HealthCheckRestService {
     @Path("/preStop")
     @Operation(description = "Kalles på før stopp", tags = "nais", hidden = true)
     public Response preStop() {
-        LOG.info("/preStop endepunkt kalt.");
         LOG.info("/preStop endepunkt kalt.");
         starter.stopServices();
         return Response.ok(RESPONSE_OK).build();
