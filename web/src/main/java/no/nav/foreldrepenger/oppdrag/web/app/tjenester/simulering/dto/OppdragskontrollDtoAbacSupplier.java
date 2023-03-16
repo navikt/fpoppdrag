@@ -8,6 +8,9 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 
 public class OppdragskontrollDtoAbacSupplier {
 
+    private OppdragskontrollDtoAbacSupplier() {
+    }
+
     public static class Supplier implements Function<Object, AbacDataAttributter> {
 
         @Override

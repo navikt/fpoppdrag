@@ -11,6 +11,9 @@ import no.nav.foreldrepenger.konfig.Environment;
 class DatasourceUtil {
     private static final Environment ENV = Environment.current();
 
+    private DatasourceUtil() {
+    }
+
     static HikariDataSource createDataSource(int maxPoolSize) {
         var config = new HikariConfig();
         config.setJdbcUrl(ENV.getRequiredProperty("defaultDS.url"));

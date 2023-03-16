@@ -25,7 +25,6 @@ import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
-import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
 
@@ -40,23 +39,23 @@ public class SimuleringBeregningTjeneste {
     }
 
     public SimulertBeregningResultat hentBeregningsresultatMedOgUtenInntrekk(SimuleringGrunnlag simuleringGrunnlag) {
-        SimulertBeregningResultat simulertBeregningResultat = new SimulertBeregningResultat(hentBeregningsresultat(simuleringGrunnlag), simuleringGrunnlag.getYtelseType());
+        var simulertBeregningResultat = new SimulertBeregningResultat(hentBeregningsresultat(simuleringGrunnlag), simuleringGrunnlag.getYtelseType());
 
-        Optional<BeregningResultat> beregningResultatUtenInntrekk = beregnResultat(simuleringGrunnlag, true);
+        var beregningResultatUtenInntrekk = beregnResultat(simuleringGrunnlag, true);
         beregningResultatUtenInntrekk.ifPresent(simulertBeregningResultat::setBeregningResultatUtenInntrekk);
         return simulertBeregningResultat;
     }
 
     private Optional<BeregningResultat> beregnResultat(SimuleringGrunnlag simuleringGrunnlag, boolean beregnUtenInntrekk) {
-        SimuleringResultat simuleringResultat = simuleringGrunnlag.getSimuleringResultat();
+        var simuleringResultat = simuleringGrunnlag.getSimuleringResultat();
         if (beregnUtenInntrekk && !harPosteringerUtenInntrekk(simuleringResultat)) {
             return Optional.empty();
         }
 
         Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat = new HashMap<>();
 
-        for (SimuleringMottaker simuleringMottaker : simuleringResultat.getSimuleringMottakere()) {
-            Mottaker mottaker = new Mottaker(simuleringMottaker.getMottakerType(), simuleringMottaker.getMottakerNummer());
+        for (var simuleringMottaker : simuleringResultat.getSimuleringMottakere()) {
+            var mottaker = new Mottaker(simuleringMottaker.getMottakerType(), simuleringMottaker.getMottakerNummer());
             List<SimulertPostering> simulertePosteringer;
             if (beregnUtenInntrekk && MottakerType.BRUKER.equals(simuleringMottaker.getMottakerType())) {
                 simulertePosteringer = simuleringMottaker.getSimulertePosteringerUtenInntrekk();
@@ -65,20 +64,20 @@ public class SimuleringBeregningTjeneste {
             }
 
             mottaker.setNesteUtbetalingsperiode(finnNesteUtbetalingsperiode(simulertePosteringer, simuleringGrunnlag.getSimuleringKjørtDato()));
-            List<SimulertBeregningPeriode> resultat = beregnPosteringerPerMånedOgFagområde(simulertePosteringer);
+            var resultat = beregnPosteringerPerMånedOgFagområde(simulertePosteringer);
             beregningsresultat.put(mottaker, resultat);
         }
-        Oppsummering oppsummering = opprettOppsummering(beregningsresultat, simuleringGrunnlag.getYtelseType());
+        var oppsummering = opprettOppsummering(beregningsresultat, simuleringGrunnlag.getYtelseType());
 
         return Optional.of(new BeregningResultat(oppsummering, beregningsresultat));
     }
 
     private static Periode finnNesteUtbetalingsperiode(List<SimulertPostering> simulertePosteringer, LocalDateTime simuleringKjørtDato) {
-        Optional<SimulertPostering> posteringNestePeriode = simulertePosteringer.stream()
+        var posteringNestePeriode = simulertePosteringer.stream()
                 .filter(p -> p.getForfallsdato().isAfter(simuleringKjørtDato.toLocalDate()))
                 .max(Comparator.comparing(SimulertPostering::getForfallsdato));
 
-        YearMonth yearMonth = posteringNestePeriode.map(p -> YearMonth.from(p.getFom()))
+        var yearMonth = posteringNestePeriode.map(p -> YearMonth.from(p.getFom()))
                 .orElse(YearMonth.from(simuleringKjørtDato.plusMonths(1)));
         return new Periode(yearMonth.atDay(1), yearMonth.atEndOfMonth());
     }
@@ -93,15 +92,15 @@ public class SimuleringBeregningTjeneste {
         Objects.requireNonNull(posteringer, "posteringer"); //NOSONAR
 
         List<SimulertBeregningPeriode> simulerteBeregninger = new ArrayList<>();
-        Map<YearMonth, List<SimulertPostering>> posteringerPerMåned = grupperPerMåned(posteringer);
-        for (Map.Entry<YearMonth, List<SimulertPostering>> entry : posteringerPerMåned.entrySet()) {
-            Periode periode = finnPeriode(entry.getValue());
-            SimulertBeregningPeriode.Builder simulertBeregningBuilder = SimulertBeregningPeriode.builder()
+        var posteringerPerMåned = grupperPerMåned(posteringer);
+        for (var entry : posteringerPerMåned.entrySet()) {
+            var periode = finnPeriode(entry.getValue());
+            var simulertBeregningBuilder = SimulertBeregningPeriode.builder()
                     .medPeriode(periode);
 
-            Map<Fagområde, List<SimulertPostering>> posteringerPerFagområde = grupperPerFagområde(entry.getValue());
-            for (Map.Entry<Fagområde, List<SimulertPostering>> entryPerFagomr : posteringerPerFagområde.entrySet()) {
-                SimulertBeregning simulertBeregning = beregnPosteringerPerFagområde(entryPerFagomr.getValue());
+            var posteringerPerFagområde = grupperPerFagområde(entry.getValue());
+            for (var entryPerFagomr : posteringerPerFagområde.entrySet()) {
+                var simulertBeregning = beregnPosteringerPerFagområde(entryPerFagomr.getValue());
                 simulertBeregningBuilder.medBeregning(entryPerFagomr.getKey(), simulertBeregning)
                         .leggTilPåResultat(simulertBeregning.getResultat())
                         .leggTilPåInntrekkNesteMåned(simulertBeregning.getMotregning())
@@ -113,28 +112,28 @@ public class SimuleringBeregningTjeneste {
     }
 
     Oppsummering opprettOppsummering(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, YtelseType ytelseType) {
-        Oppsummering oppsummering = new Oppsummering();
+        var oppsummering = new Oppsummering();
 
         oppsummering.setPeriodeFom(finnOppsummertPeriodeFom(beregningsresultat));
         oppsummering.setPeriodeTom(finnOppsummertPeriodeTom(beregningsresultat));
 
-        Fagområde fagOmrådeKode = Fagområde.utledFra(ytelseType);
+        var fagOmrådeKode = Fagområde.utledFra(ytelseType);
 
         if (ytelseType.erIkkeEngangsstønad()) {
             oppsummering.setInntrekkNesteUtbetaling(finnInntrekk(beregningsresultat, fagOmrådeKode));
         }
 
-        List<SimulertBeregning> beregninger = finnBeregningerForBrukerForFagområde(
+        var beregninger = finnBeregningerForBrukerForFagområde(
                 fagOmrådeKode,
                 beregningsresultat);
 
         //En netto reduksjon i feilutbetaling skal ikke vises som en feilutbetaling.
         //Derfor settes feilutbetaling til 0 i dette tilfellet
-        BigDecimal feilutbetaling = beregninger.stream().map(SimulertBeregning::getFeilutbetaltBeløp).reduce(BigDecimal.ZERO, BigDecimal::add);
-        boolean erReduksjonIFeilutbetaling = feilutbetaling.signum() == 1;
+        var feilutbetaling = beregninger.stream().map(SimulertBeregning::getFeilutbetaltBeløp).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var erReduksjonIFeilutbetaling = feilutbetaling.signum() == 1;
         oppsummering.setFeilutbetaling(erReduksjonIFeilutbetaling ? BigDecimal.ZERO : feilutbetaling);
 
-        BigDecimal etterbetaling = beregninger.stream().map(SimulertBeregning::getEtterbetaling).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var etterbetaling = beregninger.stream().map(SimulertBeregning::getEtterbetaling).reduce(BigDecimal.ZERO, BigDecimal::add);
         oppsummering.setEtterbetaling(etterbetaling);
         return oppsummering;
     }
@@ -144,10 +143,10 @@ public class SimuleringBeregningTjeneste {
     }
 
     private static BigDecimal finnInntrekkSum(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, Fagområde fagOmrådeKode) {
-        Optional<Mottaker> mottakerBrukerOpt = beregningsresultat.keySet().stream().filter(m -> m.getMottakerType().equals(MottakerType.BRUKER)).findFirst();
+        var mottakerBrukerOpt = beregningsresultat.keySet().stream().filter(m -> m.getMottakerType().equals(MottakerType.BRUKER)).findFirst();
         if (mottakerBrukerOpt.isPresent()) {
-            Mottaker mottaker = mottakerBrukerOpt.get();
-            List<SimulertBeregningPeriode> perioder = beregningsresultat.get(mottaker);
+            var mottaker = mottakerBrukerOpt.get();
+            var perioder = beregningsresultat.get(mottaker);
             return finnInntrekkSum(perioder, fagOmrådeKode);
         }
         return BigDecimal.ZERO;
@@ -164,16 +163,16 @@ public class SimuleringBeregningTjeneste {
 
     private static List<SimulertBeregning> finnBeregningerForBrukerForFagområde(Fagområde fagOmrådeKode,
                                                                                 Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat) {
-        Optional<Mottaker> mottakerBrukerOpt = beregningsresultat.keySet().stream().filter(m -> m.getMottakerType().equals(MottakerType.BRUKER)).findFirst();
+        var mottakerBrukerOpt = beregningsresultat.keySet().stream().filter(m -> m.getMottakerType().equals(MottakerType.BRUKER)).findFirst();
         if (mottakerBrukerOpt.isPresent()) {
-            Mottaker mottakerBruker = mottakerBrukerOpt.get();
-            YearMonth nesteUtbetalingsperiode = YearMonth.from(mottakerBruker.getNesteUtbetalingsperiodeFom());
-            List<SimulertBeregningPeriode> resultatForBruker = beregningsresultat.get(mottakerBruker);
+            var mottakerBruker = mottakerBrukerOpt.get();
+            var nesteUtbetalingsperiode = YearMonth.from(mottakerBruker.getNesteUtbetalingsperiodeFom());
+            var resultatForBruker = beregningsresultat.get(mottakerBruker);
             return resultatForBruker.stream()
                     .filter(p -> erIkkeNesteUtbetalingsperiode(p.getPeriode(), nesteUtbetalingsperiode))
                     .filter(r -> r.getBeregningPerFagområde().containsKey(fagOmrådeKode))
                     .map(r -> r.getBeregningPerFagområde().get(fagOmrådeKode))
-                    .collect(Collectors.toList());
+                    .toList();
         }
         return Collections.emptyList();
     }
@@ -181,9 +180,9 @@ public class SimuleringBeregningTjeneste {
     private static LocalDate finnOppsummertPeriodeTom(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat) {
         LocalDate sisteTomDato = null;
         for (var entry : beregningsresultat.entrySet()) {
-            Mottaker mottaker = entry.getKey();
-            YearMonth nesteUtbetalingsperiode = YearMonth.from(mottaker.getNesteUtbetalingsperiodeFom());
-            Optional<LocalDate> tomDato = entry.getValue().stream()
+            var mottaker = entry.getKey();
+            var nesteUtbetalingsperiode = YearMonth.from(mottaker.getNesteUtbetalingsperiodeFom());
+            var tomDato = entry.getValue().stream()
                     .filter(p -> erIkkeNesteUtbetalingsperiode(p.getPeriode(), nesteUtbetalingsperiode))
                     .map(b -> b.getPeriode().getPeriodeTom())
                     .reduce((a, b) -> a.isAfter(b) ? a : b);
@@ -197,9 +196,9 @@ public class SimuleringBeregningTjeneste {
     private static LocalDate finnOppsummertPeriodeFom(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat) {
         LocalDate førsteFomDato = null;
         for (var entry : beregningsresultat.entrySet()) {
-            Mottaker mottaker = entry.getKey();
-            YearMonth nesteUtbetalingsperiode = YearMonth.from(mottaker.getNesteUtbetalingsperiodeFom());
-            Optional<LocalDate> fomDato = entry.getValue().stream()
+            var mottaker = entry.getKey();
+            var nesteUtbetalingsperiode = YearMonth.from(mottaker.getNesteUtbetalingsperiodeFom());
+            var fomDato = entry.getValue().stream()
                     .filter(p -> erIkkeNesteUtbetalingsperiode(p.getPeriode(), nesteUtbetalingsperiode))
                     .map(b -> b.getPeriode().getPeriodeFom())
                     .reduce((a, b) -> a.isBefore(b) ? a : b);
@@ -231,17 +230,17 @@ public class SimuleringBeregningTjeneste {
 
     private static SimulertBeregning beregn(List<SimulertPostering> posteringer) {
 
-        List<SimulertPostering> feilutbetalingPosteringer = bareFeilutbetalingPosteringer(posteringer); // 1 FEIL
-        BigDecimal feilutbetaltBeløp = summerBeløp(feilutbetalingPosteringer); // 6381
+        var feilutbetalingPosteringer = bareFeilutbetalingPosteringer(posteringer); // 1 FEIL
+        var feilutbetaltBeløp = summerBeløp(feilutbetalingPosteringer); // 6381
 
-        BigDecimal tidligereUtbetaltBeløp = beregnTidligereUtbetaltBeløp(posteringer, feilutbetaltBeløp); // 6381
+        var tidligereUtbetaltBeløp = beregnTidligereUtbetaltBeløp(posteringer, feilutbetaltBeløp); // 6381
 
-        BigDecimal nyttBeløp = beregnNyttBeløp(posteringer, feilutbetaltBeløp); // 0
-        BigDecimal nyttMinusUtbetalt = nyttBeløp.subtract(tidligereUtbetaltBeløp); // -6381
-        BigDecimal motregning = beregnMotregning(posteringer); // 0
-        BigDecimal resultatUtenFeilutbetaling = nyttMinusUtbetalt.add(motregning); // -6381
-        BigDecimal resultat = feilutbetalingPosteringer.isEmpty() ? resultatUtenFeilutbetaling : feilutbetaltBeløp.negate(); // -6381
-        BigDecimal etterbetaling = utledEtterbetaling(feilutbetalingPosteringer, resultatUtenFeilutbetaling); // 0
+        var nyttBeløp = beregnNyttBeløp(posteringer, feilutbetaltBeløp); // 0
+        var nyttMinusUtbetalt = nyttBeløp.subtract(tidligereUtbetaltBeløp); // -6381
+        var motregning = beregnMotregning(posteringer); // 0
+        var resultatUtenFeilutbetaling = nyttMinusUtbetalt.add(motregning); // -6381
+        var resultat = feilutbetalingPosteringer.isEmpty() ? resultatUtenFeilutbetaling : feilutbetaltBeløp.negate(); // -6381
+        var etterbetaling = utledEtterbetaling(feilutbetalingPosteringer, resultatUtenFeilutbetaling); // 0
 
         sanityCheckResultater(feilutbetalingPosteringer, feilutbetaltBeløp);
 
@@ -257,7 +256,7 @@ public class SimuleringBeregningTjeneste {
     }
 
     private static BigDecimal utledEtterbetaling(List<SimulertPostering> feilutbetalingPosteringer, BigDecimal resultatUtenFeilutbetaling) {
-        BigDecimal etterbetaling = feilutbetalingPosteringer.isEmpty() && resultatUtenFeilutbetaling.signum() == 1 ? resultatUtenFeilutbetaling : BigDecimal.ZERO;
+        var etterbetaling = feilutbetalingPosteringer.isEmpty() && resultatUtenFeilutbetaling.signum() == 1 ? resultatUtenFeilutbetaling : BigDecimal.ZERO;
         if (etterbetaling.signum() == -1) {
             //Dersom tilbakeførte trekk dekker opp en feilutbetaling vil det ikke finnes en postering for feilutbetaling.
             //Men ny ytelse vil da være mindre enn utbetalt. Etterbetalingen blir da negativ. Man skal da sette etterbetalingen til 0.
@@ -283,7 +282,7 @@ public class SimuleringBeregningTjeneste {
     private static List<SimulertPostering> bareFeilutbetalingPosteringer(List<SimulertPostering> posteringer) {
         return posteringer.stream()
                 .filter(p -> PosteringType.FEIL.equals(p.getPosteringType()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     static BigDecimal beregnMotregning(List<SimulertPostering> posteringer) {
@@ -320,14 +319,14 @@ public class SimuleringBeregningTjeneste {
     }
 
     private static BigDecimal beregnNyttBeløp(List<SimulertPostering> posteringer, BigDecimal sumFeilutbetalingPosteringer) {
-        BigDecimal sumPosteringer = summerPosteringer(posteringer, BetalingType.D);
+        var sumPosteringer = summerPosteringer(posteringer, BetalingType.D);
         return sumFeilutbetalingPosteringer.signum() == 1
                 ? sumPosteringer.subtract(sumFeilutbetalingPosteringer)
                 : sumPosteringer;
     }
 
     private static BigDecimal beregnTidligereUtbetaltBeløp(List<SimulertPostering> posteringer, BigDecimal sumFeilutbetalingPosteringer) {
-        BigDecimal sumPosteringer = summerPosteringer(posteringer, BetalingType.K); // 6381
+        var sumPosteringer = summerPosteringer(posteringer, BetalingType.K); // 6381
         return sumFeilutbetalingPosteringer.signum() == -1
                 ? sumPosteringer.add(sumFeilutbetalingPosteringer)
                 : sumPosteringer;
@@ -351,5 +350,4 @@ public class SimuleringBeregningTjeneste {
         return posteringer.stream()
                 .collect(Collectors.groupingBy(p -> YearMonth.from(p.getFom())));
     }
-
 }

@@ -2,8 +2,6 @@ package no.nav.foreldrepenger.oppdrag.web.app.exceptions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.ws.rs.core.Response;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,24 +15,24 @@ import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.log.util.MemoryAppender;
 
 @Execution(ExecutionMode.SAME_THREAD)
-public class GeneralRestExceptionMapperTest {
+class GeneralRestExceptionMapperTest {
 
     private static MemoryAppender logSniffer;
 
     private final GeneralRestExceptionMapper exceptionMapper = new GeneralRestExceptionMapper();
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         logSniffer = MemoryAppender.sniff(GeneralRestExceptionMapper.class);
     }
 
     @AfterEach
-    public void afterEach() {
+    void afterEach() {
         logSniffer.reset();
     }
 
     @Test
-    public void skalIkkeMappeManglerTilgangFeil() {
+    void skalIkkeMappeManglerTilgangFeil() {
         var response = exceptionMapper.toResponse(manglerTilgangFeil());
 
         assertThat(response.getStatus()).isEqualTo(403);
@@ -47,7 +45,7 @@ public class GeneralRestExceptionMapperTest {
     }
 
     @Test
-    public void skalMappeFunksjonellFeil() {
+    void skalMappeFunksjonellFeil() {
         var response = exceptionMapper.toResponse(funksjonellFeil());
 
         assertThat(response.getEntity()).isInstanceOf(FeilDto.class);
@@ -60,7 +58,7 @@ public class GeneralRestExceptionMapperTest {
     }
 
     @Test
-    public void skalMappeVLException() {
+    void skalMappeVLException() {
         var response = exceptionMapper.toResponse(tekniskFeil());
 
         assertThat(response.getEntity()).isInstanceOf(FeilDto.class);
@@ -72,44 +70,44 @@ public class GeneralRestExceptionMapperTest {
     }
 
     @Test
-    public void skalMappeWrappedGenerellFeil() {
-        String feilmelding = "en helt generell feil";
-        RuntimeException generellFeil = new RuntimeException(feilmelding);
+    void skalMappeWrappedGenerellFeil() {
+        var feilmelding = "en helt generell feil";
+        var generellFeil = new RuntimeException(feilmelding);
 
-        Response response = exceptionMapper.toResponse(new TekniskException("KODE", "TEKST", generellFeil));
+        var response = exceptionMapper.toResponse(new TekniskException("KODE", "TEKST", generellFeil));
 
         assertThat(response.getStatus()).isEqualTo(500);
         assertThat(response.getEntity()).isInstanceOf(FeilDto.class);
-        FeilDto feilDto = (FeilDto) response.getEntity();
+        var feilDto = (FeilDto) response.getEntity();
 
         assertThat(feilDto.feilmelding()).contains("TEKST");
         assertThat(logSniffer.search("TEKST", Level.WARN)).hasSize(1);
     }
 
     @Test
-    public void skalMappeWrappedFeilUtenCause() {
-        String feilmelding = "en helt generell feil";
+    void skalMappeWrappedFeilUtenCause() {
+        var feilmelding = "en helt generell feil";
 
-        Response response = exceptionMapper.toResponse(new TekniskException("KODE", feilmelding));
+        var response = exceptionMapper.toResponse(new TekniskException("KODE", feilmelding));
 
         assertThat(response.getStatus()).isEqualTo(500);
         assertThat(response.getEntity()).isInstanceOf(FeilDto.class);
-        FeilDto feilDto = (FeilDto) response.getEntity();
+        var feilDto = (FeilDto) response.getEntity();
 
         assertThat(feilDto.feilmelding()).contains(feilmelding);
         assertThat(logSniffer.search(feilmelding, Level.WARN)).hasSize(1);
     }
 
     @Test
-    public void skalMappeGenerellFeil() {
-        String feilmelding = "en helt generell feil";
+    void skalMappeGenerellFeil() {
+        var feilmelding = "en helt generell feil";
         RuntimeException generellFeil = new IllegalArgumentException(feilmelding);
 
-        Response response = exceptionMapper.toResponse(generellFeil);
+        var response = exceptionMapper.toResponse(generellFeil);
 
         assertThat(response.getStatus()).isEqualTo(500);
         assertThat(response.getEntity()).isInstanceOf(FeilDto.class);
-        FeilDto feilDto = (FeilDto) response.getEntity();
+        var feilDto = (FeilDto) response.getEntity();
 
         assertThat(feilDto.feilmelding()).contains(feilmelding);
         assertThat(logSniffer.search(feilmelding, Level.WARN)).hasSize(1);

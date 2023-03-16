@@ -2,11 +2,9 @@ package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -68,16 +66,16 @@ public class SimulerOppdragDto implements AbacDto {
         return oppdragPrMottaker.stream()
                 .filter(Objects::nonNull)
                 .map(str -> new String(Base64.getDecoder().decode(str.getBytes(UTF_8)), UTF_8))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @JsonIgnore
     public static SimulerOppdragDto lagDto(Long behandlingId, List<String> råXml) {
         Objects.requireNonNull(råXml, "Rå XML kan ikke være null");
-        List<String> encoded = råXml.stream()
+        var encoded = råXml.stream()
                 .map(str -> Base64.getEncoder()
                         .encodeToString(str.getBytes(UTF_8)))
-                .collect(Collectors.toList());
+                .toList();
         return new SimulerOppdragDto(behandlingId, encoded);
     }
 

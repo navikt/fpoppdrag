@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.oppdrag.web.app.konfig;
 import static org.assertj.core.api.Fail.fail;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,13 +18,11 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
-public class RestApiAbacTest {
+class RestApiAbacTest {
 
     static {
         WeldContext.getInstance(); // init cdi container
     }
-
-    private static String PREV_LB_URL;
 
     /**
      * IKKE ignorer denne testen, sikrer at REST_MED_INNTEKTSMELDING-endepunkter får tilgangskontroll
@@ -33,17 +30,17 @@ public class RestApiAbacTest {
      * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her     *
      */
     @Test
-    public void test_at_alle_restmetoder_er_annotert_med_BeskyttetRessurs() throws Exception {
-        for (Method restMethod : RestApiTester.finnAlleRestMetoder()) {
+    void test_at_alle_restmetoder_er_annotert_med_BeskyttetRessurs() {
+        for (var restMethod : RestApiTester.finnAlleRestMetoder()) {
             if (restMethod.getAnnotation(BeskyttetRessurs.class) == null) {
-                throw new AssertionError("Mangler @" + BeskyttetRessurs.class.getSimpleName() + "-annotering på " + restMethod);
+                fail("Mangler @" + BeskyttetRessurs.class.getSimpleName() + "-annotering på " + restMethod);
             }
         }
     }
 
     @Test
-    public void sjekk_at_ingen_metoder_er_annotert_med_dummy_verdier() {
-        for (Method metode : RestApiTester.finnAlleRestMetoder()) {
+    void sjekk_at_ingen_metoder_er_annotert_med_dummy_verdier() {
+        for (var metode : RestApiTester.finnAlleRestMetoder()) {
             assertAtIngenBrukerDummyVerdierPåBeskyttetRessurs(metode);
         }
     }
@@ -54,14 +51,14 @@ public class RestApiAbacTest {
      * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her     *
      */
     @Test
-    public void test_at_alle_input_parametre_til_restmetoder_implementer_AbacDto() throws Exception {
-        String feilmelding = "Parameter på %s.%s av type %s må implementere " + AbacDto.class.getSimpleName() + ".\n";
-        StringBuilder feilmeldinger = new StringBuilder();
+    void test_at_alle_input_parametre_til_restmetoder_implementer_AbacDto() throws Exception {
+        var feilmelding = "Parameter på %s.%s av type %s må implementere " + AbacDto.class.getSimpleName() + ".\n";
+        var feilmeldinger = new StringBuilder();
 
-        for (Method restMethode : RestApiTester.finnAlleRestMetoder()) {
-            for (Parameter parameter : restMethode.getParameters()) {
+        for (var restMethode : RestApiTester.finnAlleRestMetoder()) {
+            for (var parameter : restMethode.getParameters()) {
                 if (Collection.class.isAssignableFrom(parameter.getType())) {
-                    ParameterizedType type = (ParameterizedType) parameter.getParameterizedType();
+                    var type = (ParameterizedType) parameter.getParameterizedType();
                     @SuppressWarnings("rawtypes")
                     Class<?> aClass = (Class) (type.getActualTypeArguments()[0]);
                     if (!AbacDto.class.isAssignableFrom(aClass)
@@ -79,13 +76,13 @@ public class RestApiAbacTest {
             }
         }
         if (feilmeldinger.length() > 0) {
-            throw new AssertionError("Følgende inputparametre til REST_MED_INNTEKTSMELDING-tjenester mangler AbacDto-impl\n" + feilmeldinger);
+            fail("Følgende inputparametre til REST_MED_INNTEKTSMELDING-tjenester mangler AbacDto-impl\n" + feilmeldinger);
         }
     }
 
     private void assertAtIngenBrukerDummyVerdierPåBeskyttetRessurs(Method metode) {
-        Class<?> klasse = metode.getDeclaringClass();
-        BeskyttetRessurs annotation = metode.getAnnotation(BeskyttetRessurs.class);
+        var klasse = metode.getDeclaringClass();
+        var annotation = metode.getAnnotation(BeskyttetRessurs.class);
         if (annotation != null && annotation.actionType() == ActionType.DUMMY) {
             fail(klasse.getSimpleName() + "." + metode.getName() + " Ikke bruk DUMMY-verdi for "
                     + ActionType.class.getSimpleName());

@@ -5,6 +5,9 @@ import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 
 public class YtelseUtleder {
 
+    private YtelseUtleder() {
+    }
+
     public static YtelseType utledFor(Fagområde fagområde) {
         if (fagområde == null) {
             throw new NullPointerException("Fagområde kan ikke våre null.");

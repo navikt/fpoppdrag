@@ -27,7 +27,7 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
 
-public class FeilutbetalingTjenesteTest {
+class FeilutbetalingTjenesteTest {
 
     private static final YearMonth JANUAR = YearMonth.of(2019, Month.JANUARY);
     private static final YearMonth FEBRUAR = YearMonth.of(2019, Month.FEBRUARY);
@@ -42,13 +42,13 @@ public class FeilutbetalingTjenesteTest {
     private static final String kontonr = "45678";
 
     @Test
-    public void finnerFeilutbetaltePerioderFraSammenhengendePeriode() {
+    void finnerFeilutbetaltePerioderFraSammenhengendePeriode() {
         //Arrange
-        SimuleringMottaker mottaker = SimuleringMottaker.builder().medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer").build();
+        var mottaker = SimuleringMottaker.builder().medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer").build();
         mottaker.leggTilSimulertPostering(lagFeilUtbetalingPostering(januar_15_2019, januar_22_2019, 6000));
         mottaker.leggTilSimulertPostering(lagYtelsePostering(januar_15_2019, januar_22_2019, 6000));
 
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(1245L))
                 .medAktørId("789")
                 .medYtelseType(YtelseType.FP)
@@ -58,25 +58,25 @@ public class FeilutbetalingTjenesteTest {
                 .build();
 
         // Act
-        Optional<FeilutbetaltePerioderDto> perioderDto = FeilutbetalingTjeneste.finnFeilutbetaltePerioderForForeldrepengerOgEngangsstønad(simuleringGrunnlag);
+        var perioderDto = FeilutbetalingTjeneste.finnFeilutbetaltePerioderForForeldrepengerOgEngangsstønad(simuleringGrunnlag);
 
         //Assert
-        List<PeriodeDto> perioder = perioderDto.get().getPerioder();
+        var perioder = perioderDto.get().getPerioder();
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(januar_15_2019);
         assertThat(perioder.get(0).getTom()).isEqualTo(januar_22_2019);
     }
 
     @Test
-    public void finnerFeilutbetaltePerioderFraOppsplittetPeriode() {
+    void finnerFeilutbetaltePerioderFraOppsplittetPeriode() {
         //Arrange
-        SimuleringMottaker mottaker = SimuleringMottaker.builder().medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer").build();
+        var mottaker = SimuleringMottaker.builder().medMottakerType(MottakerType.BRUKER).medMottakerNummer("nummer").build();
         mottaker.leggTilSimulertPostering(lagFeilUtbetalingPostering(januar_01_2019, januar_15_2019, 6000));
         mottaker.leggTilSimulertPostering(lagFeilUtbetalingPostering(januar_16_2019, januar_21_2019, 6000));
         mottaker.leggTilSimulertPostering(lagFeilUtbetalingPostering(januar_22_2019, januar_31_2019, 6000));
         mottaker.leggTilSimulertPostering(lagYtelsePostering(januar_15_2019, januar_22_2019, 6000));
 
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(1245L))
                 .medAktørId("789")
                 .medYtelseType(YtelseType.FP)
@@ -86,17 +86,17 @@ public class FeilutbetalingTjenesteTest {
                 .build();
 
         // Act
-        Optional<FeilutbetaltePerioderDto> perioderDto = FeilutbetalingTjeneste.finnFeilutbetaltePerioderForForeldrepengerOgEngangsstønad(simuleringGrunnlag);
+        var perioderDto = FeilutbetalingTjeneste.finnFeilutbetaltePerioderForForeldrepengerOgEngangsstønad(simuleringGrunnlag);
 
         //Assert
-        List<PeriodeDto> perioder = perioderDto.get().getPerioder();
+        var perioder = perioderDto.get().getPerioder();
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(januar_01_2019);
         assertThat(perioder.get(0).getTom()).isEqualTo(januar_31_2019);
     }
 
     @Test
-    public void finnerMånederMedFeilutbetaling() {
+    void finnerMånederMedFeilutbetaling() {
 
         // Arrange
         List<SimulertPostering> posteringer = new ArrayList<>();
@@ -106,17 +106,17 @@ public class FeilutbetalingTjenesteTest {
         posteringer.add(opprettDebetPostering(LocalDate.of(2019, Month.MARCH, 15), LocalDate.of(2019, Month.MARCH, 31), 16589));
 
         // Act
-        Map<YearMonth, List<SimulertPostering>> resultat = FeilutbetalingTjeneste.finnMånederMedFeilutbetaling(posteringer);
+        var resultat = FeilutbetalingTjeneste.finnMånederMedFeilutbetaling(posteringer);
 
         // Assert
         assertThat(resultat.keySet()).containsExactlyInAnyOrder(JANUAR, FEBRUAR);
     }
 
     @Test
-    public void beregnerDagsats() {
+    void beregnerDagsats() {
         // Arrange
-        int dagsats = 250;
-        SimulertPostering postering = opprettKreditPostering(LocalDate.of(2019, 1, 10), LocalDate.of(2019, 1, 31), dagsats * 16);
+        var dagsats = 250;
+        var postering = opprettKreditPostering(LocalDate.of(2019, 1, 10), LocalDate.of(2019, 1, 31), dagsats * 16);
 
         // Act
         BigDecimal resultatDagsats = FeilutbetalingTjeneste.beregnDagsats(postering);
@@ -126,7 +126,7 @@ public class FeilutbetalingTjenesteTest {
     }
 
     @Test
-    public void slårSammenSammenhengendePerioder() {
+    void slårSammenSammenhengendePerioder() {
         // Arrange
         List<Periode> perioder = new ArrayList<>();
 
@@ -136,25 +136,25 @@ public class FeilutbetalingTjenesteTest {
         perioder.add(new Periode(LocalDate.of(2019, 3, 18), LocalDate.of(2019, 3, 18)));
 
         // Andre periode: 20.03.2019 - 30.03.2019
-        Periode andrePeriode = new Periode(LocalDate.of(2019, 3, 20), LocalDate.of(2019, 3, 30));
+        var andrePeriode = new Periode(LocalDate.of(2019, 3, 20), LocalDate.of(2019, 3, 30));
         perioder.add(new Periode(LocalDate.of(2019, 3, 20), LocalDate.of(2019, 3, 23)));
         perioder.add(new Periode(LocalDate.of(2019, 3, 25), LocalDate.of(2019, 3, 30)));
 
         // Tredje periode 02.04.2019 - 02.04.2019
-        Periode tredjePeriode = new Periode(LocalDate.of(2019, 4, 2), LocalDate.of(2019, 4, 2));
+        var tredjePeriode = new Periode(LocalDate.of(2019, 4, 2), LocalDate.of(2019, 4, 2));
         perioder.add(tredjePeriode);
 
         // Act
-        List<Periode> sammenslåttePerioder = FeilutbetalingTjeneste.slåSammenSammenhengendePerioder(perioder);
+        var sammenslåttePerioder = FeilutbetalingTjeneste.slåSammenSammenhengendePerioder(perioder);
 
         // Assert
         assertThat(sammenslåttePerioder).containsExactly(førstePeriode, andrePeriode, tredjePeriode);
     }
 
     @Test
-    public void returnererOptionalEmptyHvisIngenPosteringerForMottakerBruker() {
+    void returnererOptionalEmptyHvisIngenPosteringerForMottakerBruker() {
         // Arrange
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(1245L))
                 .medAktørId("789")
                 .medYtelseType(YtelseType.FP)
@@ -173,8 +173,8 @@ public class FeilutbetalingTjenesteTest {
 
 
     private List<SimulertPostering> opprettFeilutbetaling(YearMonth måned, long beløp) {
-        LocalDate fom = måned.atDay(1);
-        LocalDate tom = måned.atEndOfMonth();
+        var fom = måned.atDay(1);
+        var tom = måned.atEndOfMonth();
         List<SimulertPostering> posteringer = new ArrayList<>();
         posteringer.add(lagFeilUtbetalingPostering(fom, tom, beløp));
         posteringer.add(lagYtelsePostering(fom, tom, beløp));

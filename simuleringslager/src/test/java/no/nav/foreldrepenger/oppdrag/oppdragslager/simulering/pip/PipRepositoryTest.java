@@ -3,8 +3,6 @@ package no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.pip;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Optional;
-
 import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +17,7 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringReposito
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 
 @ExtendWith(JpaExtension.class)
-public class PipRepositoryTest {
+class PipRepositoryTest {
 
     private PipRepository pipRepository;
     private SimuleringRepository simuleringRepository;
@@ -31,24 +29,24 @@ public class PipRepositoryTest {
     }
 
     @Test
-    public void henterAktørIdForBehandlingId() {
-        String aktørId = "44556677";
-        long behandlingId = 234L;
-        SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder()
+    void henterAktørIdForBehandlingId() {
+        var aktørId = "44556677";
+        var behandlingId = 234L;
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medSimuleringResultat(SimuleringResultat.builder().build())
                 .medAktørId(aktørId)
                 .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medYtelseType(YtelseType.FP)
                 .build();
         simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
-        Optional<String> aktørIdForBehandling = pipRepository.getAktørIdForBehandling(behandlingId);
+        var aktørIdForBehandling = pipRepository.getAktørIdForBehandling(behandlingId);
         assertThat(aktørIdForBehandling).isPresent();
-        assertThat(aktørIdForBehandling.get()).isEqualTo(aktørId);
+        assertThat(aktørIdForBehandling.get()).contains(aktørId);
     }
 
     @Test
-    public void returnererOptionalEmptyHvisGrunnlagForBehandlingIkkeFinnes() {
-        Optional<String> aktørIdForBehandling = pipRepository.getAktørIdForBehandling(123L);
+    void returnererOptionalEmptyHvisGrunnlagForBehandlingIkkeFinnes() {
+        var aktørIdForBehandling = pipRepository.getAktørIdForBehandling(123L);
         assertThat(aktørIdForBehandling).isNotPresent();
     }
 

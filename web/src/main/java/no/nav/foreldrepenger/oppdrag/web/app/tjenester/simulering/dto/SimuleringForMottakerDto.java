@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,9 +60,8 @@ public class SimuleringForMottakerDto {
 
     public static class Builder {
 
-        private Map<Fagområde, Integer> SORTERING = new HashMap<>();
-
-        private SimuleringForMottakerDto kladd = new SimuleringForMottakerDto();
+        private final Map<Fagområde, Integer> sortering = new EnumMap<>(Fagområde.class);
+        private final SimuleringForMottakerDto kladd = new SimuleringForMottakerDto();
         private YtelseType gjelderYtelsetype;
 
         public Builder medResultatPerFagområde(List<SimuleringResultatPerFagområdeDto> resultatPerFagområde) {
@@ -110,34 +109,34 @@ public class SimuleringForMottakerDto {
 
         private void initSortering(YtelseType gjelderYtelsetype) {
             //default sortering
-            SORTERING.put(Fagområde.REFUTG, 101);
-            SORTERING.put(Fagområde.SVP, 101);
-            SORTERING.put(Fagområde.SVPREF, 102);
-            SORTERING.put(Fagområde.FP, 103);
-            SORTERING.put(Fagområde.FPREF, 104);
-            SORTERING.put(Fagområde.SP, 105);
-            SORTERING.put(Fagområde.SPREF, 106);
-            SORTERING.put(Fagområde.OOP, 107);
-            SORTERING.put(Fagområde.OOPREF, 108);
-            SORTERING.put(Fagområde.PB, 109);
-            SORTERING.put(Fagområde.PBREF, 110);
-            SORTERING.put(Fagområde.PN, 111);
-            SORTERING.put(Fagområde.PNREF, 112);
-            SORTERING.put(Fagområde.OM, 113);
-            SORTERING.put(Fagområde.OMREF, 114);
-            SORTERING.put(Fagområde.OPP, 115);
-            SORTERING.put(Fagområde.OPPREF, 116);
+            sortering.put(Fagområde.REFUTG, 101);
+            sortering.put(Fagområde.SVP, 101);
+            sortering.put(Fagområde.SVPREF, 102);
+            sortering.put(Fagområde.FP, 103);
+            sortering.put(Fagområde.FPREF, 104);
+            sortering.put(Fagområde.SP, 105);
+            sortering.put(Fagområde.SPREF, 106);
+            sortering.put(Fagområde.OOP, 107);
+            sortering.put(Fagområde.OOPREF, 108);
+            sortering.put(Fagområde.PB, 109);
+            sortering.put(Fagområde.PBREF, 110);
+            sortering.put(Fagområde.PN, 111);
+            sortering.put(Fagområde.PNREF, 112);
+            sortering.put(Fagområde.OM, 113);
+            sortering.put(Fagområde.OMREF, 114);
+            sortering.put(Fagområde.OPP, 115);
+            sortering.put(Fagområde.OPPREF, 116);
 
             //flytter gjeldende ytelsetype først i sorteringen
-            for (Fagområde fagOmrådeKode : SORTERING.keySet()) {
-                if (YtelseUtleder.utledFor(fagOmrådeKode).equals(gjelderYtelsetype)) {
-                    SORTERING.put(fagOmrådeKode, SORTERING.get(fagOmrådeKode) - 100);
+            sortering.forEach((fagområde, value) -> {
+                if (YtelseUtleder.utledFor(fagområde).equals(gjelderYtelsetype)) {
+                    sortering.put(fagområde, sortering.get(fagområde) - 100);
                 }
-            }
+            });
         }
 
         private int getSortering(Fagområde fagomradeKode) {
-            return SORTERING.getOrDefault(fagomradeKode, Integer.MAX_VALUE);
+            return sortering.getOrDefault(fagomradeKode, Integer.MAX_VALUE);
         }
 
         public Builder medGjelderYtelseType(YtelseType gjelderYtelseType) {

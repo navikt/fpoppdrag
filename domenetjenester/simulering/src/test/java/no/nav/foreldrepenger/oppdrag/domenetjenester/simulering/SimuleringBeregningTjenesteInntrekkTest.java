@@ -5,8 +5,8 @@ import static no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType.K;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde.FP;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde.SP;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.FEIL;
-import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.SKAT;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.JUST;
+import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.SKAT;
 import static no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType.YTEL;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,7 +35,7 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
 
-public class SimuleringBeregningTjenesteInntrekkTest {
+class SimuleringBeregningTjenesteInntrekkTest {
 
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
 
@@ -44,7 +44,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     private Periode juni = new Periode(LocalDate.of(2019, 6, 1), LocalDate.of(2019, 6, 30));
 
     @Test
-    public void skal_regne_inntrekk_over_alle_utbetalingsperioder_når_toggle_er_på() {
+    void skal_regne_inntrekk_over_alle_utbetalingsperioder_når_toggle_er_på() {
 
         Mottaker mottaker = new Mottaker(MottakerType.BRUKER, null);
         mottaker.setNesteUtbetalingsperiode(juni);
@@ -75,7 +75,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     @Test
-    public void skal_ha_at_tidligere_utbetalt_beløp_er_sum_av_kreditposter_for_ytelse() {
+    void skal_ha_at_tidligere_utbetalt_beløp_er_sum_av_kreditposter_for_ytelse() {
 
         // Act
         BigDecimal tidligereUtbetaltBeløp = SimuleringBeregningTjeneste.beregnTidligereUtbetaltBeløp(Arrays.asList(
@@ -90,7 +90,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     @Test
-    public void skal_ha_at_nytt_beløp_er_sum_av_debetposter_for_ytelse() {
+    void skal_ha_at_nytt_beløp_er_sum_av_debetposter_for_ytelse() {
         // Act
         BigDecimal nyttBeløp = SimuleringBeregningTjeneste.beregnNyttBeløp(Arrays.asList(
                 postering("01.09.2018-15.09.2018", FP, YTEL, K, 3000),
@@ -105,7 +105,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     @Test
-    public void skal_ha_at_feilutbetalt_beløp_er_sum_av_feilutbetaling_poster() {
+    void skal_ha_at_feilutbetalt_beløp_er_sum_av_feilutbetaling_poster() {
 
         // Act
         BigDecimal feilutbetaltBeløp = SimuleringBeregningTjeneste.beregnFeilutbetaltBeløp(Arrays.asList(
@@ -120,7 +120,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     @Test
-    public void skal_beregne_posteringer_pr_måned_og_fagområde_scenario_med_etterbetaling() {
+    void skal_beregne_posteringer_pr_måned_og_fagområde_scenario_med_etterbetaling() {
         // Act
         List<SimulertBeregningPeriode> simulertBeregningPerioder = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 postering("16.09.2018-30.09.2018", FP, YTEL, K, 2000),
@@ -147,7 +147,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     @Test
-    public void skal_beregne_posteringer_pr_måned_og_fagområde_scenario_med_feilutbetaling() {
+    void skal_beregne_posteringer_pr_måned_og_fagområde_scenario_med_feilutbetaling() {
         // Act
         List<SimulertBeregningPeriode> simulertBeregningPerioder = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 postering("01.09.2017-30.09.2017", FP, YTEL, D, 8928),
@@ -173,7 +173,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     @Test
-    public void skal_beregne_posteringer_pr_måned_og_fagområde_scenario_med_sykepenger_og_foreldrepenger() {
+    void skal_beregne_posteringer_pr_måned_og_fagområde_scenario_med_sykepenger_og_foreldrepenger() {
         // Act
         List<SimulertBeregningPeriode> simulertBeregningPerioder = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 postering("01.09.2018-30.09.2018", SP, YTEL, D, 4000),
@@ -209,7 +209,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     @Test
-    public void skal_summere_justeringskontoer() {
+    void skal_summere_justeringskontoer() {
         BigDecimal resultat = SimuleringBeregningTjeneste.beregnMotregning(Arrays.asList(
                 postering("16.09.2018-30.09.2018", FP, JUST, D, 1000),
                 postering("16.09.2018-30.09.2018", FP, JUST, K, 500),
@@ -227,7 +227,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     @Test
-    public void oppretterOppsummeringForForeldrepenger() {
+    void oppretterOppsummeringForForeldrepenger() {
         // Arrange
         Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat = new HashMap<>();
         BigDecimal feilutbetaltBeløp = BigDecimal.valueOf(-5000);
@@ -271,7 +271,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     @Test
-    public void oppretterOppsummeringForEngangsstønad() {
+    void oppretterOppsummeringForEngangsstønad() {
         // Arrange
         Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat = new HashMap<>();
         BigDecimal feilutbetaltBeløp = BigDecimal.valueOf(-40000);
@@ -298,7 +298,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     @Test
-    public void skal_beregne_inntrekk_og_feilutbetaling_scenario_over_to_måneder() {
+    void skal_beregne_inntrekk_og_feilutbetaling_scenario_over_to_måneder() {
         // Act
         List<SimulertBeregningPeriode> resultat = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 // Posteringer for juni, feilutbetaling og inntrekk fra neste måned
@@ -351,7 +351,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     @Test
-    public void skal_beregne_motregning_mellom_to_ytelser_innenfor_samme_måned() {
+    void skal_beregne_motregning_mellom_to_ytelser_innenfor_samme_måned() {
         // Act
         List<SimulertBeregningPeriode> resultat = simuleringBeregningTjeneste.beregnPosteringerPerMånedOgFagområde(Arrays.asList(
                 // Posteringer for foreldrepenger
@@ -397,7 +397,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     @Test
-    public void beregnerPosteringerUtenInntrekk() {
+    void beregnerPosteringerUtenInntrekk() {
         // Arrange
         SimuleringGrunnlag simuleringGrunnlag = SimuleringGrunnlag.builder().medYtelseType(YtelseType.FP)
                 .medAktørId("1234")
@@ -450,7 +450,7 @@ public class SimuleringBeregningTjenesteInntrekkTest {
     }
 
     @Test
-    public void finnerNesteUtbetalingsperiodeForMottakere() {
+    void finnerNesteUtbetalingsperiodeForMottakere() {
         // Arrange
         LocalDate idag = LocalDate.now();
 

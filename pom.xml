@@ -6,7 +6,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-bom</artifactId>
-        <version>0.4.3</version>
+        <version>0.4.6</version>
     </parent>
 
     <groupId>no.nav.foreldrepenger.oppdrag</groupId>
@@ -30,8 +30,8 @@
         <sonar.projectName>fp-oppdrag</sonar.projectName>
         <sonar.projectKey>navikt_fpoppdrag</sonar.projectKey>
 
-        <felles.version>4.2.31</felles.version>
-        <fp-kontrakter.version>6.2.12</fp-kontrakter.version>
+        <felles.version>4.2.36</felles.version>
+        <fp-kontrakter.version>6.2.14</fp-kontrakter.version>
     </properties>
 
     <dependencyManagement>
@@ -39,7 +39,7 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles</groupId>
                 <artifactId>fp-bom</artifactId>
-                <version>0.4.3</version>
+                <version>0.4.6</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -74,14 +74,6 @@
                 <artifactId>domenetjenester-simulering</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!-- Intern Test -->
-            <dependency>
-                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-                <artifactId>migreringer</artifactId>
-                <version>${project.version}</version>
-                <type>test-jar</type>
-                <scope>test</scope>
-            </dependency>
 
             <!-- Felles -->
             <dependency>
@@ -91,23 +83,7 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.felles</groupId>
-                <artifactId>felles-feil</artifactId>
-                <version>${felles.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-                <artifactId>felles-integrasjon-pom</artifactId>
-                <version>${felles.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-                <artifactId>felles-integrasjon-bom</artifactId>
-                <version>${felles.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
                 <artifactId>ereg-klient</artifactId>
@@ -125,12 +101,14 @@
                 <artifactId>fp-ws-proxy-v1</artifactId>
                 <version>${fp-kontrakter.version}</version>
             </dependency>
+
+            <!-- Intern Test -->
             <dependency>
-                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
-                <artifactId>fp-kontrakter-root</artifactId>
-                <version>${fp-kontrakter.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
+                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+                <artifactId>migreringer</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

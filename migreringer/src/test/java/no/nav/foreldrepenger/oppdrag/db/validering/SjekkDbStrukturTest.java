@@ -18,7 +18,7 @@ import no.nav.foreldrepenger.oppdrag.dbstoette.Databaseskjemainitialisering;
 /**
  * Tester at alle migreringer følger standarder for navn og god praksis.
  */
-public class SjekkDbStrukturTest {
+class SjekkDbStrukturTest {
 
     private static final String HJELP = """
             Du har nylig lagt til en ny tabell eller kolonne som ikke er dokumentert ihht. gjeldende regler for dokumentasjon.
@@ -29,13 +29,13 @@ public class SjekkDbStrukturTest {
     private static String schema;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         ds = Databaseskjemainitialisering.initUnitTestDataSource();
         schema = Databaseskjemainitialisering.USER;
     }
 
     @Test
-    public void sjekk_at_alle_tabeller_er_dokumentert() throws Exception {
+    void sjekk_at_alle_tabeller_er_dokumentert() throws Exception {
         String sql = "SELECT table_name FROM all_tab_comments WHERE (comments IS NULL OR comments in ('', 'MISSING COLUMN COMMENT')) AND owner=sys_context('userenv', 'current_schema') AND table_name NOT LIKE 'schema_%' AND table_name not like '%_MOCK'";
         List<String> avvik = new ArrayList<>();
         try (Connection conn = ds.getConnection();
@@ -52,7 +52,7 @@ public class SjekkDbStrukturTest {
     }
 
     @Test
-    public void sjekk_at_alle_relevant_kolonner_er_dokumentert() throws Exception {
+    void sjekk_at_alle_relevant_kolonner_er_dokumentert() throws Exception {
         List<String> avvik = new ArrayList<>();
 
         String sql = """
@@ -87,7 +87,7 @@ public class SjekkDbStrukturTest {
     }
 
     @Test
-    public void sjekk_at_alle_FK_kolonner_har_fornuftig_indekser() throws Exception {
+    void sjekk_at_alle_FK_kolonner_har_fornuftig_indekser() throws Exception {
         String sql = """
                 SELECT
                   uc.table_name, uc.constraint_name, LISTAGG(dcc.column_name, ',') WITHIN GROUP (ORDER BY dcc.position) as columns
@@ -135,7 +135,7 @@ public class SjekkDbStrukturTest {
     }
 
     @Test
-    public void skal_ha_primary_key_i_hver_tabell_som_begynner_med_PK() throws Exception {
+    void skal_ha_primary_key_i_hver_tabell_som_begynner_med_PK() throws Exception {
         String sql = """
                 SELECT table_name FROM all_tables at
                 WHERE table_name
@@ -170,7 +170,7 @@ public class SjekkDbStrukturTest {
     }
 
     @Test
-    public void skal_ha_alle_foreign_keys_begynne_med_FK() throws Exception {
+    void skal_ha_alle_foreign_keys_begynne_med_FK() throws Exception {
         String sql = "SELECT ac.table_name, ac.constraint_name FROM all_constraints ac"
                 + " WHERE ac.constraint_type ='R' and ac.owner=upper(?) and constraint_name NOT LIKE 'FK_%'";
 
@@ -200,7 +200,7 @@ public class SjekkDbStrukturTest {
     }
 
     @Test
-    public void skal_ha_korrekt_index_navn() throws Exception {
+    void skal_ha_korrekt_index_navn() throws Exception {
         String sql = """
                 select table_name, index_name, column_name
                  from all_ind_columns
@@ -235,20 +235,20 @@ public class SjekkDbStrukturTest {
     }
 
     @Test
-    public void skal_ha_samme_data_type_for_begge_sider_av_en_FK() throws Exception {
+    void skal_ha_samme_data_type_for_begge_sider_av_en_FK() throws Exception {
         String sql = """
                 SELECT T.TABLE_NAME
                 , TCC.COLUMN_NAME AS KOL_A
                 , ATT.DATA_TYPE AS KOL_A_DATA_TYPE
                 , ATT.CHAR_LENGTH AS KOL_A_CHAR_LENGTH
                 , ATT.CHAR_USED AS KOL_A_CHAR_USED
-                , RCC.COLUMN_NAME AS KOL_B 
+                , RCC.COLUMN_NAME AS KOL_B
                 , ATR.DATA_TYPE AS KOL_B_DATA_TYPE
                 , ATR.CHAR_LENGTH AS KOL_B_CHAR_LENGTH
                 , atr.CHAR_USED as KOL_B_CHAR_USED
-                FROM ALL_CONSTRAINTS T 
+                FROM ALL_CONSTRAINTS T
                 INNER JOIN ALL_CONSTRAINTS R ON R.OWNER=T.OWNER AND R.CONSTRAINT_NAME = T.R_CONSTRAINT_NAME
-                INNER JOIN ALL_CONS_COLUMNS TCC ON TCC.TABLE_NAME=T.TABLE_NAME AND TCC.OWNER=T.OWNER AND TCC.CONSTRAINT_NAME=T.CONSTRAINT_NAME 
+                INNER JOIN ALL_CONS_COLUMNS TCC ON TCC.TABLE_NAME=T.TABLE_NAME AND TCC.OWNER=T.OWNER AND TCC.CONSTRAINT_NAME=T.CONSTRAINT_NAME
                 INNER JOIN ALL_CONS_COLUMNS RCC ON RCC.TABLE_NAME = R.TABLE_NAME AND RCC.OWNER=R.OWNER AND RCC.CONSTRAINT_NAME=R.CONSTRAINT_NAME
                 INNER JOIN ALL_TAB_COLS ATT ON ATT.COLUMN_NAME=TCC.COLUMN_NAME AND ATT.OWNER=TCC.OWNER AND Att.TABLE_NAME=TCC.TABLE_NAME
                 inner join all_tab_cols atr on atr.column_name=rcc.column_name and atr.owner=rcc.owner and atr.table_name=rcc.table_name
@@ -286,7 +286,7 @@ public class SjekkDbStrukturTest {
     }
 
     @Test
-    public void skal_deklarere_VARCHAR2_kolonner_som_CHAR_ikke_BYTE_semantikk() throws Exception {
+    void skal_deklarere_VARCHAR2_kolonner_som_CHAR_ikke_BYTE_semantikk() throws Exception {
         String sql = """
                 SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, CHAR_USED, CHAR_LENGTH
                 FROM ALL_TAB_COLS
@@ -322,7 +322,7 @@ public class SjekkDbStrukturTest {
     }
 
     @Test
-    public void skal_ikke_bruke_FLOAT_eller_DOUBLE() throws Exception {
+    void skal_ikke_bruke_FLOAT_eller_DOUBLE() throws Exception {
         String sql = "select table_name, column_name, data_type from all_tab_cols where owner=upper(?) and data_type in ('FLOAT', 'DOUBLE') order by 1, 2";
 
         List<String> avvik = new ArrayList<>();

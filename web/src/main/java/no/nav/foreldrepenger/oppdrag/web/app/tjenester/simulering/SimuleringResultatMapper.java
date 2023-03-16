@@ -9,7 +9,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -18,7 +17,6 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.BeregningResulta
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.Mottaker;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.Oppsummering;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.Periode;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimulertBeregning;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimulertBeregningPeriode;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimulertBeregningResultat;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
@@ -44,21 +42,21 @@ class SimuleringResultatMapper {
     }
 
     public static SimuleringDto map(HentNavnTjeneste hentNavnTjeneste, SimulertBeregningResultat simulertBeregningResultat, boolean slåttAvInntrekk) {
-        SimuleringResultatMapper mapper = new SimuleringResultatMapper(hentNavnTjeneste);
-        DetaljertSimuleringResultatDto resultatDto = mapper.map(simulertBeregningResultat.getBeregningResultat(), simulertBeregningResultat.getGjelderYtelseType());
+        var mapper = new SimuleringResultatMapper(hentNavnTjeneste);
+        var resultatDto = mapper.map(simulertBeregningResultat.getBeregningResultat(), simulertBeregningResultat.getGjelderYtelseType());
 
         mapper.simuleringResultatBuilder = new DetaljertSimuleringResultatDto.Builder();
-        Optional<DetaljertSimuleringResultatDto> resultatDtoUtenInntrekk = simulertBeregningResultat.getBeregningResultatUtenInntrekk()
+        var resultatDtoUtenInntrekk = simulertBeregningResultat.getBeregningResultatUtenInntrekk()
                 .map(b -> mapper.map(b, simulertBeregningResultat.getGjelderYtelseType()));
 
         return resultatDtoUtenInntrekk.map(simuleringResultatDto -> new SimuleringDto(resultatDto, simuleringResultatDto)).orElseGet(() -> new SimuleringDto(resultatDto, slåttAvInntrekk));
     }
 
     private DetaljertSimuleringResultatDto map(BeregningResultat beregningsresultat, YtelseType ytelseType) {
-        Map<Mottaker, List<SimulertBeregningPeriode>> beregningPerMottaker = beregningsresultat.getBeregningPerMottaker();
+        var beregningPerMottaker = beregningsresultat.getBeregningPerMottaker();
         for (var entry : beregningPerMottaker.entrySet()) {
-            Mottaker mottaker = entry.getKey();
-            List<SimulertBeregningPeriode> perioder = entry.getValue();
+            var mottaker = entry.getKey();
+            var perioder = entry.getValue();
             if (MottakerType.BRUKER.equals(mottaker.getMottakerType())) {
                 simuleringResultatBuilder.medIngenPerioderMedAvvik(harIngenPerioderMedAvvik(mottaker, perioder));
             }
@@ -69,14 +67,14 @@ class SimuleringResultatMapper {
     }
 
     private boolean harIngenPerioderMedAvvik(Mottaker mottaker, List<SimulertBeregningPeriode> perioder) {
-        YearMonth nesteUtbetalingsperiode = YearMonth.from(mottaker.getNesteUtbetalingsperiodeFom());
-        boolean harTidligereUtbetalingsperiode = perioder.stream()
+        var nesteUtbetalingsperiode = YearMonth.from(mottaker.getNesteUtbetalingsperiodeFom());
+        var harTidligereUtbetalingsperiode = perioder.stream()
                 .anyMatch(p -> !YearMonth.from(p.getPeriode().getPeriodeFom()).equals(nesteUtbetalingsperiode));
         return !harTidligereUtbetalingsperiode;
     }
 
     private void leggTilBeregnetResultat(Mottaker mottaker, List<SimulertBeregningPeriode> beregnetRestulat, YtelseType ytelseType) {
-        SimuleringForMottakerDto mottakerDto = mapMottaker(mottaker, beregnetRestulat, ytelseType);
+        var mottakerDto = mapMottaker(mottaker, beregnetRestulat, ytelseType);
         simuleringResultatBuilder.medPerioderForMottaker(mottakerDto);
     }
 
@@ -92,8 +90,8 @@ class SimuleringResultatMapper {
     }
 
     private SimuleringForMottakerDto mapMottaker(Mottaker mottaker, List<SimulertBeregningPeriode> simulertBeregningPerioder, YtelseType ytelseType) {
-        MottakerType mottakerType = mottaker.getMottakerType();
-        String mottakerNummer = mottaker.getMottakerNummer();
+        var mottakerType = mottaker.getMottakerType();
+        var mottakerNummer = mottaker.getMottakerNummer();
 
         var builder = new SimuleringForMottakerDto.Builder()
                 .medGjelderYtelseType(ytelseType)
@@ -112,7 +110,7 @@ class SimuleringResultatMapper {
             return builder.build();
         }
         if (MottakerType.ARBG_PRIV.equals(mottakerType)) {
-            String navn = hentNavnTjeneste.hentNavnGittFnr(mottakerNummer);
+            var navn = hentNavnTjeneste.hentNavnGittFnr(mottakerNummer);
             return builder
                     .medMottakerNavn(navn)
                     .medMottakerNummer(mottakerNummer)
@@ -120,7 +118,7 @@ class SimuleringResultatMapper {
                     .build();
         }
         if (MottakerType.ARBG_ORG.equals(mottakerType)) {
-            String orgNavn = hentNavnTjeneste.hentNavnGittOrgnummer(mottakerNummer);
+            var orgNavn = hentNavnTjeneste.hentNavnGittOrgnummer(mottakerNummer);
             return builder.medMottakerNummer(mottakerNummer)
                     .medMottakerNavn(orgNavn)
                     .medMottakerIdentifikator(mottakerNummer)
@@ -129,7 +127,6 @@ class SimuleringResultatMapper {
 
         throw new IllegalArgumentException("Ukjent mottaker-mottakerType: " + mottakerType);
     }
-
 
     private List<SimuleringResultatRadDto> mapResultaterPerMåned(List<SimulertBeregningPeriode> simulertBeregningPerioder) {
         if (erFlereFagområder(simulertBeregningPerioder)) {
@@ -157,8 +154,8 @@ class SimuleringResultatMapper {
     }
 
     private SimuleringResultatRadDto mapPerMåned(List<SimulertBeregningPeriode> simulertBeregningPerioder, Function<SimulertBeregningPeriode, BigDecimal> hva, RadId feltnavn) {
-        SimuleringResultatRadDto.Builder resultatRadDto = new SimuleringResultatRadDto.Builder().medFeltnavn(feltnavn);
-        for (SimulertBeregningPeriode sbp : simulertBeregningPerioder) {
+        var resultatRadDto = new SimuleringResultatRadDto.Builder().medFeltnavn(feltnavn);
+        for (var sbp : simulertBeregningPerioder) {
             resultatRadDto.medResultatPerMåned(new SimuleringResultatPerMånedDto(sbp.getPeriode(), hva.apply(sbp)));
         }
         return resultatRadDto.build();
@@ -182,7 +179,7 @@ class SimuleringResultatMapper {
 
         List<SimuleringResultatPerFagområdeDto> resultat = new ArrayList<>();
         for (var entry : perFagområde.entrySet()) {
-            List<SimuleringResultatRadDto> rader = mapForFagområde(entry.getValue());
+            var rader = mapForFagområde(entry.getValue());
             resultat.add(new SimuleringResultatPerFagområdeDto.Builder()
                     .medFagområdeKode(entry.getKey())
                     .medRader(rader)
@@ -193,10 +190,10 @@ class SimuleringResultatMapper {
 
     private List<SimuleringResultatRadDto> mapForFagområde(Map<RadId, List<SimuleringResultatPerMånedDto>> radDtoEr) {
         List<SimuleringResultatRadDto> rader = new ArrayList<>();
-        boolean harTidligereUtbetaltBeløp = harTidligereUtbetaltBeløp(radDtoEr);
+        var harTidligereUtbetaltBeløp = harTidligereUtbetaltBeløp(radDtoEr);
 
         for (var entryRad : radDtoEr.entrySet()) {
-            RadId feltnavn = entryRad.getKey();
+            var feltnavn = entryRad.getKey();
             if (skalViseFeltForFagområde(feltnavn, harTidligereUtbetaltBeløp)) {
                 rader.add(new SimuleringResultatRadDto.Builder()
                         .medFeltnavn(feltnavn)
@@ -213,14 +210,14 @@ class SimuleringResultatMapper {
     }
 
     private Map<Fagområde, Map<RadId, List<SimuleringResultatPerMånedDto>>> mapFelterPerFagområdePerMåned(List<SimulertBeregningPeriode> simulertBeregningPerioder) {
-        Map<Fagområde, Map<RadId, List<SimuleringResultatPerMånedDto>>> perFagområde = lagTommeResultatRader(simulertBeregningPerioder);
+        var perFagområde = lagTommeResultatRader(simulertBeregningPerioder);
 
-        for (SimulertBeregningPeriode sbp : simulertBeregningPerioder) {
-            Periode periode = sbp.getPeriode();
-            for (Map.Entry<Fagområde, SimulertBeregning> entry : sbp.getBeregningPerFagområde().entrySet()) {
-                Fagområde fagOmråde = entry.getKey();
-                SimulertBeregning beregning = entry.getValue();
-                Map<RadId, List<SimuleringResultatPerMånedDto>> resultatPerFelt = perFagområde.get(fagOmråde);
+        for (var sbp : simulertBeregningPerioder) {
+            var periode = sbp.getPeriode();
+            for (var entry : sbp.getBeregningPerFagområde().entrySet()) {
+                var fagOmråde = entry.getKey();
+                var beregning = entry.getValue();
+                var resultatPerFelt = perFagområde.get(fagOmråde);
                 leggTil(resultatPerFelt, RadId.NYTT_BELØP, periode, beregning.getNyttBeregnetBeløp());
                 leggTil(resultatPerFelt, RadId.TIDLIGERE_UTBETALT, periode, beregning.getTidligereUtbetaltBeløp());
                 leggTil(resultatPerFelt, RadId.DIFFERANSE, periode, beregning.getDifferanse());

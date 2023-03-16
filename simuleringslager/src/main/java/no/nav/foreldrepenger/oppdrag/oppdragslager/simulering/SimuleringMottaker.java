@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.oppdrag.oppdragslager.simulering;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -72,11 +71,11 @@ public class SimuleringMottaker extends BaseCreateableEntitet {
     }
 
     public List<SimulertPostering> getSimulertePosteringer() {
-        return simulertePosteringer.stream().filter(sp -> !sp.erUtenInntrekk()).collect(Collectors.toList());
+        return simulertePosteringer.stream().filter(sp -> !sp.erUtenInntrekk()).toList();
     }
 
     public List<SimulertPostering> getSimulertePosteringerUtenInntrekk() {
-        return simulertePosteringer.stream().filter(SimulertPostering::erUtenInntrekk).collect(Collectors.toList());
+        return simulertePosteringer.stream().filter(SimulertPostering::erUtenInntrekk).toList();
     }
 
     public List<SimulertPostering> getSimulertePosteringerForFeilutbetaling() {
