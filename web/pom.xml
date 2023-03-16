@@ -41,7 +41,6 @@
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
             <artifactId>migreringer</artifactId>
         </dependency>
-m
         <dependency>
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
             <artifactId>simuleringslager</artifactId>
@@ -202,6 +201,13 @@ m
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Intern Test -->
+        <dependency>
+            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
+            <artifactId>migreringer</artifactId>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
     </dependencies>

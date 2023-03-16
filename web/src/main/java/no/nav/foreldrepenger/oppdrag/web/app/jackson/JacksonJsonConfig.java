@@ -40,9 +40,7 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
     }
 
     private static SimpleModule createModule() {
-        SimpleModule module = new SimpleModule("VL-REST_MED_INNTEKTSMELDING", new Version(1, 0, 0, null, null, null));
-
-        return module;
+        return new SimpleModule("VL-REST_MED_INNTEKTSMELDING", new Version(1, 0, 0, null, null, null));
     }
 
     @Override
@@ -54,7 +52,7 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
      * Scan subtyper dynamisk fra WAR slik at superklasse slipper å deklarere @JsonSubtypes.
      */
     public static List<Class<?>> getJsonTypeNameClasses() {
-        Class<JacksonJsonConfig> cls = JacksonJsonConfig.class;
+        var cls = JacksonJsonConfig.class;
         IndexClasses indexClasses;
         try {
             indexClasses = IndexClasses.getIndexFor(cls.getProtectionDomain().getCodeSource().getLocation().toURI());

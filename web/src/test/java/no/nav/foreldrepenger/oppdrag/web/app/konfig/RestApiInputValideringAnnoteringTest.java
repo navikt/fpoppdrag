@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -11,7 +12,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -46,13 +46,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import no.nav.vedtak.felles.testutilities.cdi.WeldContext;
 
-public class RestApiInputValideringAnnoteringTest extends RestApiTester {
+class RestApiInputValideringAnnoteringTest extends RestApiTester {
 
     static {
         WeldContext.getInstance(); // init cdi container
     }
 
-    private Function<Method, String> printKlasseOgMetodeNavn = (method -> String.format("%s.%s", method.getDeclaringClass(), method.getName()));
+    private final Function<Method, String> printKlasseOgMetodeNavn = (method -> String.format("%s.%s", method.getDeclaringClass(), method.getName()));
 
     /**
      * IKKE ignorer denne testen, den sørger for at inputvalidering er i orden for REST_MED_INNTEKTSMELDING-grensesnittene
@@ -60,7 +60,7 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
      * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her     *
      */
     @Test
-    public void alle_parametre_i_REST_api_skal_ha_gyldig_type_og_annotert_med_valid() {
+    void alle_parametre_i_REST_api_skal_ha_gyldig_type_og_annotert_med_valid() {
         for (Method method : finnAlleRestMetoder()) {
             for (int i = 0; i < method.getParameterCount(); i++) {
                 assertThat(method.getParameterTypes()[i].isAssignableFrom(String.class)).as("REST_MED_INNTEKTSMELDING-metoder skal ikke har parameter som er String eller mer generelt. Bruk DTO-er og valider. " + printKlasseOgMetodeNavn.apply(method)).isFalse();
@@ -75,18 +75,18 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
      * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her
      */
     @Test
-    public void alle_felter_i_objekter_som_brukes_som_inputDTO_skal_enten_ha_valideringsannotering_eller_være_av_godkjent_type() {
-        Set<Class<?>> dtoKlasser = finnAlleDtoTyper();
-        Set<Class<?>> validerteKlasser = new HashSet<>(); //trengs for å unngå løkker og unngå å validere samme klasse flere ganger dobbelt
-        for (Class<?> c : dtoKlasser) {
+    void alle_felter_i_objekter_som_brukes_som_inputDTO_skal_enten_ha_valideringsannotering_eller_være_av_godkjent_type() {
+        var dtoKlasser = finnAlleDtoTyper();
+        var validerteKlasser = new HashSet<Class<?>>(); //trengs for å unngå løkker og unngå å validere samme klasse flere ganger dobbelt
+        for (var c : dtoKlasser) {
             validerRekursivt(validerteKlasser, c, null);
         }
     }
 
     private boolean isRequiredAnnotationPresent(Parameter parameter) {
-        final Valid validAnnotation = parameter.getAnnotation(Valid.class);
+        final var validAnnotation = parameter.getAnnotation(Valid.class);
         if (validAnnotation == null) {
-            final Context contextAnnotation = parameter.getAnnotation(Context.class);
+            final var contextAnnotation = parameter.getAnnotation(Context.class);
             return contextAnnotation != null;
         }
         return true;
@@ -94,8 +94,7 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
 
     @SuppressWarnings("rawtypes")
     private static final Map<Class, List<List<Class<? extends Annotation>>>> VALIDERINGSALTERNATIVER = new HashMap<>() {{
-        put(String.class, asList(
-                asList(Pattern.class),
+        put(String.class, asList(List.of(Pattern.class),
                 asList(Pattern.class, Size.class),
                 singletonList(Digits.class)));
         put(Long.class, singletonList(
@@ -126,19 +125,18 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
 
     private Set<Class<?>> finnAlleDtoTyper() {
         Set<Class<?>> parametre = new TreeSet<>(Comparator.comparing(Class::getName));
-        for (Method method : finnAlleRestMetoder()) {
+        for (var method : finnAlleRestMetoder()) {
             parametre.addAll(Arrays.asList(method.getParameterTypes()));
-            for (Type type : method.getGenericParameterTypes()) {
-                if (type instanceof ParameterizedType) {
-                    ParameterizedType genericTypes = (ParameterizedType) type;
-                    for (Type gen : genericTypes.getActualTypeArguments()) {
+            for (var type : method.getGenericParameterTypes()) {
+                if (type instanceof ParameterizedType genericTypes) {
+                    for (var gen : genericTypes.getActualTypeArguments()) {
                         parametre.add((Class<?>) gen);
                     }
                 }
             }
         }
         Set<Class<?>> filtreteParametre = new TreeSet<>(Comparator.comparing(Class::getName));
-        for (Class<?> klasse : parametre) {
+        for (var klasse : parametre) {
             if (klasse.getName().startsWith("java")) {
                 //ikke sjekk nedover i innebygde klasser, det skal brukes annoteringer på tidligere tidspunkt
                 continue;
@@ -155,13 +153,13 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
         besøkteKlasser.add(klasse);
 
         if (klasse.getAnnotation(Entity.class) != null || klasse.getAnnotation(MappedSuperclass.class) != null) {
-            throw new AssertionError("Klassen " + klasse + " er en entitet, kan ikke brukes som DTO. Brukes i " + forrigeKlasse);
+            fail("Klassen " + klasse + " er en entitet, kan ikke brukes som DTO. Brukes i " + forrigeKlasse);
         }
 
-        for (Class<?> subklasse : JsonSubTypesUtil.getJsonSubtypes(klasse)) {
+        for (var subklasse : JsonSubTypesUtil.getJsonSubtypes(klasse)) {
             validerRekursivt(besøkteKlasser, subklasse, klasse);
         }
-        for (Field field : getRelevantFields(klasse)) {
+        for (var field : getRelevantFields(klasse)) {
             if (field.getAnnotation(JsonIgnore.class) != null) {
                 continue; //feltet blir hverken serialisert elle deserialisert, unntas fra sjekk
             }
@@ -171,14 +169,14 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
             if (getVurderingsalternativer(field.getType()) != null) {
                 validerRiktigAnnotert(field); //har konfigurert opp spesifikk validering
             } else if (field.getType().getName().startsWith("java")) {
-                throw new AssertionError("Feltet " + field + " har ikke påkrevde annoteringer. Trenger evt. utvidelse av denne testen for å akseptere denne typen.");
+                fail("Feltet " + field + " har ikke påkrevde annoteringer. Trenger evt. utvidelse av denne testen for å akseptere denne typen.");
             } else {
                 validerHarValidAnnotering(field);
                 validerRekursivt(besøkteKlasser, field.getType(), klasse);
             }
             if (brukerGenerics(field)) {
                 validerRekursivt(besøkteKlasser, field.getType(), klasse);
-                for (Class<?> klazz : genericTypes(field)) {
+                for (var klazz : genericTypes(field)) {
                     validerRekursivt(besøkteKlasser, klazz, klasse);
                 }
             }
@@ -187,14 +185,14 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
 
     private static void validerHarValidAnnotering(Field field) {
         if (field.getAnnotation(Valid.class) == null) {
-            throw new AssertionError("Feltet " + field + " må ha @Valid-annotering");
+            fail("Feltet " + field + " må ha @Valid-annotering");
         }
     }
 
     private static Set<Class<?>> genericTypes(Field field) {
         Set<Class<?>> klasser = new HashSet<>();
-        ParameterizedType type = (ParameterizedType) field.getGenericType();
-        for (Type t : type.getActualTypeArguments()) {
+        var type = (ParameterizedType) field.getGenericType();
+        for (var t : type.getActualTypeArguments()) {
             klasser.add((Class<?>) t);
         }
         return klasser;
@@ -218,10 +216,10 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
     }
 
     private static void validerRiktigAnnotert(Field field) {
-        List<List<Class<? extends Annotation>>> alternativer = getVurderingsalternativer(field.getType());
-        for (List<Class<? extends Annotation>> alternativ : alternativer) {
-            boolean harAlleAnnoteringerForAlternativet = true;
-            for (Class<? extends Annotation> annotering : alternativ) {
+        var alternativer = getVurderingsalternativer(field.getType());
+        for (var alternativ : alternativer) {
+            var harAlleAnnoteringerForAlternativet = true;
+            for (var annotering : alternativ) {
                 if (field.getAnnotation(annotering) == null) {
                     harAlleAnnoteringerForAlternativet = false;
                 }

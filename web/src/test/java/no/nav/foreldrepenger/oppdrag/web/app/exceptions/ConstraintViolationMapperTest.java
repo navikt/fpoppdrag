@@ -18,40 +18,40 @@ import javax.ws.rs.core.Response;
 
 import org.junit.jupiter.api.Test;
 
-public class ConstraintViolationMapperTest {
+class ConstraintViolationMapperTest {
 
     @Test
-    public void toResponse() {
-        String message = "message";
-        String template = "template";
-        String rootBean = "rootBean";
+    void toResponse() {
+        var message = "message";
+        var template = "template";
+        var rootBean = "rootBean";
         Class<String> rootBeanClass = null;
         Object leafBean = "leafBean";
         Object[] execParam = {"param1"};
         Object returnValue = "returnValue";
-        Path path = new Path() {
+        var path = new Path() {
             @Override
             public Iterator<Node> iterator() {
                 return null;
             }
         };
         Object invalid = null;
-        TestViolation violation = new TestViolation(message, template, rootBean, rootBeanClass, leafBean, execParam, returnValue, path, invalid);
+        var violation = new TestViolation(message, template, rootBean, rootBeanClass, leafBean, execParam, returnValue, path, invalid);
         Set<TestViolation> violationList = new HashSet<>();
         violationList.add(violation);
-        ConstraintViolationMapper mapper = new ConstraintViolationMapper();
-        ConstraintViolationException exception = new ConstraintViolationException(violationList);
-        Response response = mapper.toResponse(exception);
+        var mapper = new ConstraintViolationMapper();
+        var exception = new ConstraintViolationException(violationList);
+        var response = mapper.toResponse(exception);
 
         Collection<FeltFeilDto> feilene = new ArrayList<>();
         List<String> feltNavn = new ArrayList<>();
         feltNavn.add("null");
         var feil = FeltValideringFeil.feltverdiKanIkkeValideres(feltNavn);
-        FeilDto feilDto = new FeilDto(feil.getMessage(), feilene);
+        var feilDto = new FeilDto(feil.getMessage(), feilene);
         assertThat(response.getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
-        FeilDto dto = (FeilDto) response.getEntity();
+        var dto = (FeilDto) response.getEntity();
         assertThat(dto.feilmelding()).isEqualTo(feilDto.feilmelding());
-        assertThat(response.getMediaType().toString()).isEqualTo(MediaType.APPLICATION_JSON);
+        assertThat(response.getMediaType()).hasToString(MediaType.APPLICATION_JSON);
     }
 
     class TestViolation implements ConstraintViolation<String> {

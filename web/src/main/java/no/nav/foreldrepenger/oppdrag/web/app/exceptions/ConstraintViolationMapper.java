@@ -2,11 +2,7 @@ package no.nav.foreldrepenger.oppdrag.web.app.exceptions;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 import javax.ws.rs.core.MediaType;
@@ -25,12 +21,12 @@ public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViol
     public Response toResponse(ConstraintViolationException exception) {
         Collection<FeltFeilDto> feilene = new ArrayList<>();
 
-        Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
-        for (ConstraintViolation<?> constraintViolation : constraintViolations) {
-            String feltNavn = getFeltNavn(constraintViolation.getPropertyPath());
+        var constraintViolations = exception.getConstraintViolations();
+        for (var constraintViolation : constraintViolations) {
+            var feltNavn = getFeltNavn(constraintViolation.getPropertyPath());
             feilene.add(new FeltFeilDto(feltNavn, constraintViolation.getMessage()));
         }
-        List<String> feltNavn = feilene.stream().map(FeltFeilDto::navn).collect(Collectors.toList());
+        var feltNavn = feilene.stream().map(FeltFeilDto::navn).toList();
 
         var feil = FeltValideringFeil.feltverdiKanIkkeValideres(feltNavn);
         log.warn(feil.getMessage());

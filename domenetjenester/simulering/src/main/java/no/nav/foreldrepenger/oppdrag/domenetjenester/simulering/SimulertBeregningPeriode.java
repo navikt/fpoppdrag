@@ -1,7 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
@@ -11,7 +11,7 @@ public class SimulertBeregningPeriode {
     private BigDecimal resultatEtterMotregning = BigDecimal.ZERO;
     private BigDecimal inntrekkNesteMåned = BigDecimal.ZERO;
     private BigDecimal resultat = BigDecimal.ZERO;
-    private Map<Fagområde, SimulertBeregning> beregningPerFagområde = new HashMap<>();
+    private Map<Fagområde, SimulertBeregning> beregningPerFagområde = new EnumMap<>(Fagområde.class);
 
     public Periode getPeriode() {
         return periode;

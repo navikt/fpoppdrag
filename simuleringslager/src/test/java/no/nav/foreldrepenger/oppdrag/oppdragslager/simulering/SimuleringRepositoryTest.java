@@ -22,7 +22,7 @@ import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 
 @ExtendWith(JpaExtension.class)
-public class SimuleringRepositoryTest {
+class SimuleringRepositoryTest {
 
     private SimuleringRepository simuleringRepository;
 
@@ -34,7 +34,7 @@ public class SimuleringRepositoryTest {
     }
 
     @Test
-    public void lagrer_simulering_grunnlag() {
+    void lagrer_simulering_grunnlag() {
         // Arrange
         Long behandlingId = 1111L;
         LocalDate kjøresDato = LocalDate.of(2018, 9, 20);
@@ -55,7 +55,7 @@ public class SimuleringRepositoryTest {
 
 
     @Test
-    public void setter_forrige_grunnlag_til_inaktivt_ved_lagring_av_nytt_grunnlag_på_samme_behandling(EntityManager entityManager) {
+    void setter_forrige_grunnlag_til_inaktivt_ved_lagring_av_nytt_grunnlag_på_samme_behandling(EntityManager entityManager) {
         Long behandlingId = 1234L;
 
         // Oppretter første simuleringsgrunnlag for behandling
