@@ -41,12 +41,7 @@
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
             <artifactId>migreringer</artifactId>
         </dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-            <artifactId>migreringer</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
+m
         <dependency>
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
             <artifactId>simuleringslager</artifactId>
