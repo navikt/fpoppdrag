@@ -30,8 +30,7 @@
         <sonar.projectName>fp-oppdrag</sonar.projectName>
         <sonar.projectKey>navikt_fpoppdrag</sonar.projectKey>
 
-        <felles.version>4.2.36</felles.version>
-        <fp-kontrakter.version>6.2.15</fp-kontrakter.version>
+        <felles.version>4.2.38</felles.version>
     </properties>
 
     <dependencyManagement>
@@ -99,7 +98,7 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
                 <artifactId>fp-ws-proxy-v1</artifactId>
-                <version>${fp-kontrakter.version}</version>
+                <version>6.2.15</version>
             </dependency>
 
             <!-- Intern Test -->
