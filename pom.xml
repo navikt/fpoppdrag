@@ -6,7 +6,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-bom</artifactId>
-        <version>0.4.6</version>
+        <version>0.5.0</version>
     </parent>
 
     <groupId>no.nav.foreldrepenger.oppdrag</groupId>
@@ -30,8 +30,7 @@
         <sonar.projectName>fp-oppdrag</sonar.projectName>
         <sonar.projectKey>navikt_fpoppdrag</sonar.projectKey>
 
-        <felles.version>4.2.36</felles.version>
-        <fp-kontrakter.version>6.2.14</fp-kontrakter.version>
+        <felles.version>4.2.38</felles.version>
     </properties>
 
     <dependencyManagement>
@@ -39,7 +38,7 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles</groupId>
                 <artifactId>fp-bom</artifactId>
-                <version>0.4.6</version>
+                <version>0.5.0</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -99,7 +98,7 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
                 <artifactId>fp-ws-proxy-v1</artifactId>
-                <version>${fp-kontrakter.version}</version>
+                <version>6.2.15</version>
             </dependency>
 
             <!-- Intern Test -->
