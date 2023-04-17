@@ -20,6 +20,7 @@ jobs:
     name: Build
     uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@gar
     with:
+      sonar-scan: false
       push-image: ${{ github.ref_name == 'master' }} # default: false
     secrets: inherit
 
