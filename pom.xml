@@ -98,7 +98,7 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
                 <artifactId>fp-ws-proxy-v1</artifactId>
-                <version>6.2.15</version>
+                <version>6.2.17</version>
             </dependency>
 
             <!-- Intern Test -->
