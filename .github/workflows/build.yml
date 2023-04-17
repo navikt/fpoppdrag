@@ -18,7 +18,7 @@ on:
 jobs:
   build-app:
     name: Build
-    uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@gar
+    uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@main
     with:
       build-image: ${{ github.ref_name == 'master' }} # default: true
       push-image: ${{ github.ref_name == 'master' }} # default: false
