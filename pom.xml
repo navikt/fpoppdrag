@@ -30,7 +30,7 @@
         <sonar.projectName>fp-oppdrag</sonar.projectName>
         <sonar.projectKey>navikt_fpoppdrag</sonar.projectKey>
 
-        <felles.version>4.2.46</felles.version>
+        <felles.version>4.2.47</felles.version>
     </properties>
 
     <dependencyManagement>
