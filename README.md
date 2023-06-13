@@ -1,7 +1,6 @@
 FP-OPPDRAG
 ===============
 [![Bygg og deploy](https://github.com/navikt/fpoppdrag/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/navikt/fpoppdrag/actions/workflows/build.yml)
-[![Promote](https://github.com/navikt/fpoppdrag/actions/workflows/promote.yml/badge.svg?branch=master)](https://github.com/navikt/fpoppdrag/actions/workflows/promote.yml)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=navikt_fpoppdrag&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=navikt_fpoppdrag)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=navikt_fpoppdrag&metric=coverage)](https://sonarcloud.io/summary/new_code?id=navikt_fpoppdrag)
 
