@@ -18,13 +18,14 @@ on:
 jobs:
   build-app:
     name: Build
+    permissions:
+      security-events: read
+      packages: write
     uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@main
     with:
       build-image: ${{ github.ref_name == 'master' }} # default: true
       push-image: ${{ github.ref_name == 'master' }} # default: false
-    permissions:
-      security-events:  read
-      packages: write #${{ (github.ref_name == 'master' && 'write') || 'read' }}
+    secrets: inherit
 
   verdikjede:
     name: Verdikjedetester
