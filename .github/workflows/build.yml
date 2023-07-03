@@ -18,11 +18,12 @@ on:
 jobs:
   build-app:
     name: Build
+    permissions:
+      packages: write
     uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@main
     with:
       build-image: ${{ github.ref_name == 'master' }} # default: true
       push-image: ${{ github.ref_name == 'master' }} # default: false
-    secrets: inherit
 
   verdikjede:
     name: Verdikjedetester
@@ -32,7 +33,6 @@ jobs:
     with:
       build-version: ${{ needs.build-app.outputs.build-version }}
       test-suite: verdikjede
-    secrets: inherit
 
   notify:
     name: Notify
@@ -42,7 +42,6 @@ jobs:
     with:
       verdikjede: ${{ needs.verdikjede.outputs.resultat }}
       build-version: ${{ needs.build-app.outputs.build-version }}
-    secrets: inherit
 
   deploy-dev:
     name: Deploy dev
