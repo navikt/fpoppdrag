@@ -43,6 +43,7 @@ jobs:
     with:
       verdikjede: ${{ needs.verdikjede.outputs.resultat }}
       build-version: ${{ needs.build-app.outputs.build-version }}
+    secrets: inherit
 
   deploy-dev:
     name: Deploy dev
