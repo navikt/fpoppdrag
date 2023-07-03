@@ -17,11 +17,8 @@ on:
 
 jobs:
   build-app:
-    permissions:
-      packages: write
     name: Build
     permissions:
-      security-events: read
       packages: write
     uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@main
     with:
@@ -45,7 +42,6 @@ jobs:
     with:
       verdikjede: ${{ needs.verdikjede.outputs.resultat }}
       build-version: ${{ needs.build-app.outputs.build-version }}
-    secrets: inherit
 
   deploy-dev:
     name: Deploy dev
