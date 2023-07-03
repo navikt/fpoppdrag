@@ -17,8 +17,6 @@ on:
 
 jobs:
   build-app:
-    permissions:
-      packages: write
     name: Build
     uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@main
     with:
