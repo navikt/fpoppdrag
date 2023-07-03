@@ -24,7 +24,7 @@ jobs:
       push-image: ${{ github.ref_name == 'master' }} # default: false
     permissions:
       security-events:  read
-      packages: ${{ (github.ref_name == 'master' && 'write') || 'read' }}
+      packages: write #${{ (github.ref_name == 'master' && 'write') || 'read' }}
 
   verdikjede:
     name: Verdikjedetester
