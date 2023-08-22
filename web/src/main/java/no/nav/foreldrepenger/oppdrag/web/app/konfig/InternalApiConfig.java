@@ -2,8 +2,8 @@ package no.nav.foreldrepenger.oppdrag.web.app.konfig;
 
 import java.util.Set;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 
 import no.nav.foreldrepenger.oppdrag.web.app.metrics.PrometheusRestService;
 import no.nav.foreldrepenger.oppdrag.web.app.healthcheck.HealthCheckRestService;

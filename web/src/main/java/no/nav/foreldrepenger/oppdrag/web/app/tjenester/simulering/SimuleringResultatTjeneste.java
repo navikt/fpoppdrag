@@ -3,8 +3,8 @@ package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.BeregningResultat;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.FeilutbetalingTjeneste;

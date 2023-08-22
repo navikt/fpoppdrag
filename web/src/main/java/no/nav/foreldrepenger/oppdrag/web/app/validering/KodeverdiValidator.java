@@ -2,7 +2,7 @@ package no.nav.foreldrepenger.oppdrag.web.app.validering;
 
 import java.util.Objects;
 
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidatorContext;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Kodeverdi;
 

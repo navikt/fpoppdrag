@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.oppdrag.domenetjenester.person;
 
-import javax.enterprise.context.Dependent;
+import jakarta.enterprise.context.Dependent;
 
 import no.nav.vedtak.felles.integrasjon.person.AbstractPersonKlient;
 import no.nav.vedtak.felles.integrasjon.person.Tema;
