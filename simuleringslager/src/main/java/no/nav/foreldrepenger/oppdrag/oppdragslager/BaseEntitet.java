@@ -3,9 +3,9 @@ package no.nav.foreldrepenger.oppdrag.oppdragslager;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PreUpdate;
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PreUpdate;
 
 @MappedSuperclass
 public class BaseEntitet extends BaseCreateableEntitet implements Serializable {

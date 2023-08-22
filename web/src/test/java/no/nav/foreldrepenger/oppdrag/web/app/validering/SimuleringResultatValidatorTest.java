@@ -4,18 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
@@ -56,7 +52,7 @@ class SimuleringResultatValidatorTest {
     void testSkalFeilPåManglendeInput() {
         var violations = validator.validate(new SimuleringGjelderDto(Lists.newArrayList()));
         assertThat(violations).hasSize(1);
-        assertThat(violations.iterator().next().getMessageTemplate()).isEqualTo("{javax.validation.constraints.Size.message}");
+        assertThat(violations.iterator().next().getMessageTemplate()).isEqualTo("{jakarta.validation.constraints.Size.message}");
     }
 
     @Test
@@ -69,6 +65,5 @@ class SimuleringResultatValidatorTest {
         assertThat(violations).hasSize(1);
         assertThat(violations.iterator().next().getMessageTemplate()).isEqualTo("ugyldig mottaker");
     }
-
 
 }

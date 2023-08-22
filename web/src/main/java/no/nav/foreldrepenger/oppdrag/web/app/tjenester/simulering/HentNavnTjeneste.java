@@ -1,7 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import no.nav.foreldrepenger.oppdrag.domene.organisasjon.OrganisasjonInfo;
 import no.nav.foreldrepenger.oppdrag.domene.organisasjon.OrganisasjonTjeneste;
