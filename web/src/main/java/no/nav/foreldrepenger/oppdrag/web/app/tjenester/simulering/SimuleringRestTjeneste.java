@@ -1,5 +1,8 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering;
 
+import java.util.function.Function;
+
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -10,15 +13,14 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
-import io.swagger.v3.oas.annotations.Operation;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.OppdragskontrollDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.OppdragskontrollDtoAbacSupplier;
+import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.FeilutbetaltePerioderDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatDto;
+import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
@@ -49,8 +51,8 @@ public class SimuleringRestTjeneste {
     @Path("resultat")
     @Operation(description = "Hent resultat av simulering mot økonomi", summary = ("Returnerer simuleringsresultat."), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
-    public SimuleringResultatDto hentSimuleringResultat(@Valid BehandlingIdDto behandlingIdDto) {
-        var optionalSimuleringResultatDto = simuleringResultatTjeneste.hentResultatFraSimulering(behandlingIdDto.getBehandlingId());
+    public SimuleringResultatDto hentSimuleringResultat(@TilpassetAbacAttributt(supplierClass = BehandlingIdAbacDataSupplier.class) @Valid BehandlingIdDto behandlingIdDto) {
+        var optionalSimuleringResultatDto = simuleringResultatTjeneste.hentResultatFraSimulering(behandlingIdDto.behandlingId());
         return optionalSimuleringResultatDto.orElse(null);
     }
 
@@ -58,8 +60,8 @@ public class SimuleringRestTjeneste {
     @Path("resultat-uten-inntrekk")
     @Operation(description = "Hent detaljert resultat av simulering mot økonomi med og uten inntrekk", summary = ("Returnerer simuleringsresultat."), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
-    public SimuleringDto hentSimuleringResultatMedOgUtenInntrekk(@Valid BehandlingIdDto behandlingIdDto) {
-        var optionalSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingIdDto.getBehandlingId());
+    public SimuleringDto hentSimuleringResultatMedOgUtenInntrekk(@TilpassetAbacAttributt(supplierClass = BehandlingIdAbacDataSupplier.class) @Valid BehandlingIdDto behandlingIdDto) {
+        var optionalSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingIdDto.behandlingId());
         return optionalSimuleringDto.orElse(null);
     }
 
@@ -76,8 +78,8 @@ public class SimuleringRestTjeneste {
     @Path("kanseller")
     @Operation(description = "Kanseller simulering for behandling", summary = ("Deaktiverer simuleringgrunnlag for behandling"), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
-    public Response kansellerSimulering(@Valid BehandlingIdDto behandlingIdDto) {
-        startSimuleringTjenesteFpWsProxy.kansellerSimulering(behandlingIdDto.getBehandlingId());
+    public Response kansellerSimulering(@TilpassetAbacAttributt(supplierClass = BehandlingIdAbacDataSupplier.class) @Valid BehandlingIdDto behandlingIdDto) {
+        startSimuleringTjenesteFpWsProxy.kansellerSimulering(behandlingIdDto.behandlingId());
         return Response.ok().build();
     }
 
@@ -85,7 +87,30 @@ public class SimuleringRestTjeneste {
     @Path("feilutbetalte-perioder")
     @Operation(description = "Hent sum feilutbetaling og simulerte perioder som er feilutbetalte og kan kreves tilbake fra brukeren.", summary = ("Returnerer perioder som er feilutbetalt."), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
-    public FeilutbetaltePerioderDto hentFeilutbetaltePerioderForTilbakekreving(@Valid BehandlingIdDto behandlingIdDto) {
-        return simuleringResultatTjeneste.hentFeilutbetaltePerioder(behandlingIdDto.getBehandlingId());
+    public FeilutbetaltePerioderDto hentFeilutbetaltePerioderForTilbakekreving(@TilpassetAbacAttributt(supplierClass = BehandlingIdAbacDataSupplier.class) @Valid BehandlingIdDto behandlingIdDto) {
+        return simuleringResultatTjeneste.hentFeilutbetaltePerioder(behandlingIdDto.behandlingId());
     }
+
+    public static class BehandlingIdAbacDataSupplier implements Function<Object, AbacDataAttributter> {
+
+        @Override
+        public AbacDataAttributter apply(Object obj) {
+            var req = (BehandlingIdDto) obj;
+            return AbacDataAttributter.opprett()
+                .leggTil(StandardAbacAttributtType.BEHANDLING_ID, req.behandlingId());
+        }
+    }
+
+    public class OppdragskontrollDtoAbacSupplier {
+
+        public static class Supplier implements Function<Object, AbacDataAttributter> {
+
+            @Override
+            public AbacDataAttributter apply(Object obj) {
+                var req = (OppdragskontrollDto) obj;
+                return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.BEHANDLING_ID, req.behandlingId());
+            }
+        }
+    }
+
 }

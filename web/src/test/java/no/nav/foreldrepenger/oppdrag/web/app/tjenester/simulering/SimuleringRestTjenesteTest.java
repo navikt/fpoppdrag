@@ -12,8 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatDto;
 
 @ExtendWith(JpaExtension.class)
 class SimuleringRestTjenesteTest {
@@ -33,10 +31,10 @@ class SimuleringRestTjenesteTest {
     @Test
     void returnererNullDersomSimuleringForBehandlingIkkeFinnes() {
         var simuleringDto = restTjeneste.hentSimuleringResultatMedOgUtenInntrekk(
-                new BehandlingIdDto("12345"));
+                new BehandlingIdDto(12345L));
         assertThat(simuleringDto).isNull();
 
-        var simuleringResultatDto = restTjeneste.hentSimuleringResultat(new BehandlingIdDto("12345"));
+        var simuleringResultatDto = restTjeneste.hentSimuleringResultat(new BehandlingIdDto(12345L));
         assertThat(simuleringResultatDto).isNull();
     }
 

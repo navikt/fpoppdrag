@@ -16,12 +16,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.PeriodeDto;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
 
 public class FeilutbetalingTjeneste {
@@ -30,27 +29,26 @@ public class FeilutbetalingTjeneste {
         // Skal ikke instansieres
     }
 
-    public static Optional<FeilutbetaltePerioderDto> finnFeilutbetaltePerioderForForeldrepengerOgEngangsstønad(SimuleringGrunnlag simuleringGrunnlag) {
-        var mottaker = simuleringGrunnlag.getSimuleringResultat().getSimuleringMottakere()
+    public record FeilutbetaltePerioder(Long sumFeilutbetaling, List<Periode> perioder) {}
+
+    public static Optional<FeilutbetaltePerioder> finnFeilutbetaltePerioderForForeldrepengeYtelser(SimuleringGrunnlag simuleringGrunnlag) {
+        var fagOmrådeKodeForBruker = Fagområde.utledFra(simuleringGrunnlag.getYtelseType());
+        return simuleringGrunnlag.getSimuleringResultat().getSimuleringMottakere()
                 .stream()
                 .filter(m -> m.getMottakerType().equals(MottakerType.BRUKER))
-                .findFirst();
+                .findFirst()
+                .map(m -> mapTilFeilutbetaltePerioder(m, fagOmrådeKodeForBruker));
+    }
 
-        var fagOmrådeKodeForBruker = Fagområde.utledFra(simuleringGrunnlag.getYtelseType());
+    private static FeilutbetaltePerioder mapTilFeilutbetaltePerioder(SimuleringMottaker mottaker, Fagområde fagOmrådeKodeForBruker) {
+        var posteringer = mottaker.getSimulertePosteringerForFeilutbetaling().stream()
+                .filter(p -> fagOmrådeKodeForBruker.equals(p.getFagOmrådeKode()))
+                .filter(p -> PosteringType.FEIL.equals(p.getPosteringType()))
+                .toList();
 
-        if (mottaker.isPresent()) {
-            var posteringer = mottaker.get().getSimulertePosteringerForFeilutbetaling().stream()
-                    .filter(p -> fagOmrådeKodeForBruker.equals(p.getFagOmrådeKode()))
-                    .filter(p -> PosteringType.FEIL.equals(p.getPosteringType()))
-                    .toList();
+        var sumFeilutbetaling = SimuleringBeregningTjeneste.beregnFeilutbetaltBeløp(posteringer);
 
-            var feilutbetaltePerioder = finnFeilutbetaltePerioder(posteringer)
-                    .stream().map(PeriodeDto::new).toList();
-            var sumFeilutbetaling = SimuleringBeregningTjeneste.beregnFeilutbetaltBeløp(posteringer);
-
-            return Optional.of(new FeilutbetaltePerioderDto(sumFeilutbetaling.longValue(), feilutbetaltePerioder));
-        }
-        return Optional.empty();
+        return new FeilutbetaltePerioder(sumFeilutbetaling.longValue(), finnFeilutbetaltePerioder(posteringer));
     }
 
     static List<Periode> finnFeilutbetaltePerioder(List<SimulertPostering> feilutbetaltePosteringer) {
