@@ -19,8 +19,8 @@ jobs:
   build-app:
     name: Build
     permissions:
-      contents: "read"
-      packages: "write"
+      contents: read
+      packages: write
       id-token: write
     uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@main
     with:
