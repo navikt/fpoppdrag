@@ -19,9 +19,9 @@ jobs:
   build-app:
     name: Build
     permissions:
-      contents: read
-      packages: write
-      id-token: read
+      contents: "read"
+      packages: "write"
+      id-token: "read"
     uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@main
     with:
       build-image: ${{ github.ref_name == 'master' }} # default: true
