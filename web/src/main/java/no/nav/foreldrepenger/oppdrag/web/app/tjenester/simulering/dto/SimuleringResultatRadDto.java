@@ -36,7 +36,7 @@ public class SimuleringResultatRadDto {
         }
 
         public SimuleringResultatRadDto build() {
-            kladd.resultaterPerMåned.sort(Comparator.comparing(p -> p.getPeriode().getFom()));
+            kladd.resultaterPerMåned.sort(Comparator.comparing(p -> p.periode().fom()));
             return kladd;
         }
     }

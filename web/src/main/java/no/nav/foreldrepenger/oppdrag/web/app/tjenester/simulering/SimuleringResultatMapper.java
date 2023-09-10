@@ -5,6 +5,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +100,7 @@ class SimuleringResultatMapper {
                 .medResultatPerFagområde(mapPerFagområde(simulertBeregningPerioder));
 
         if (ytelseType.erIkkeEngangsstønad()) {
-            builder.medNesteUtbetalingsperiode(new Periode(mottaker.getNesteUtbetalingsperiodeFom(), mottaker.getNesteUtbetalingsperiodeTom()));
+            builder.medNesteUtbetalingsperiode(mottaker.getNesteUtbetalingsperiodeFom(), mottaker.getNesteUtbetalingsperiodeTom());
         }
 
         if (MottakerType.BRUKER.equals(mottakerType)) {
@@ -156,7 +157,7 @@ class SimuleringResultatMapper {
     private SimuleringResultatRadDto mapPerMåned(List<SimulertBeregningPeriode> simulertBeregningPerioder, Function<SimulertBeregningPeriode, BigDecimal> hva, RadId feltnavn) {
         var resultatRadDto = new SimuleringResultatRadDto.Builder().medFeltnavn(feltnavn);
         for (var sbp : simulertBeregningPerioder) {
-            resultatRadDto.medResultatPerMåned(new SimuleringResultatPerMånedDto(sbp.getPeriode(), hva.apply(sbp)));
+            resultatRadDto.medResultatPerMåned(new SimuleringResultatPerMånedDto(sbp.getPeriode().getPeriodeFom(), sbp.getPeriode().getPeriodeTom(), hva.apply(sbp)));
         }
         return resultatRadDto.build();
     }
@@ -179,11 +180,8 @@ class SimuleringResultatMapper {
 
         List<SimuleringResultatPerFagområdeDto> resultat = new ArrayList<>();
         for (var entry : perFagområde.entrySet()) {
-            var rader = mapForFagområde(entry.getValue());
-            resultat.add(new SimuleringResultatPerFagområdeDto.Builder()
-                    .medFagområdeKode(entry.getKey())
-                    .medRader(rader)
-                    .build());
+            var rader = mapForFagområde(entry.getValue()).stream().sorted(Comparator.comparingInt(o -> o.getFeltnavn().ordinal())).toList();
+            resultat.add(new SimuleringResultatPerFagområdeDto(entry.getKey(), rader));
         }
         return resultat;
     }
@@ -206,7 +204,7 @@ class SimuleringResultatMapper {
 
     private boolean harTidligereUtbetaltBeløp(Map<RadId, List<SimuleringResultatPerMånedDto>> rader) {
         return rader.get(RadId.TIDLIGERE_UTBETALT)
-                .stream().anyMatch(p -> p.getBeløp() > 0);
+                .stream().anyMatch(p -> p.beløp() > 0);
     }
 
     private Map<Fagområde, Map<RadId, List<SimuleringResultatPerMånedDto>>> mapFelterPerFagområdePerMåned(List<SimulertBeregningPeriode> simulertBeregningPerioder) {
@@ -234,7 +232,7 @@ class SimuleringResultatMapper {
     }
 
     private static void leggTil(Map<RadId, List<SimuleringResultatPerMånedDto>> resultatPerFelt, RadId feltnavn, Periode periode, BigDecimal verdi) {
-        resultatPerFelt.get(feltnavn).add(new SimuleringResultatPerMånedDto(periode, verdi));
+        resultatPerFelt.get(feltnavn).add(new SimuleringResultatPerMånedDto(periode.getPeriodeFom(), periode.getPeriodeTom(), verdi));
     }
 
     private boolean skalViseFeltForFagområde(RadId feltnavn, boolean harTidligereUtbetaltBeløp) {

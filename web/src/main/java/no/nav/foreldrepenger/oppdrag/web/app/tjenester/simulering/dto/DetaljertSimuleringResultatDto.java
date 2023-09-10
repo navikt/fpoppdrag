@@ -12,6 +12,7 @@ public class DetaljertSimuleringResultatDto {
 
     private LocalDate periodeFom;
     private LocalDate periodeTom;
+    private PeriodeDto periode;
 
     private Long sumEtterbetaling;
     private Long sumFeilutbetaling;
@@ -30,6 +31,10 @@ public class DetaljertSimuleringResultatDto {
 
     public LocalDate getPeriodeTom() {
         return periodeTom;
+    }
+
+    public PeriodeDto getPeriode() {
+        return periode;
     }
 
     public Long getSumEtterbetaling() {
@@ -69,6 +74,7 @@ public class DetaljertSimuleringResultatDto {
         public Builder medPeriode(LocalDate fom, LocalDate tom) {
             kladd.periodeFom = fom;
             kladd.periodeTom = tom;
+            kladd.periode = new PeriodeDto(fom, tom);
             return this;
         }
 

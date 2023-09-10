@@ -26,7 +26,6 @@ import no.nav.foreldrepenger.oppdrag.web.app.exceptions.JsonMappingExceptionMapp
 import no.nav.foreldrepenger.oppdrag.web.app.exceptions.JsonParseExceptionMapper;
 import no.nav.foreldrepenger.oppdrag.web.app.jackson.JacksonJsonConfig;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.SimuleringRestTjeneste;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.test.SimuleringTestRestTjeneste;
 import no.nav.vedtak.exception.TekniskException;
 
 @ApplicationPath(ApiConfig.API_URI)
@@ -66,10 +65,6 @@ public class ApiConfig extends Application {
         Set<Class<?>> classes = new HashSet<>();
         // eksponert grensesnitt
         classes.add(SimuleringRestTjeneste.class);
-
-        if (ENV.isLocal()) {
-            classes.add(SimuleringTestRestTjeneste.class);
-        }
 
         // swagger
         classes.add(OpenApiResource.class);

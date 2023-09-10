@@ -8,7 +8,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.Periode;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.YtelseUtleder;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
@@ -24,6 +23,7 @@ public class SimuleringForMottakerDto {
     private List<SimuleringResultatRadDto> resultatOgMotregningRader = new ArrayList<>();
     private LocalDate nesteUtbPeriodeFom;
     private LocalDate nestUtbPeriodeTom;
+    private PeriodeDto nesteUtbPeriode;
 
 
     public MottakerType getMottakerType() {
@@ -48,6 +48,10 @@ public class SimuleringForMottakerDto {
 
     public LocalDate getNestUtbPeriodeTom() {
         return nestUtbPeriodeTom;
+    }
+
+    public PeriodeDto getNesteUtbPeriode() {
+        return nesteUtbPeriode;
     }
 
     public List<SimuleringResultatPerFagområdeDto> getResultatPerFagområde() {
@@ -94,15 +98,16 @@ public class SimuleringForMottakerDto {
             return this;
         }
 
-        public Builder medNesteUtbetalingsperiode(Periode periode) {
-            kladd.nesteUtbPeriodeFom = periode.getPeriodeFom();
-            kladd.nestUtbPeriodeTom = periode.getPeriodeTom();
+        public Builder medNesteUtbetalingsperiode(LocalDate fom, LocalDate tom) {
+            kladd.nesteUtbPeriodeFom = fom;
+            kladd.nestUtbPeriodeTom = tom;
+            kladd.nesteUtbPeriode = new PeriodeDto(fom, tom);
             return this;
         }
 
         public SimuleringForMottakerDto build() {
             initSortering(gjelderYtelsetype);
-            kladd.resultatPerFagområde.sort(Comparator.comparingInt(o -> getSortering(o.getFagOmrådeKode())));
+            kladd.resultatPerFagområde.sort(Comparator.comparingInt(o -> getSortering(o.fagOmrådeKode())));
             kladd.resultatOgMotregningRader.sort(Comparator.comparingInt(o -> o.getFeltnavn().ordinal()));
             return kladd;
         }

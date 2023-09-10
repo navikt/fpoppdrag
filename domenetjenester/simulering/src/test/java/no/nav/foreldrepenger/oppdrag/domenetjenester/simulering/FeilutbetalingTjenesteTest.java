@@ -9,13 +9,10 @@ import java.time.Month;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.FeilutbetaltePerioderDto;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.dto.PeriodeDto;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
@@ -58,13 +55,14 @@ class FeilutbetalingTjenesteTest {
                 .build();
 
         // Act
-        var perioderDto = FeilutbetalingTjeneste.finnFeilutbetaltePerioderForForeldrepengerOgEngangsstønad(simuleringGrunnlag);
+        var perioderDto = FeilutbetalingTjeneste.finnFeilutbetaltePerioderForForeldrepengeYtelser(simuleringGrunnlag);
 
         //Assert
-        var perioder = perioderDto.get().getPerioder();
-        assertThat(perioder).hasSize(1);
-        assertThat(perioder.get(0).getFom()).isEqualTo(januar_15_2019);
-        assertThat(perioder.get(0).getTom()).isEqualTo(januar_22_2019);
+        assertThat(perioderDto).hasValueSatisfying(p -> {
+            assertThat(p.perioder()).hasSize(1);
+            assertThat(p.perioder().get(0).getPeriodeFom()).isEqualTo(januar_15_2019);
+            assertThat(p.perioder().get(0).getPeriodeTom()).isEqualTo(januar_22_2019);
+        });
     }
 
     @Test
@@ -86,13 +84,14 @@ class FeilutbetalingTjenesteTest {
                 .build();
 
         // Act
-        var perioderDto = FeilutbetalingTjeneste.finnFeilutbetaltePerioderForForeldrepengerOgEngangsstønad(simuleringGrunnlag);
+        var perioderDto = FeilutbetalingTjeneste.finnFeilutbetaltePerioderForForeldrepengeYtelser(simuleringGrunnlag);
 
         //Assert
-        var perioder = perioderDto.get().getPerioder();
-        assertThat(perioder).hasSize(1);
-        assertThat(perioder.get(0).getFom()).isEqualTo(januar_01_2019);
-        assertThat(perioder.get(0).getTom()).isEqualTo(januar_31_2019);
+        assertThat(perioderDto).hasValueSatisfying(p -> {
+            assertThat(p.perioder()).hasSize(1);
+            assertThat(p.perioder().get(0).getPeriodeFom()).isEqualTo(januar_01_2019);
+            assertThat(p.perioder().get(0).getPeriodeTom()).isEqualTo(januar_31_2019);
+        });
     }
 
     @Test
@@ -165,10 +164,10 @@ class FeilutbetalingTjenesteTest {
                 .build();
 
         // Act
-        Optional<FeilutbetaltePerioderDto> perioderDto = FeilutbetalingTjeneste.finnFeilutbetaltePerioderForForeldrepengerOgEngangsstønad(simuleringGrunnlag);
+        Optional<FeilutbetalingTjeneste.FeilutbetaltePerioder> perioder = FeilutbetalingTjeneste.finnFeilutbetaltePerioderForForeldrepengeYtelser(simuleringGrunnlag);
 
         // Assert
-        assertThat(perioderDto).isNotPresent();
+        assertThat(perioder).isNotPresent();
     }
 
 
