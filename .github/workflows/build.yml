@@ -52,7 +52,7 @@ jobs:
     needs: [build-app, verdikjede]
     uses: navikt/fp-gha-workflows/.github/workflows/deploy.yml@main
     with:
-      image: ghcr.io/${{ github.repository }}:${{ needs.build-app.outputs.build-version }}
+      image: ${{ needs.build-app.outputs.build-version }}
       cluster: dev-fss
     secrets: inherit
 
@@ -62,6 +62,6 @@ jobs:
     needs: [build-app, verdikjede, deploy-dev]
     uses: navikt/fp-gha-workflows/.github/workflows/deploy.yml@main
     with:
-      image: ghcr.io/${{ github.repository }}:${{ needs.build-app.outputs.build-version }}
+      image: ${{ needs.build-app.outputs.build-version }}
       cluster: prod-fss
     secrets: inherit
