@@ -15,7 +15,6 @@
     <modules>
         <module>simulering</module>
         <module>person</module>
-        <module>organisasjon</module>
     </modules>
 
     <dependencies>

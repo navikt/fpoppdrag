@@ -9,9 +9,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
@@ -73,7 +71,7 @@ class SimuleringResultatTransformerTest {
         var fnr = "12345678910";
         var aktørId = new AktørId("12345");
 
-        when(tpsTjeneste.hentAktørForFnr(new PersonIdent(fnr))).thenReturn(Optional.of(aktørId));
+        when(tpsTjeneste.hentAktørForFnr(fnr)).thenReturn(Optional.of(aktørId));
 
         String resultat = simuleringResultatTransformer.hentAktørIdHvisFnr(fnr);
         assertThat(resultat).isEqualTo(aktørId.getId());

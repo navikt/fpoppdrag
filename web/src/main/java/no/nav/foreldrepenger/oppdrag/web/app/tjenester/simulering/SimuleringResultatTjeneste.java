@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.FeilutbetalingTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimulertBeregningResultat;
@@ -20,7 +21,7 @@ import no.nav.vedtak.exception.TekniskException;
 public class SimuleringResultatTjeneste {
 
     private SimuleringRepository simuleringRepository;
-    private HentNavnTjeneste hentNavnTjeneste;
+    private PersonTjeneste personTjeneste;
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste;
 
     SimuleringResultatTjeneste() {
@@ -28,9 +29,9 @@ public class SimuleringResultatTjeneste {
     }
 
     @Inject
-    public SimuleringResultatTjeneste(SimuleringRepository simuleringRepository, HentNavnTjeneste hentNavnTjeneste, SimuleringBeregningTjeneste simuleringBeregningTjeneste) {
+    public SimuleringResultatTjeneste(SimuleringRepository simuleringRepository, PersonTjeneste personTjeneste, SimuleringBeregningTjeneste simuleringBeregningTjeneste) {
         this.simuleringRepository = simuleringRepository;
-        this.hentNavnTjeneste = hentNavnTjeneste;
+        this.personTjeneste = personTjeneste;
         this.simuleringBeregningTjeneste = simuleringBeregningTjeneste;
     }
 
@@ -50,9 +51,9 @@ public class SimuleringResultatTjeneste {
     public Optional<SimuleringDto> hentDetaljertSimuleringsResultat(Long behandlingId) {
         var simulertBeregningResultat = hentResultat(behandlingId);
         if (simulertBeregningResultat.isPresent() && skalKunViseResultatUtenInntrekk(simulertBeregningResultat.get())) {
-            return Optional.of(SimuleringResultatMapper.map(hentNavnTjeneste, brukKunResultatUtenInntrekk(simulertBeregningResultat.get()), true));
+            return Optional.of(SimuleringResultatMapper.map(personTjeneste, brukKunResultatUtenInntrekk(simulertBeregningResultat.get()), true));
         }
-        return simulertBeregningResultat.map(resultat -> SimuleringResultatMapper.map(hentNavnTjeneste, resultat, false));
+        return simulertBeregningResultat.map(resultat -> SimuleringResultatMapper.map(personTjeneste, resultat, false));
     }
 
     private static boolean skalKunViseResultatUtenInntrekk(SimulertBeregningResultat simulertBeregningResultat) {

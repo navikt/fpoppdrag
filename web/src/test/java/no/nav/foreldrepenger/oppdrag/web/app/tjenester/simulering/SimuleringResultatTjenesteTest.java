@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,7 @@ import org.mockito.Mockito;
 
 import jakarta.persistence.EntityManager;
 import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
@@ -43,7 +45,7 @@ class SimuleringResultatTjenesteTest {
 
     private SimuleringRepository simuleringRepository;
 
-    private final HentNavnTjeneste hentNavnTjeneste = Mockito.mock(HentNavnTjeneste.class);
+    private final PersonTjeneste hentNavnTjeneste = Mockito.mock(PersonTjeneste.class);
     private final SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
     private final String aktørId = "0123456789";
 
@@ -114,99 +116,99 @@ class SimuleringResultatTjenesteTest {
 
         // Assert
         assertThat(simuleringDto).isPresent();
-        var simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
+        var simuleringResultatDto = simuleringDto.get().simuleringResultat();
 
-        assertThat(simuleringResultatDto.isIngenPerioderMedAvvik()).isFalse();
-        assertThat(simuleringResultatDto.getPeriode().fom()).isEqualTo(startDato);
-        assertThat(simuleringResultatDto.getPeriode().tom()).isEqualTo(nesteMåned.minusDays(1));
-        assertThat(simuleringResultatDto.getSumEtterbetaling()).isEqualTo(6000);
-        assertThat(simuleringResultatDto.getSumFeilutbetaling()).isZero();
-        assertThat(simuleringResultatDto.getSumInntrekk()).isZero();
-        assertThat(simuleringResultatDto.getPerioderPerMottaker()).hasSize(1);
+        assertThat(simuleringResultatDto.ingenPerioderMedAvvik()).isFalse();
+        assertThat(simuleringResultatDto.periode().fom()).isEqualTo(startDato);
+        assertThat(simuleringResultatDto.periode().tom()).isEqualTo(nesteMåned.minusDays(1));
+        assertThat(simuleringResultatDto.sumEtterbetaling()).isEqualTo(6000);
+        assertThat(simuleringResultatDto.sumFeilutbetaling()).isZero();
+        assertThat(simuleringResultatDto.sumInntrekk()).isZero();
+        assertThat(simuleringResultatDto.perioderPerMottaker()).hasSize(1);
 
-        var mottakerDto = simuleringResultatDto.getPerioderPerMottaker().get(0);
-        assertThat(mottakerDto.getMottakerType()).isEqualTo(MottakerType.BRUKER);
+        var mottakerDto = simuleringResultatDto.perioderPerMottaker().get(0);
+        assertThat(mottakerDto.mottakerType()).isEqualTo(MottakerType.BRUKER);
 
-        assertThat(mottakerDto.getResultatOgMotregningRader()).hasSize(2);
+        assertThat(mottakerDto.resultatOgMotregningRader()).hasSize(2);
 
         // Inntrekk - skal være sortert i riktig rekkefølge
-        var inntrekk = mottakerDto.getResultatOgMotregningRader().get(0);
-        assertThat(inntrekk.getFeltnavn()).isEqualTo(RadId.INNTREKK_NESTE_MÅNED);
-        assertThat(inntrekk.getResultaterPerMåned()).hasSize(3);
-        assertThat(inntrekk.getResultaterPerMåned().get(0).beløp()).isZero();
-        assertThat(inntrekk.getResultaterPerMåned().get(1).beløp()).isZero();
-        assertThat(inntrekk.getResultaterPerMåned().get(2).beløp()).isZero();
+        var inntrekk = mottakerDto.resultatOgMotregningRader().get(0);
+        assertThat(inntrekk.feltnavn()).isEqualTo(RadId.INNTREKK_NESTE_MÅNED);
+        assertThat(inntrekk.resultaterPerMåned()).hasSize(3);
+        assertThat(inntrekk.resultaterPerMåned().get(0).beløp()).isZero();
+        assertThat(inntrekk.resultaterPerMåned().get(1).beløp()).isZero();
+        assertThat(inntrekk.resultaterPerMåned().get(2).beløp()).isZero();
 
         // Resultat
-        var resultat = mottakerDto.getResultatOgMotregningRader().get(1);
-        assertThat(resultat.getFeltnavn()).isEqualTo(RadId.RESULTAT);
-        assertThat(resultat.getResultaterPerMåned()).hasSize(3);
-        assertThat(resultat.getResultaterPerMåned().get(0).beløp()).isEqualTo(2000);
-        assertThat(resultat.getResultaterPerMåned().get(1).beløp()).isEqualTo(4000);
-        assertThat(resultat.getResultaterPerMåned().get(2).beløp()).isEqualTo(10000);
+        var resultat = mottakerDto.resultatOgMotregningRader().get(1);
+        assertThat(resultat.feltnavn()).isEqualTo(RadId.RESULTAT);
+        assertThat(resultat.resultaterPerMåned()).hasSize(3);
+        assertThat(resultat.resultaterPerMåned().get(0).beløp()).isEqualTo(2000);
+        assertThat(resultat.resultaterPerMåned().get(1).beløp()).isEqualTo(4000);
+        assertThat(resultat.resultaterPerMåned().get(2).beløp()).isEqualTo(10000);
 
 
-        assertThat(mottakerDto.getResultatPerFagområde()).hasSize(1);
-        assertThat(mottakerDto.getResultatPerFagområde().get(0).fagOmrådeKode()).isEqualTo(
+        assertThat(mottakerDto.resultatPerFagområde()).hasSize(1);
+        assertThat(mottakerDto.resultatPerFagområde().get(0).fagOmrådeKode()).isEqualTo(
                 Fagområde.FP);
-        assertThat(mottakerDto.getResultatPerFagområde().get(0).rader()).hasSize(3);
+        assertThat(mottakerDto.resultatPerFagområde().get(0).rader()).hasSize(3);
 
         // Nytt beløp - skal være sortert i riktig rekkefølge
-        var nyttBeløp = mottakerDto.getResultatPerFagområde().get(0).rader().get(0);
-        assertThat(nyttBeløp.getFeltnavn()).isEqualTo(RadId.NYTT_BELØP);
-        assertThat(nyttBeløp.getResultaterPerMåned()).hasSize(3);
+        var nyttBeløp = mottakerDto.resultatPerFagområde().get(0).rader().get(0);
+        assertThat(nyttBeløp.feltnavn()).isEqualTo(RadId.NYTT_BELØP);
+        assertThat(nyttBeløp.resultaterPerMåned()).hasSize(3);
         // Assert første periode (skal returneres sortert)
-        assertThat(nyttBeløp.getResultaterPerMåned().get(0).periode().fom()).isEqualTo(startDato);
-        assertThat(nyttBeløp.getResultaterPerMåned().get(0).periode().tom()).isEqualTo(andreMåned.minusDays(1));
-        assertThat(nyttBeløp.getResultaterPerMåned().get(0).beløp()).isEqualTo(7000);
+        assertThat(nyttBeløp.resultaterPerMåned().get(0).periode().fom()).isEqualTo(startDato);
+        assertThat(nyttBeløp.resultaterPerMåned().get(0).periode().tom()).isEqualTo(andreMåned.minusDays(1));
+        assertThat(nyttBeløp.resultaterPerMåned().get(0).beløp()).isEqualTo(7000);
         // Assert andre periode
-        assertThat(nyttBeløp.getResultaterPerMåned().get(1).periode().fom()).isEqualTo(andreMåned);
-        assertThat(nyttBeløp.getResultaterPerMåned().get(1).periode().tom()).isEqualTo(nesteMåned.minusDays(1));
-        assertThat(nyttBeløp.getResultaterPerMåned().get(1).beløp()).isEqualTo(10000);
+        assertThat(nyttBeløp.resultaterPerMåned().get(1).periode().fom()).isEqualTo(andreMåned);
+        assertThat(nyttBeløp.resultaterPerMåned().get(1).periode().tom()).isEqualTo(nesteMåned.minusDays(1));
+        assertThat(nyttBeløp.resultaterPerMåned().get(1).beløp()).isEqualTo(10000);
         // Assert tredje periode
-        assertThat(nyttBeløp.getResultaterPerMåned().get(2).periode().fom()).isEqualTo(nesteMåned);
-        assertThat(nyttBeløp.getResultaterPerMåned().get(2).periode().tom()).isEqualTo(
+        assertThat(nyttBeløp.resultaterPerMåned().get(2).periode().fom()).isEqualTo(nesteMåned);
+        assertThat(nyttBeløp.resultaterPerMåned().get(2).periode().tom()).isEqualTo(
                 nesteMåned.plusMonths(1).minusDays(1));
-        assertThat(nyttBeløp.getResultaterPerMåned().get(2).beløp()).isEqualTo(10000);
+        assertThat(nyttBeløp.resultaterPerMåned().get(2).beløp()).isEqualTo(10000);
 
         // Tidligere utbetalt
-        var tidligereUtbetalt = mottakerDto.getResultatPerFagområde().get(0).rader().get(1);
-        assertThat(tidligereUtbetalt.getFeltnavn()).isEqualTo(RadId.TIDLIGERE_UTBETALT);
-        assertThat(tidligereUtbetalt.getResultaterPerMåned()).hasSize(3);
+        var tidligereUtbetalt = mottakerDto.resultatPerFagområde().get(0).rader().get(1);
+        assertThat(tidligereUtbetalt.feltnavn()).isEqualTo(RadId.TIDLIGERE_UTBETALT);
+        assertThat(tidligereUtbetalt.resultaterPerMåned()).hasSize(3);
         // Assert første periode (skal returneres sortert)
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(0).periode().fom()).isEqualTo(startDato);
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(0).periode().tom()).isEqualTo(
+        assertThat(tidligereUtbetalt.resultaterPerMåned().get(0).periode().fom()).isEqualTo(startDato);
+        assertThat(tidligereUtbetalt.resultaterPerMåned().get(0).periode().tom()).isEqualTo(
                 andreMåned.minusDays(1));
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(0).beløp()).isEqualTo(5000);
+        assertThat(tidligereUtbetalt.resultaterPerMåned().get(0).beløp()).isEqualTo(5000);
         // Assert andre periode
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(1).periode().fom()).isEqualTo(andreMåned);
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(1).periode().tom()).isEqualTo(
+        assertThat(tidligereUtbetalt.resultaterPerMåned().get(1).periode().fom()).isEqualTo(andreMåned);
+        assertThat(tidligereUtbetalt.resultaterPerMåned().get(1).periode().tom()).isEqualTo(
                 nesteMåned.minusDays(1));
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(1).beløp()).isEqualTo(6000);
+        assertThat(tidligereUtbetalt.resultaterPerMåned().get(1).beløp()).isEqualTo(6000);
         // Assert tredje periode
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(2).periode().fom()).isEqualTo(nesteMåned);
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(2).periode().tom()).isEqualTo(
+        assertThat(tidligereUtbetalt.resultaterPerMåned().get(2).periode().fom()).isEqualTo(nesteMåned);
+        assertThat(tidligereUtbetalt.resultaterPerMåned().get(2).periode().tom()).isEqualTo(
                 nesteMåned.plusMonths(1).minusDays(1));
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(2).beløp()).isZero();
+        assertThat(tidligereUtbetalt.resultaterPerMåned().get(2).beløp()).isZero();
 
 
         // Differanse
-        var differanse = mottakerDto.getResultatPerFagområde().get(0).rader().get(2);
-        assertThat(differanse.getFeltnavn()).isEqualTo(RadId.DIFFERANSE);
-        assertThat(differanse.getResultaterPerMåned()).hasSize(3);
+        var differanse = mottakerDto.resultatPerFagområde().get(0).rader().get(2);
+        assertThat(differanse.feltnavn()).isEqualTo(RadId.DIFFERANSE);
+        assertThat(differanse.resultaterPerMåned()).hasSize(3);
         // Assert første periode (skal returneres sortert)
-        assertThat(differanse.getResultaterPerMåned().get(0).periode().fom()).isEqualTo(startDato);
-        assertThat(differanse.getResultaterPerMåned().get(0).periode().tom()).isEqualTo(andreMåned.minusDays(1));
-        assertThat(differanse.getResultaterPerMåned().get(0).beløp()).isEqualTo(2000);
+        assertThat(differanse.resultaterPerMåned().get(0).periode().fom()).isEqualTo(startDato);
+        assertThat(differanse.resultaterPerMåned().get(0).periode().tom()).isEqualTo(andreMåned.minusDays(1));
+        assertThat(differanse.resultaterPerMåned().get(0).beløp()).isEqualTo(2000);
         // Assert andre periode
-        assertThat(differanse.getResultaterPerMåned().get(1).periode().fom()).isEqualTo(andreMåned);
-        assertThat(differanse.getResultaterPerMåned().get(1).periode().tom()).isEqualTo(nesteMåned.minusDays(1));
-        assertThat(differanse.getResultaterPerMåned().get(1).beløp()).isEqualTo(4000);
+        assertThat(differanse.resultaterPerMåned().get(1).periode().fom()).isEqualTo(andreMåned);
+        assertThat(differanse.resultaterPerMåned().get(1).periode().tom()).isEqualTo(nesteMåned.minusDays(1));
+        assertThat(differanse.resultaterPerMåned().get(1).beløp()).isEqualTo(4000);
         // Assert tredje periode
-        assertThat(differanse.getResultaterPerMåned().get(2).periode().fom()).isEqualTo(nesteMåned);
-        assertThat(differanse.getResultaterPerMåned().get(2).periode().tom()).isEqualTo(
+        assertThat(differanse.resultaterPerMåned().get(2).periode().fom()).isEqualTo(nesteMåned);
+        assertThat(differanse.resultaterPerMåned().get(2).periode().tom()).isEqualTo(
                 nesteMåned.plusMonths(1).minusDays(1));
-        assertThat(differanse.getResultaterPerMåned().get(2).beløp()).isEqualTo(10000);
+        assertThat(differanse.resultaterPerMåned().get(2).beløp()).isEqualTo(10000);
     }
 
     @Test
@@ -218,14 +220,10 @@ class SimuleringResultatTjenesteTest {
         var andreMåned = startDato.plusMonths(1);
 
         var fnrArbgiv = "12345678999";
-        var navn = "Onkel Skrue";
         var aktørIdArbgiver = new AktørId("1111111111111");
 
         var orgnr = "999999999";
-        var orgName = "TEST BEDRIFT AS";
-        when(hentNavnTjeneste.hentAktørIdGittFnr(fnrArbgiv)).thenReturn(aktørIdArbgiver);
-        when(hentNavnTjeneste.hentNavnGittFnr(fnrArbgiv)).thenReturn(navn);
-        when(hentNavnTjeneste.hentNavnGittOrgnummer(orgnr)).thenReturn(orgName);
+        when(hentNavnTjeneste.hentAktørForFnr(fnrArbgiv)).thenReturn(Optional.of(aktørIdArbgiver));
 
         var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
@@ -266,98 +264,96 @@ class SimuleringResultatTjenesteTest {
 
         // Assert
         assertThat(simuleringDto).isPresent();
-        var simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
+        var simuleringResultatDto = simuleringDto.get().simuleringResultat();
 
-        assertThat(simuleringResultatDto.isIngenPerioderMedAvvik()).isFalse();
-        assertThat(simuleringResultatDto.getPeriode().fom()).isEqualTo(startDato);
-        assertThat(simuleringResultatDto.getPeriode().tom()).isEqualTo(andreMåned.minusDays(1));
-        assertThat(simuleringResultatDto.getSumFeilutbetaling()).isZero();
-        assertThat(simuleringResultatDto.getSumInntrekk()).isZero();
-        assertThat(simuleringResultatDto.getSumEtterbetaling()).isEqualTo(2000);
+        assertThat(simuleringResultatDto.ingenPerioderMedAvvik()).isFalse();
+        assertThat(simuleringResultatDto.periode().fom()).isEqualTo(startDato);
+        assertThat(simuleringResultatDto.periode().tom()).isEqualTo(andreMåned.minusDays(1));
+        assertThat(simuleringResultatDto.sumFeilutbetaling()).isZero();
+        assertThat(simuleringResultatDto.sumInntrekk()).isZero();
+        assertThat(simuleringResultatDto.sumEtterbetaling()).isEqualTo(2000);
 
-        assertThat(simuleringResultatDto.getPerioderPerMottaker()).hasSize(3);
+        assertThat(simuleringResultatDto.perioderPerMottaker()).hasSize(3);
 
         // Mottaker = bruker
-        var brukerOptional = simuleringResultatDto.getPerioderPerMottaker()
+        var brukerOptional = simuleringResultatDto.perioderPerMottaker()
                 .stream()
-                .filter(p -> p.getMottakerType().equals(MottakerType.BRUKER))
+                .filter(p -> p.mottakerType().equals(MottakerType.BRUKER))
                 .findFirst();
         assertThat(brukerOptional).isPresent();
         var bruker = brukerOptional.get();
-        assertThat(bruker.getResultatPerFagområde()).hasSize(1);
-        var perFagområdeDto = bruker.getResultatPerFagområde().get(0);
+        assertThat(bruker.resultatPerFagområde()).hasSize(1);
+        var perFagområdeDto = bruker.resultatPerFagområde().get(0);
         assertThat(perFagområdeDto.fagOmrådeKode()).isEqualTo(Fagområde.FP);
         assertThat(perFagområdeDto.rader()).hasSize(3);
 
-        assertThat(bruker.getResultatOgMotregningRader()).hasSize(2);
-        assertThat(bruker.getResultatOgMotregningRader().get(0).getFeltnavn()).isEqualTo(RadId.INNTREKK_NESTE_MÅNED);
-        assertThat(bruker.getResultatOgMotregningRader().get(0).getResultaterPerMåned()).hasSize(1);
-        assertThat(bruker.getResultatOgMotregningRader().get(0).getResultaterPerMåned().get(0).beløp()).isZero();
-        assertThat(bruker.getResultatOgMotregningRader()
+        assertThat(bruker.resultatOgMotregningRader()).hasSize(2);
+        assertThat(bruker.resultatOgMotregningRader().get(0).feltnavn()).isEqualTo(RadId.INNTREKK_NESTE_MÅNED);
+        assertThat(bruker.resultatOgMotregningRader().get(0).resultaterPerMåned()).hasSize(1);
+        assertThat(bruker.resultatOgMotregningRader().get(0).resultaterPerMåned().get(0).beløp()).isZero();
+        assertThat(bruker.resultatOgMotregningRader()
                 .get(0)
-                .getResultaterPerMåned()
+                .resultaterPerMåned()
                 .get(0)
                 .periode()
                 .fom()).isEqualTo(startDato);
-        assertThat(bruker.getResultatOgMotregningRader()
+        assertThat(bruker.resultatOgMotregningRader()
                 .get(0)
-                .getResultaterPerMåned()
+                .resultaterPerMåned()
                 .get(0)
                 .periode()
                 .tom()).isEqualTo(andreMåned.minusDays(1));
 
-        assertThat(bruker.getResultatOgMotregningRader().get(1).getFeltnavn()).isEqualTo(RadId.RESULTAT);
-        assertThat(bruker.getResultatOgMotregningRader().get(1).getResultaterPerMåned()).hasSize(1);
-        assertThat(bruker.getResultatOgMotregningRader().get(1).getResultaterPerMåned().get(0).beløp()).isEqualTo(
+        assertThat(bruker.resultatOgMotregningRader().get(1).feltnavn()).isEqualTo(RadId.RESULTAT);
+        assertThat(bruker.resultatOgMotregningRader().get(1).resultaterPerMåned()).hasSize(1);
+        assertThat(bruker.resultatOgMotregningRader().get(1).resultaterPerMåned().get(0).beløp()).isEqualTo(
                 2000);
-        assertThat(bruker.getResultatOgMotregningRader()
+        assertThat(bruker.resultatOgMotregningRader()
                 .get(1)
-                .getResultaterPerMåned()
+                .resultaterPerMåned()
                 .get(0)
                 .periode()
                 .fom()).isEqualTo(startDato);
-        assertThat(bruker.getResultatOgMotregningRader()
+        assertThat(bruker.resultatOgMotregningRader()
                 .get(1)
-                .getResultaterPerMåned()
+                .resultaterPerMåned()
                 .get(0)
                 .periode()
                 .tom()).isEqualTo(andreMåned.minusDays(1));
 
 
         // Mottaker = arbeidsgiver med fnr
-        var  arbgivPrivOptional = simuleringResultatDto.getPerioderPerMottaker()
+        var  arbgivPrivOptional = simuleringResultatDto.perioderPerMottaker()
                 .stream()
-                .filter(p -> p.getMottakerType().equals(MottakerType.ARBG_PRIV))
+                .filter(p -> p.mottakerType().equals(MottakerType.ARBG_PRIV))
                 .findFirst();
         assertThat(arbgivPrivOptional).isPresent();
         var arbgivPriv = arbgivPrivOptional.get();
-        assertThat(arbgivPriv.getMottakerNavn()).isEqualTo(navn);
-        assertThat(arbgivPriv.getMottakerNummer()).isEqualTo(fnrArbgiv);
-        assertThat(arbgivPriv.getMottakerIdentifikator()).isEqualTo(aktørIdArbgiver.getId());
-        assertThat(arbgivPriv.getResultatPerFagområde()).hasSize(1);
-        var perFagområdeDto1 = arbgivPriv.getResultatPerFagområde().get(0);
+        assertThat(arbgivPriv.mottakerNummer()).isEqualTo(fnrArbgiv);
+        assertThat(arbgivPriv.mottakerIdentifikator()).isEqualTo(aktørIdArbgiver.getId());
+        assertThat(arbgivPriv.resultatPerFagområde()).hasSize(1);
+        var perFagområdeDto1 = arbgivPriv.resultatPerFagområde().get(0);
 
         assertThat(perFagområdeDto1.fagOmrådeKode()).isEqualTo(Fagområde.FPREF);
         assertThat(perFagområdeDto1.rader()).hasSize(3);
-        assertThat(arbgivPriv.getResultatOgMotregningRader()).isEmpty();
+        assertThat(arbgivPriv.resultatOgMotregningRader()).isEmpty();
 
 
         // Mottaker = arbeidsgiver med orgnr
-        var arbgivOrgnrOptional = simuleringResultatDto.getPerioderPerMottaker()
+        var arbgivOrgnrOptional = simuleringResultatDto.perioderPerMottaker()
                 .stream()
-                .filter(p -> p.getMottakerType().equals(MottakerType.ARBG_ORG))
+                .filter(p -> p.mottakerType().equals(MottakerType.ARBG_ORG))
                 .findFirst();
         assertThat(arbgivOrgnrOptional).isPresent();
         var arbgivOrgnr = arbgivOrgnrOptional.get();
-        assertThat(arbgivOrgnr.getMottakerNavn()).isEqualToIgnoringCase(orgName);
-        assertThat(arbgivOrgnr.getMottakerNummer()).isEqualTo(orgnr);
-        assertThat(arbgivOrgnr.getMottakerIdentifikator()).isEqualTo(orgnr);
-        assertThat(arbgivOrgnr.getResultatPerFagområde()).hasSize(1);
-        var perFagområdeDto2 = arbgivOrgnr.getResultatPerFagområde().get(0);
+        assertThat(arbgivOrgnr.mottakerNummer()).isEqualTo(orgnr);
+        assertThat(arbgivOrgnr.mottakerIdentifikator()).isEqualTo(orgnr);
+        assertThat(arbgivOrgnr.resultatPerFagområde()).hasSize(1);
+        var perFagområdeDto2 = arbgivOrgnr.resultatPerFagområde().get(0);
 
         assertThat(perFagområdeDto2.fagOmrådeKode()).isEqualTo(Fagområde.FPREF);
         assertThat(perFagområdeDto2.rader()).hasSize(1);
-        assertThat(arbgivOrgnr.getResultatOgMotregningRader()).isEmpty();
+        assertThat(arbgivOrgnr.resultatOgMotregningRader()).isEmpty();
     }
 
     @Test
@@ -373,8 +369,7 @@ class SimuleringResultatTjenesteTest {
         var aktørIdArbgiver = new AktørId("1111111111111");
         var orgnr = "999999999";
 
-        when(hentNavnTjeneste.hentAktørIdGittFnr(fnrArbgiv)).thenReturn(aktørIdArbgiver);
-        when(hentNavnTjeneste.hentNavnGittFnr(fnrArbgiv)).thenReturn(navn);
+        when(hentNavnTjeneste.hentAktørForFnr(fnrArbgiv)).thenReturn(Optional.of(aktørIdArbgiver));
 
         var simuleringGrunnlag = SimuleringGrunnlag.builder()
                 .medEksternReferanse(new BehandlingRef(behandlingId))
@@ -416,9 +411,9 @@ class SimuleringResultatTjenesteTest {
         var simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
 
         assertThat(simuleringDto).isPresent();
-        var simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
-        assertThat(simuleringResultatDto.getSumFeilutbetaling()).isZero();
-        assertThat(simuleringResultatDto.getPerioderPerMottaker()).hasSize(3);
+        var simuleringResultatDto = simuleringDto.get().simuleringResultat();
+        assertThat(simuleringResultatDto.sumFeilutbetaling()).isZero();
+        assertThat(simuleringResultatDto.perioderPerMottaker()).hasSize(3);
     }
 
     @Test
@@ -454,11 +449,11 @@ class SimuleringResultatTjenesteTest {
         var simuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingId);
 
         // Assert
-        assertThat(simuleringDto).map(SimuleringDto::getSimuleringResultat)
+        assertThat(simuleringDto).map(SimuleringDto::simuleringResultat)
             .hasValueSatisfying(simuleringResultatDto -> {
-                assertThat(simuleringResultatDto.getSumInntrekk()).isNull();
-                assertThat(simuleringResultatDto.getPerioderPerMottaker()).hasSize(1);
-                assertThat(simuleringResultatDto.getPerioderPerMottaker().get(0).getNesteUtbPeriodeFom()).isNull();
+                assertThat(simuleringResultatDto.sumInntrekk()).isNull();
+                assertThat(simuleringResultatDto.perioderPerMottaker()).hasSize(1);
+                assertThat(simuleringResultatDto.perioderPerMottaker().get(0).nesteUtbPeriode().fom()).isNull();
             });
     }
 
@@ -492,7 +487,7 @@ class SimuleringResultatTjenesteTest {
 
         // Assert
         assertThat(simuleringDto).isPresent();
-        assertThat(simuleringDto.get().getSimuleringResultat().getSumEtterbetaling()).isEqualTo(23001);
+        assertThat(simuleringDto.get().simuleringResultat().sumEtterbetaling()).isEqualTo(23001);
     }
 
     @Test
@@ -539,21 +534,21 @@ class SimuleringResultatTjenesteTest {
 
         // Assert
         assertThat(optSimuleringDto).isPresent();
-        var simuleringResultat = optSimuleringDto.get().getSimuleringResultat();
-        assertThat(simuleringResultat.isIngenPerioderMedAvvik()).isTrue();
-        assertThat(simuleringResultat.getPerioderPerMottaker()).hasSize(2);
+        var simuleringResultat = optSimuleringDto.get().simuleringResultat();
+        assertThat(simuleringResultat.ingenPerioderMedAvvik()).isTrue();
+        assertThat(simuleringResultat.perioderPerMottaker()).hasSize(2);
 
         // Sjekker neste utbetalingsperiode for Bruker
-        var mottakerBruker = simuleringResultat.getPerioderPerMottaker().get(0);
-        assertThat(mottakerBruker.getMottakerType()).isEqualTo(MottakerType.BRUKER);
-        assertThat(mottakerBruker.getNesteUtbPeriode().fom()).isEqualTo(januar01);
-        assertThat(mottakerBruker.getNesteUtbPeriode().tom()).isEqualTo(januar31);
+        var mottakerBruker = simuleringResultat.perioderPerMottaker().get(0);
+        assertThat(mottakerBruker.mottakerType()).isEqualTo(MottakerType.BRUKER);
+        assertThat(mottakerBruker.nesteUtbPeriode().fom()).isEqualTo(januar01);
+        assertThat(mottakerBruker.nesteUtbPeriode().tom()).isEqualTo(januar31);
 
         // Sjekker neste utbetalingsperiode for arbeidsgiver
-        var mottakerArbgiv = simuleringResultat.getPerioderPerMottaker().get(1);
-        assertThat(mottakerArbgiv.getMottakerType()).isEqualTo(MottakerType.ARBG_ORG);
-        assertThat(mottakerArbgiv.getNesteUtbPeriode().fom()).isEqualTo(februar01);
-        assertThat(mottakerArbgiv.getNesteUtbPeriode().tom()).isEqualTo(februar28);
+        var mottakerArbgiv = simuleringResultat.perioderPerMottaker().get(1);
+        assertThat(mottakerArbgiv.mottakerType()).isEqualTo(MottakerType.ARBG_ORG);
+        assertThat(mottakerArbgiv.nesteUtbPeriode().fom()).isEqualTo(februar01);
+        assertThat(mottakerArbgiv.nesteUtbPeriode().tom()).isEqualTo(februar28);
     }
 
     @Test
@@ -587,7 +582,7 @@ class SimuleringResultatTjenesteTest {
         // Assert
         assertThat(optSimuleringDto).isPresent();
         var simuleringDto = optSimuleringDto.get();
-        assertThat(simuleringDto.getSimuleringResultat().isIngenPerioderMedAvvik()).isTrue();
+        assertThat(simuleringDto.simuleringResultat().ingenPerioderMedAvvik()).isTrue();
     }
 
     @Test
