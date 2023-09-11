@@ -106,6 +106,9 @@ public class SimuleringForMottakerDto {
         }
 
         public SimuleringForMottakerDto build() {
+            if (kladd.nesteUtbPeriode == null) {
+                kladd.nesteUtbPeriode = new PeriodeDto(null, null);
+            }
             initSortering(gjelderYtelsetype);
             kladd.resultatPerFagområde.sort(Comparator.comparingInt(o -> getSortering(o.fagOmrådeKode())));
             kladd.resultatOgMotregningRader.sort(Comparator.comparingInt(o -> o.getFeltnavn().ordinal()));

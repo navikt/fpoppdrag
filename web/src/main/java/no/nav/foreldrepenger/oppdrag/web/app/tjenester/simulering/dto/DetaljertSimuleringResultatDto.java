@@ -89,6 +89,9 @@ public class DetaljertSimuleringResultatDto {
         }
 
         public DetaljertSimuleringResultatDto build() {
+            if (kladd.periode == null) {
+                kladd.periode = new PeriodeDto(null, null);
+            }
             kladd.perioderPerMottaker.sort((o1, o2) -> o1.getMottakerType().equals(MottakerType.BRUKER) ? -1 : 1);
             return kladd;
         }
