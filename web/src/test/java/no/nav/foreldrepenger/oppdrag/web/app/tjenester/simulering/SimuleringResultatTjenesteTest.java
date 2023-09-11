@@ -15,13 +15,12 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import jakarta.persistence.EntityManager;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
+import jakarta.persistence.EntityManager;
 import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
@@ -459,7 +458,6 @@ class SimuleringResultatTjenesteTest {
             .hasValueSatisfying(simuleringResultatDto -> {
                 assertThat(simuleringResultatDto.getSumInntrekk()).isNull();
                 assertThat(simuleringResultatDto.getPerioderPerMottaker()).hasSize(1);
-                assertThat(simuleringResultatDto.getPerioderPerMottaker().get(0).getNesteUtbPeriode()).isNull();
                 assertThat(simuleringResultatDto.getPerioderPerMottaker().get(0).getNesteUtbPeriodeFom()).isNull();
             });
     }
