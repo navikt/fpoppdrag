@@ -36,7 +36,7 @@ class TpsTjenesteImplTest {
     @Test
     void finnerAktørIdForFnr() {
         // Arrange
-        var aktørId = new AktørId("12345");
+        var aktørId = new AktørId("1234567890123");
         var fnr = "12345678910";
 
         when(pdlKlient.hentIdenter(any(), any())).thenReturn(new Identliste(List.of(new IdentInformasjon(aktørId.getId(), IdentGruppe.AKTORID, false))));
@@ -52,7 +52,7 @@ class TpsTjenesteImplTest {
     @Test
     void kasterExceptionPersonIkkeFunnetSomHåndteres() {
         // Arrange
-        var fnr = "12345678910";
+        var fnr = "12345678911";
         var unntak = Mockito.mock(TekniskException.class);
         when(unntak.getKode()).thenReturn(PdlKlient.PDL_KLIENT_NOT_FOUND_KODE);
 

@@ -69,7 +69,7 @@ class SimuleringResultatTransformerTest {
     @Test
     void returnererAktørIdHvisFnr() {
         var fnr = "12345678910";
-        var aktørId = new AktørId("12345");
+        var aktørId = new AktørId("1234567890123");
 
         when(tpsTjeneste.hentAktørForFnr(fnr)).thenReturn(Optional.of(aktørId));
 
