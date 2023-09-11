@@ -36,6 +36,8 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
+import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.KontraktFagområde;
+import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.KontraktMottakerType;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.RadId;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatDto;
@@ -121,7 +123,7 @@ class SimuleringResultatTjenesteInntrekkTest {
         assertThat(mottakerDto.resultatPerFagområde()).hasSize(1);
 
         var foreldrepenger = mottakerDto.resultatPerFagområde().get(0);
-        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(FP);
+        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(KontraktFagområde.FP);
         assertThat(foreldrepenger.rader()).hasSize(3);
 
         // Sjekker nytt beløp
@@ -262,11 +264,11 @@ class SimuleringResultatTjenesteInntrekkTest {
         assertThat(simuleringResultatDto.perioderPerMottaker()).hasSize(1);
 
         var mottakerDto = simuleringResultatDto.perioderPerMottaker().get(0);
-        assertThat(mottakerDto.mottakerType()).isEqualTo(MottakerType.BRUKER);
+        assertThat(mottakerDto.mottakerType()).isEqualTo(KontraktMottakerType.BRUKER);
 
         // Sjekker foreldrepenger
         var foreldrepenger = mottakerDto.resultatPerFagområde().get(0);
-        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(FP);
+        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(KontraktFagområde.FP);
         assertThat(foreldrepenger.rader()).hasSize(1);
 
         // Sjekker nytt beløp foreldrepenger
@@ -277,7 +279,7 @@ class SimuleringResultatTjenesteInntrekkTest {
 
         // Sjekker sykepenger
         var sykepenger = mottakerDto.resultatPerFagområde().get(1);
-        assertThat(sykepenger.fagOmrådeKode()).isEqualTo(SP);
+        assertThat(sykepenger.fagOmrådeKode()).isEqualTo(KontraktFagområde.SP);
         assertThat(sykepenger.rader()).hasSize(3);
 
         // Sjekker nytt beløp sykepenger
@@ -424,7 +426,7 @@ class SimuleringResultatTjenesteInntrekkTest {
         assertThat(simuleringDto.simuleringResultat().perioderPerMottaker()).hasSize(2);
 
         var simuleringForMottakerDto = simuleringDto.simuleringResultat().perioderPerMottaker().get(0);
-        assertThat(simuleringForMottakerDto.mottakerType()).isEqualTo(MottakerType.BRUKER);
+        assertThat(simuleringForMottakerDto.mottakerType()).isEqualTo(KontraktMottakerType.BRUKER);
         assertThat(simuleringForMottakerDto.nesteUtbPeriode().fom()).isEqualTo(november01);
         assertThat(simuleringForMottakerDto.nesteUtbPeriode().tom()).isEqualTo(november30);
 

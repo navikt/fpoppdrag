@@ -37,6 +37,8 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringReposito
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
+import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.KontraktFagområde;
+import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.KontraktMottakerType;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.RadId;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 
@@ -127,7 +129,7 @@ class SimuleringResultatTjenesteTest {
         assertThat(simuleringResultatDto.perioderPerMottaker()).hasSize(1);
 
         var mottakerDto = simuleringResultatDto.perioderPerMottaker().get(0);
-        assertThat(mottakerDto.mottakerType()).isEqualTo(MottakerType.BRUKER);
+        assertThat(mottakerDto.mottakerType()).isEqualTo(KontraktMottakerType.BRUKER);
 
         assertThat(mottakerDto.resultatOgMotregningRader()).hasSize(2);
 
@@ -150,7 +152,7 @@ class SimuleringResultatTjenesteTest {
 
         assertThat(mottakerDto.resultatPerFagområde()).hasSize(1);
         assertThat(mottakerDto.resultatPerFagområde().get(0).fagOmrådeKode()).isEqualTo(
-                Fagområde.FP);
+                KontraktFagområde.FP);
         assertThat(mottakerDto.resultatPerFagområde().get(0).rader()).hasSize(3);
 
         // Nytt beløp - skal være sortert i riktig rekkefølge
@@ -278,13 +280,13 @@ class SimuleringResultatTjenesteTest {
         // Mottaker = bruker
         var brukerOptional = simuleringResultatDto.perioderPerMottaker()
                 .stream()
-                .filter(p -> p.mottakerType().equals(MottakerType.BRUKER))
+                .filter(p -> p.mottakerType().equals(KontraktMottakerType.BRUKER))
                 .findFirst();
         assertThat(brukerOptional).isPresent();
         var bruker = brukerOptional.get();
         assertThat(bruker.resultatPerFagområde()).hasSize(1);
         var perFagområdeDto = bruker.resultatPerFagområde().get(0);
-        assertThat(perFagområdeDto.fagOmrådeKode()).isEqualTo(Fagområde.FP);
+        assertThat(perFagområdeDto.fagOmrådeKode()).isEqualTo(KontraktFagområde.FP);
         assertThat(perFagområdeDto.rader()).hasSize(3);
 
         assertThat(bruker.resultatOgMotregningRader()).hasSize(2);
@@ -325,7 +327,7 @@ class SimuleringResultatTjenesteTest {
         // Mottaker = arbeidsgiver med fnr
         var  arbgivPrivOptional = simuleringResultatDto.perioderPerMottaker()
                 .stream()
-                .filter(p -> p.mottakerType().equals(MottakerType.ARBG_PRIV))
+                .filter(p -> p.mottakerType().equals(KontraktMottakerType.ARBG_PRIV))
                 .findFirst();
         assertThat(arbgivPrivOptional).isPresent();
         var arbgivPriv = arbgivPrivOptional.get();
@@ -334,7 +336,7 @@ class SimuleringResultatTjenesteTest {
         assertThat(arbgivPriv.resultatPerFagområde()).hasSize(1);
         var perFagområdeDto1 = arbgivPriv.resultatPerFagområde().get(0);
 
-        assertThat(perFagområdeDto1.fagOmrådeKode()).isEqualTo(Fagområde.FPREF);
+        assertThat(perFagområdeDto1.fagOmrådeKode()).isEqualTo(KontraktFagområde.FPREF);
         assertThat(perFagområdeDto1.rader()).hasSize(3);
         assertThat(arbgivPriv.resultatOgMotregningRader()).isEmpty();
 
@@ -342,7 +344,7 @@ class SimuleringResultatTjenesteTest {
         // Mottaker = arbeidsgiver med orgnr
         var arbgivOrgnrOptional = simuleringResultatDto.perioderPerMottaker()
                 .stream()
-                .filter(p -> p.mottakerType().equals(MottakerType.ARBG_ORG))
+                .filter(p -> p.mottakerType().equals(KontraktMottakerType.ARBG_ORG))
                 .findFirst();
         assertThat(arbgivOrgnrOptional).isPresent();
         var arbgivOrgnr = arbgivOrgnrOptional.get();
@@ -351,7 +353,7 @@ class SimuleringResultatTjenesteTest {
         assertThat(arbgivOrgnr.resultatPerFagområde()).hasSize(1);
         var perFagområdeDto2 = arbgivOrgnr.resultatPerFagområde().get(0);
 
-        assertThat(perFagområdeDto2.fagOmrådeKode()).isEqualTo(Fagområde.FPREF);
+        assertThat(perFagområdeDto2.fagOmrådeKode()).isEqualTo(KontraktFagområde.FPREF);
         assertThat(perFagområdeDto2.rader()).hasSize(1);
         assertThat(arbgivOrgnr.resultatOgMotregningRader()).isEmpty();
     }
@@ -540,13 +542,13 @@ class SimuleringResultatTjenesteTest {
 
         // Sjekker neste utbetalingsperiode for Bruker
         var mottakerBruker = simuleringResultat.perioderPerMottaker().get(0);
-        assertThat(mottakerBruker.mottakerType()).isEqualTo(MottakerType.BRUKER);
+        assertThat(mottakerBruker.mottakerType()).isEqualTo(KontraktMottakerType.BRUKER);
         assertThat(mottakerBruker.nesteUtbPeriode().fom()).isEqualTo(januar01);
         assertThat(mottakerBruker.nesteUtbPeriode().tom()).isEqualTo(januar31);
 
         // Sjekker neste utbetalingsperiode for arbeidsgiver
         var mottakerArbgiv = simuleringResultat.perioderPerMottaker().get(1);
-        assertThat(mottakerArbgiv.mottakerType()).isEqualTo(MottakerType.ARBG_ORG);
+        assertThat(mottakerArbgiv.mottakerType()).isEqualTo(KontraktMottakerType.ARBG_ORG);
         assertThat(mottakerArbgiv.nesteUtbPeriode().fom()).isEqualTo(februar01);
         assertThat(mottakerArbgiv.nesteUtbPeriode().tom()).isEqualTo(februar28);
     }

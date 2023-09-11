@@ -25,6 +25,7 @@ import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
+import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.KontraktFagområde;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.RadId;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 
@@ -184,7 +185,7 @@ class SimuleringResultatMapper {
             var rader = mapForFagområde(entry.getValue()).stream()
                 .sorted(Comparator.comparingInt(o -> o.feltnavn().ordinal()))
                 .toList();
-            resultat.add(new SimuleringDto.SimuleringResultatPerFagområdeDto(entry.getKey(), rader));
+            resultat.add(new SimuleringDto.SimuleringResultatPerFagområdeDto(KontraktFagområde.valueOf(entry.getKey().name()), rader));
         }
         return resultat;
     }

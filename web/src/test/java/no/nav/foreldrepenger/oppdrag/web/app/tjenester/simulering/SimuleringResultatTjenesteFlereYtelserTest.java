@@ -32,6 +32,7 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
+import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.KontraktFagområde;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.RadId;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 
@@ -105,7 +106,7 @@ class SimuleringResultatTjenesteFlereYtelserTest {
 
         // Resultat for foreldrepenger -- Skal være sortert slik at foreldrepenger kommer først
         var foreldrepenger = mottakerBruker.resultatPerFagområde().get(0);
-        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(Fagområde.FP);
+        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(KontraktFagområde.FP);
         assertThat(foreldrepenger.rader()).hasSize(3);
         assertThat(foreldrepenger.rader().get(0).resultaterPerMåned()).hasSize(2);
 
@@ -115,7 +116,7 @@ class SimuleringResultatTjenesteFlereYtelserTest {
 
         // Resultat for sykepenger
         var sykepenger = mottakerBruker.resultatPerFagområde().get(1);
-        assertThat(sykepenger.fagOmrådeKode()).isEqualTo(Fagområde.SP);
+        assertThat(sykepenger.fagOmrådeKode()).isEqualTo(KontraktFagområde.SP);
         assertThat(sykepenger.rader()).hasSize(3);
         assertThat(sykepenger.rader().get(0).resultaterPerMåned()).hasSize(2);
         assertThat(sykepenger.rader().get(0).resultaterPerMåned().get(0).periode().fom()).isEqualTo(august_01);

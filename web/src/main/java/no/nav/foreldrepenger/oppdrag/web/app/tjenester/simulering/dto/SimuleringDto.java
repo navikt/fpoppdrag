@@ -4,9 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
-
 public record SimuleringDto(DetaljertSimuleringResultatDto simuleringResultat,
                             DetaljertSimuleringResultatDto simuleringResultatUtenInntrekk,
                             boolean slåttAvInntrekk) {
@@ -18,14 +15,14 @@ public record SimuleringDto(DetaljertSimuleringResultatDto simuleringResultat,
     }
 
 
-    public record SimuleringForMottakerDto(MottakerType mottakerType, String mottakerNummer, String mottakerIdentifikator,
+    public record SimuleringForMottakerDto(KontraktMottakerType mottakerType, String mottakerNummer, String mottakerIdentifikator,
                                            List<SimuleringResultatPerFagområdeDto> resultatPerFagområde,
                                            List<SimuleringResultatRadDto> resultatOgMotregningRader,
                                            PeriodeDto nesteUtbPeriode) {
     }
 
 
-    public record SimuleringResultatPerFagområdeDto(Fagområde fagOmrådeKode, List<SimuleringResultatRadDto> rader) { }
+    public record SimuleringResultatPerFagområdeDto(KontraktFagområde fagOmrådeKode, List<SimuleringResultatRadDto> rader) { }
 
     public record SimuleringResultatRadDto(RadId feltnavn, List<SimuleringResultatPerMånedDto> resultaterPerMåned) { }
 
