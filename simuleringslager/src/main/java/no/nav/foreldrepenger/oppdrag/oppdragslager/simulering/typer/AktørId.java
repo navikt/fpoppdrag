@@ -4,11 +4,10 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.Pattern.Flag;
-
-import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Id som genereres fra NAV Aktør Register. Denne iden benyttes til interne forhold i Nav og vil ikke endres f.eks. dersom bruker går fra
@@ -16,18 +15,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 @Embeddable
 public class AktørId implements Serializable, Comparable<AktørId> {
-    private static final String CHARS = "a-z0-9_:-";
-
-    private static final String VALID_REGEXP = "^(-?[1-9]|[a-z0])[" + CHARS + "]*$";
-    private static final String INVALID_REGEXP = "[^" + CHARS + "]+";
+    private static final String VALID_REGEXP = "^\\d{13}$";
 
     private static final Pattern VALID = Pattern.compile(VALID_REGEXP, Pattern.CASE_INSENSITIVE);
-    private static final Pattern INVALID = Pattern.compile(INVALID_REGEXP, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
     @JsonValue
-    @jakarta.validation.constraints.Pattern(regexp = VALID_REGEXP, flags = {Flag.CASE_INSENSITIVE})
+    @jakarta.validation.constraints.Pattern(regexp = VALID_REGEXP, message = "aktørId ${validatedValue} har ikke gyldig verdi (pattern '{regexp}')")
     @Column(name = "aktoer_id", updatable = false, length = 50)
-    private String aktørId;  // NOSONAR
+    private String aktørId;
 
     protected AktørId() {
         // for hibernate
@@ -37,7 +32,7 @@ public class AktørId implements Serializable, Comparable<AktørId> {
         Objects.requireNonNull(aktørId, "aktørId");
         if (!VALID.matcher(aktørId).matches()) {
             // skal ikke skje, funksjonelle feilmeldinger håndteres ikke her.
-            throw new IllegalArgumentException("Ugyldig aktørId, støtter kun A-Z/0-9/:/-/_ tegn. Var: " + aktørId.replaceAll(INVALID.pattern(), "?") + " (vasket)");
+            throw new IllegalArgumentException("Ugyldig aktørId '" + aktørId +"', tillatt pattern: "+ VALID_REGEXP);
         }
         this.aktørId = aktørId;
     }
@@ -50,17 +45,12 @@ public class AktørId implements Serializable, Comparable<AktørId> {
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
-        } else if (obj == null || !getClass().equals(obj.getClass())) {
+        }
+        if (obj == null || !getClass().equals(obj.getClass())) {
             return false;
         }
-        AktørId other = (AktørId) obj;
+        var other = (AktørId) obj;
         return Objects.equals(aktørId, other.aktørId);
-    }
-
-    @Override
-    public int compareTo(AktørId o) {
-        // TODO: Burde ikke finnes
-        return aktørId.compareTo(o.aktørId);
     }
 
     @Override
@@ -70,6 +60,27 @@ public class AktørId implements Serializable, Comparable<AktørId> {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" + aktørId + ">";
+        return getClass().getSimpleName() + "<" + maskerAktørId() + ">";
+    }
+
+    @Override
+    public int compareTo(AktørId o) {
+        // TODO: Burde ikke finnes
+        return aktørId.compareTo(o.aktørId);
+    }
+
+    public static boolean erGyldigAktørId(String aktørId) {
+        return aktørId != null && VALID.matcher(aktørId).matches();
+    }
+
+    private String maskerAktørId() {
+        if (aktørId == null) {
+            return "";
+        }
+        var length = aktørId.length();
+        if (length <= 4) {
+            return "*".repeat(length);
+        }
+        return "*".repeat(length - 4) + aktørId.substring(length - 4);
     }
 }

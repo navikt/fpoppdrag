@@ -24,6 +24,7 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimulertBeregnin
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.RadId;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 
@@ -109,8 +110,8 @@ class SimuleringResultatMapper {
         }
         if (MottakerType.ARBG_PRIV.equals(mottakerType)) {
             return builder
-                    .medMottakerNummer(mottakerNummer)
-                    .medMottakerIdentifikator(personTjeneste.hentAktørForFnr(mottakerNummer).orElseThrow().getId())
+                    .medMottakerNummer(mottakerNummerTilFNR(mottakerNummer))
+                    .medMottakerIdentifikator(mottakerNummerTilAktørId(mottakerNummer))
                     .build();
         }
         if (MottakerType.ARBG_ORG.equals(mottakerType)) {
@@ -120,6 +121,14 @@ class SimuleringResultatMapper {
         }
 
         throw new IllegalArgumentException("Ukjent mottaker-mottakerType: " + mottakerType);
+    }
+
+    private String mottakerNummerTilFNR(String mottakerNummer) {
+        return AktørId.erGyldigAktørId(mottakerNummer) ? personTjeneste.hentFnrForAktørId(new AktørId(mottakerNummer)).orElse(mottakerNummer) : mottakerNummer;
+    }
+
+    private String mottakerNummerTilAktørId(String mottakerNummer) {
+        return AktørId.erGyldigAktørId(mottakerNummer) ? mottakerNummer : personTjeneste.hentAktørForFnr(mottakerNummer).map(AktørId::getId).orElse(mottakerNummer);
     }
 
     private List<SimuleringDto.SimuleringResultatRadDto> mapResultaterPerMåned(List<SimulertBeregningPeriode> simulertBeregningPerioder) {
