@@ -56,7 +56,7 @@ public class StartSimuleringTjenesteTest {
 
     private static final Long BEHANDLING_ID_1 = 42345L;
     private static final Long BEHANDLING_ID_2 = 87890L;
-    private static final String AKTØR_ID = "12345678901";
+    private static final String AKTØR_ID = "1234567890123";
 
     private final FpWsProxySimuleringKlient fpWsProxySimuleringKlient = mock(FpWsProxySimuleringKlient.class);
     private final PersonTjeneste tpsTjenesteMock = mock(PersonTjeneste.class);

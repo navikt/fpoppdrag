@@ -8,11 +8,9 @@ import java.util.Objects;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningDto;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningStoppnivåDetaljerDto;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningStoppnivåDto;
-import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonIdent;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
@@ -101,7 +99,7 @@ public class SimuleringResultatTransformer {
         if (erOrgNr(orgNrOrFnr)) {
             return orgNrOrFnr.substring(2);
         } else {
-            var aktørId = personTjeneste.hentAktørForFnr(new PersonIdent(orgNrOrFnr))
+            var aktørId = personTjeneste.hentAktørForFnr(orgNrOrFnr)
                     .orElseThrow(() -> new TekniskException("FPO-952153", "Fant ikke aktørId for FNR"));
             return aktørId.getId();
         }

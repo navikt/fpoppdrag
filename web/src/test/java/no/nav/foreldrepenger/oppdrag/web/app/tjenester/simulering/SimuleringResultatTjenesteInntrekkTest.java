@@ -16,14 +16,14 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.persistence.EntityManager;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
+import jakarta.persistence.EntityManager;
 import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
@@ -36,17 +36,18 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
+import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.KontraktFagområde;
+import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.KontraktMottakerType;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.RadId;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatDto;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatRadDto;
 
 @ExtendWith({JpaExtension.class})
 class SimuleringResultatTjenesteInntrekkTest {
 
     private SimuleringRepository simuleringRepository;
 
-    private HentNavnTjeneste hentNavnTjeneste = Mockito.mock(HentNavnTjeneste.class);
+    private PersonTjeneste hentNavnTjeneste = Mockito.mock(PersonTjeneste.class);
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
     private SimuleringResultatTjeneste simuleringResultatTjeneste;
 
@@ -109,62 +110,62 @@ class SimuleringResultatTjenesteInntrekkTest {
 
         // Assert
         assertThat(simuleringDto).isPresent();
-        assertThat(simuleringDto.get().isSlåttAvInntrekk()).isTrue();
-        assertThat(simuleringDto.get().getSimuleringResultatUtenInntrekk()).isNull();
-        var simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
+        assertThat(simuleringDto.get().slåttAvInntrekk()).isTrue();
+        assertThat(simuleringDto.get().simuleringResultatUtenInntrekk()).isNull();
+        var simuleringResultatDto = simuleringDto.get().simuleringResultat();
 
-        assertThat(simuleringResultatDto.getSumFeilutbetaling()).isEqualTo(-21360);
-        assertThat(simuleringResultatDto.getSumInntrekk()).isZero();
-        assertThat(simuleringResultatDto.getSumEtterbetaling()).isZero();
+        assertThat(simuleringResultatDto.sumFeilutbetaling()).isEqualTo(-21360);
+        assertThat(simuleringResultatDto.sumInntrekk()).isZero();
+        assertThat(simuleringResultatDto.sumEtterbetaling()).isZero();
 
-        assertThat(simuleringResultatDto.getPerioderPerMottaker()).hasSize(1);
-        var mottakerDto = simuleringResultatDto.getPerioderPerMottaker().get(0);
-        assertThat(mottakerDto.getResultatPerFagområde()).hasSize(1);
+        assertThat(simuleringResultatDto.perioderPerMottaker()).hasSize(1);
+        var mottakerDto = simuleringResultatDto.perioderPerMottaker().get(0);
+        assertThat(mottakerDto.resultatPerFagområde()).hasSize(1);
 
-        var foreldrepenger = mottakerDto.getResultatPerFagområde().get(0);
-        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(FP);
+        var foreldrepenger = mottakerDto.resultatPerFagområde().get(0);
+        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(KontraktFagområde.FP);
         assertThat(foreldrepenger.rader()).hasSize(3);
 
         // Sjekker nytt beløp
         var nyttBeløpOptional = finnRadMedRadId(foreldrepenger.rader(), RadId.NYTT_BELØP);
         assertThat(nyttBeløpOptional).isPresent();
         var nyttBeløp = nyttBeløpOptional.get();
-        assertThat(nyttBeløp.getResultaterPerMåned()).hasSize(2);
+        assertThat(nyttBeløp.resultaterPerMåned()).hasSize(2);
         // Skal være sortert på dato
-        assertThat(nyttBeløp.getResultaterPerMåned().get(0).beløp()).isEqualTo(25632);
-        assertThat(nyttBeløp.getResultaterPerMåned().get(1).beløp()).isEqualTo(44856);
+        assertThat(nyttBeløp.resultaterPerMåned().get(0).beløp()).isEqualTo(25632);
+        assertThat(nyttBeløp.resultaterPerMåned().get(1).beløp()).isEqualTo(44856);
 
         // Sjekker tidligere utbetalt beløp
         var tidligereUtbOptional = finnRadMedRadId(foreldrepenger.rader(), RadId.TIDLIGERE_UTBETALT);
         assertThat(tidligereUtbOptional).isPresent();
         var tidligereUtbetalt = tidligereUtbOptional.get();
-        assertThat(tidligereUtbetalt.getResultaterPerMåned()).hasSize(2);
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(0).beløp()).isEqualTo(46992);
-        assertThat(tidligereUtbetalt.getResultaterPerMåned().get(1).beløp()).isZero();
+        assertThat(tidligereUtbetalt.resultaterPerMåned()).hasSize(2);
+        assertThat(tidligereUtbetalt.resultaterPerMåned().get(0).beløp()).isEqualTo(46992);
+        assertThat(tidligereUtbetalt.resultaterPerMåned().get(1).beløp()).isZero();
 
         // Sjekker differanse
         var differanseOptional = finnRadMedRadId(foreldrepenger.rader(), RadId.DIFFERANSE);
         assertThat(differanseOptional).isPresent();
         var differanse = differanseOptional.get();
-        assertThat(differanse.getResultaterPerMåned()).hasSize(2);
-        assertThat(differanse.getResultaterPerMåned().get(0).beløp()).isEqualTo(-21360);
-        assertThat(differanse.getResultaterPerMåned().get(1).beløp()).isEqualTo(44856);
+        assertThat(differanse.resultaterPerMåned()).hasSize(2);
+        assertThat(differanse.resultaterPerMåned().get(0).beløp()).isEqualTo(-21360);
+        assertThat(differanse.resultaterPerMåned().get(1).beløp()).isEqualTo(44856);
 
-        assertThat(mottakerDto.getResultatOgMotregningRader()).hasSize(2);
+        assertThat(mottakerDto.resultatOgMotregningRader()).hasSize(2);
 
         // Sjekker inntrekk neste måned
-        var inntrekkNesteMånedOptional = finnRadMedRadId(mottakerDto.getResultatOgMotregningRader(), RadId.INNTREKK_NESTE_MÅNED);
+        var inntrekkNesteMånedOptional = finnRadMedRadId(mottakerDto.resultatOgMotregningRader(), RadId.INNTREKK_NESTE_MÅNED);
         assertThat(inntrekkNesteMånedOptional).isPresent();
         var inntrekkNesteMåned = inntrekkNesteMånedOptional.get();
-        assertThat(inntrekkNesteMåned.getResultaterPerMåned().get(0).beløp()).isZero();
-        assertThat(inntrekkNesteMåned.getResultaterPerMåned().get(1).beløp()).isZero();
+        assertThat(inntrekkNesteMåned.resultaterPerMåned().get(0).beløp()).isZero();
+        assertThat(inntrekkNesteMåned.resultaterPerMåned().get(1).beløp()).isZero();
 
         // Sjekker resultat
-        var resultatOptional = finnRadMedRadId(mottakerDto.getResultatOgMotregningRader(), RadId.RESULTAT);
+        var resultatOptional = finnRadMedRadId(mottakerDto.resultatOgMotregningRader(), RadId.RESULTAT);
         assertThat(resultatOptional).isPresent();
         var resultat = resultatOptional.get();
-        assertThat(resultat.getResultaterPerMåned().get(0).beløp()).isEqualTo(-21360);
-        assertThat(resultat.getResultaterPerMåned().get(1).beløp()).isEqualTo(44856);
+        assertThat(resultat.resultaterPerMåned().get(0).beløp()).isEqualTo(-21360);
+        assertThat(resultat.resultaterPerMåned().get(1).beløp()).isEqualTo(44856);
     }
 
     @Test
@@ -256,63 +257,63 @@ class SimuleringResultatTjenesteInntrekkTest {
 
         // Assert
         assertThat(simuleringDto).isPresent();
-        var simuleringResultatDto = simuleringDto.get().getSimuleringResultat();
-        assertThat(simuleringResultatDto.isIngenPerioderMedAvvik()).isFalse();
-        assertThat(simuleringResultatDto.getSumEtterbetaling()).isEqualTo(14369);
-        assertThat(simuleringResultatDto.getSumInntrekk()).isEqualTo(-517);
-        assertThat(simuleringResultatDto.getPerioderPerMottaker()).hasSize(1);
+        var simuleringResultatDto = simuleringDto.get().simuleringResultat();
+        assertThat(simuleringResultatDto.ingenPerioderMedAvvik()).isFalse();
+        assertThat(simuleringResultatDto.sumEtterbetaling()).isEqualTo(14369);
+        assertThat(simuleringResultatDto.sumInntrekk()).isEqualTo(-517);
+        assertThat(simuleringResultatDto.perioderPerMottaker()).hasSize(1);
 
-        var mottakerDto = simuleringResultatDto.getPerioderPerMottaker().get(0);
-        assertThat(mottakerDto.getMottakerType()).isEqualTo(MottakerType.BRUKER);
+        var mottakerDto = simuleringResultatDto.perioderPerMottaker().get(0);
+        assertThat(mottakerDto.mottakerType()).isEqualTo(KontraktMottakerType.BRUKER);
 
         // Sjekker foreldrepenger
-        var foreldrepenger = mottakerDto.getResultatPerFagområde().get(0);
-        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(FP);
+        var foreldrepenger = mottakerDto.resultatPerFagområde().get(0);
+        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(KontraktFagområde.FP);
         assertThat(foreldrepenger.rader()).hasSize(1);
 
         // Sjekker nytt beløp foreldrepenger
         var nyttBeløpOptional = finnRadMedRadId(foreldrepenger.rader(), RadId.NYTT_BELØP);
         assertThat(nyttBeløpOptional).isPresent();
         var nyttBeløp = nyttBeløpOptional.get();
-        assertThat(nyttBeløp.getResultaterPerMåned().get(0).beløp()).isEqualTo(14886);
+        assertThat(nyttBeløp.resultaterPerMåned().get(0).beløp()).isEqualTo(14886);
 
         // Sjekker sykepenger
-        var sykepenger = mottakerDto.getResultatPerFagområde().get(1);
-        assertThat(sykepenger.fagOmrådeKode()).isEqualTo(SP);
+        var sykepenger = mottakerDto.resultatPerFagområde().get(1);
+        assertThat(sykepenger.fagOmrådeKode()).isEqualTo(KontraktFagområde.SP);
         assertThat(sykepenger.rader()).hasSize(3);
 
         // Sjekker nytt beløp sykepenger
         var nyttBeløpSPOptional = finnRadMedRadId(sykepenger.rader(), RadId.NYTT_BELØP);
         assertThat(nyttBeløpSPOptional).isPresent();
-        assertThat(nyttBeløpSPOptional.get().getResultaterPerMåned().get(0).beløp()).isEqualTo(1551);
+        assertThat(nyttBeløpSPOptional.get().resultaterPerMåned().get(0).beløp()).isEqualTo(1551);
 
         // Sjekker tidligere utbetalt beløp sykepenger
         var tidligereUtbOptional = finnRadMedRadId(sykepenger.rader(), RadId.TIDLIGERE_UTBETALT);
         assertThat(tidligereUtbOptional).isPresent();
-        assertThat(tidligereUtbOptional.get().getResultaterPerMåned().get(0).beløp()).isEqualTo(2068);
+        assertThat(tidligereUtbOptional.get().resultaterPerMåned().get(0).beløp()).isEqualTo(2068);
 
         // Sjekker differanse
         var differanseOptional = finnRadMedRadId(sykepenger.rader(), RadId.DIFFERANSE);
         assertThat(differanseOptional).isPresent();
-        assertThat(differanseOptional.get().getResultaterPerMåned().get(0).beløp()).isEqualTo(-517);
+        assertThat(differanseOptional.get().resultaterPerMåned().get(0).beløp()).isEqualTo(-517);
 
-        var resultatOgMotregningRader = mottakerDto.getResultatOgMotregningRader();
+        var resultatOgMotregningRader = mottakerDto.resultatOgMotregningRader();
         assertThat(resultatOgMotregningRader).hasSize(3);
 
         // Sjekker inntrekk neste måned
         var inntrekkNesteMånedOptional = finnRadMedRadId(resultatOgMotregningRader, RadId.INNTREKK_NESTE_MÅNED);
         assertThat(inntrekkNesteMånedOptional).isPresent();
-        assertThat(inntrekkNesteMånedOptional.get().getResultaterPerMåned().get(0).beløp()).isZero();
+        assertThat(inntrekkNesteMånedOptional.get().resultaterPerMåned().get(0).beløp()).isZero();
 
         // Sjekker resultat etter motregning
         var resMotregning = finnRadMedRadId(resultatOgMotregningRader, RadId.RESULTAT_ETTER_MOTREGNING);
         assertThat(resMotregning).isPresent();
-        assertThat(resMotregning.get().getResultaterPerMåned().get(0).beløp()).isEqualTo(14369);
+        assertThat(resMotregning.get().resultaterPerMåned().get(0).beløp()).isEqualTo(14369);
 
         // Sjekker resultat
         var resultat = finnRadMedRadId(resultatOgMotregningRader, RadId.RESULTAT_ETTER_MOTREGNING);
         assertThat(resultat).isPresent();
-        assertThat(resultat.get().getResultaterPerMåned().get(0).beløp()).isEqualTo(14369);
+        assertThat(resultat.get().resultaterPerMåned().get(0).beløp()).isEqualTo(14369);
     }
 
     @Test
@@ -419,20 +420,20 @@ class SimuleringResultatTjenesteInntrekkTest {
         assertThat(optSimuleringDto).isPresent();
         var simuleringDto = optSimuleringDto.get();
 
-        assertThat(simuleringDto.getSimuleringResultat().isIngenPerioderMedAvvik()).isFalse();
-        assertThat(simuleringDto.getSimuleringResultat().getSumInntrekk()).isEqualTo(-feilutbetalt);
-        assertThat(simuleringDto.getSimuleringResultat().getSumFeilutbetaling()).isZero();
-        assertThat(simuleringDto.getSimuleringResultat().getPerioderPerMottaker()).hasSize(2);
+        assertThat(simuleringDto.simuleringResultat().ingenPerioderMedAvvik()).isFalse();
+        assertThat(simuleringDto.simuleringResultat().sumInntrekk()).isEqualTo(-feilutbetalt);
+        assertThat(simuleringDto.simuleringResultat().sumFeilutbetaling()).isZero();
+        assertThat(simuleringDto.simuleringResultat().perioderPerMottaker()).hasSize(2);
 
-        var simuleringForMottakerDto = simuleringDto.getSimuleringResultat().getPerioderPerMottaker().get(0);
-        assertThat(simuleringForMottakerDto.getMottakerType()).isEqualTo(MottakerType.BRUKER);
-        assertThat(simuleringForMottakerDto.getNesteUtbPeriode().fom()).isEqualTo(november01);
-        assertThat(simuleringForMottakerDto.getNesteUtbPeriode().tom()).isEqualTo(november30);
+        var simuleringForMottakerDto = simuleringDto.simuleringResultat().perioderPerMottaker().get(0);
+        assertThat(simuleringForMottakerDto.mottakerType()).isEqualTo(KontraktMottakerType.BRUKER);
+        assertThat(simuleringForMottakerDto.nesteUtbPeriode().fom()).isEqualTo(november01);
+        assertThat(simuleringForMottakerDto.nesteUtbPeriode().tom()).isEqualTo(november30);
 
-        assertThat(simuleringDto.getSimuleringResultatUtenInntrekk().isIngenPerioderMedAvvik()).isFalse();
-        assertThat(simuleringDto.getSimuleringResultatUtenInntrekk().getSumFeilutbetaling()).isEqualTo(-feilutbetalt);
-        assertThat(simuleringDto.getSimuleringResultatUtenInntrekk().getSumInntrekk()).isZero();
-        assertThat(simuleringDto.getSimuleringResultat().getPerioderPerMottaker()).hasSize(2);
+        assertThat(simuleringDto.simuleringResultatUtenInntrekk().ingenPerioderMedAvvik()).isFalse();
+        assertThat(simuleringDto.simuleringResultatUtenInntrekk().sumFeilutbetaling()).isEqualTo(-feilutbetalt);
+        assertThat(simuleringDto.simuleringResultatUtenInntrekk().sumInntrekk()).isZero();
+        assertThat(simuleringDto.simuleringResultat().perioderPerMottaker()).hasSize(2);
     }
 
     @Test
@@ -472,12 +473,12 @@ class SimuleringResultatTjenesteInntrekkTest {
         assertThat(optSimuleringDto).isPresent();
         var simuleringDto = optSimuleringDto.get();
 
-        assertThat(simuleringDto.getSimuleringResultat()).isNotNull();
-        assertThat(simuleringDto.getSimuleringResultatUtenInntrekk()).isNull();
+        assertThat(simuleringDto.simuleringResultat()).isNotNull();
+        assertThat(simuleringDto.simuleringResultatUtenInntrekk()).isNull();
     }
 
-    private Optional<SimuleringResultatRadDto> finnRadMedRadId(List<SimuleringResultatRadDto> resultatOgMotregningRader, RadId radId) {
-        return resultatOgMotregningRader.stream().filter(r -> r.getFeltnavn().equals(radId)).findFirst();
+    private Optional<SimuleringDto.SimuleringResultatRadDto> finnRadMedRadId(List<SimuleringDto.SimuleringResultatRadDto> resultatOgMotregningRader, RadId radId) {
+        return resultatOgMotregningRader.stream().filter(r -> r.feltnavn().equals(radId)).findFirst();
     }
 
     private LocalDate finnNesteForfallsdatoBasertPåDagensDato() {

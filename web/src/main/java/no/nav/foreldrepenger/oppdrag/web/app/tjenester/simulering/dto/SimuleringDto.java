@@ -1,30 +1,36 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto;
 
-public class SimuleringDto {
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
-    private DetaljertSimuleringResultatDto simuleringResultat;
-    private DetaljertSimuleringResultatDto simuleringResultatUtenInntrekk;
-    private boolean slåttAvInntrekk;
+public record SimuleringDto(DetaljertSimuleringResultatDto simuleringResultat,
+                            DetaljertSimuleringResultatDto simuleringResultatUtenInntrekk,
+                            boolean slåttAvInntrekk) {
 
-    public SimuleringDto(DetaljertSimuleringResultatDto simuleringResultat, boolean slåttAvInntrekk) {
-        this.simuleringResultat = simuleringResultat;
-        this.slåttAvInntrekk = slåttAvInntrekk;
+
+    public record DetaljertSimuleringResultatDto(PeriodeDto periode, boolean ingenPerioderMedAvvik,
+                                                 Long sumEtterbetaling, Long sumFeilutbetaling, Long sumInntrekk,
+                                                 List<SimuleringForMottakerDto> perioderPerMottaker) {
     }
 
-    public SimuleringDto(DetaljertSimuleringResultatDto simuleringResultat, DetaljertSimuleringResultatDto simuleringResultatUtenInntrekk) {
-        this.simuleringResultat = simuleringResultat;
-        this.simuleringResultatUtenInntrekk = simuleringResultatUtenInntrekk;
+
+    public record SimuleringForMottakerDto(KontraktMottakerType mottakerType, String mottakerNummer, String mottakerIdentifikator,
+                                           List<SimuleringResultatPerFagområdeDto> resultatPerFagområde,
+                                           List<SimuleringResultatRadDto> resultatOgMotregningRader,
+                                           PeriodeDto nesteUtbPeriode) {
     }
 
-    public DetaljertSimuleringResultatDto getSimuleringResultat() {
-        return simuleringResultat;
-    }
 
-    public DetaljertSimuleringResultatDto getSimuleringResultatUtenInntrekk() {
-        return simuleringResultatUtenInntrekk;
-    }
+    public record SimuleringResultatPerFagområdeDto(KontraktFagområde fagOmrådeKode, List<SimuleringResultatRadDto> rader) { }
 
-    public boolean isSlåttAvInntrekk() {
-        return slåttAvInntrekk;
+    public record SimuleringResultatRadDto(RadId feltnavn, List<SimuleringResultatPerMånedDto> resultaterPerMåned) { }
+
+    public record SimuleringResultatPerMånedDto(PeriodeDto periode, Long beløp) {
+
+        public SimuleringResultatPerMånedDto(LocalDate fom, LocalDate tom, BigDecimal beløp) {
+            this(new PeriodeDto(fom , tom), beløp != null ? beløp.longValue() : null);
+        }
+
     }
 }

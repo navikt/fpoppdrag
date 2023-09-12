@@ -56,10 +56,6 @@
             <groupId>no.nav.foreldrepenger.oppdrag</groupId>
             <artifactId>domenetjenester-person</artifactId>
         </dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-            <artifactId>domenetjenester-organisasjon</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>no.nav.foreldrepenger.felles.sikkerhet</groupId>

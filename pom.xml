@@ -60,11 +60,6 @@
             </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-                <artifactId>domenetjenester-organisasjon</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.oppdrag</groupId>
                 <artifactId>domenetjenester-person</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -83,11 +78,6 @@
                 <type>pom</type>
             </dependency>
 
-            <dependency>
-                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-                <artifactId>ereg-klient</artifactId>
-                <version>${felles.version}</version>
-            </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
                 <artifactId>person-klient</artifactId>
