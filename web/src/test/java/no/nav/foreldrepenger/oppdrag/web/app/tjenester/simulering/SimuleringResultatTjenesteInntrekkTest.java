@@ -22,6 +22,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import jakarta.persistence.EntityManager;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.kodeverk.RadId;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringDto;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringResultatDto;
 import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
@@ -36,11 +39,6 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.KontraktFagområde;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.KontraktMottakerType;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.RadId;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatDto;
 
 @ExtendWith({JpaExtension.class})
 class SimuleringResultatTjenesteInntrekkTest {
@@ -123,7 +121,7 @@ class SimuleringResultatTjenesteInntrekkTest {
         assertThat(mottakerDto.resultatPerFagområde()).hasSize(1);
 
         var foreldrepenger = mottakerDto.resultatPerFagområde().get(0);
-        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(KontraktFagområde.FP);
+        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(no.nav.foreldrepenger.kontrakter.simulering.resultat.kodeverk.Fagområde.FP);
         assertThat(foreldrepenger.rader()).hasSize(3);
 
         // Sjekker nytt beløp
@@ -264,11 +262,11 @@ class SimuleringResultatTjenesteInntrekkTest {
         assertThat(simuleringResultatDto.perioderPerMottaker()).hasSize(1);
 
         var mottakerDto = simuleringResultatDto.perioderPerMottaker().get(0);
-        assertThat(mottakerDto.mottakerType()).isEqualTo(KontraktMottakerType.BRUKER);
+        assertThat(mottakerDto.mottakerType()).isEqualTo(no.nav.foreldrepenger.kontrakter.simulering.resultat.kodeverk.MottakerType.BRUKER);
 
         // Sjekker foreldrepenger
         var foreldrepenger = mottakerDto.resultatPerFagområde().get(0);
-        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(KontraktFagområde.FP);
+        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(no.nav.foreldrepenger.kontrakter.simulering.resultat.kodeverk.Fagområde.FP);
         assertThat(foreldrepenger.rader()).hasSize(1);
 
         // Sjekker nytt beløp foreldrepenger
@@ -279,7 +277,7 @@ class SimuleringResultatTjenesteInntrekkTest {
 
         // Sjekker sykepenger
         var sykepenger = mottakerDto.resultatPerFagområde().get(1);
-        assertThat(sykepenger.fagOmrådeKode()).isEqualTo(KontraktFagområde.SP);
+        assertThat(sykepenger.fagOmrådeKode()).isEqualTo(no.nav.foreldrepenger.kontrakter.simulering.resultat.kodeverk.Fagområde.SP);
         assertThat(sykepenger.rader()).hasSize(3);
 
         // Sjekker nytt beløp sykepenger
@@ -426,7 +424,7 @@ class SimuleringResultatTjenesteInntrekkTest {
         assertThat(simuleringDto.simuleringResultat().perioderPerMottaker()).hasSize(2);
 
         var simuleringForMottakerDto = simuleringDto.simuleringResultat().perioderPerMottaker().get(0);
-        assertThat(simuleringForMottakerDto.mottakerType()).isEqualTo(KontraktMottakerType.BRUKER);
+        assertThat(simuleringForMottakerDto.mottakerType()).isEqualTo(no.nav.foreldrepenger.kontrakter.simulering.resultat.kodeverk.MottakerType.BRUKER);
         assertThat(simuleringForMottakerDto.nesteUtbPeriode().fom()).isEqualTo(november01);
         assertThat(simuleringForMottakerDto.nesteUtbPeriode().tom()).isEqualTo(november30);
 

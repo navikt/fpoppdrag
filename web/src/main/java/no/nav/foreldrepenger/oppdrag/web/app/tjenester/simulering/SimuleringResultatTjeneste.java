@@ -1,19 +1,21 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.FeilutbetaltePerioderDto;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.PeriodeDto;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringDto;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringResultatDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.FeilutbetalingTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimulertBeregningResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.FeilutbetaltePerioderDto;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.PeriodeDto;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatDto;
 import no.nav.vedtak.exception.TekniskException;
 
 
@@ -44,8 +46,13 @@ public class SimuleringResultatTjeneste {
 
         var beregningResultat = resultat.getBeregningResultatUtenInntrekk().filter(r -> slåttAvInntrekk).orElseGet(resultat::getBeregningResultat);
 
-        return new SimuleringResultatDto(beregningResultat.getOppsummering().getFeilutbetaling(),
+        return lagSimuleringResultatDto(beregningResultat.getOppsummering().getFeilutbetaling(),
             beregningResultat.getOppsummering().getInntrekkNesteUtbetaling(), slåttAvInntrekk);
+    }
+
+    private static SimuleringResultatDto lagSimuleringResultatDto(BigDecimal sumFeilutbetaling, BigDecimal sumInntrekk, boolean slåttAvInntrekk) {
+        return new SimuleringResultatDto(sumFeilutbetaling != null ? sumFeilutbetaling.longValue() : null,
+            sumInntrekk != null ? sumInntrekk.longValue() : null, slåttAvInntrekk);
     }
 
     public Optional<SimuleringDto> hentDetaljertSimuleringsResultat(Long behandlingId) {
@@ -67,8 +74,13 @@ public class SimuleringResultatTjeneste {
         }
         var simuleringGrunnlag = optSimuleringGrunnlag.get();
         return FeilutbetalingTjeneste.finnFeilutbetaltePerioderForForeldrepengeYtelser(simuleringGrunnlag)
-            .map(futp -> FeilutbetaltePerioderDto.lagDto(futp.sumFeilutbetaling(), futp.perioder().stream().map(p -> new PeriodeDto(p.getPeriodeFom(), p.getPeriodeTom())).toList()))
+            .map(futp -> lagDto(futp.sumFeilutbetaling(), futp.perioder().stream().map(p -> new PeriodeDto(p.getPeriodeFom(), p.getPeriodeTom())).toList()))
             .orElseThrow(() -> new TekniskException("FPO-216725", String.format("Fant ingen perioder med feilutbetaling for bruker, behandlingId=%s", behandlingId)));
+    }
+
+    private static FeilutbetaltePerioderDto lagDto(Long sumFeilutbetaling, List<PeriodeDto> perioder) {
+        Objects.requireNonNull(sumFeilutbetaling, "sumFeilutbetaling");
+        return new FeilutbetaltePerioderDto(Math.abs(sumFeilutbetaling), perioder);
     }
 
     private Optional<SimulertBeregningResultat> hentResultat(Long behandlingId) {

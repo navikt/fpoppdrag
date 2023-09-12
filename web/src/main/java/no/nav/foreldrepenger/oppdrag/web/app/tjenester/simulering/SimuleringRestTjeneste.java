@@ -14,10 +14,10 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.OppdragskontrollDto;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.FeilutbetaltePerioderDto;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringDto;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringResultatDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.FeilutbetaltePerioderDto;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringResultatDto;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -69,7 +69,7 @@ public class SimuleringRestTjeneste {
     @Path("start")
     @Operation(description = "Start simulering for behandling med oppdrag via fpwsproxy", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
-    public Response startSimulering(@TilpassetAbacAttributt(supplierClass = OppdragskontrollDtoAbacSupplier.Supplier.class) @Valid OppdragskontrollDto oppdragskontrollDto) {
+    public Response startSimulering(@TilpassetAbacAttributt(supplierClass = OppdragskontrollDtoAbacSupplier.class) @Valid OppdragskontrollDto oppdragskontrollDto) {
         startSimuleringTjenesteFpWsProxy.startSimulering(oppdragskontrollDto);
         return Response.ok().build();
     }
@@ -101,16 +101,14 @@ public class SimuleringRestTjeneste {
         }
     }
 
-    public class OppdragskontrollDtoAbacSupplier {
+    public static class OppdragskontrollDtoAbacSupplier implements Function<Object, AbacDataAttributter> {
 
-        public static class Supplier implements Function<Object, AbacDataAttributter> {
-
-            @Override
-            public AbacDataAttributter apply(Object obj) {
-                var req = (OppdragskontrollDto) obj;
-                return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.BEHANDLING_ID, req.behandlingId());
-            }
+        @Override
+        public AbacDataAttributter apply(Object obj) {
+            var req = (OppdragskontrollDto) obj;
+            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.BEHANDLING_ID, req.behandlingId());
         }
+
     }
 
 }

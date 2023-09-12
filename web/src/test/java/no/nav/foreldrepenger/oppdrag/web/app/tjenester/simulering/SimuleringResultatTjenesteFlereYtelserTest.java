@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import jakarta.persistence.EntityManager;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.kodeverk.RadId;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringDto;
 import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
@@ -32,9 +34,7 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.KontraktFagområde;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.RadId;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
+
 
 @ExtendWith(JpaExtension.class)
 class SimuleringResultatTjenesteFlereYtelserTest {
@@ -106,7 +106,7 @@ class SimuleringResultatTjenesteFlereYtelserTest {
 
         // Resultat for foreldrepenger -- Skal være sortert slik at foreldrepenger kommer først
         var foreldrepenger = mottakerBruker.resultatPerFagområde().get(0);
-        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(KontraktFagområde.FP);
+        assertThat(foreldrepenger.fagOmrådeKode()).isEqualTo(no.nav.foreldrepenger.kontrakter.simulering.resultat.kodeverk.Fagområde.FP);
         assertThat(foreldrepenger.rader()).hasSize(3);
         assertThat(foreldrepenger.rader().get(0).resultaterPerMåned()).hasSize(2);
 
@@ -116,7 +116,7 @@ class SimuleringResultatTjenesteFlereYtelserTest {
 
         // Resultat for sykepenger
         var sykepenger = mottakerBruker.resultatPerFagområde().get(1);
-        assertThat(sykepenger.fagOmrådeKode()).isEqualTo(KontraktFagområde.SP);
+        assertThat(sykepenger.fagOmrådeKode()).isEqualTo(no.nav.foreldrepenger.kontrakter.simulering.resultat.kodeverk.Fagområde.SP);
         assertThat(sykepenger.rader()).hasSize(3);
         assertThat(sykepenger.rader().get(0).resultaterPerMåned()).hasSize(2);
         assertThat(sykepenger.rader().get(0).resultaterPerMåned().get(0).periode().fom()).isEqualTo(august_01);
