@@ -5,38 +5,12 @@ import java.util.Objects;
 
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 
-public class Mottaker {
-    private MottakerType mottakerType;
-    private String mottakerNummer;
-    private LocalDate nesteUtbetalingsperiodeFom;
-    private LocalDate nesteUtbetalingsperiodeTom;
+public record Mottaker(MottakerType mottakerType, String mottakerNummer, LocalDate nesteUtbetalingsperiodeFom, LocalDate nesteUtbetalingsperiodeTom) {
 
-
-    public Mottaker(MottakerType mottakerType, String mottakerNummer) {
-        this.mottakerType = mottakerType;
-        this.mottakerNummer = mottakerNummer;
+    public Mottaker(MottakerType mottakerType, String mottakerNummer, Periode periode) {
+        this(mottakerType, mottakerNummer, periode.getPeriodeFom(), periode.getPeriodeTom());
     }
 
-    public void setNesteUtbetalingsperiode(Periode periode) {
-        this.nesteUtbetalingsperiodeFom = periode.getPeriodeFom();
-        this.nesteUtbetalingsperiodeTom = periode.getPeriodeTom();
-    }
-
-    public MottakerType getMottakerType() {
-        return mottakerType;
-    }
-
-    public String getMottakerNummer() {
-        return mottakerNummer;
-    }
-
-    public LocalDate getNesteUtbetalingsperiodeFom() {
-        return nesteUtbetalingsperiodeFom;
-    }
-
-    public LocalDate getNesteUtbetalingsperiodeTom() {
-        return nesteUtbetalingsperiodeTom;
-    }
 
     @Override
     public boolean equals(Object o) {

@@ -55,7 +55,6 @@ public class SimuleringBeregningTjeneste {
         Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat = new HashMap<>();
 
         for (var simuleringMottaker : simuleringResultat.getSimuleringMottakere()) {
-            var mottaker = new Mottaker(simuleringMottaker.getMottakerType(), simuleringMottaker.getMottakerNummer());
             List<SimulertPostering> simulertePosteringer;
             if (beregnUtenInntrekk && MottakerType.BRUKER.equals(simuleringMottaker.getMottakerType())) {
                 simulertePosteringer = simuleringMottaker.getSimulertePosteringerUtenInntrekk();
@@ -63,7 +62,8 @@ public class SimuleringBeregningTjeneste {
                 simulertePosteringer = simuleringMottaker.getSimulertePosteringer();
             }
 
-            mottaker.setNesteUtbetalingsperiode(finnNesteUtbetalingsperiode(simulertePosteringer, simuleringGrunnlag.getSimuleringKjørtDato()));
+            var mottaker = new Mottaker(simuleringMottaker.getMottakerType(), simuleringMottaker.getMottakerNummer(),
+                finnNesteUtbetalingsperiode(simulertePosteringer, simuleringGrunnlag.getSimuleringKjørtDato()));
             var resultat = beregnPosteringerPerMånedOgFagområde(simulertePosteringer);
             beregningsresultat.put(mottaker, resultat);
         }
@@ -143,7 +143,7 @@ public class SimuleringBeregningTjeneste {
     }
 
     private static BigDecimal finnInntrekkSum(Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat, Fagområde fagOmrådeKode) {
-        var mottakerBrukerOpt = beregningsresultat.keySet().stream().filter(m -> m.getMottakerType().equals(MottakerType.BRUKER)).findFirst();
+        var mottakerBrukerOpt = beregningsresultat.keySet().stream().filter(m -> m.mottakerType().equals(MottakerType.BRUKER)).findFirst();
         if (mottakerBrukerOpt.isPresent()) {
             var mottaker = mottakerBrukerOpt.get();
             var perioder = beregningsresultat.get(mottaker);
@@ -163,10 +163,10 @@ public class SimuleringBeregningTjeneste {
 
     private static List<SimulertBeregning> finnBeregningerForBrukerForFagområde(Fagområde fagOmrådeKode,
                                                                                 Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat) {
-        var mottakerBrukerOpt = beregningsresultat.keySet().stream().filter(m -> m.getMottakerType().equals(MottakerType.BRUKER)).findFirst();
+        var mottakerBrukerOpt = beregningsresultat.keySet().stream().filter(m -> m.mottakerType().equals(MottakerType.BRUKER)).findFirst();
         if (mottakerBrukerOpt.isPresent()) {
             var mottakerBruker = mottakerBrukerOpt.get();
-            var nesteUtbetalingsperiode = YearMonth.from(mottakerBruker.getNesteUtbetalingsperiodeFom());
+            var nesteUtbetalingsperiode = YearMonth.from(mottakerBruker.nesteUtbetalingsperiodeFom());
             var resultatForBruker = beregningsresultat.get(mottakerBruker);
             return resultatForBruker.stream()
                     .filter(p -> erIkkeNesteUtbetalingsperiode(p.getPeriode(), nesteUtbetalingsperiode))
@@ -181,7 +181,7 @@ public class SimuleringBeregningTjeneste {
         LocalDate sisteTomDato = null;
         for (var entry : beregningsresultat.entrySet()) {
             var mottaker = entry.getKey();
-            var nesteUtbetalingsperiode = YearMonth.from(mottaker.getNesteUtbetalingsperiodeFom());
+            var nesteUtbetalingsperiode = YearMonth.from(mottaker.nesteUtbetalingsperiodeFom());
             var tomDato = entry.getValue().stream()
                     .filter(p -> erIkkeNesteUtbetalingsperiode(p.getPeriode(), nesteUtbetalingsperiode))
                     .map(b -> b.getPeriode().getPeriodeTom())
@@ -197,7 +197,7 @@ public class SimuleringBeregningTjeneste {
         LocalDate førsteFomDato = null;
         for (var entry : beregningsresultat.entrySet()) {
             var mottaker = entry.getKey();
-            var nesteUtbetalingsperiode = YearMonth.from(mottaker.getNesteUtbetalingsperiodeFom());
+            var nesteUtbetalingsperiode = YearMonth.from(mottaker.nesteUtbetalingsperiodeFom());
             var fomDato = entry.getValue().stream()
                     .filter(p -> erIkkeNesteUtbetalingsperiode(p.getPeriode(), nesteUtbetalingsperiode))
                     .map(b -> b.getPeriode().getPeriodeFom())

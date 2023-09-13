@@ -170,9 +170,6 @@ class RestApiInputValideringDtoTest extends RestApiTester {
                     "Klassen " + klasse + " er en entitet, kan ikke brukes som DTO. Brukes i " + forrigeKlasse);
         }
 
-        for (var subklasse : JsonSubTypesUtil.getJsonSubtypes(klasse)) {
-            validerRekursivt(besøkteKlasser, subklasse, forrigeKlasse);
-        }
         for (var field : getRelevantFields(klasse)) {
             if (field.getAnnotation(JsonIgnore.class) != null) {
                 continue; // feltet blir hverken serialisert elle deserialisert, unntas fra sjekk

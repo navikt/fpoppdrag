@@ -199,8 +199,8 @@ class SimuleringBeregningTjenesteTest {
         BigDecimal feilutbetaltBeløp = BigDecimal.valueOf(-5000);
         BigDecimal inntrekkNesteMåned = BigDecimal.valueOf(-3000);
         BigDecimal etterbetaling = BigDecimal.valueOf(4000);
-        Mottaker mottaker = new Mottaker(MottakerType.BRUKER, "12345");
-        mottaker.setNesteUtbetalingsperiode(new Periode(LocalDate.of(2018, 11, 1), LocalDate.of(2018, 11, 30)));
+        var mottaker = new Mottaker(MottakerType.BRUKER, "12345",
+            LocalDate.of(2018, 11, 1), LocalDate.of(2018, 11, 30));
 
         SimulertBeregningPeriode september = SimulertBeregningPeriode.builder()
                 .medPeriode(new Periode(LocalDate.of(2018, 9, 1), LocalDate.of(2018, 9, 30)))
@@ -241,8 +241,8 @@ class SimuleringBeregningTjenesteTest {
         // Arrange
         Map<Mottaker, List<SimulertBeregningPeriode>> beregningsresultat = new HashMap<>();
         BigDecimal feilutbetaltBeløp = BigDecimal.valueOf(-40000);
-        Mottaker mottaker = new Mottaker(MottakerType.BRUKER, "12345");
-        mottaker.setNesteUtbetalingsperiode(new Periode(LocalDate.of(2018, 11, 1), LocalDate.of(2018, 11, 30)));
+        var mottaker = new Mottaker(MottakerType.BRUKER, "12345",
+            LocalDate.of(2018, 11, 1), LocalDate.of(2018, 11, 30));
 
         SimulertBeregningPeriode simulertBeregningPeriode = SimulertBeregningPeriode.builder()
                 .medPeriode(new Periode(LocalDate.of(2018, 10, 1), LocalDate.of(2018, 10, 31)))
@@ -448,15 +448,15 @@ class SimuleringBeregningTjenesteTest {
 
         // Assert
         Map<Mottaker, List<SimulertBeregningPeriode>> beregningPerMottaker = resultat.getBeregningPerMottaker();
-        Optional<Mottaker> mottakerBruker = beregningPerMottaker.keySet().stream().filter(m -> m.getMottakerType().equals(MottakerType.BRUKER)).findFirst();
+        Optional<Mottaker> mottakerBruker = beregningPerMottaker.keySet().stream().filter(m -> m.mottakerType().equals(MottakerType.BRUKER)).findFirst();
         assertThat(mottakerBruker).isPresent();
-        assertThat(mottakerBruker.get().getNesteUtbetalingsperiodeFom()).isEqualTo(LocalDate.of(2018, 11, 1));
-        assertThat(mottakerBruker.get().getNesteUtbetalingsperiodeTom()).isEqualTo(LocalDate.of(2018, 11, 30));
+        assertThat(mottakerBruker.get().nesteUtbetalingsperiodeFom()).isEqualTo(LocalDate.of(2018, 11, 1));
+        assertThat(mottakerBruker.get().nesteUtbetalingsperiodeTom()).isEqualTo(LocalDate.of(2018, 11, 30));
 
-        Optional<Mottaker> mottakerArbg = beregningPerMottaker.keySet().stream().filter(m -> m.getMottakerType().equals(MottakerType.ARBG_ORG)).findFirst();
+        Optional<Mottaker> mottakerArbg = beregningPerMottaker.keySet().stream().filter(m -> m.mottakerType().equals(MottakerType.ARBG_ORG)).findFirst();
         assertThat(mottakerArbg).isPresent();
-        assertThat(mottakerArbg.get().getNesteUtbetalingsperiodeFom()).isEqualTo(LocalDate.of(2018, 12, 1));
-        assertThat(mottakerArbg.get().getNesteUtbetalingsperiodeTom()).isEqualTo(LocalDate.of(2018, 12, 31));
+        assertThat(mottakerArbg.get().nesteUtbetalingsperiodeFom()).isEqualTo(LocalDate.of(2018, 12, 1));
+        assertThat(mottakerArbg.get().nesteUtbetalingsperiodeTom()).isEqualTo(LocalDate.of(2018, 12, 31));
     }
 
     @Test
@@ -520,8 +520,8 @@ class SimuleringBeregningTjenesteTest {
                 postering("01.06.2019-30.06.2019", FP, FEIL, K, 9300)
         ));
 
-        Mottaker mottaker = new Mottaker(MottakerType.BRUKER, "1");
-        mottaker.setNesteUtbetalingsperiode(new Periode(LocalDate.of(2019, 12, 1), LocalDate.of(2019, 12, 31)));
+        var mottaker = new Mottaker(MottakerType.BRUKER, "1", LocalDate.of(2019, 12, 1),
+            LocalDate.of(2019, 12, 31));
         Map<Mottaker, List<SimulertBeregningPeriode>> resultatForBruker = Map.of(mottaker, resultat);
 
         //act
@@ -542,8 +542,8 @@ class SimuleringBeregningTjenesteTest {
                 postering("26.11.2020-30.11.2020", FP, FEIL, D, 6381)
         ));
 
-        Mottaker mottaker = new Mottaker(MottakerType.BRUKER, "1");
-        mottaker.setNesteUtbetalingsperiode(new Periode(LocalDate.of(2020, 11, 1), LocalDate.of(2020, 11, 30)));
+        var mottaker = new Mottaker(MottakerType.BRUKER, "1", LocalDate.of(2020, 11, 1),
+            LocalDate.of(2020, 11, 30));
         Map<Mottaker, List<SimulertBeregningPeriode>> resultatForBruker = Map.of(mottaker, resultat);
 
         //act

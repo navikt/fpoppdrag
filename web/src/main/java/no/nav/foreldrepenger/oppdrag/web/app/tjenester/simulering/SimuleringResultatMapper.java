@@ -10,10 +10,13 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.kodeverk.Fagområde;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.kodeverk.RadId;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.PeriodeDto;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.BeregningResultat;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.Mottaker;
@@ -21,13 +24,9 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.Oppsummering;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.Periode;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimulertBeregningPeriode;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimulertBeregningResultat;
-import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.KontraktFagområde;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.RadId;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
 
 class SimuleringResultatMapper {
 
@@ -57,7 +56,7 @@ class SimuleringResultatMapper {
         for (var entry : beregningPerMottaker.entrySet()) {
             var mottaker = entry.getKey();
             var perioder = entry.getValue();
-            if (MottakerType.BRUKER.equals(mottaker.getMottakerType())) {
+            if (MottakerType.BRUKER.equals(mottaker.mottakerType())) {
                 simuleringResultatBuilder.medIngenPerioderMedAvvik(harIngenPerioderMedAvvik(mottaker, perioder));
             }
             leggTilBeregnetResultat(mottaker, perioder, ytelseType);
@@ -67,7 +66,7 @@ class SimuleringResultatMapper {
     }
 
     private boolean harIngenPerioderMedAvvik(Mottaker mottaker, List<SimulertBeregningPeriode> perioder) {
-        var nesteUtbetalingsperiode = YearMonth.from(mottaker.getNesteUtbetalingsperiodeFom());
+        var nesteUtbetalingsperiode = YearMonth.from(mottaker.nesteUtbetalingsperiodeFom());
         var harTidligereUtbetalingsperiode = perioder.stream()
                 .anyMatch(p -> !YearMonth.from(p.getPeriode().getPeriodeFom()).equals(nesteUtbetalingsperiode));
         return !harTidligereUtbetalingsperiode;
@@ -90,8 +89,8 @@ class SimuleringResultatMapper {
     }
 
     private SimuleringDto.SimuleringForMottakerDto mapMottaker(Mottaker mottaker, List<SimulertBeregningPeriode> simulertBeregningPerioder, YtelseType ytelseType) {
-        var mottakerType = mottaker.getMottakerType();
-        var mottakerNummer = mottaker.getMottakerNummer();
+        var mottakerType = mottaker.mottakerType();
+        var mottakerNummer = mottaker.mottakerNummer();
 
         var builder = new SimuleringForMottakerDtoBuilder()
                 .medGjelderYtelseType(ytelseType)
@@ -99,7 +98,7 @@ class SimuleringResultatMapper {
                 .medResultatPerFagområde(mapPerFagområde(simulertBeregningPerioder));
 
         if (ytelseType.erIkkeEngangsstønad()) {
-            builder.medNesteUtbetalingsperiode(mottaker.getNesteUtbetalingsperiodeFom(), mottaker.getNesteUtbetalingsperiodeTom());
+            builder.medNesteUtbetalingsperiode(mottaker.nesteUtbetalingsperiodeFom(), mottaker.nesteUtbetalingsperiodeTom());
         }
 
         if (MottakerType.BRUKER.equals(mottakerType)) {
@@ -159,21 +158,18 @@ class SimuleringResultatMapper {
 
     private SimuleringDto.SimuleringResultatRadDto mapPerMåned(List<SimulertBeregningPeriode> simulertBeregningPerioder, Function<SimulertBeregningPeriode, BigDecimal> hva, RadId feltnavn) {
         var månedsresultater = simulertBeregningPerioder.stream()
-            .map(sbp -> new SimuleringDto.SimuleringResultatPerMånedDto(sbp.getPeriode().getPeriodeFom(), sbp.getPeriode().getPeriodeTom(), hva.apply(sbp)))
+            .map(sbp -> lagResultatPerMånedDto(sbp.getPeriode(), hva.apply(sbp)))
             .toList();
         return lagRadDtoMedSortertePerioder(feltnavn, månedsresultater);
     }
 
     private boolean erFlereFagområder(List<SimulertBeregningPeriode> simulertBeregningPerioder) {
-        return finnUnikeFagområder(simulertBeregningPerioder).size() > 1;
-    }
-
-    private Set<Fagområde> finnUnikeFagområder(List<SimulertBeregningPeriode> simulertBeregningPerioder) {
         return simulertBeregningPerioder
                 .stream()
                 .map(p -> p.getBeregningPerFagområde().keySet())
                 .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet())
+                .size() > 1;
     }
 
 
@@ -185,7 +181,7 @@ class SimuleringResultatMapper {
             var rader = mapForFagområde(entry.getValue()).stream()
                 .sorted(Comparator.comparingInt(o -> o.feltnavn().ordinal()))
                 .toList();
-            resultat.add(new SimuleringDto.SimuleringResultatPerFagområdeDto(KontraktFagområde.valueOf(entry.getKey().name()), rader));
+            resultat.add(new SimuleringDto.SimuleringResultatPerFagområdeDto(entry.getKey(), rader));
         }
         return resultat;
     }
@@ -214,7 +210,7 @@ class SimuleringResultatMapper {
         for (var sbp : simulertBeregningPerioder) {
             var periode = sbp.getPeriode();
             for (var entry : sbp.getBeregningPerFagområde().entrySet()) {
-                var fagOmråde = entry.getKey();
+                var fagOmråde = Fagområde.valueOf(entry.getKey().name());
                 var beregning = entry.getValue();
                 var resultatPerFelt = perFagområde.get(fagOmråde);
                 leggTil(resultatPerFelt, RadId.NYTT_BELØP, periode, beregning.getNyttBeregnetBeløp());
@@ -228,12 +224,18 @@ class SimuleringResultatMapper {
     private Map<Fagområde, Map<RadId, List<SimuleringDto.SimuleringResultatPerMånedDto>>> lagTommeResultatRader(List<SimulertBeregningPeriode> simulertBeregningPerioder) {
         return simulertBeregningPerioder.stream()
                 .flatMap(sbp -> sbp.getBeregningPerFagområde().keySet().stream())
+                .map(fo -> Fagområde.valueOf(fo.name()))
                 .distinct()
                 .collect(Collectors.toMap(Function.identity(), f -> lagTommeResultatRader()));
     }
 
     private static void leggTil(Map<RadId, List<SimuleringDto.SimuleringResultatPerMånedDto>> resultatPerFelt, RadId feltnavn, Periode periode, BigDecimal verdi) {
-        resultatPerFelt.get(feltnavn).add(new SimuleringDto.SimuleringResultatPerMånedDto(periode.getPeriodeFom(), periode.getPeriodeTom(), verdi));
+        resultatPerFelt.get(feltnavn).add(lagResultatPerMånedDto(periode, verdi));
+    }
+
+    private static SimuleringDto.SimuleringResultatPerMånedDto lagResultatPerMånedDto(Periode periode, BigDecimal verdi) {
+        return new SimuleringDto.SimuleringResultatPerMånedDto(new PeriodeDto(periode.getPeriodeFom(), periode.getPeriodeTom()),
+            verdi != null ? verdi.longValue() : null);
     }
 
     private boolean skalViseFeltForFagområde(RadId feltnavn, boolean harTidligereUtbetaltBeløp) {

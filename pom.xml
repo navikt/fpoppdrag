@@ -31,6 +31,7 @@
         <sonar.projectKey>navikt_fpoppdrag</sonar.projectKey>
 
         <felles.version>5.1.0</felles.version>
+        <kontrakter.version>7.0.1</kontrakter.version>
     </properties>
 
     <dependencyManagement>
@@ -88,7 +89,12 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
                 <artifactId>fp-ws-proxy-v1</artifactId>
-                <version>7.0.0</version>
+                <version>${kontrakter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+                <artifactId>simulering-resultat-v1</artifactId>
+                <version>${kontrakter.version}</version>
             </dependency>
 
             <!-- Intern Test -->

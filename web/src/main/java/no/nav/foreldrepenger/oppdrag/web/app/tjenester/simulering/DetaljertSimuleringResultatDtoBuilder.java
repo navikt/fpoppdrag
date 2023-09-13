@@ -5,10 +5,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.KontraktMottakerType;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.PeriodeDto;
-import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.dto.SimuleringDto;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.kodeverk.MottakerType;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.PeriodeDto;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringDto;
+
 
 public class DetaljertSimuleringResultatDtoBuilder {
     private PeriodeDto periode;
@@ -53,7 +53,7 @@ public class DetaljertSimuleringResultatDtoBuilder {
         if (this.periode == null) {
             this.periode = new PeriodeDto(null, null);
         }
-        this.perioderPerMottaker.sort((o1, o2) -> KontraktMottakerType.BRUKER.equals(o1.mottakerType()) ? -1 : 1);
+        this.perioderPerMottaker.sort((o1, o2) -> MottakerType.BRUKER.equals(o1.mottakerType()) ? -1 : 1);
         return new SimuleringDto.DetaljertSimuleringResultatDto(this.periode, this.ingenPerioderMedAvvik, this.sumEtterbetaling, this.sumFeilutbetaling, this.sumInntrekk,
             this.perioderPerMottaker);
     }
