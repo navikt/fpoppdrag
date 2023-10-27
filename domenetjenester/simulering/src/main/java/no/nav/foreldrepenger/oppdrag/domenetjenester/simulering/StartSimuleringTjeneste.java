@@ -7,12 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.Oppdrag110Dto;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.OppdragskontrollDto;
@@ -76,7 +75,7 @@ public class StartSimuleringTjeneste {
             // Deaktiverer forrige simuleringgrunnlag hvis den nye simuleringen returnerer et tomt svar
             // f.eks. oppdrag finnes fra før, tom respons fra øk, FeilUnderBehandling som ikke er error
             // for å unngå å sende simuleringsresultat for forrige simulering når den nye simuleringen returnerer tomt resultat
-            deaktiverBehandling(Long.parseLong(behandlingId));
+            deaktiverBehandling(behandlingId);
 
         }
         LOG.info("Fullført simulering. behandlingID={} tidsforbrukTotalt={} ms", behandlingId, System.currentTimeMillis() - t0);
@@ -115,7 +114,7 @@ public class StartSimuleringTjeneste {
                 && feilutbetaling != null && feilutbetaling.compareTo(BigDecimal.ZERO) != 0;
     }
 
-    private YtelseType bestemYtelseType(String behandlingId, List<Oppdrag110Dto> oppdrag) {
+    private YtelseType bestemYtelseType(Long behandlingId, List<Oppdrag110Dto> oppdrag) {
         var fagOmrådeKoder = oppdrag.stream()
                 .map(Oppdrag110Dto::kodeFagomrade)
                 .distinct()
@@ -143,7 +142,7 @@ public class StartSimuleringTjeneste {
         return ytelseType.get();
     }
 
-    private SimuleringGrunnlag transformerTilDatastruktur(String behandlingId, List<BeregningDto> beregningDtoListe, YtelseType ytelseType) {
+    private SimuleringGrunnlag transformerTilDatastruktur(Long behandlingId, List<BeregningDto> beregningDtoListe, YtelseType ytelseType) {
         // Finn første gjelderId hvor responsen ikke er en null-verdi
         var gjelderIdFnr = beregningDtoListe.stream()
                 .filter(Objects::nonNull)
@@ -166,7 +165,7 @@ public class StartSimuleringTjeneste {
         mottakerBuilderMap.forEach((key, builder) -> simuleringResultatBuilder.medSimuleringMottaker(builder.build()));
 
         return SimuleringGrunnlag.builder()
-                .medEksternReferanse(new BehandlingRef(Long.parseLong(behandlingId)))
+                .medEksternReferanse(new BehandlingRef(behandlingId))
                 .medAktørId(gjelderId)
                 .medSimuleringResultat(simuleringResultatBuilder.build())
                 .medSimuleringKjørtDato(LocalDateTime.now())
