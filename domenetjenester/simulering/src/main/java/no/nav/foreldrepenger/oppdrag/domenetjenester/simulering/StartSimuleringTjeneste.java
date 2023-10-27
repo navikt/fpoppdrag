@@ -76,7 +76,7 @@ public class StartSimuleringTjeneste {
             // Deaktiverer forrige simuleringgrunnlag hvis den nye simuleringen returnerer et tomt svar
             // f.eks. oppdrag finnes fra før, tom respons fra øk, FeilUnderBehandling som ikke er error
             // for å unngå å sende simuleringsresultat for forrige simulering når den nye simuleringen returnerer tomt resultat
-            deaktiverBehandling(behandlingId);
+            deaktiverBehandling(Long.parseLong(behandlingId));
 
         }
         LOG.info("Fullført simulering. behandlingID={} tidsforbrukTotalt={} ms", behandlingId, System.currentTimeMillis() - t0);
@@ -115,7 +115,7 @@ public class StartSimuleringTjeneste {
                 && feilutbetaling != null && feilutbetaling.compareTo(BigDecimal.ZERO) != 0;
     }
 
-    private YtelseType bestemYtelseType(Long behandlingId, List<Oppdrag110Dto> oppdrag) {
+    private YtelseType bestemYtelseType(String behandlingId, List<Oppdrag110Dto> oppdrag) {
         var fagOmrådeKoder = oppdrag.stream()
                 .map(Oppdrag110Dto::kodeFagomrade)
                 .distinct()
@@ -143,7 +143,7 @@ public class StartSimuleringTjeneste {
         return ytelseType.get();
     }
 
-    private SimuleringGrunnlag transformerTilDatastruktur(long behandlingId, List<BeregningDto> beregningDtoListe, YtelseType ytelseType) {
+    private SimuleringGrunnlag transformerTilDatastruktur(String behandlingId, List<BeregningDto> beregningDtoListe, YtelseType ytelseType) {
         // Finn første gjelderId hvor responsen ikke er en null-verdi
         var gjelderIdFnr = beregningDtoListe.stream()
                 .filter(Objects::nonNull)
@@ -166,7 +166,7 @@ public class StartSimuleringTjeneste {
         mottakerBuilderMap.forEach((key, builder) -> simuleringResultatBuilder.medSimuleringMottaker(builder.build()));
 
         return SimuleringGrunnlag.builder()
-                .medEksternReferanse(new BehandlingRef(behandlingId))
+                .medEksternReferanse(new BehandlingRef(Long.parseLong(behandlingId)))
                 .medAktørId(gjelderId)
                 .medSimuleringResultat(simuleringResultatBuilder.build())
                 .medSimuleringKjørtDato(LocalDateTime.now())

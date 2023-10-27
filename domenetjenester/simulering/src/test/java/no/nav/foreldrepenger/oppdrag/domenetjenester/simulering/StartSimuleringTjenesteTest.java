@@ -17,12 +17,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import jakarta.persistence.EntityManager;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import jakarta.persistence.EntityManager;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.KodeEndring;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.KodeEndringLinje;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.KodeFagområde;
@@ -76,7 +75,7 @@ public class StartSimuleringTjenesteTest {
     @Test
     void test_skal_deaktivere_forrige_simulering_når_ny_simulering_gir_tomt_resultat() throws Exception {
         var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
-        var oppdragskontrollSimulering1 = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
+        var oppdragskontrollSimulering1 = new OppdragskontrollDto(BEHANDLING_ID_2.toString(), List.of(oppdrag1));
         when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("12345678999", "423535", oppdragskontrollSimulering1));
         simuleringTjeneste.startSimulering(oppdragskontrollSimulering1);
 
@@ -85,7 +84,7 @@ public class StartSimuleringTjenesteTest {
         assertThat(grunnlagOpt1.get().isAktiv()).isTrue();
 
         var oppdrag2 = lagOppdragRefusjon();
-        var oppdragskontrollDtoSimulering2 = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag2));
+        var oppdragskontrollDtoSimulering2 = new OppdragskontrollDto(BEHANDLING_ID_2.toString(), List.of(oppdrag2));
         when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(null);
         simuleringTjeneste.startSimulering(oppdragskontrollDtoSimulering2);
 
@@ -96,7 +95,7 @@ public class StartSimuleringTjenesteTest {
     @Test
     void test_skal_deaktiver_behandling_med_gitt_behandling() {
         var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
-        OppdragskontrollDto oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
+        OppdragskontrollDto oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2.toString(), List.of(oppdrag1));
 
         when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("12345678999", "423535", oppdragskontrollDto));
         simuleringTjeneste.startSimulering(oppdragskontrollDto);
@@ -114,7 +113,7 @@ public class StartSimuleringTjenesteTest {
     void mapperFlereBeregningsresultatTilSammeMottaker() {
         // Arrange
         var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
-        var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1, oppdrag1));
+        var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2.toString(), List.of(oppdrag1, oppdrag1));
         List<BeregningDto> mockRespons = lagRespons("12345678999", "423535", oppdragskontrollDto);
         when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(mockRespons);
 
@@ -141,7 +140,7 @@ public class StartSimuleringTjenesteTest {
         String gjelderId = "12345678910";
         String fagsysId = "423535";
         var oppdrag = lagOppdrag(Long.parseLong(fagsysId), gjelderId);
-        var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_1, List.of(oppdrag));
+        var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_1.toString(), List.of(oppdrag));
         var response = lagRespons(gjelderId, fagsysId, pattern.format(LocalDate.now()), oppdragskontrollDto);
 
         // Legger til feilutbetaling
@@ -190,7 +189,7 @@ public class StartSimuleringTjenesteTest {
     void bestemmerYtelseTypeOgLagrerDetPåSimuleringsGrunnlaget() {
         // Arrange
         var oppdrag = lagOppdrag(130158784200L, "12345678910");
-        var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag));
+        var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2.toString(), List.of(oppdrag));
         when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("12345678999", "423535", oppdragskontrollDto));
 
         // Act
@@ -211,7 +210,7 @@ public class StartSimuleringTjenesteTest {
         return new Oppdrag110Dto(
                 KodeEndring.NY,
                 KodeFagområde.FP,
-                fagsystemId,
+                fagsystemId.toString(),
                 oppdragGjelderId,
                 "Z999999",
                 null,
@@ -240,7 +239,7 @@ public class StartSimuleringTjenesteTest {
         return new Oppdrag110Dto(
                 KodeEndring.NY,
                 KodeFagområde.FPREF,
-                135702910101L,
+                "135702910101",
                 "12345678999",
                 "Z991097",
                 null,
@@ -253,7 +252,7 @@ public class StartSimuleringTjenesteTest {
         return new Oppdragslinje150Dto(
                 KodeEndringLinje.NY,
                 "2018-08-16",
-                delytelseId,
+                delytelseId.toString(),
                 KodeKlassifik.FPF_FRILANSER,
                 new LukketPeriode(datoVedtakFom, datoVedtakTom),
                 new SatsDto(738),
@@ -262,8 +261,8 @@ public class StartSimuleringTjenesteTest {
                 KodeStatusLinje.OPPH,
                 LocalDate.of(2018, 5, 11),
                 oppdragGjelderId,
-                refDelytelseId,
-                refFagsystemId,
+                refDelytelseId == null ? null : refDelytelseId.toString(),
+                refFagsystemId == null ? null : refFagsystemId.toString(),
                 lagRefusjonsinfo156(refusjon)
         );
     }
