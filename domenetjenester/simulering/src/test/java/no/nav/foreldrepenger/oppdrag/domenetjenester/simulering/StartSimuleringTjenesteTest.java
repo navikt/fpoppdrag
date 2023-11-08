@@ -53,8 +53,10 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
 @ExtendWith(JpaExtension.class)
 public class StartSimuleringTjenesteTest {
 
-    private static final Long BEHANDLING_ID_1 = 42345L;
-    private static final Long BEHANDLING_ID_2 = 87890L;
+    private static final String  BEHANDLING_ID_1 = "42345";
+    private static final String BEHANDLING_ID_2 = "87890";
+    private static final Long BEHANDLING_ID_1_L = 42345L;
+    private static final Long BEHANDLING_ID_2_L = 87890L;
     private static final String AKTØR_ID = "1234567890123";
 
     private final FpWsProxySimuleringKlient fpWsProxySimuleringKlient = mock(FpWsProxySimuleringKlient.class);
@@ -74,12 +76,12 @@ public class StartSimuleringTjenesteTest {
 
     @Test
     void test_skal_deaktivere_forrige_simulering_når_ny_simulering_gir_tomt_resultat() throws Exception {
-        var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
+        var oppdrag1 = lagOppdrag("130158784200", "12345678910");
         var oppdragskontrollSimulering1 = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
         when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("12345678999", "423535", oppdragskontrollSimulering1));
         simuleringTjeneste.startSimulering(oppdragskontrollSimulering1);
 
-        Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
+        Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2_L);
         assertThat(grunnlagOpt1).isPresent();
         assertThat(grunnlagOpt1.get().isAktiv()).isTrue();
 
@@ -88,31 +90,31 @@ public class StartSimuleringTjenesteTest {
         when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(null);
         simuleringTjeneste.startSimulering(oppdragskontrollDtoSimulering2);
 
-        Optional<SimuleringGrunnlag> grunnlagOpt2 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
+        Optional<SimuleringGrunnlag> grunnlagOpt2 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2_L);
         assertThat(grunnlagOpt2).isEmpty();
     }
 
     @Test
     void test_skal_deaktiver_behandling_med_gitt_behandling() {
-        var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
+        var oppdrag1 = lagOppdrag("130158784200", "12345678910");
         OppdragskontrollDto oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
 
         when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("12345678999", "423535", oppdragskontrollDto));
         simuleringTjeneste.startSimulering(oppdragskontrollDto);
 
-        Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
+        Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2_L);
         assertThat(grunnlagOpt1).isPresent();
         assertThat(grunnlagOpt1.get().isAktiv()).isTrue();
 
-        simuleringTjeneste.kansellerSimulering(BEHANDLING_ID_2);
-        Optional<SimuleringGrunnlag> grunnlagOpt2 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
+        simuleringTjeneste.kansellerSimulering(BEHANDLING_ID_2_L);
+        Optional<SimuleringGrunnlag> grunnlagOpt2 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2_L);
         assertThat(grunnlagOpt2).isNotPresent();
     }
 
     @Test
     void mapperFlereBeregningsresultatTilSammeMottaker() {
         // Arrange
-        var oppdrag1 = lagOppdrag(130158784200L, "12345678910");
+        var oppdrag1 = lagOppdrag("130158784200", "12345678910");
         var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1, oppdrag1));
         List<BeregningDto> mockRespons = lagRespons("12345678999", "423535", oppdragskontrollDto);
         when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(mockRespons);
@@ -121,7 +123,7 @@ public class StartSimuleringTjenesteTest {
         simuleringTjeneste.startSimulering(oppdragskontrollDto);
 
         // Assert
-        Optional<SimuleringGrunnlag> grunnlagOpt = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
+        Optional<SimuleringGrunnlag> grunnlagOpt = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2_L);
         assertThat(grunnlagOpt).isPresent();
 
         Set<SimuleringMottaker> mottakere = grunnlagOpt.get().getSimuleringResultat().getSimuleringMottakere();
@@ -139,7 +141,7 @@ public class StartSimuleringTjenesteTest {
         LocalDate fom = forfallsdato.withDayOfMonth(1);
         String gjelderId = "12345678910";
         String fagsysId = "423535";
-        var oppdrag = lagOppdrag(Long.parseLong(fagsysId), gjelderId);
+        var oppdrag = lagOppdrag(fagsysId, gjelderId);
         var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_1, List.of(oppdrag));
         var response = lagRespons(gjelderId, fagsysId, pattern.format(LocalDate.now()), oppdragskontrollDto);
 
@@ -174,7 +176,7 @@ public class StartSimuleringTjenesteTest {
         // Assert
         verify(fpWsProxySimuleringKlient, times(2)).utførSimuleringMedExceptionHandling(any(), any(), anyBoolean());
 
-        Optional<SimuleringGrunnlag> simuleringGrunnlag = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_1);
+        Optional<SimuleringGrunnlag> simuleringGrunnlag = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_1_L);
         assertThat(simuleringGrunnlag).isPresent();
 
         Set<SimuleringMottaker> simuleringMottakere = simuleringGrunnlag.get().getSimuleringResultat().getSimuleringMottakere();
@@ -188,7 +190,7 @@ public class StartSimuleringTjenesteTest {
     @Test
     void bestemmerYtelseTypeOgLagrerDetPåSimuleringsGrunnlaget() {
         // Arrange
-        var oppdrag = lagOppdrag(130158784200L, "12345678910");
+        var oppdrag = lagOppdrag("130158784200", "12345678910");
         var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag));
         when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("12345678999", "423535", oppdragskontrollDto));
 
@@ -196,17 +198,17 @@ public class StartSimuleringTjenesteTest {
         simuleringTjeneste.startSimulering(oppdragskontrollDto);
 
         // Assert
-        Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2);
+        Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2_L);
         assertThat(grunnlagOpt1).isPresent();
         assertThat(grunnlagOpt1.get().getYtelseType()).isEqualTo(YtelseType.FP);
     }
 
 
-    public static Oppdrag110Dto lagOppdrag(Long fagsystemId, String oppdragGjelderId) { // Skal være relativt lik oppdrag_mottaker_2.xml
+    public static Oppdrag110Dto lagOppdrag(String fagsystemId, String oppdragGjelderId) { // Skal være relativt lik oppdrag_mottaker_2.xml
         List<Oppdragslinje150Dto> oppdragslinje150 = new ArrayList<>();
         oppdragslinje150.add(lagOppdragslinlje150(oppdragGjelderId, LocalDate.of(2018, 5, 11),
                         LocalDate.of(2018, 5, 31),
-                        130158784200100L, 135702910101L, 135702910101100L, false));
+                        "130158784200100", "135702910101", "135702910101100", false));
         return new Oppdrag110Dto(
                 KodeEndring.NY,
                 KodeFagområde.FP,
@@ -223,23 +225,23 @@ public class StartSimuleringTjenesteTest {
         oppdragslinje150.add(lagOppdragslinlje150("12345678910",
                         LocalDate.of(2017, 9, 7),
                         LocalDate.of(2017, 9, 9),
-                        130158784200100L, null, null, true));
+                        "130158784200100", null, null, true));
         oppdragslinje150.add(lagOppdragslinlje150("12345678910",
                         LocalDate.of(2017, 9, 10),
                         LocalDate.of(2017, 9, 28),
-                        135702910101101L,135702910101L, 135702910101100L, true));
+                        "135702910101101","135702910101", "135702910101100", true));
         oppdragslinje150.add(lagOppdragslinlje150("12345678910",
                         LocalDate.of(2017, 10, 1),
                         LocalDate.of(2017, 10, 10),
-                        135702910101101L,135702910101L, 135702910101101L, true));
+                        "135702910101101","135702910101", "135702910101101", true));
         oppdragslinje150.add(lagOppdragslinlje150("12345678910",
                         LocalDate.of(2018, 5, 1),
                         LocalDate.of(2018, 5, 31),
-                        135702910101101L,null, null, true));
+                        "135702910101101",null, null, true));
         return new Oppdrag110Dto(
                 KodeEndring.NY,
                 KodeFagområde.FPREF,
-                135702910101L,
+                "135702910101",
                 "12345678999",
                 "Z991097",
                 null,
@@ -248,7 +250,7 @@ public class StartSimuleringTjenesteTest {
     }
 
     private static Oppdragslinje150Dto lagOppdragslinlje150(String oppdragGjelderId, LocalDate datoVedtakFom, LocalDate datoVedtakTom,
-                                                            Long delytelseId, Long refFagsystemId, Long refDelytelseId, boolean refusjon) {
+                                                            String delytelseId, String refFagsystemId, String refDelytelseId, boolean refusjon) {
         return new Oppdragslinje150Dto(
                 KodeEndringLinje.NY,
                 "2018-08-16",

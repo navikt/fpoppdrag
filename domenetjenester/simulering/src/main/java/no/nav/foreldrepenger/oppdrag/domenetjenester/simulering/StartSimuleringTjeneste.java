@@ -55,7 +55,7 @@ public class StartSimuleringTjeneste {
 
     public void startSimulering(OppdragskontrollDto oppdragskontrollDto) {
         long t0 = System.currentTimeMillis();
-        var behandlingId = oppdragskontrollDto.behandlingId();
+        var behandlingId = Long.parseLong(oppdragskontrollDto.behandlingId());
         LOG.info("Starter simulering. behandlingID={} oppdragantall={}", behandlingId, oppdragskontrollDto.oppdrag().size());
 
         var simuleringResponsListe = utførSimuleringViaFpWsProxy(oppdragskontrollDto);
