@@ -106,7 +106,7 @@ public class SimuleringRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (OppdragskontrollDto) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.BEHANDLING_ID, req.behandlingId());
+            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.BEHANDLING_ID, Long.parseLong(req.behandlingId()));
         }
 
     }
