@@ -13,6 +13,7 @@ import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringDto;
 import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringResultatDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.FeilutbetalingTjeneste;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.Oppsummering;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimulertBeregningResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
@@ -46,13 +47,16 @@ public class SimuleringResultatTjeneste {
 
         var beregningResultat = resultat.getBeregningResultatUtenInntrekk().filter(r -> slåttAvInntrekk).orElseGet(resultat::getBeregningResultat);
 
-        return lagSimuleringResultatDto(beregningResultat.getOppsummering().getFeilutbetaling(),
-            beregningResultat.getOppsummering().getInntrekkNesteUtbetaling(), slåttAvInntrekk);
+        return lagSimuleringResultatDto(beregningResultat.getOppsummering(), slåttAvInntrekk);
     }
 
-    private static SimuleringResultatDto lagSimuleringResultatDto(BigDecimal sumFeilutbetaling, BigDecimal sumInntrekk, boolean slåttAvInntrekk) {
-        return new SimuleringResultatDto(sumFeilutbetaling != null ? sumFeilutbetaling.longValue() : null,
-            sumInntrekk != null ? sumInntrekk.longValue() : null, slåttAvInntrekk);
+    private static SimuleringResultatDto lagSimuleringResultatDto(Oppsummering oppsummering, boolean slåttAvInntrekk) {
+        return new SimuleringResultatDto(
+            oppsummering.getFeilutbetaling() != null ? oppsummering.getFeilutbetaling().longValue() : null,
+            oppsummering.getInntrekkNesteUtbetaling() != null ? oppsummering.getInntrekkNesteUtbetaling().longValue() : null,
+            oppsummering.getEtterbetaling() != null ? oppsummering.getEtterbetaling().longValue() : null,
+            slåttAvInntrekk
+        );
     }
 
     public Optional<SimuleringDto> hentDetaljertSimuleringsResultat(Long behandlingId) {
