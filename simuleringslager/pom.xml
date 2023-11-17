@@ -5,7 +5,7 @@
     <parent>
         <artifactId>fpoppdrag</artifactId>
         <groupId>no.nav.foreldrepenger.oppdrag</groupId>
-        <version>${revision}</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>simuleringslager</artifactId>
