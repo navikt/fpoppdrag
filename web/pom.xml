@@ -5,7 +5,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.oppdrag</groupId>
         <artifactId>fpoppdrag</artifactId>
-        <version>${revision}</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>webapp</artifactId>
@@ -70,8 +70,8 @@
             <artifactId>felles-feil</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.nav.foreldrepenger</groupId>
-            <artifactId>konfig</artifactId>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-konfig</artifactId>
         </dependency>
 
         <!-- Jersey server -->
