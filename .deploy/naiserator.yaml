@@ -38,11 +38,11 @@ spec:
         thresholdPercentage: 80
   resources:
     limits:
-      cpu: "1500m"
-      memory: "1024Mi"
+      cpu: "{{limits.cpu}}"
+      memory: "{{limits.mem}}"
     requests:
-      cpu: "200m"
-      memory: "512Mi"
+      cpu: "{{requests.cpu}}"
+      memory: "{{requests.mem}}"
   vault:
     enabled: true
     paths:
@@ -54,11 +54,6 @@ spec:
         kvPath: {{serviceusersecretpath}}
   secureLogs:
     enabled: true
-  env:
-  {{#each env}}
-     - name: {{@key}}
-       value: "{{this}}"
-  {{/each}}
   azure:
     application:
       enabled: true
