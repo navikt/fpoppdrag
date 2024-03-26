@@ -7,9 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import jakarta.ws.rs.ApplicationPath;
-import jakarta.ws.rs.core.Application;
-
 import org.glassfish.jersey.server.ServerProperties;
 
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
@@ -19,6 +16,8 @@ import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.foreldrepenger.oppdrag.web.app.exceptions.ConstraintViolationMapper;
 import no.nav.foreldrepenger.oppdrag.web.app.exceptions.GeneralRestExceptionMapper;
@@ -65,6 +64,9 @@ public class ApiConfig extends Application {
         Set<Class<?>> classes = new HashSet<>();
         // eksponert grensesnitt
         classes.add(SimuleringRestTjeneste.class);
+
+        // Autentisering
+        classes.add(AuthenticationFilter.class);
 
         // swagger
         classes.add(OpenApiResource.class);
