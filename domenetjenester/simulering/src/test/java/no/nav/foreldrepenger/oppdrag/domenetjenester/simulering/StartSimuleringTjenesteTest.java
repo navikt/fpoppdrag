@@ -17,9 +17,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import jakarta.persistence.EntityManager;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.KodeEndring;
@@ -39,7 +42,6 @@ import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningDt
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningStoppnivåDetaljerDto;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningStoppnivåDto;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningsPeriodeDto;
-import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy.FpWsProxySimuleringKlient;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
