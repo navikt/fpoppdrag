@@ -30,6 +30,10 @@ public class YtelseUtleder {
             case PNREF -> YtelseType.PLEIEPENGER_NÆRSTÅENDE;
             case OPP -> YtelseType.OPPLÆRINGSPENGER;
             case OPPREF -> YtelseType.OPPLÆRINGSPENGER;
+            case MFP -> YtelseType.FP;
+            case MFPREF -> YtelseType.FP;
+            case MSVP -> YtelseType.SVP;
+            case MSVPREF -> YtelseType.SVP;
         };
     }
 }
