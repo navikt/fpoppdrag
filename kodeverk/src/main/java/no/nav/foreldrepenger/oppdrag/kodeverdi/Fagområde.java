@@ -38,6 +38,10 @@ public enum Fagområde {
     OOP,
     /** pleiepenger_v1 til arbeidsgiver **/
     OOPREF,
+    MFP, // Foreldrepenger, manuell
+    MFPREF, //Foreldrepenger, manuell. AG refusjon
+    MSVP, // Svangerskapspenger, manuell
+    MSVPREF, // Svangerskapspenger, manuell. AG refusjon
     ;
 
     private static final Logger LOG = LoggerFactory.getLogger(Fagområde.class);
