@@ -6,10 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-
-import no.nav.vedtak.log.metrics.Controllable;
-
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import no.nav.vedtak.server.Controllable;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationServiceStarterTest {
