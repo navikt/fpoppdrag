@@ -1,5 +1,8 @@
 package no.nav.foreldrepenger.oppdrag.web.server.jetty.abac;
 
+import static no.nav.vedtak.sikkerhet.abac.pdp.ForeldrepengerDataKeys.BEHANDLING_STATUS;
+import static no.nav.vedtak.sikkerhet.abac.pdp.ForeldrepengerDataKeys.FAGSAK_STATUS;
+
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -8,13 +11,14 @@ import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.inject.Inject;
-
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.pip.PipRepository;
 import no.nav.vedtak.log.mdc.MdcExtendedLogContext;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.PdpRequestBuilder;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.pdp.AppRessursData;
+import no.nav.vedtak.sikkerhet.abac.pipdata.PipBehandlingStatus;
+import no.nav.vedtak.sikkerhet.abac.pipdata.PipFagsakStatus;
 
 /**
  * Implementasjon av PDP request for denne applikasjonen.
@@ -45,12 +49,14 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
             MDC_EXTENDED_LOG_CONTEXT.add("behandling", behId);
         });
         var aktørFraBehandling = behandlinger.stream()
-                .map(b -> pipRepository.getAktørIdForBehandling(b))
-                .flatMap(Optional::stream)
-                .collect(Collectors.toSet());
+            .map(b -> pipRepository.getAktørIdForBehandling(b))
+            .flatMap(Optional::stream)
+            .collect(Collectors.toSet());
         return AppRessursData.builder()
-                .leggTilAktørIdSet(dataAttributter.getVerdier(StandardAbacAttributtType.AKTØR_ID))
-                .leggTilAktørIdSet(aktørFraBehandling)
-                .build();
+            .leggTilAktørIdSet(dataAttributter.getVerdier(StandardAbacAttributtType.AKTØR_ID))
+            .leggTilAktørIdSet(aktørFraBehandling)
+            .leggTilRessurs(FAGSAK_STATUS, PipFagsakStatus.UNDER_BEHANDLING) // pga fagsak / update
+            .leggTilRessurs(BEHANDLING_STATUS, PipBehandlingStatus.UTREDES) // pga fagsak / update
+            .build();
     }
 }
