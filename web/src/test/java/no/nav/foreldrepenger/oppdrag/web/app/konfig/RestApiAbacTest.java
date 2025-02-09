@@ -7,10 +7,9 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.Collection;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
 
+import jakarta.servlet.http.HttpServletRequest;
 import no.nav.vedtak.felles.testutilities.cdi.WeldContext;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
@@ -86,7 +85,7 @@ class RestApiAbacTest {
         if (annotation != null && annotation.actionType() == ActionType.DUMMY) {
             fail(klasse.getSimpleName() + "." + metode.getName() + " Ikke bruk DUMMY-verdi for "
                     + ActionType.class.getSimpleName());
-        } else if (annotation != null && annotation.resource().isEmpty() && annotation.property().isEmpty() && annotation.resourceType() == ResourceType.DUMMY) {
+        } else if (annotation != null && annotation.resourceType() == ResourceType.DUMMY) {
             fail(klasse.getSimpleName() + "." + metode.getName() + " En verdi for resource må være satt!");
         }
     }
