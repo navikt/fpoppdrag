@@ -365,7 +365,6 @@ class SimuleringResultatTjenesteTest {
         var andreMåned = startDato.plusMonths(1);
 
         var fnrArbgiv = "12345678910";
-        var navn = "Onkel Skrue";
         var aktørIdArbgiver = new AktørId("1111111111111");
         var orgnr = "999999999";
 

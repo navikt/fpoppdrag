@@ -54,7 +54,7 @@ class ConstraintViolationMapperTest {
         assertThat(response.getMediaType()).hasToString(MediaType.APPLICATION_JSON);
     }
 
-    class TestViolation implements ConstraintViolation<String> {
+    static class TestViolation implements ConstraintViolation<String> {
 
         private String message;
         private String template;
@@ -71,6 +71,7 @@ class ConstraintViolationMapperTest {
             this.template = template;
             this.rootBean = rootBean;
             this.rootBeanClass = rootBeanClass;
+            this.leafBean = leafBean;
             this.execParam = execParam;
             this.returnValue = returnValue;
             this.path = path;
@@ -104,7 +105,7 @@ class ConstraintViolationMapperTest {
 
         @Override
         public Object[] getExecutableParameters() {
-            return new Object[0];
+            return execParam;
         }
 
         @Override
