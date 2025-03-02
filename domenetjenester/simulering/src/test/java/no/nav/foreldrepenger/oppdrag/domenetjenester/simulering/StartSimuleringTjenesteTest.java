@@ -22,7 +22,6 @@ import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import jakarta.persistence.EntityManager;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.KodeEndring;
@@ -80,7 +79,8 @@ public class StartSimuleringTjenesteTest {
     void test_skal_deaktivere_forrige_simulering_når_ny_simulering_gir_tomt_resultat() throws Exception {
         var oppdrag1 = lagOppdrag("130158784200", "12345678910");
         var oppdragskontrollSimulering1 = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
-        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("12345678999", "423535", oppdragskontrollSimulering1));
+        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons(
+            oppdragskontrollSimulering1));
         simuleringTjeneste.startSimulering(oppdragskontrollSimulering1);
 
         Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2_L);
@@ -101,7 +101,7 @@ public class StartSimuleringTjenesteTest {
         var oppdrag1 = lagOppdrag("130158784200", "12345678910");
         OppdragskontrollDto oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1));
 
-        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("12345678999", "423535", oppdragskontrollDto));
+        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons(oppdragskontrollDto));
         simuleringTjeneste.startSimulering(oppdragskontrollDto);
 
         Optional<SimuleringGrunnlag> grunnlagOpt1 = simuleringRepository.hentSimulertOppdragForBehandling(BEHANDLING_ID_2_L);
@@ -118,7 +118,7 @@ public class StartSimuleringTjenesteTest {
         // Arrange
         var oppdrag1 = lagOppdrag("130158784200", "12345678910");
         var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag1, oppdrag1));
-        List<BeregningDto> mockRespons = lagRespons("12345678999", "423535", oppdragskontrollDto);
+        List<BeregningDto> mockRespons = lagRespons(oppdragskontrollDto);
         when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(mockRespons);
 
         // Act - Skal gi to beregningsresultater til samme mottaker
@@ -145,7 +145,7 @@ public class StartSimuleringTjenesteTest {
         String fagsysId = "423535";
         var oppdrag = lagOppdrag(fagsysId, gjelderId);
         var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_1, List.of(oppdrag));
-        var response = lagRespons(gjelderId, fagsysId, pattern.format(LocalDate.now()), oppdragskontrollDto);
+        var response = lagRespons(pattern.format(LocalDate.now()), oppdragskontrollDto);
 
         // Legger til feilutbetaling
         var beregningsPeriodeDto = response.get(0).beregningsPeriode().get(0);
@@ -194,7 +194,7 @@ public class StartSimuleringTjenesteTest {
         // Arrange
         var oppdrag = lagOppdrag("130158784200", "12345678910");
         var oppdragskontrollDto = new OppdragskontrollDto(BEHANDLING_ID_2, List.of(oppdrag));
-        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons("12345678999", "423535", oppdragskontrollDto));
+        when(fpWsProxySimuleringKlient.utførSimuleringMedExceptionHandling(any(), any(), anyBoolean())).thenReturn(lagRespons(oppdragskontrollDto));
 
         // Act
         simuleringTjeneste.startSimulering(oppdragskontrollDto);
@@ -279,25 +279,25 @@ public class StartSimuleringTjenesteTest {
     }
 
 
-    private List<BeregningDto> lagRespons(String gjelderId, String fagsysId, OppdragskontrollDto oppdragskontrollDto) {
-        return lagRespons(gjelderId, fagsysId, "2018-10-15", oppdragskontrollDto);
+    private List<BeregningDto> lagRespons(OppdragskontrollDto oppdragskontrollDto) {
+        return lagRespons("2018-10-15", oppdragskontrollDto);
     }
 
-    private List<BeregningDto> lagRespons(String gjelderId, String fagsysId, String forfallsdato, OppdragskontrollDto oppdragskontrollDto) {
+    private List<BeregningDto> lagRespons(String forfallsdato, OppdragskontrollDto oppdragskontrollDto) {
         List<BeregningDto> beregningDtos = new ArrayList<>();
-        for (var todo : oppdragskontrollDto.oppdrag()) {
+        for (var oppdrag : oppdragskontrollDto.oppdrag()) {
             List<BeregningStoppnivåDto> beregningStoppnivaa = new ArrayList<>();
-            BeregningStoppnivåDto beregningStoppnivåDto = opprettBeregningStoppnivå(gjelderId, fagsysId, forfallsdato);
+            BeregningStoppnivåDto beregningStoppnivåDto = opprettBeregningStoppnivå(oppdrag.oppdragGjelderId(), oppdrag.fagsystemId(), forfallsdato);
             beregningStoppnivåDto.beregningStoppnivaaDetaljer().add(opprettStoppnivaaDetaljer("2018-10-10", "2018-11-11", PosteringType.YTEL, BigDecimal.valueOf(12532L)));
             beregningStoppnivaa.add(beregningStoppnivåDto);
 
             List<BeregningsPeriodeDto> beregningsPeriodeDtos = new ArrayList<>();
             beregningsPeriodeDtos.add(new BeregningsPeriodeDto("2018-09-01", "2018-09-31", beregningStoppnivaa));
             var beregning = new BeregningDto.Builder()
-                    .gjelderId(gjelderId)
+                    .gjelderId(oppdrag.oppdragGjelderId())
                     .gjelderNavn("dummy")
                     .datoBeregnet("2018-10-10")
-                    .kodeFaggruppe("DUMMY")
+                    .kodeFaggruppe(oppdrag.kodeFagomrade().name())
                     .belop(BigDecimal.valueOf(1234L))
                     .beregningsPeriode(beregningsPeriodeDtos)
                     .build();
