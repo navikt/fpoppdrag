@@ -50,7 +50,7 @@ public class SimuleringRestTjeneste {
     @POST
     @Path("resultat")
     @Operation(description = "Hent resultat av simulering mot økonomi", summary = ("Returnerer simuleringsresultat."), tags = "simulering")
-    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
+    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     public SimuleringResultatDto hentSimuleringResultat(@TilpassetAbacAttributt(supplierClass = BehandlingIdAbacDataSupplier.class) @Valid BehandlingIdDto behandlingIdDto) {
         var optionalSimuleringResultatDto = simuleringResultatTjeneste.hentResultatFraSimulering(behandlingIdDto.behandlingId());
         return optionalSimuleringResultatDto.orElse(null);
@@ -59,7 +59,7 @@ public class SimuleringRestTjeneste {
     @POST
     @Path("resultat-uten-inntrekk")
     @Operation(description = "Hent detaljert resultat av simulering mot økonomi med og uten inntrekk", summary = ("Returnerer simuleringsresultat."), tags = "simulering")
-    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
+    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     public SimuleringDto hentSimuleringResultatMedOgUtenInntrekk(@TilpassetAbacAttributt(supplierClass = BehandlingIdAbacDataSupplier.class) @Valid BehandlingIdDto behandlingIdDto) {
         var optionalSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingIdDto.behandlingId());
         return optionalSimuleringDto.orElse(null);
@@ -68,7 +68,7 @@ public class SimuleringRestTjeneste {
     @POST
     @Path("start")
     @Operation(description = "Start simulering for behandling med oppdrag via fpwsproxy", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
-    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = false)
     public Response startSimulering(@TilpassetAbacAttributt(supplierClass = OppdragskontrollDtoAbacSupplier.class) @Valid OppdragskontrollDto oppdragskontrollDto) {
         startSimuleringTjenesteFpWsProxy.startSimulering(oppdragskontrollDto);
         return Response.ok().build();
@@ -77,7 +77,7 @@ public class SimuleringRestTjeneste {
     @POST
     @Path("kanseller")
     @Operation(description = "Kanseller simulering for behandling", summary = ("Deaktiverer simuleringgrunnlag for behandling"), tags = "simulering")
-    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = false)
     public Response kansellerSimulering(@TilpassetAbacAttributt(supplierClass = BehandlingIdAbacDataSupplier.class) @Valid BehandlingIdDto behandlingIdDto) {
         startSimuleringTjenesteFpWsProxy.kansellerSimulering(behandlingIdDto.behandlingId());
         return Response.ok().build();
@@ -86,7 +86,7 @@ public class SimuleringRestTjeneste {
     @POST
     @Path("feilutbetalte-perioder")
     @Operation(description = "Hent sum feilutbetaling og simulerte perioder som er feilutbetalte og kan kreves tilbake fra brukeren.", summary = ("Returnerer perioder som er feilutbetalt."), tags = "simulering")
-    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
+    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     public FeilutbetaltePerioderDto hentFeilutbetaltePerioderForTilbakekreving(@TilpassetAbacAttributt(supplierClass = BehandlingIdAbacDataSupplier.class) @Valid BehandlingIdDto behandlingIdDto) {
         return simuleringResultatTjeneste.hentFeilutbetaltePerioder(behandlingIdDto.behandlingId());
     }
