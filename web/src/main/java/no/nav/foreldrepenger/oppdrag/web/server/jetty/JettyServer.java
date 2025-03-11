@@ -65,7 +65,7 @@ public class JettyServer {
 
     protected void bootStrap() throws Exception {
         konfigurerSikkerhet();
-        konfigurerDataSource(DatasourceUtil.createDataSource(30));
+        konfigurerDataSource(DatasourceUtil.createDataSource(30, 2));
         migrerDatabase();
         start();
     }
@@ -98,7 +98,7 @@ public class JettyServer {
     }
 
     private static void migrerDatabase() {
-        try (var dataSource = DatasourceUtil.createDataSource(5)) {
+        try (var dataSource = DatasourceUtil.createDataSource(3, 1)) {
             Flyway.configure()
                     .dataSource(dataSource)
                     .locations("classpath:/db/migration/defaultDS")

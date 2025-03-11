@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.web.server.jetty;
 
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -14,13 +15,13 @@ class DatasourceUtil {
     private DatasourceUtil() {
     }
 
-    static HikariDataSource createDataSource(int maxPoolSize) {
+    static HikariDataSource createDataSource(int maxPoolSize, int minIdle) {
         var config = new HikariConfig();
         config.setJdbcUrl(ENV.getRequiredProperty("defaultDS.url"));
         config.setUsername(ENV.getRequiredProperty("defaultDS.username"));
         config.setPassword(ENV.getRequiredProperty("defaultDS.password"));
-        config.setConnectionTimeout(1000);
-        config.setMinimumIdle(2);
+        config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(2));
+        config.setMinimumIdle(minIdle);
         config.setMaximumPoolSize(maxPoolSize);
         config.setConnectionTestQuery("select 1 from dual");
         config.setDriverClassName("oracle.jdbc.OracleDriver");
