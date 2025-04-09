@@ -41,10 +41,7 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
     @Override
     public AppRessursData lagAppRessursData(AbacDataAttributter dataAttributter) {
         Set<Long> behandlinger = dataAttributter.getVerdier(AppAbacAttributtType.BEHANDLING_ID);
-        behandlinger.stream().findFirst().ifPresent(behId -> {
-            MDC_EXTENDED_LOG_CONTEXT.remove("behandlingId");
-            MDC_EXTENDED_LOG_CONTEXT.add("behandlingId", behId);
-        });
+        setLogContext(behandlinger);
         var aktørFraBehandling = behandlinger.stream()
             .map(b -> pipRepository.getAktørIdForBehandling(b))
             .flatMap(Optional::stream)
@@ -57,10 +54,18 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
     @Override
     public AppRessursData lagAppRessursDataForSystembruker(AbacDataAttributter dataAttributter) {
+        Set<Long> behandlinger = dataAttributter.getVerdier(AppAbacAttributtType.BEHANDLING_ID);
+        setLogContext(behandlinger);
         return minimalbuilder().build();
     }
 
-
+    private static void setLogContext(Set<Long> behandlinger) {
+        behandlinger.stream().findFirst().ifPresent(behId -> {
+            MDC_EXTENDED_LOG_CONTEXT.remove("behandlingId");
+            MDC_EXTENDED_LOG_CONTEXT.add("behandlingId", behId);
+        });
+    }
+    
     private AppRessursData.Builder minimalbuilder() {
         return AppRessursData.builder()
             .medFagsakStatus(PipFagsakStatus.UNDER_BEHANDLING)
