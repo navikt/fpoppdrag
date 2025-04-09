@@ -18,9 +18,9 @@ import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.FeilutbetaltePeri
 import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringDto;
 import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringResultatDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.StartSimuleringTjeneste;
+import no.nav.foreldrepenger.oppdrag.web.server.jetty.abac.AppAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
-import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
@@ -97,7 +97,7 @@ public class SimuleringRestTjeneste {
         public AbacDataAttributter apply(Object obj) {
             var req = (BehandlingIdDto) obj;
             return AbacDataAttributter.opprett()
-                .leggTil(StandardAbacAttributtType.BEHANDLING_ID, req.behandlingId());
+                .leggTil(AppAbacAttributtType.BEHANDLING_ID, req.behandlingId());
         }
     }
 
@@ -106,7 +106,7 @@ public class SimuleringRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (OppdragskontrollDto) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.BEHANDLING_ID, Long.parseLong(req.behandlingId()));
+            return AbacDataAttributter.opprett().leggTil(AppAbacAttributtType.BEHANDLING_ID, Long.parseLong(req.behandlingId()));
         }
 
     }
