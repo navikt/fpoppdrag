@@ -1,8 +1,5 @@
 package no.nav.foreldrepenger.oppdrag.web.server.jetty.abac;
 
-import static no.nav.vedtak.sikkerhet.abac.pdp.ForeldrepengerDataKeys.BEHANDLING_STATUS;
-import static no.nav.vedtak.sikkerhet.abac.pdp.ForeldrepengerDataKeys.FAGSAK_STATUS;
-
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,20 +40,35 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
     @Override
     public AppRessursData lagAppRessursData(AbacDataAttributter dataAttributter) {
-        Set<Long> behandlinger = dataAttributter.getVerdier(StandardAbacAttributtType.BEHANDLING_ID);
-        behandlinger.stream().findFirst().ifPresent(behId -> {
-            MDC_EXTENDED_LOG_CONTEXT.remove("behandling");
-            MDC_EXTENDED_LOG_CONTEXT.add("behandling", behId);
-        });
+        Set<Long> behandlinger = dataAttributter.getVerdier(AppAbacAttributtType.BEHANDLING_ID);
+        setLogContext(behandlinger);
         var aktørFraBehandling = behandlinger.stream()
             .map(b -> pipRepository.getAktørIdForBehandling(b))
             .flatMap(Optional::stream)
             .collect(Collectors.toSet());
-        return AppRessursData.builder()
+        return minimalbuilder()
             .leggTilAktørIdSet(dataAttributter.getVerdier(StandardAbacAttributtType.AKTØR_ID))
             .leggTilAktørIdSet(aktørFraBehandling)
-            .leggTilRessurs(FAGSAK_STATUS, PipFagsakStatus.UNDER_BEHANDLING) // pga fagsak / update
-            .leggTilRessurs(BEHANDLING_STATUS, PipBehandlingStatus.UTREDES) // pga fagsak / update
             .build();
+    }
+
+    @Override
+    public AppRessursData lagAppRessursDataForSystembruker(AbacDataAttributter dataAttributter) {
+        Set<Long> behandlinger = dataAttributter.getVerdier(AppAbacAttributtType.BEHANDLING_ID);
+        setLogContext(behandlinger);
+        return minimalbuilder().build();
+    }
+
+    private static void setLogContext(Set<Long> behandlinger) {
+        behandlinger.stream().findFirst().ifPresent(behId -> {
+            MDC_EXTENDED_LOG_CONTEXT.remove("behandlingId");
+            MDC_EXTENDED_LOG_CONTEXT.add("behandlingId", behId);
+        });
+    }
+    
+    private AppRessursData.Builder minimalbuilder() {
+        return AppRessursData.builder()
+            .medFagsakStatus(PipFagsakStatus.UNDER_BEHANDLING)
+            .medBehandlingStatus(PipBehandlingStatus.UTREDES);
     }
 }
