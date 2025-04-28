@@ -49,8 +49,8 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
             .map(b -> pipRepository.getAktørIdForBehandling(b))
             .flatMap(Optional::stream)
             .collect(Collectors.toSet());
-        var builder = minimalbuilder().leggTilIdenter(aktørFraBehandling); // TODO: Fjerne identer. Stol på saksnummer fra request.
-        saksnummer.stream().findFirst().ifPresent(builder::medSaksnummer);
+        var builder = minimalbuilder().leggTilIdenter(aktørFraBehandling);
+        // saksnummer.stream().findFirst().ifPresent(builder::medSaksnummer); TODO: Vurder om vi skal bruke denne framfor å jakte bruker i oppdraget.
         return builder.build();
     }
 

@@ -45,6 +45,33 @@ class PipRepositoryTest {
     }
 
     @Test
+    void henterAktørIdForBehandlingIdNySim() {
+        var aktørId = "44556677";
+        var behandlingId = 234L;
+        var simuleringGrunnlag = SimuleringGrunnlag.builder()
+            .medSimuleringResultat(SimuleringResultat.builder().build())
+            .medAktørId(aktørId)
+            .medEksternReferanse(new BehandlingRef(behandlingId))
+            .medYtelseType(YtelseType.FP)
+            .build();
+        simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
+        var aktørIdForBehandling = pipRepository.getAktørIdForBehandling(behandlingId);
+        assertThat(aktørIdForBehandling).isPresent();
+        assertThat(aktørIdForBehandling.get()).contains(aktørId);
+
+        var simuleringGrunnlag2 = SimuleringGrunnlag.builder()
+            .medSimuleringResultat(SimuleringResultat.builder().build())
+            .medAktørId(aktørId)
+            .medEksternReferanse(new BehandlingRef(behandlingId))
+            .medYtelseType(YtelseType.FP)
+            .build();
+        simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag2);
+        var aktørIdForBehandling2 = pipRepository.getAktørIdForBehandling(behandlingId);
+        assertThat(aktørIdForBehandling2).isPresent();
+        assertThat(aktørIdForBehandling2.get()).contains(aktørId);
+    }
+
+    @Test
     void returnererOptionalEmptyHvisGrunnlagForBehandlingIkkeFinnes() {
         var aktørIdForBehandling = pipRepository.getAktørIdForBehandling(123L);
         assertThat(aktørIdForBehandling).isNotPresent();
