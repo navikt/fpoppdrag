@@ -13,6 +13,8 @@ import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.SimuleringBeregningTjeneste;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 
+import java.util.UUID;
+
 @ExtendWith(JpaExtension.class)
 class SimuleringRestTjenesteTest {
 
@@ -30,11 +32,13 @@ class SimuleringRestTjenesteTest {
 
     @Test
     void returnererNullDersomSimuleringForBehandlingIkkeFinnes() {
+        var bUuid = UUID.randomUUID();
+        var sak = "123456789";
         var simuleringDto = restTjeneste.hentSimuleringResultatMedOgUtenInntrekk(
-                new BehandlingIdDto(12345L));
+                new BehandlingIdDto(12345L, bUuid, sak));
         assertThat(simuleringDto).isNull();
 
-        var simuleringResultatDto = restTjeneste.hentSimuleringResultat(new BehandlingIdDto(12345L));
+        var simuleringResultatDto = restTjeneste.hentSimuleringResultat(new BehandlingIdDto(12345L, bUuid, sak));
         assertThat(simuleringResultatDto).isNull();
     }
 

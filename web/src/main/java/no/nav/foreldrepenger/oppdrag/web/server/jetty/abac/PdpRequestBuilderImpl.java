@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.oppdrag.web.server.jetty.abac;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.Priority;
@@ -41,31 +42,42 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
     @Override
     public AppRessursData lagAppRessursData(AbacDataAttributter dataAttributter) {
         Set<Long> behandlinger = dataAttributter.getVerdier(AppAbacAttributtType.BEHANDLING_ID);
-        setLogContext(behandlinger);
+        Set<UUID> behandlingUUids = dataAttributter.getVerdier(StandardAbacAttributtType.BEHANDLING_UUID);
+        Set<String> saksnummer = dataAttributter.getVerdier(StandardAbacAttributtType.SAKSNUMMER);
+        setLogContext(behandlinger, behandlingUUids, saksnummer);
         var aktørFraBehandling = behandlinger.stream()
             .map(b -> pipRepository.getAktørIdForBehandling(b))
             .flatMap(Optional::stream)
             .collect(Collectors.toSet());
-        return minimalbuilder()
-            .leggTilAktørIdSet(dataAttributter.getVerdier(StandardAbacAttributtType.AKTØR_ID))
-            .leggTilAktørIdSet(aktørFraBehandling)
-            .build();
+        var builder = minimalbuilder().leggTilIdenter(aktørFraBehandling);
+        // saksnummer.stream().findFirst().ifPresent(builder::medSaksnummer); TODO: Vurder om vi skal bruke denne framfor å jakte bruker i oppdraget.
+        return builder.build();
     }
 
     @Override
     public AppRessursData lagAppRessursDataForSystembruker(AbacDataAttributter dataAttributter) {
         Set<Long> behandlinger = dataAttributter.getVerdier(AppAbacAttributtType.BEHANDLING_ID);
-        setLogContext(behandlinger);
+        Set<UUID> behandlingUUids = dataAttributter.getVerdier(StandardAbacAttributtType.BEHANDLING_UUID);
+        Set<String> saksnummer = dataAttributter.getVerdier(StandardAbacAttributtType.SAKSNUMMER);
+        setLogContext(behandlinger, behandlingUUids, saksnummer);
         return minimalbuilder().build();
     }
 
-    private static void setLogContext(Set<Long> behandlinger) {
+    private static void setLogContext(Set<Long> behandlinger, Set<UUID> behandlingUUids, Set<String> saksnummer) {
         behandlinger.stream().findFirst().ifPresent(behId -> {
             MDC_EXTENDED_LOG_CONTEXT.remove("behandlingId");
             MDC_EXTENDED_LOG_CONTEXT.add("behandlingId", behId);
         });
+        behandlingUUids.stream().findFirst().ifPresent(uuid -> {
+            MDC_EXTENDED_LOG_CONTEXT.remove("behandling");
+            MDC_EXTENDED_LOG_CONTEXT.add("behandling", uuid.toString());
+        });
+        saksnummer.stream().findFirst().ifPresent(s -> {
+            MDC_EXTENDED_LOG_CONTEXT.remove("saksnummer");
+            MDC_EXTENDED_LOG_CONTEXT.add("saksnummer", s);
+        });
     }
-    
+
     private AppRessursData.Builder minimalbuilder() {
         return AppRessursData.builder()
             .medFagsakStatus(PipFagsakStatus.UNDER_BEHANDLING)

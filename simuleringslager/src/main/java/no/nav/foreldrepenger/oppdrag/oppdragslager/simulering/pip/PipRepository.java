@@ -28,14 +28,12 @@ public class PipRepository {
     public Optional<String> getAktørIdForBehandling(Long behandlingId) {
         Objects.requireNonNull(behandlingId, "behandlingId"); //NOSONAR
 
-        String sql = "SELECT aktoer_id from GR_SIMULERING where behandling_id = :behandlingId and aktiv = 'J'";
+        String sql = "SELECT g.aktørId from SimuleringGrunnlag g where g.eksternReferanse.behandlingId = :behandlingId and g.aktiv = true";
 
-        Query query = entityManager.createNativeQuery(sql);
-        query.setParameter("behandlingId", behandlingId);
-
-        @SuppressWarnings("unchecked")
-        List<String> resultaterRaw = query.getResultList();
-        Set<String> resultater = new HashSet<>(resultaterRaw);
+        var resultatList = entityManager.createQuery(sql, String.class)
+            .setParameter("behandlingId", behandlingId)
+            .getResultList();
+        Set<String> resultater = new HashSet<>(resultatList);
         if (resultater.isEmpty()) {
             return Optional.empty();
         } else if (resultater.size() == 1) {
