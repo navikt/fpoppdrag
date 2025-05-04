@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering;
 
-import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Function;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,15 +7,14 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.OppdragskontrollDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.StartSimuleringRequest;
+import no.nav.foreldrepenger.kontrakter.simulering.resultat.request.SimuleringResultatRequest;
 import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.FeilutbetaltePerioderDto;
 import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringDto;
 import no.nav.foreldrepenger.kontrakter.simulering.resultat.v1.SimuleringResultatDto;
@@ -56,7 +53,7 @@ public class SimuleringRestTjeneste {
     @Path("resultat")
     @Operation(description = "Hent resultat av simulering mot økonomi", summary = ("Returnerer simuleringsresultat."), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK, sporingslogg = true)
-    public SimuleringResultatDto hentSimuleringResultat(@TilpassetAbacAttributt(supplierClass = BehandlingIdAbacDataSupplier.class) @Valid BehandlingIdDto behandlingIdDto) {
+    public SimuleringResultatDto hentSimuleringResultat(@TilpassetAbacAttributt(supplierClass = SimuleringResultatRequestAbacDataSupplier.class) @Valid SimuleringResultatRequest behandlingIdDto) {
         var optionalSimuleringResultatDto = simuleringResultatTjeneste.hentResultatFraSimulering(behandlingIdDto.behandlingId());
         return optionalSimuleringResultatDto.orElse(null);
     }
@@ -65,25 +62,16 @@ public class SimuleringRestTjeneste {
     @Path("resultat-uten-inntrekk")
     @Operation(description = "Hent detaljert resultat av simulering mot økonomi med og uten inntrekk", summary = ("Returnerer simuleringsresultat."), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK, sporingslogg = true)
-    public SimuleringDto hentSimuleringResultatMedOgUtenInntrekk(@TilpassetAbacAttributt(supplierClass = BehandlingIdAbacDataSupplier.class) @Valid BehandlingIdDto behandlingIdDto) {
+    public SimuleringDto hentSimuleringResultatMedOgUtenInntrekk(@TilpassetAbacAttributt(supplierClass = SimuleringResultatRequestAbacDataSupplier.class) @Valid SimuleringResultatRequest behandlingIdDto) {
         var optionalSimuleringDto = simuleringResultatTjeneste.hentDetaljertSimuleringsResultat(behandlingIdDto.behandlingId());
         return optionalSimuleringDto.orElse(null);
-    }
-
-    @POST
-    @Path("start")
-    @Operation(description = "Start simulering for behandling med oppdrag via fpwsproxy", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
-    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = false)
-    public Response startSimulering(@TilpassetAbacAttributt(supplierClass = OppdragskontrollDtoAbacSupplier.class) @Valid OppdragskontrollDto oppdragskontrollDto) {
-        startSimuleringTjenesteFpWsProxy.startSimulering(oppdragskontrollDto);
-        return Response.ok().build();
     }
 
     @POST
     @Path("start-v2")
     @Operation(description = "Start simulering for behandling med oppdrag via fpwsproxy", summary = ("Returnerer status på om oppdrag er gyldig"), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = false)
-    public Response startSimulering(@TilpassetAbacAttributt(supplierClass = UtvidetOppdragskontrollDtoAbacSupplier.class) @Valid UtvidetOppdragskontrollDto oppdragskontrollDto) {
+    public Response startSimulering(@TilpassetAbacAttributt(supplierClass = StartSimuleringRequestDtoAbacSupplier.class) @Valid StartSimuleringRequest oppdragskontrollDto) {
         startSimuleringTjenesteFpWsProxy.startSimulering(oppdragskontrollDto.dto());
         return Response.ok().build();
     }
@@ -92,7 +80,7 @@ public class SimuleringRestTjeneste {
     @Path("kanseller")
     @Operation(description = "Kanseller simulering for behandling", summary = ("Deaktiverer simuleringgrunnlag for behandling"), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = false)
-    public Response kansellerSimulering(@TilpassetAbacAttributt(supplierClass = BehandlingIdAbacDataSupplier.class) @Valid BehandlingIdDto behandlingIdDto) {
+    public Response kansellerSimulering(@TilpassetAbacAttributt(supplierClass = SimuleringResultatRequestAbacDataSupplier.class) @Valid SimuleringResultatRequest behandlingIdDto) {
         startSimuleringTjenesteFpWsProxy.kansellerSimulering(behandlingIdDto.behandlingId());
         return Response.ok().build();
     }
@@ -101,46 +89,30 @@ public class SimuleringRestTjeneste {
     @Path("feilutbetalte-perioder")
     @Operation(description = "Hent sum feilutbetaling og simulerte perioder som er feilutbetalte og kan kreves tilbake fra brukeren.", summary = ("Returnerer perioder som er feilutbetalt."), tags = "simulering")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK, sporingslogg = true)
-    public FeilutbetaltePerioderDto hentFeilutbetaltePerioderForTilbakekreving(@TilpassetAbacAttributt(supplierClass = BehandlingIdAbacDataSupplier.class) @Valid BehandlingIdDto behandlingIdDto) {
+    public FeilutbetaltePerioderDto hentFeilutbetaltePerioderForTilbakekreving(@TilpassetAbacAttributt(supplierClass = SimuleringResultatRequestAbacDataSupplier.class) @Valid SimuleringResultatRequest behandlingIdDto) {
         return simuleringResultatTjeneste.hentFeilutbetaltePerioder(behandlingIdDto.behandlingId());
     }
 
-    public static class BehandlingIdAbacDataSupplier implements Function<Object, AbacDataAttributter> {
+    public static class SimuleringResultatRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override
         public AbacDataAttributter apply(Object obj) {
-            var req = (BehandlingIdDto) obj;
-            var attr = AbacDataAttributter.opprett()
-                .leggTil(AppAbacAttributtType.BEHANDLING_ID, req.behandlingId());
-            Optional.ofNullable(req.saksnummer()).ifPresent(s -> attr.leggTil(StandardAbacAttributtType.SAKSNUMMER, s));
-            Optional.ofNullable(req.behandlingUuid()).ifPresent(b -> attr.leggTil(StandardAbacAttributtType.BEHANDLING_UUID, b));
-            return attr;
+            var req = (SimuleringResultatRequest) obj;
+            return AbacDataAttributter.opprett()
+                .leggTil(AppAbacAttributtType.BEHANDLING_ID, req.behandlingId())
+                .leggTil(StandardAbacAttributtType.SAKSNUMMER, req.saksnummer())
+                .leggTil(StandardAbacAttributtType.BEHANDLING_UUID, req.behandlingUuid());
         }
     }
 
-    public record UtvidetOppdragskontrollDto(@NotNull @Valid OppdragskontrollDto dto,
-                                             @Valid UUID behandlingUuid,
-                                             @Digits(integer = 18, fraction = 0) String saksnummer) {}
-
-    public static class UtvidetOppdragskontrollDtoAbacSupplier implements Function<Object, AbacDataAttributter> {
+    public static class StartSimuleringRequestDtoAbacSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override
         public AbacDataAttributter apply(Object obj) {
-            var req = (UtvidetOppdragskontrollDto) obj;
-            var attr = AbacDataAttributter.opprett().leggTil(AppAbacAttributtType.BEHANDLING_ID, Long.parseLong(req.dto.behandlingId()));
-            Optional.ofNullable(req.saksnummer()).ifPresent(s -> attr.leggTil(StandardAbacAttributtType.SAKSNUMMER, s));
-            Optional.ofNullable(req.behandlingUuid()).ifPresent(b -> attr.leggTil(StandardAbacAttributtType.BEHANDLING_UUID, b));
-            return attr;
-        }
-
-    }
-
-    public static class OppdragskontrollDtoAbacSupplier implements Function<Object, AbacDataAttributter> {
-
-        @Override
-        public AbacDataAttributter apply(Object obj) {
-            var req = (OppdragskontrollDto) obj;
-            return AbacDataAttributter.opprett().leggTil(AppAbacAttributtType.BEHANDLING_ID, Long.parseLong(req.behandlingId()));
+            var req = (StartSimuleringRequest) obj;
+            return AbacDataAttributter.opprett().leggTil(AppAbacAttributtType.BEHANDLING_ID, Long.parseLong(req.dto().behandlingId()))
+                .leggTil(StandardAbacAttributtType.SAKSNUMMER, req.saksnummer())
+                .leggTil(StandardAbacAttributtType.BEHANDLING_UUID, req.behandlingUuid());
         }
 
     }
