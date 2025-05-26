@@ -1,9 +1,8 @@
 {
-  "environment": "prod",
   "oraclesecretpath": "oracle/data/prod/creds/fpoppdrag_p-fpoppdrag_p",
   "oracleconfigpath": "oracle/data/prod/config/fpoppdrag_p",
   "serviceusersecretpath": "serviceuser/data/prod/srvfpoppdrag",
-  "minReplicas": "1",
+  "minReplicas": "2",
   "maxReplicas": "3",
   "limits": {
     "cpu": "2",

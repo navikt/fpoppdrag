@@ -1,5 +1,4 @@
 {
-  "environment": "dev",
   "oraclesecretpath": "oracle/data/dev/creds/fpoppdrag_q1-user",
   "oracleconfigpath": "oracle/data/dev/config/fpoppdrag_q1",
   "serviceusersecretpath": "serviceuser/data/dev/srvfpoppdrag",
@@ -10,7 +9,7 @@
     "mem": "1024Mi"
   },
   "requests": {
-    "cpu": "200m",
+    "cpu": "100m",
     "mem": "512Mi"
   },
   "ingresses": [
