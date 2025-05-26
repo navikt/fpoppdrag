@@ -6,7 +6,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-bom</artifactId>
-        <version>3.6.10</version>
+        <version>3.6.11</version>
     </parent>
 
     <groupId>no.nav.foreldrepenger.oppdrag</groupId>
@@ -29,8 +29,8 @@
         <sonar.projectName>fp-oppdrag</sonar.projectName>
         <sonar.projectKey>navikt_fpoppdrag</sonar.projectKey>
 
-        <felles.version>7.5.5</felles.version>
-        <kontrakter.version>9.3.0</kontrakter.version>
+        <felles.version>7.5.6</felles.version>
+        <kontrakter.version>9.3.2</kontrakter.version>
     </properties>
 
     <dependencyManagement>
@@ -38,7 +38,7 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles</groupId>
                 <artifactId>fp-bom</artifactId>
-                <version>3.6.10</version>
+                <version>3.6.11</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
