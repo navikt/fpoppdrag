@@ -62,7 +62,8 @@ spec:
       - mountPath: {{vault.mountPath}}/defaultDS
         kvPath: {{vault.db.secretsPath}}
   env:
-    VAULT_MOUNT_PATH: {{vault.mountPath}}
+    - name: VAULT_MOUNT_PATH
+      value: "{{vault.mountPath}}"
   azure:
     application:
       enabled: true
