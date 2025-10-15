@@ -68,15 +68,15 @@ public class JettyServer {
         new EnvEntry("jdbc/defaultDS", dataSource);
     }
 
-    private static void migrerDatabase(){
+    private static void migrerDatabase() {
         try (var dataSource = DatasourceUtil.createDataSource(3, 1)) {
             Flyway.configure()
-                    .dataSource(dataSource)
-                    .locations("classpath:/db/migration/defaultDS")
-                    .table("schema_version")
-                    .baselineOnMigrate(true)
-                    .load()
-                    .migrate();
+                .dataSource(dataSource)
+                .locations("classpath:/db/migration/defaultDS")
+                .table("schema_version")
+                .baselineOnMigrate(true)
+                .load()
+                .migrate();
         } catch (FlywayException e) {
             LOG.error("Feil under migrering av databasen.");
             throw e;
@@ -107,8 +107,7 @@ public class JettyServer {
     }
 
     private static ContextHandler createContext() throws IOException {
-        var ctx = new WebAppContext(CONTEXT_PATH, null, simpleConstraints(), null,
-            new ErrorPageErrorHandler(), ServletContextHandler.NO_SESSIONS);
+        var ctx = new WebAppContext(CONTEXT_PATH, null, simpleConstraints(), null, new ErrorPageErrorHandler(), ServletContextHandler.NO_SESSIONS);
         ctx.setParentLoaderPriority(true);
 
         // må hoppe litt bukk for å hente web.xml fra classpath i stedet for fra filsystem.
