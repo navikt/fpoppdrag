@@ -1,6 +1,11 @@
 {
-  "oraclesecretpath": "oracle/data/prod/creds/fpoppdrag_p-fpoppdrag_p",
-  "oracleconfigpath": "oracle/data/prod/config/fpoppdrag_p",
+  "vault": {
+    "mountPath": "/var/run/secrets/nais.io",
+    "db": {
+      "secretsPath": "oracle/data/prod/creds/fpoppdrag_p-fpoppdrag_p",
+      "configPath": "oracle/data/prod/config/fpoppdrag_p"
+    }
+  },
   "minReplicas": "2",
   "maxReplicas": "3",
   "limits": {
