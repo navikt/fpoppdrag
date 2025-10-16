@@ -6,7 +6,7 @@ public class JettyDevServer extends JettyServer {
 
     private static final Environment ENV = Environment.current();
 
-    public static void main(String[] args) throws Exception {
+    static void main(String[] args) throws Exception {
         initTrustStoreAndKeyStore();
         jettyServer(args).bootStrap();
     }
@@ -32,10 +32,6 @@ public class JettyDevServer extends JettyServer {
         System.setProperty("javax.net.ssl.trustStorePassword", keystoreTruststorePassword);
         System.setProperty("javax.net.ssl.keyStorePassword", keystoreTruststorePassword);
         System.setProperty("javax.net.ssl.password", keystoreTruststorePassword);
-        // KAFKA spesifikke properties
-        System.setProperty("KAFKA_TRUSTSTORE_PATH", absolutePathHome + truststoreRelativPath);
-        System.setProperty("KAFKA_KEYSTORE_PATH", absolutePathHome + keystoreRelativPath);
-        System.setProperty("KAFKA_CREDSTORE_PASSWORD", keystoreTruststorePassword);
     }
 }
 

@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.oppdrag.web.server.jetty;
 
 import static org.eclipse.jetty.ee11.webapp.MetaInfConfiguration.CONTAINER_JAR_PATTERN;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,17 +44,13 @@ public class JettyServer {
     private static final String JETTY_SCAN_LOCATIONS = "^.*jersey-.*\\.jar$|^.*felles-.*\\.jar$|^.*/app\\.jar$";
     private static final String JETTY_LOCAL_CLASSES = "^.*/target/classes/|";
 
-
     private final Integer serverPort;
 
-    public static void main(String[] args) throws Exception {
-        jettyServer(args).bootStrap();
+    static void main() throws Exception {
+        jettyServer().bootStrap();
     }
 
-    protected static JettyServer jettyServer(String[] args) {
-        if (args.length > 0) {
-            return new JettyServer(Integer.parseUnsignedInt(args[0]));
-        }
+    protected static JettyServer jettyServer() {
         return new JettyServer(ENV.getProperty("server.port", Integer.class, 8080));
     }
 
@@ -74,12 +71,12 @@ public class JettyServer {
     private static void migrerDatabase() {
         try (var dataSource = DatasourceUtil.createDataSource(3, 1)) {
             Flyway.configure()
-                    .dataSource(dataSource)
-                    .locations("classpath:/db/migration/defaultDS")
-                    .table("schema_version")
-                    .baselineOnMigrate(true)
-                    .load()
-                    .migrate();
+                .dataSource(dataSource)
+                .locations("classpath:/db/migration/defaultDS")
+                .table("schema_version")
+                .baselineOnMigrate(true)
+                .load()
+                .migrate();
         } catch (FlywayException e) {
             LOG.error("Feil under migrering av databasen.");
             throw e;
@@ -110,8 +107,7 @@ public class JettyServer {
     }
 
     private static ContextHandler createContext() throws IOException {
-        var ctx = new WebAppContext(CONTEXT_PATH, null, simpleConstraints(), null,
-            new ErrorPageErrorHandler(), ServletContextHandler.NO_SESSIONS);
+        var ctx = new WebAppContext(CONTEXT_PATH, null, simpleConstraints(), null, new ErrorPageErrorHandler(), ServletContextHandler.NO_SESSIONS);
         ctx.setParentLoaderPriority(true);
 
         // må hoppe litt bukk for å hente web.xml fra classpath i stedet for fra filsystem.

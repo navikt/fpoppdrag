@@ -57,10 +57,13 @@ spec:
   vault:
     enabled: true
     paths:
-      - mountPath: /var/run/secrets/nais.io/defaultDSconfig
-        kvPath: {{oracleconfigpath}}
-      - mountPath: /var/run/secrets/nais.io/defaultDS
-        kvPath: {{oraclesecretpath}}
+      - mountPath: {{vault.mountPath}}/defaultDSconfig
+        kvPath: {{vault.db.configPath}}
+      - mountPath: {{vault.mountPath}}/defaultDS
+        kvPath: {{vault.db.secretsPath}}
+  env:
+    - name: VAULT_MOUNT_PATH
+      value: "{{vault.mountPath}}"
   azure:
     application:
       enabled: true
