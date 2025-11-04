@@ -20,3 +20,4 @@ truststore.jts
 conf
 .mvn/maven.config
 .flattened*
+.java-version
