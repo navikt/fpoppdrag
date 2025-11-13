@@ -5,17 +5,14 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Application;
 
-import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
-
 public class RestApiTester {
 
 
-    static final List<Class<?>> UNNTATT = List.of(OpenApiResource.class);
+    static final List<Class<?>> UNNTATT = List.of();
 
     static Collection<Method> finnAlleRestMetoder() {
         List<Method> liste = new ArrayList<>();
@@ -37,6 +34,6 @@ public class RestApiTester {
         return config.getClasses().stream()
                 .filter(c -> c.getAnnotation(Path.class) != null)
                 .filter(c -> !UNNTATT.contains(c))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

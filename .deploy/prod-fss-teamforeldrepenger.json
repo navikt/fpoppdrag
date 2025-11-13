@@ -26,14 +26,6 @@
   ],
   "AZURE_IAC_RULES": [
     {
-      "app": "fp-swagger",
-      "namespace": "teamforeldrepenger",
-      "cluster": "prod-gcp",
-      "scopes": [
-        "swagger"
-      ]
-    },
-    {
       "app": "fpsak",
       "namespace": "teamforeldrepenger",
       "cluster": "prod-fss"
