@@ -6,7 +6,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-parent-app</artifactId>
-        <version>5.0.2</version>
+        <version>5.0.3</version>
     </parent>
 
     <groupId>no.nav.foreldrepenger.oppdrag</groupId>
@@ -20,8 +20,8 @@
         <sonar.projectName>fp-oppdrag</sonar.projectName>
         <sonar.projectKey>navikt_fpoppdrag</sonar.projectKey>
 
-        <felles.version>7.6.8</felles.version>
-        <kontrakter.version>9.4.3</kontrakter.version>
+        <felles.version>7.6.9</felles.version>
+        <kontrakter.version>9.4.11</kontrakter.version>
     </properties>
 
     <modules>
