@@ -3,15 +3,14 @@ package no.nav.foreldrepenger.oppdrag.web.app.exceptions;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
-
-import org.hibernate.validator.internal.engine.path.PathImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViolationException> {
 
@@ -38,7 +37,7 @@ public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViol
     }
 
     private String getFeltNavn(Path propertyPath) {
-        return propertyPath instanceof PathImpl pi ? pi.getLeafNode().toString() : null;
+        return propertyPath instanceof org.hibernate.validator.path.Path  pi ? pi.getLeafNode().toString() : null;
     }
 
 }
