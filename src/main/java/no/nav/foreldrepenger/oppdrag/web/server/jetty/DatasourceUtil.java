@@ -20,8 +20,8 @@ class DatasourceUtil {
     static HikariDataSource createDataSource(int maxPoolSize, int minIdle) {
         var config = new HikariConfig();
         config.setJdbcUrl(hentEllerBeregnVerdiHvisMangler("defaultDS.url", "defaultDSconfig", "jdbc_url"));
-        config.setUsername(hentEllerBeregnVerdiHvisMangler("defaultDS.username", "db/migration/defaultDS", "username"));
-        config.setPassword(hentEllerBeregnVerdiHvisMangler("defaultDS.password", "db/migration/defaultDS", "password"));
+        config.setUsername(hentEllerBeregnVerdiHvisMangler("defaultDS.username", "defaultDS", "username"));
+        config.setPassword(hentEllerBeregnVerdiHvisMangler("defaultDS.password", "defaultDS", "password"));
         config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(2));
         config.setMinimumIdle(minIdle);
         config.setMaximumPoolSize(maxPoolSize);
