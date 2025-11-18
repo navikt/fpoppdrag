@@ -20,7 +20,7 @@
         <sonar.projectKey>navikt_fpoppdrag</sonar.projectKey>
 
         <felles.version>7.6.9</felles.version>
-        <kontrakter.version>9.4.11</kontrakter.version>
+        <kontrakter.version>9.4.12</kontrakter.version>
     </properties>
 
 
@@ -86,20 +86,26 @@
 
         <!-- Prosjekt avhengigheter -->
         <dependency>
-            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-            <artifactId>person-klient</artifactId>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-util</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-util</artifactId>
+            <artifactId>felles-kontekst</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-feil</artifactId>
         </dependency>
 
-
-
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-konfig</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-server</artifactId>
+        </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-auth-filter</artifactId>
@@ -108,13 +114,11 @@
             <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-abac-kontekst</artifactId>
         </dependency>
+
+        <!-- Integrasjoner -->
         <dependency>
-            <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-konfig</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-server</artifactId>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>person-klient</artifactId>
         </dependency>
 
         <!-- Jersey server -->
@@ -215,14 +219,6 @@
             <groupId>org.glassfish.expressly</groupId>
             <artifactId>expressly</artifactId>
         </dependency>
-
-        <!-- Foreldrepengeprosjektet -->
-        <dependency>
-            <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-kontekst</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!-- NAV -->
 
         <!-- Test avhengigheter -->
         <dependency>
