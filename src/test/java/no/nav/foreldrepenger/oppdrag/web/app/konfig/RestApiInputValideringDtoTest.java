@@ -180,6 +180,8 @@ class RestApiInputValideringDtoTest extends RestApiTester {
             }
             if (erKodeverk(field.getType())) {
                 validerHarValidkodeverkAnnotering(field);
+            } else if (isCollectionOrMap(field)) {
+                validerRekursivt(besøkteKlasser, field.getType(), forrigeKlasse);
             } else if (getVurderingsalternativer(field) != null) {
                 validerRiktigAnnotert(field); // har konfigurert opp spesifikk validering
             } else if (field.getType().getName().startsWith("java")) {
@@ -270,9 +272,12 @@ class RestApiInputValideringDtoTest extends RestApiTester {
         throw new IllegalArgumentException("Feltet " + field + " har ikke påkrevde annoteringer: " + alternativer);
     }
 
+    private static boolean isCollectionOrMap(Field field) {
+        return Collection.class.isAssignableFrom(field.getType()) || Map.class.isAssignableFrom(field.getType());
+    }
+
     private static void validerRiktigAnnotertForCollectionsAndMaps(Field field) {
-        if (!Properties.class.isAssignableFrom(field.getType()) && (Collection.class.isAssignableFrom(
-                field.getType()) || Map.class.isAssignableFrom(field.getType()))) {
+        if (!Properties.class.isAssignableFrom(field.getType()) && isCollectionOrMap(field)) {
             var annType = (AnnotatedParameterizedType) field.getAnnotatedType();
             var annotatedTypes = annType.getAnnotatedActualTypeArguments();
             for (var at : List.of(annotatedTypes)) {
