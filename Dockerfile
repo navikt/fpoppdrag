@@ -2,8 +2,8 @@ FROM ghcr.io/navikt/fp-baseimages/chainguard:jre-25
 LABEL org.opencontainers.image.source=https://github.com/navikt/fpoppdrag
 
 # Config
-COPY web/target/classes/logback*.xml ./conf/
+COPY target/classes/logback*.xml ./conf/
 
 # Application Container (Jetty)
-COPY web/target/lib/*.jar ./lib/
-COPY web/target/app.jar .
+COPY target/lib/*.jar ./lib/
+COPY target/app.jar .
