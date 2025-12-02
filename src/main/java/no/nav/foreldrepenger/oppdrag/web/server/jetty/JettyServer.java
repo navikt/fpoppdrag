@@ -35,6 +35,8 @@ import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.foreldrepenger.oppdrag.web.app.konfig.ApiConfig;
 import no.nav.foreldrepenger.oppdrag.web.app.konfig.InternalApiConfig;
 
+import org.slf4j.bridge.SLF4JBridgeHandler;
+
 public class JettyServer {
 
     private static final Environment ENV = Environment.current();
@@ -59,9 +61,19 @@ public class JettyServer {
     }
 
     protected void bootStrap() throws Exception {
+        konfigurerLogging();
         konfigurerDataSource(DatasourceUtil.createDataSource(30, 2));
         migrerDatabase();
         start();
+    }
+
+    /**
+     * Vi bruker SLF4J + logback, Jersey brukes JUL for logging.
+     * Setter opp en bridge til å få Jersey til å logge gjennom Logback også.
+     */
+    private void konfigurerLogging() {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
     }
 
     private static void konfigurerDataSource(DataSource dataSource) throws NamingException {
