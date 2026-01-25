@@ -20,7 +20,7 @@
         <sonar.projectKey>navikt_fpoppdrag</sonar.projectKey>
 
         <felles.version>7.6.14</felles.version>
-        <kontrakter.version>9.4.23</kontrakter.version>
+        <kontrakter.version>9.4.24</kontrakter.version>
     </properties>
 
 
@@ -85,6 +85,10 @@
         </dependency>
 
         <!-- Prosjekt avhengigheter -->
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-mapper</artifactId>
+        </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-util</artifactId>
