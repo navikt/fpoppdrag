@@ -6,7 +6,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-parent-app</artifactId>
-        <version>5.2.1</version>
+        <version>5.2.2</version>
     </parent>
 
     <groupId>no.nav.foreldrepenger.oppdrag</groupId>
@@ -19,8 +19,8 @@
         <sonar.projectName>fp-oppdrag</sonar.projectName>
         <sonar.projectKey>navikt_fpoppdrag</sonar.projectKey>
 
-        <felles.version>7.6.14</felles.version>
-        <kontrakter.version>9.4.24</kontrakter.version>
+        <felles.version>7.6.15</felles.version>
+        <kontrakter.version>9.4.26</kontrakter.version>
     </properties>
 
 
@@ -71,8 +71,8 @@
             <artifactId>flyway-database-oracle</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.oracle.ojdbc</groupId>
-            <artifactId>ojdbc8</artifactId>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc17</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
