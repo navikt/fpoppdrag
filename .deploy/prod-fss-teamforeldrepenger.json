@@ -9,11 +9,11 @@
   "minReplicas": "2",
   "maxReplicas": "3",
   "limits": {
-    "mem": "544Mi"
+    "mem": "980Mi"
   },
   "requests": {
-    "cpu": "10m",
-    "mem": "544Mi"
+    "cpu": "50m",
+    "mem": "652Mi"
   },
   "ingresses": [
     "https://fpoppdrag.prod-fss-pub.nais.io"
