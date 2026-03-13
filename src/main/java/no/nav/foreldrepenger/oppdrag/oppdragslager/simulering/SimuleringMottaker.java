@@ -41,7 +41,7 @@ public class SimuleringMottaker extends BaseCreateableEntitet {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "simuleringMottaker")
     private List<SimulertPostering> simulertePosteringer = new ArrayList<>();
 
-    private SimuleringMottaker() {
+    protected SimuleringMottaker() {
         // Hibernate
     }
 
