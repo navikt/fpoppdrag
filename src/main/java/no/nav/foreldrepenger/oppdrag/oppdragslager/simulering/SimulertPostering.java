@@ -61,7 +61,7 @@ public class SimulertPostering extends BaseCreateableEntitet {
     @Column(name = "uten_inntrekk", nullable = false)
     private boolean utenInntrekk;
 
-    private SimulertPostering() {
+    protected SimulertPostering() {
         // Hibernate
     }
 

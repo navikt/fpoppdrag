@@ -54,7 +54,7 @@ public class SimuleringGrunnlag extends BaseEntitet {
     @Column(name = "ytelse_type", nullable = false)
     private YtelseType ytelseType;
 
-    private SimuleringGrunnlag() {
+    protected SimuleringGrunnlag() {
         // Hibernate
     }
 

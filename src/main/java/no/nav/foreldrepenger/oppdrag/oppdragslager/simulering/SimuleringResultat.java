@@ -26,7 +26,7 @@ public class SimuleringResultat extends BaseCreateableEntitet {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "simuleringResultat")
     private Set<SimuleringMottaker> simuleringMottakere = new HashSet<>();
 
-    private SimuleringResultat() {
+    protected SimuleringResultat() {
         // Hibernate
     }
 
