@@ -10,18 +10,19 @@ import org.glassfish.jersey.server.ServerProperties;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
-import no.nav.foreldrepenger.oppdrag.web.app.exceptions.ConstraintViolationMapper;
-import no.nav.foreldrepenger.oppdrag.web.app.exceptions.GeneralRestExceptionMapper;
-import no.nav.foreldrepenger.oppdrag.web.app.exceptions.JsonMappingExceptionMapper;
-import no.nav.foreldrepenger.oppdrag.web.app.exceptions.JsonParseExceptionMapper;
-import no.nav.foreldrepenger.oppdrag.web.app.jackson.JacksonJsonConfig;
+import no.nav.foreldrepenger.oppdrag.web.app.exceptions.OppdragNedetidExceptionMapper;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.SimuleringRestTjeneste;
+import no.nav.vedtak.server.rest.FpRestJackson2Feature;
+import no.nav.vedtak.server.rest.GeneralRestExceptionMapper;
 
 @ApplicationPath(ApiConfig.API_URI)
 public class ApiConfig extends Application {
 
     public static final String API_URI = "/api";
 
+    public ApiConfig() {
+        GeneralRestExceptionMapper.setBrukerRettetApplikasjon(false);
+    }
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -29,19 +30,8 @@ public class ApiConfig extends Application {
         // eksponert grensesnitt
         classes.add(SimuleringRestTjeneste.class);
 
-        // Autentisering
-        classes.add(AuthenticationFilter.class);
-
-        // Applikasjonsoppsett
-        classes.add(JacksonJsonConfig.class);
-
-        // ExceptionMappers pga de som finnes i Jackson+Jersey-media
-        classes.add(ConstraintViolationMapper.class);
-        classes.add(JsonMappingExceptionMapper.class);
-        classes.add(JsonParseExceptionMapper.class);
-
-        // Generell exceptionmapper m/logging for øvrige tilfelle
-        classes.add(GeneralRestExceptionMapper.class);
+        classes.add(FpRestJackson2Feature.class);
+        classes.add(OppdragNedetidExceptionMapper.class);
 
         return Collections.unmodifiableSet(classes);
     }
