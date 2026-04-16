@@ -10,19 +10,13 @@ import org.glassfish.jersey.server.ServerProperties;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
-import no.nav.foreldrepenger.oppdrag.web.app.exceptions.OppdragNedetidExceptionMapper;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.simulering.SimuleringRestTjeneste;
 import no.nav.vedtak.server.rest.FpRestJackson2Feature;
-import no.nav.vedtak.server.rest.GeneralRestExceptionMapper;
 
 @ApplicationPath(ApiConfig.API_URI)
 public class ApiConfig extends Application {
 
     public static final String API_URI = "/api";
-
-    public ApiConfig() {
-        GeneralRestExceptionMapper.setBrukerRettetApplikasjon(false);
-    }
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -31,7 +25,6 @@ public class ApiConfig extends Application {
         classes.add(SimuleringRestTjeneste.class);
 
         classes.add(FpRestJackson2Feature.class);
-        classes.add(OppdragNedetidExceptionMapper.class);
 
         return Collections.unmodifiableSet(classes);
     }
