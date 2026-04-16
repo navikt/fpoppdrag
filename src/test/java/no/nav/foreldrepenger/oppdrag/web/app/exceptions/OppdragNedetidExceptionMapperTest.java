@@ -6,20 +6,22 @@ import org.junit.jupiter.api.Test;
 
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy.OppdragNedetidException;
 import no.nav.vedtak.feil.FeilDto;
+import no.nav.vedtak.server.rest.GeneralRestExceptionMapper;
 
 class OppdragNedetidExceptionMapperTest {
 
-    private final OppdragNedetidExceptionMapper exceptionMapper = new OppdragNedetidExceptionMapper();
+    private final GeneralRestExceptionMapper exceptionMapper = new GeneralRestExceptionMapper();
 
     @Test
     void skalMappeOppdragNedetidTil503() {
-        var response = exceptionMapper.toResponse(new OppdragNedetidException());
+        try (var response = exceptionMapper.toResponse(new OppdragNedetidException())) {
 
-        assertThat(response.getStatus()).isEqualTo(503);
-        assertThat(response.getEntity()).isInstanceOf(FeilDto.class);
-        var feilDto = (FeilDto) response.getEntity();
+            assertThat(response.getStatus()).isEqualTo(503);
+            assertThat(response.getEntity()).isInstanceOf(FeilDto.class);
+            var feilDto = (FeilDto) response.getEntity();
 
-        assertThat(feilDto.feiltype()).isEqualTo("OPPDRAG_FORVENTET_NEDETID");
+            assertThat(feilDto.feilkode()).isEqualTo("OPPDRAG_FORVENTET_NEDETID");
+        }
     }
 
 }
