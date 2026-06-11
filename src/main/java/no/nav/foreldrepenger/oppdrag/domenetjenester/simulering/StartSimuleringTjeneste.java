@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.Oppdrag110Dto;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.OppdragskontrollDto;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningDto;
@@ -30,8 +29,6 @@ import no.nav.vedtak.exception.TekniskException;
 public class StartSimuleringTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(StartSimuleringTjeneste.class);
-
-    private static final String DEAKTIVER_SIMULERING_DEAKTIVERING = "testing.deaktiver.simulering.deaktivering";
 
     private SimuleringRepository simuleringRepository;
     private FpWsProxySimuleringKlient fpWsProxySimuleringKlient;
@@ -178,13 +175,10 @@ public class StartSimuleringTjeneste {
     }
 
     private void deaktiverBehandling(long behandlingId) {
-        var deaktiverForLokalTesting = Environment.current().getProperty(DEAKTIVER_SIMULERING_DEAKTIVERING);
-        if (deaktiverForLokalTesting == null || "false".equalsIgnoreCase(deaktiverForLokalTesting)) {
-            var eksisterende = simuleringRepository.hentSimulertOppdragForBehandling(behandlingId);
-            eksisterende.ifPresent(grunnlag -> {
-                LOG.info("Deaktiverer simulering for behandling {}", behandlingId);
-                simuleringRepository.deaktiverSimuleringGrunnlag(grunnlag);
-            });
-        }
+        var eksisterende = simuleringRepository.hentSimulertOppdragForBehandling(behandlingId);
+        eksisterende.ifPresent(grunnlag -> {
+            LOG.info("Deaktiverer simulering for behandling {}", behandlingId);
+            simuleringRepository.deaktiverSimuleringGrunnlag(grunnlag);
+        });
     }
 }
