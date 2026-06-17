@@ -3,9 +3,6 @@ package no.nav.foreldrepenger.oppdrag.web.server.jetty;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
 import org.eclipse.jetty.ee11.cdi.CdiDecoratingListener;
 import org.eclipse.jetty.ee11.cdi.CdiServletContainerInitializer;
 import org.eclipse.jetty.ee11.servlet.DefaultServlet;
@@ -13,7 +10,6 @@ import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee11.servlet.ServletHolder;
 import org.eclipse.jetty.ee11.servlet.security.ConstraintMapping;
 import org.eclipse.jetty.ee11.servlet.security.ConstraintSecurityHandler;
-import org.eclipse.jetty.plus.jndi.EnvEntry;
 import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
@@ -22,22 +18,21 @@ import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.flywaydb.core.Flyway;
-import org.flywaydb.core.api.FlywayException;
 import org.glassfish.jersey.servlet.ServletContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.foreldrepenger.oppdrag.web.app.konfig.ApiConfig;
 import no.nav.foreldrepenger.oppdrag.web.app.konfig.InternalApiConfig;
 import no.nav.foreldrepenger.oppdrag.web.app.tjenester.ServiceStarterListener;
+import no.nav.vedtak.felles.jpa.NamingStandard;
+import no.nav.vedtak.felles.jpa.flyway.FlywayUtil;
+import no.nav.vedtak.felles.jpa.jdbc.DataSourceHolder;
+import no.nav.vedtak.log.metrics.MetricsUtil;
 
 public class JettyServer {
 
     private static final Environment ENV = Environment.current();
-    private static final Logger LOG = LoggerFactory.getLogger(JettyServer.class);
     private static final String APPLICATION = "jakarta.ws.rs.Application";
 
     private static final String CONTEXT_PATH = ENV.getProperty("context.path", "/fpoppdrag");
@@ -58,9 +53,25 @@ public class JettyServer {
 
     void bootStrap() throws Exception {
         konfigurerLogging();
-        konfigurerDataSource(DatasourceUtil.createDataSource(30, 2));
-        migrerDatabase();
+        createDatasourceMigrer();
         start();
+    }
+
+    private static void createDatasourceMigrer() {
+        var jdbc = hentEllerBeregnVerdiHvisMangler("defaultDS.url", "defaultDSconfig", "jdbc_url");
+        var username = hentEllerBeregnVerdiHvisMangler("defaultDS.username", "defaultDS", "username");
+        var password = hentEllerBeregnVerdiHvisMangler("defaultDS.password", "defaultDS", "password");
+        var dataSource = no.nav.vedtak.felles.jpa.jdbc.DatasourceUtil.oracleDataSource(jdbc, username, password, 15);
+        DataSourceHolder.initialize(dataSource);
+        FlywayUtil.migrateLegacyOracle(dataSource, NamingStandard.DEFAULT_DS_MIGRATION_CLASSPATH);
+    }
+
+    /* Denne gir lazy loading og feiler ikke ved lokalt kjøring uten vault mount */
+    private static String hentEllerBeregnVerdiHvisMangler(String key, String mappeNavn, String filNavn) {
+        if (ENV.getProperty(key) == null) {
+            System.getProperties().computeIfAbsent(key, _ -> VaultUtil.lesFilVerdi(mappeNavn, filNavn));
+        }
+        return ENV.getRequiredProperty(key);
     }
 
     /**
@@ -70,25 +81,7 @@ public class JettyServer {
     private static void konfigurerLogging() {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
-    }
-
-    private static void konfigurerDataSource(DataSource dataSource) throws NamingException {
-        new EnvEntry("jdbc/defaultDS", dataSource);
-    }
-
-    private static void migrerDatabase() {
-        try (var dataSource = DatasourceUtil.createDataSource(3, 1)) {
-            Flyway.configure()
-                .dataSource(dataSource)
-                .locations("classpath:/db/migration/defaultDS")
-                .table("schema_version")
-                .baselineOnMigrate(true)
-                .load()
-                .migrate();
-        } catch (FlywayException e) {
-            LOG.error("Feil under migrering av databasen.");
-            throw e;
-        }
+        MetricsUtil.scrape(); // TODO: erstatt med kommende init
     }
 
     private void start() throws Exception {
