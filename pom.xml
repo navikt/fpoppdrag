@@ -20,7 +20,7 @@
         <sonar.projectKey>navikt_fpoppdrag</sonar.projectKey>
 
         <felles.version>7.9.0</felles.version>
-        <kontrakter.version>9.4.37</kontrakter.version>
+        <kontrakter.version>9.4.39</kontrakter.version>
     </properties>
 
 
