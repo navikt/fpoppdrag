@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import jakarta.enterprise.context.Dependent;
-import no.nav.vedtak.log.mdc.LoggFelter;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.PdpRequestBuilder;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -31,11 +30,11 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
         var builder = AppRessursData.builder()
             .medFagsakStatus(PipFagsakStatus.UNDER_BEHANDLING)
-            .medBehandlingStatus(PipBehandlingStatus.UTREDES);
+            .medBehandlingStatus(PipBehandlingStatus.UTREDES)
+            .medLoggSaksnummer(saksnummer.stream().findFirst().orElse(null))
+            .medLoggBehandling(behandlingUUids.stream().findFirst().orElse(null))
+            .medLoggBehandlingId(behandlinger.stream().findFirst().orElse(null));
         saksnummer.stream().findFirst().ifPresent(builder::medSaksnummer);
-        saksnummer.stream().findFirst().ifPresent(builder::medLoggSaksnummer);
-        behandlingUUids.stream().findFirst().ifPresent(builder::medLoggBehandling);
-        behandlinger.stream().findFirst().ifPresent(b -> builder.medLoggFelt(LoggFelter.BEHANDLING_ID, String.valueOf(b)));
         return builder.build();
     }
 }
