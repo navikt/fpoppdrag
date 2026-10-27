@@ -59,6 +59,22 @@ class SimuleringGrunnlagEqualsTest {
         assertThat(simuleringGrunnlag1).isNotEqualTo(simuleringGrunnlag2);
     }
 
+    @Test
+    void sammenlignerAntallForekomsterAvHverPostering() {
+        var første = simuleringMottaker(BigDecimal.TEN, 2);
+        første.leggTilSimulertPostering(simulertPostering(BigDecimal.ONE));
+        var andre = simuleringMottaker(BigDecimal.ONE, 2);
+        andre.leggTilSimulertPostering(simulertPostering(BigDecimal.TEN));
+        var samme = simuleringMottaker(new BigDecimal("1.00"));
+        samme.leggTilSimulertPostering(simulertPostering(new BigDecimal("10.0")));
+        samme.leggTilSimulertPostering(simulertPostering(new BigDecimal("10.00")));
+
+        var grunnlag = opprettGrunnlag(123L, første);
+        assertThat(grunnlag).isNotEqualTo(opprettGrunnlag(123L, andre));
+        assertThat(opprettGrunnlag(123L, andre)).isNotEqualTo(grunnlag);
+        assertThat(grunnlag).isEqualTo(opprettGrunnlag(123L, samme));
+    }
+
     private static SimuleringGrunnlag opprettGrunnlag(Long behandlingId, SimuleringMottaker... simuleringMottakere) {
         SimuleringResultat.Builder simuleringResultat = SimuleringResultat.builder();
         if (simuleringMottakere != null) {

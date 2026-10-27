@@ -112,7 +112,13 @@ public class SimuleringMottaker extends BaseCreateableEntitet {
             return true;
         if (l1 == null || l2 == null)
             return false;
-        return l1.size() == l2.size() && l2.containsAll(l1);
+        var resterende = new ArrayList<>(l1);
+        for (var postering : l2) {
+            if (!resterende.remove(postering)) {
+                return false;
+            }
+        }
+        return resterende.isEmpty();
     }
 
     @Override
