@@ -66,10 +66,10 @@ public class SokosOppdragProxyKlient {
         var container = Objects.requireNonNull(operation.container(), "Mangler ZS1OCont");
         var respons = Objects.requireNonNull(container.responsSimulering(), "Mangler responsSimulering");
         if (!Integer.valueOf(0).equals(respons.statusKode())) {
-            LOG.info("Sokos-simulering status. behandlingId={} utenInntrekk={} statusKode={}",
-                behandlingId, utenInntrekk, respons.statusKode());
+            LOG.info("Sokos-simulering status. behandlingId={} utenInntrekk={} statusKode={} statusMelding={}",
+                behandlingId, utenInntrekk, respons.statusKode(), respons.statusMelding());
             if (!Integer.valueOf(4).equals(respons.statusKode())) {
-                throw new IntegrasjonException("FPO-468819", "Feilstatus i Sokos-simulering");
+                throw new IntegrasjonException("FPO-468819", "Feilstatus i Sokos-simulering. Melding=" + respons.statusMelding());
             }
         }
         return respons;
