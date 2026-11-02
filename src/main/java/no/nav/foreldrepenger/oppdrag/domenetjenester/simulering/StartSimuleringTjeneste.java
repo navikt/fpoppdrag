@@ -150,7 +150,7 @@ public class StartSimuleringTjeneste {
             }
         } catch (Exception e) {
             // Shadow-kallet skal aldri endre responsen eller nedetidsprotokollen til fp-sak.
-            LOG.info("Sokos-sammenligning feilet. behandlingId={}", oppdrag.behandlingId(), e);
+            LOG.info("Sokos-sammenligning feilet. behandlingId={},  feiltype={}", oppdrag.behandlingId(), e.getClass().getSimpleName(), e);
         }
     }
 
