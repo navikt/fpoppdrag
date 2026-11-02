@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,10 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.Oppdrag110Dto;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.request.OppdragskontrollDto;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy.FpWsProxySimuleringKlient;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.sokosproxy.SokosOppdragProxyKlient;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.sokosproxy.SokosSimuleringRespons;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.BehandlingRef;
@@ -23,6 +27,7 @@ import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
 import no.nav.vedtak.exception.TekniskException;
 
 @ApplicationScoped
@@ -30,8 +35,11 @@ public class StartSimuleringTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(StartSimuleringTjeneste.class);
 
+    private boolean skalKalleSokos;
+
     private SimuleringRepository simuleringRepository;
     private FpWsProxySimuleringKlient fpWsProxySimuleringKlient;
+    private SokosOppdragProxyKlient sokosOppdragProxyKlient;
     private SimuleringResultatTransformer resultatTransformer;
     private SimuleringBeregningTjeneste simuleringBeregningTjeneste;
 
@@ -42,12 +50,25 @@ public class StartSimuleringTjeneste {
     @Inject
     public StartSimuleringTjeneste(SimuleringRepository simuleringRepository,
                                    FpWsProxySimuleringKlient fpWsProxySimuleringKlient,
+                                   SokosOppdragProxyKlient sokosOppdragProxyKlient,
                                    SimuleringResultatTransformer resultatTransformer,
                                    SimuleringBeregningTjeneste simuleringBeregningTjeneste) {
+        this(simuleringRepository, fpWsProxySimuleringKlient, sokosOppdragProxyKlient, resultatTransformer,
+            simuleringBeregningTjeneste, Environment.current().getProperty("sokos.simulering.sammenlign", Boolean.class, false));
+    }
+
+    StartSimuleringTjeneste(SimuleringRepository simuleringRepository,
+                            FpWsProxySimuleringKlient fpWsProxySimuleringKlient,
+                            SokosOppdragProxyKlient sokosOppdragProxyKlient,
+                            SimuleringResultatTransformer resultatTransformer,
+                            SimuleringBeregningTjeneste simuleringBeregningTjeneste,
+                            boolean skalKalleSokos) {
         this.simuleringRepository = simuleringRepository;
         this.fpWsProxySimuleringKlient = fpWsProxySimuleringKlient;
+        this.sokosOppdragProxyKlient = sokosOppdragProxyKlient;
         this.resultatTransformer = resultatTransformer;
         this.simuleringBeregningTjeneste = simuleringBeregningTjeneste;
+        this.skalKalleSokos = skalKalleSokos;
     }
 
     public void startSimulering(OppdragskontrollDto oppdragskontrollDto) {
@@ -65,7 +86,11 @@ public class StartSimuleringTjeneste {
             var ytelseType = bestemYtelseType(behandlingId, oppdragskontrollDto.oppdrag());
             var simuleringGrunnlag = transformerTilDatastruktur(behandlingId, simuleringResponsListe, ytelseType);
 
-            utførSimuleringUtenInntrekk(oppdragskontrollDto, simuleringGrunnlag);
+            var simulertUtenInntrekk = utførSimuleringUtenInntrekk(oppdragskontrollDto, simuleringGrunnlag);
+
+            if (skalKalleSokos) {
+                sammenlignMedSokos(oppdragskontrollDto, simuleringGrunnlag, simulertUtenInntrekk);
+            }
 
             simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
         } else {
@@ -73,7 +98,6 @@ public class StartSimuleringTjeneste {
             // f.eks. oppdrag finnes fra før, tom respons fra øk, FeilUnderBehandling som ikke er error
             // for å unngå å sende simuleringsresultat for forrige simulering når den nye simuleringen returnerer tomt resultat
             deaktiverBehandling(behandlingId);
-
         }
         LOG.info("Fullført simulering. behandlingID={} tidsforbrukTotalt={} ms", behandlingId, System.currentTimeMillis() - t0);
     }
@@ -93,7 +117,7 @@ public class StartSimuleringTjeneste {
                 .anyMatch(Objects::nonNull);
     }
 
-    private void utførSimuleringUtenInntrekk(OppdragskontrollDto oppdragskontrollDto, SimuleringGrunnlag simuleringGrunnlag) {
+    private boolean utførSimuleringUtenInntrekk(OppdragskontrollDto oppdragskontrollDto, SimuleringGrunnlag simuleringGrunnlag) {
         var beregningResultat = simuleringBeregningTjeneste.hentBeregningsresultat(simuleringGrunnlag);
         if (erResultatMedInntrekkOgFeilutbetaling(beregningResultat)) {
             LOG.info("Utfører simulering uten inntrekk.");
@@ -101,6 +125,70 @@ public class StartSimuleringTjeneste {
             beregningResultater.stream()
                     .filter(Objects::nonNull)
                     .forEach(beregningDto -> resultatTransformer.mapSimuleringUtenInntrekk(beregningDto, simuleringGrunnlag));
+            return true;
+        }
+        return false;
+    }
+
+    private void sammenlignMedSokos(OppdragskontrollDto oppdrag, SimuleringGrunnlag fasit, boolean simulertUtenInntrekk) {
+        try {
+            var beregninger = hentSokosBeregninger(oppdrag, fasit.getYtelseType(), false);
+            if (beregninger.isEmpty()) {
+                LOG.info("Sokos-sammenligning: tomt resultat fra Sokos, grunnlag fra FpWsProxy. behandlingId={}", oppdrag.behandlingId());
+                return;
+            }
+            var sokosGrunnlag = resultatTransformer.mapSokosSimulering(fasit.getEksternReferanse().getBehandlingId(),
+                beregninger, fasit.getYtelseType());
+            if (simulertUtenInntrekk) {
+                hentSokosBeregninger(oppdrag, fasit.getYtelseType(), true)
+                    .forEach(beregning -> resultatTransformer.mapSokosSimuleringUtenInntrekk(beregning, sokosGrunnlag));
+            }
+            if (!fasit.equals(sokosGrunnlag)) {
+                loggForskjeller(oppdrag.behandlingId(), fasit, sokosGrunnlag);
+            } else {
+                LOG.info("Sokos-sammenligning: like grunnlag. behandlingId={} utenInntrekk={}", oppdrag.behandlingId(), simulertUtenInntrekk);
+            }
+        } catch (Exception e) {
+            // Shadow-kallet skal aldri endre responsen eller nedetidsprotokollen til fp-sak.
+            LOG.info("Sokos-sammenligning feilet. behandlingId={} feiltype={}", oppdrag.behandlingId(), e.getClass().getSimpleName());
+        }
+    }
+
+    private List<SokosSimuleringRespons.Beregning> hentSokosBeregninger(OppdragskontrollDto oppdrag, YtelseType ytelseType, boolean utenInntrekk) {
+        return sokosOppdragProxyKlient.utførSimulering(oppdrag, ytelseType, utenInntrekk).stream()
+            .map(SokosSimuleringRespons.Respons::beregning)
+            .filter(Objects::nonNull)
+            .filter(beregning -> beregning.gjelderId() != null && !beregning.gjelderId().isBlank())
+            .toList();
+    }
+
+    private static void loggForskjeller(String behandlingId, SimuleringGrunnlag fasit, SimuleringGrunnlag sokos) {
+        var forventede = fasit.getSimuleringResultat().getSimuleringMottakere();
+        var faktiske = new ArrayList<>(sokos.getSimuleringResultat().getSimuleringMottakere());
+        LOG.info("Sokos-sammenligning: ulike grunnlag. behandlingId={} mottakereFpWsProxy={} mottakereSokos={}",
+            behandlingId, forventede.size(), faktiske.size());
+        for (var forventet : forventede) {
+            var faktisk = faktiske.stream()
+                .filter(m -> m.getMottakerNummer().equals(forventet.getMottakerNummer()) && m.getMottakerType() == forventet.getMottakerType())
+                .findFirst();
+            if (faktisk.isEmpty()) {
+                LOG.info("Sokos-sammenligning: mangler mottaker. behandlingId={} mottakerType={}", behandlingId, forventet.getMottakerType());
+            } else {
+                faktiske.remove(faktisk.get());
+                loggPosteringsavvik(behandlingId, forventet, faktisk.get(), false);
+                loggPosteringsavvik(behandlingId, forventet, faktisk.get(), true);
+            }
+        }
+        faktiske.forEach(m -> LOG.info("Sokos-sammenligning: ekstra mottaker. behandlingId={} mottakerType={}", behandlingId, m.getMottakerType()));
+    }
+
+    private static void loggPosteringsavvik(String behandlingId, SimuleringMottaker fasit, SimuleringMottaker sokos, boolean utenInntrekk) {
+        var forventede = utenInntrekk ? fasit.getSimulertePosteringerUtenInntrekk() : fasit.getSimulertePosteringer();
+        var ekstra = new ArrayList<>(utenInntrekk ? sokos.getSimulertePosteringerUtenInntrekk() : sokos.getSimulertePosteringer());
+        List<SimulertPostering> manglende = forventede.stream().filter(p -> !ekstra.remove(p)).toList();
+        if (!manglende.isEmpty() || !ekstra.isEmpty()) {
+            LOG.info("Sokos-sammenligning: ulike posteringer. behandlingId={} mottakerType={} utenInntrekk={} manglerISokos={} ekstraISokos={}",
+                behandlingId, fasit.getMottakerType(), utenInntrekk, manglende.size(), ekstra.size());
         }
     }
 

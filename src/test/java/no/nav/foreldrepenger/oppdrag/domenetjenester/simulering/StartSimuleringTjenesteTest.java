@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,8 +39,10 @@ import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningDt
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningStoppnivåDetaljerDto;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningStoppnivåDto;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningsPeriodeDto;
+import no.nav.foreldrepenger.oppdrag.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.fpwsproxy.FpWsProxySimuleringKlient;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.sokosproxy.SokosOppdragProxyKlient;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
@@ -61,6 +61,7 @@ public class StartSimuleringTjenesteTest {
     private static final String AKTØR_ID = "1234567890123";
 
     private final FpWsProxySimuleringKlient fpWsProxySimuleringKlient = mock(FpWsProxySimuleringKlient.class);
+    private final SokosOppdragProxyKlient sokosOppdragProxyKlient = mock(SokosOppdragProxyKlient.class);
     private final PersonTjeneste tpsTjenesteMock = mock(PersonTjeneste.class);
     private final SimuleringResultatTransformer resultatTransformer = new SimuleringResultatTransformer(tpsTjenesteMock);
     private final SimuleringBeregningTjeneste simuleringBeregningTjeneste = new SimuleringBeregningTjeneste();
@@ -71,7 +72,7 @@ public class StartSimuleringTjenesteTest {
     public void setup(EntityManager entityManager) {
 
         simuleringRepository = new SimuleringRepository(entityManager);
-        simuleringTjeneste = new StartSimuleringTjeneste(simuleringRepository, fpWsProxySimuleringKlient, resultatTransformer, simuleringBeregningTjeneste);
+        simuleringTjeneste = new StartSimuleringTjeneste(simuleringRepository, fpWsProxySimuleringKlient, sokosOppdragProxyKlient, resultatTransformer, simuleringBeregningTjeneste);
         when(tpsTjenesteMock.hentAktørForFnr(any())).thenReturn(Optional.of(new AktørId(AKTØR_ID)));
     }
 

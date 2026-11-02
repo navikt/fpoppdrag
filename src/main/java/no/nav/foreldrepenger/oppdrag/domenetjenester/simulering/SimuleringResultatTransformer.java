@@ -3,6 +3,8 @@ package no.nav.foreldrepenger.oppdrag.domenetjenester.simulering;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -12,12 +14,16 @@ import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningDt
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningStoppnivåDetaljerDto;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.simulering.respons.BeregningStoppnivåDto;
 import no.nav.foreldrepenger.oppdrag.domenetjenester.person.PersonTjeneste;
+import no.nav.foreldrepenger.oppdrag.domenetjenester.simulering.sokosproxy.SokosSimuleringRespons;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.BetalingType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.Fagområde;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.MottakerType;
 import no.nav.foreldrepenger.oppdrag.kodeverdi.PosteringType;
+import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.BehandlingRef;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringMottaker;
+import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringResultat;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimulertPostering;
 import no.nav.vedtak.exception.TekniskException;
 
@@ -79,10 +85,7 @@ public class SimuleringResultatTransformer {
 
 
     public void mapSimuleringUtenInntrekk(BeregningDto beregning, SimuleringGrunnlag simuleringGrunnlag) {
-        var mottaker = simuleringGrunnlag.getSimuleringResultat().getSimuleringMottakere().stream()
-                .filter(m -> m.getMottakerType().equals(MottakerType.BRUKER))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Utviklerfeil: skal ikke komme hit uten at bruker finnes som mottaker"));
+        var mottaker = hentBruker(simuleringGrunnlag);
 
         for (var periode : beregning.beregningsPeriode()) {
             for (var stoppnivaa : periode.beregningStoppnivaa()) {
@@ -92,6 +95,62 @@ public class SimuleringResultatTransformer {
                 }
             }
         }
+    }
+
+    public SimuleringGrunnlag mapSokosSimulering(Long behandlingId, List<SokosSimuleringRespons.Beregning> beregninger, YtelseType ytelseType) {
+        var gjelderAktørId = hentAktørIdHvisFnr(beregninger.getFirst().gjelderId());
+        Map<String, SimuleringMottaker.Builder> mottakere = new HashMap<>();
+        for (var beregning : beregninger) {
+            var aktørId = hentAktørIdHvisFnr(beregning.gjelderId());
+            for (var periode : beregning.periodeStoppnivaa()) {
+                var stoppnivaa = periode.beregningStoppnivaa();
+                var mottakerId = hentAktørIdHvisFnr(stoppnivaa.utbetalesTilId());
+                var mottaker = mottakere.computeIfAbsent(mottakerId, id -> SimuleringMottaker.builder()
+                    .medMottakerNummer(id)
+                    .medMottakerType(utledMottakerType(stoppnivaa.utbetalesTilId(), aktørId.equals(id))));
+                stoppnivaa.stoppnivaaDetaljer().stream()
+                    .map(detaljer -> mapSokosPostering(false, stoppnivaa, detaljer))
+                    .forEach(mottaker::medSimulertPostering);
+            }
+        }
+        var resultat = SimuleringResultat.builder();
+        mottakere.values().stream().map(SimuleringMottaker.Builder::build).forEach(resultat::medSimuleringMottaker);
+        return SimuleringGrunnlag.builder()
+            .medEksternReferanse(new BehandlingRef(behandlingId))
+            .medAktørId(gjelderAktørId)
+            .medYtelseType(ytelseType)
+            .medSimuleringResultat(resultat.build())
+            .build();
+    }
+
+    public void mapSokosSimuleringUtenInntrekk(SokosSimuleringRespons.Beregning beregning, SimuleringGrunnlag grunnlag) {
+        var mottaker = hentBruker(grunnlag);
+        beregning.periodeStoppnivaa().stream()
+            .map(SokosSimuleringRespons.PeriodeStoppnivaa::beregningStoppnivaa)
+            .flatMap(stoppnivaa -> stoppnivaa.stoppnivaaDetaljer().stream()
+                .map(detaljer -> mapSokosPostering(true, stoppnivaa, detaljer)))
+            .forEach(mottaker::leggTilSimulertPostering);
+    }
+
+    private SimulertPostering mapSokosPostering(boolean utenInntrekk, SokosSimuleringRespons.Stoppnivaa stoppnivaa,
+                                               SokosSimuleringRespons.Detaljer detaljer) {
+        return SimulertPostering.builder()
+            .medBetalingType(utledBetalingType(detaljer.belop()))
+            .medBeløp(detaljer.belop())
+            .medFagOmraadeKode(Fagområde.fraKode(stoppnivaa.kodeFagomraade()))
+            .medFom(parseDato(detaljer.faktiskFom()))
+            .medTom(parseDato(detaljer.faktiskTom()))
+            .medForfallsdato(parseDato(stoppnivaa.datoForfall()))
+            .medPosteringType(PosteringType.getOrNull(detaljer.typeKlasse()))
+            .utenInntrekk(utenInntrekk)
+            .build();
+    }
+
+    private static SimuleringMottaker hentBruker(SimuleringGrunnlag grunnlag) {
+        return grunnlag.getSimuleringResultat().getSimuleringMottakere().stream()
+            .filter(m -> m.getMottakerType().equals(MottakerType.BRUKER))
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("Utviklerfeil: skal ikke komme hit uten at bruker finnes som mottaker"));
     }
 
 
