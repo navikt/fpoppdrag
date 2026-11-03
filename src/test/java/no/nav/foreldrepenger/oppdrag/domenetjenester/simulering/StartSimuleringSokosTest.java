@@ -17,8 +17,10 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.LoggerFactory;
@@ -45,6 +47,7 @@ import no.nav.foreldrepenger.oppdrag.kodeverdi.YtelseType;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringGrunnlag;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.SimuleringRepository;
 import no.nav.foreldrepenger.oppdrag.oppdragslager.simulering.typer.AktørId;
+import no.nav.vedtak.exception.IntegrasjonException;
 
 class StartSimuleringSokosTest {
 
@@ -171,13 +174,95 @@ class StartSimuleringSokosTest {
         verify(sokos).utførSimulering(kontroll, YtelseType.FP, true);
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    @DisplayName("Bruk Sokos overstyrer sammenligning og lagrer bare Sokos-resultatet")
+    void brukerKunSokos(boolean sammenlign) {
+        when(sokos.utførSimulering(kontroll, null, false)).thenReturn(List.of(sokosRespons("999")));
+
+        tjeneste(sammenlign, true).startSimulering(kontroll);
+
+        assertThat(lagretBeløp()).isEqualByComparingTo("999");
+        verifyNoInteractions(wsProxy);
+        verify(sokos, never()).utførSimulering(any(), any(), eq(true));
+        verify(repository, never()).hentSimulertOppdragForBehandling(any());
+        assertThat(meldinger()).noneMatch(m -> m.contains("Sokos-sammenligning"));
+    }
+
+    @Test
+    @DisplayName("Sokos-resultatet styrer behovet for og lagringen av simulering uten inntrekk")
+    void brukerSokosOgsåUtenInntrekk() {
+        aktiverUtenInntrekk();
+        when(sokos.utførSimulering(kontroll, null, false)).thenReturn(List.of(sokosRespons("999")));
+        when(sokos.utførSimulering(kontroll, YtelseType.FP, true)).thenReturn(List.of(sokosRespons("200")));
+
+        tjeneste(false, true).startSimulering(kontroll);
+
+        var grunnlag = lagretGrunnlag();
+        verify(beregningTjeneste).hentBeregningsresultat(grunnlag);
+        var mottaker = grunnlag.getSimuleringResultat().getSimuleringMottakere().iterator().next();
+        assertThat(mottaker.getSimulertePosteringer()).singleElement()
+            .satisfies(p -> assertThat(p.getBeløp()).isEqualByComparingTo("999"));
+        assertThat(mottaker.getSimulertePosteringerUtenInntrekk()).singleElement()
+            .satisfies(p -> assertThat(p.getBeløp()).isEqualByComparingTo("200"));
+        verifyNoInteractions(wsProxy);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    @DisplayName("Tomt autoritativt Sokos-resultat deaktiverer tidligere simulering")
+    void tomSokosResponsDeaktiverer(boolean harResponsUtenBeregning) {
+        var tidligere = mock(SimuleringGrunnlag.class);
+        when(repository.hentSimulertOppdragForBehandling(42L)).thenReturn(Optional.of(tidligere));
+        when(sokos.utførSimulering(kontroll, null, false)).thenReturn(harResponsUtenBeregning
+            ? List.of(new SokosSimuleringRespons.Respons(0, "", null)) : List.of());
+
+        tjeneste(false, true).startSimulering(kontroll);
+
+        verify(repository).deaktiverSimuleringGrunnlag(tidligere);
+        verify(repository, never()).lagreSimuleringGrunnlag(any());
+        verifyNoInteractions(wsProxy, beregningTjeneste);
+        verify(sokos, never()).utførSimulering(any(), any(), eq(true));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"false, false", "false, true", "true, false", "true, true"})
+    @DisplayName("Autoritative Sokos-feil propageres uten lagring, deaktivering eller fallback")
+    void sokosFeilPropagerer(boolean utenInntrekk, boolean nedetid) {
+        var feil = nedetid ? new SokosOppdragNedetidException() : new IntegrasjonException("TEST", "Feil fra Sokos");
+        if (utenInntrekk) {
+            aktiverUtenInntrekk();
+            when(sokos.utførSimulering(kontroll, null, false)).thenReturn(List.of(sokosRespons("999")));
+            when(sokos.utførSimulering(kontroll, YtelseType.FP, true)).thenThrow(feil);
+        } else {
+            when(sokos.utførSimulering(kontroll, null, false)).thenThrow(feil);
+        }
+
+        assertThatThrownBy(() -> tjeneste(false, true).startSimulering(kontroll)).isSameAs(feil);
+        verifyNoInteractions(wsProxy, repository);
+    }
+
+    @Test
+    @DisplayName("Mappingfeil i autoritativ Sokos-respons skal ikke skjules")
+    void autoritativMappingfeilPropagerer() {
+        when(sokos.utførSimulering(kontroll, null, false)).thenReturn(List.of(new SokosSimuleringRespons.Respons(0, "",
+            new SokosSimuleringRespons.Beregning("12345678910", List.of(new SokosSimuleringRespons.PeriodeStoppnivaa(null))))));
+
+        assertThatThrownBy(() -> tjeneste(false, true).startSimulering(kontroll)).isInstanceOf(NullPointerException.class);
+        verifyNoInteractions(wsProxy, repository);
+    }
+
     private void aktiverUtenInntrekk() {
         oppsummering.setFeilutbetaling(BigDecimal.ONE);
         oppsummering.setInntrekkNesteUtbetaling(BigDecimal.ONE);
     }
 
     private StartSimuleringTjeneste tjeneste(boolean sammenlign) {
-        return new StartSimuleringTjeneste(repository, wsProxy, sokos, transformer, beregningTjeneste, sammenlign);
+        return tjeneste(sammenlign, false);
+    }
+
+    private StartSimuleringTjeneste tjeneste(boolean sammenlign, boolean brukSokos) {
+        return new StartSimuleringTjeneste(repository, wsProxy, sokos, transformer, beregningTjeneste, sammenlign, brukSokos);
     }
 
     private List<String> meldinger() {
