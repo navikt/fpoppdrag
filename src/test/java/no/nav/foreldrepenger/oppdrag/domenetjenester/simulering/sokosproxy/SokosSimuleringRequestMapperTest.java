@@ -41,7 +41,7 @@ class SokosSimuleringRequestMapperTest {
               "simuleringsPeriode":{"datoSimulerFom":"","datoSimulerTom":""},
               "oppdrag":{"kodeEndring":"NY","kodeFagomraade":"FP","fagsystemId":"SYNTHETIC",
                 "utbetFrekvens":"MND","oppdragGjelderId":"12345678910","datoOppdragGjelderFom":"2000-01-01","saksbehId":"Z123456"},
-              "omposter":[{"ompostering":"J","datoOmposterFom":"2026-01-01"}],
+              "omposter":[{"ompostering":"J","datoOmposterFom":"2026-01-01","feilreg":false}],
               "enhetOppdrag":[{"typeEnhet":"BOS","enhet":"8020","datoEnhetFom":"1900-01-01"}],
               "oppdragslinje":[{"kodeEndringLinje":"ENDR","kodeStatusLinje":"OPPH","datoStatusFom":"2026-01-20",
                 "vedtakId":"42","delytelseId":"SYNTHETIC-2","kodeKlassifik":"FPATORD",
@@ -67,7 +67,11 @@ class SokosSimuleringRequestMapperTest {
         var request = requester.getFirst().operation().container().requestSimulering();
         assertThat(request.oppdrag().kodeFagomraade()).isEqualTo(bruker.name());
         assertThat(request.oppdrag().kodeEndring()).isEqualTo("ENDR");
-        assertThat(request.omposter()).containsExactly(new SokosSimuleringRequest.Omposter("N", ""));
+        assertThat(request.omposter()).containsExactly(new SokosSimuleringRequest.Omposter("N", "", false));
+        assertThat(fromJson(toJson(request.omposter().getFirst()), Map.class))
+            .isEqualTo(fromJson("""
+                {"ompostering":"N","datoOmposterFom":"","feilreg":false}
+                """, Map.class));
         assertThat(request.oppdragslinje()).extracting(SokosSimuleringRequest.Oppdragslinje::delytelseId).containsExactly("A-2", "A-10");
         assertThat(kontroll.oppdrag().getLast().ompostering116().omPostering()).isTrue();
         assertThat(kontroll.oppdrag().getLast().kodeEndring()).isEqualTo(KodeEndring.NY);

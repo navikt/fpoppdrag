@@ -45,11 +45,11 @@ final class SokosSimuleringRequestMapper {
 
     private static List<SokosSimuleringRequest.Omposter> mapOmpostering(Oppdrag110Dto dto, boolean utenInntrekk) {
         if (utenInntrekk) {
-            return List.of(new SokosSimuleringRequest.Omposter("N", ""));
+            return List.of(new SokosSimuleringRequest.Omposter("N", "", false));
         }
         var ompostering = dto.ompostering116();
         return ompostering == null ? List.of() : List.of(new SokosSimuleringRequest.Omposter(
-            Boolean.TRUE.equals(ompostering.omPostering()) ? "J" : "N", dato(ompostering.datoOmposterFom())));
+            Boolean.TRUE.equals(ompostering.omPostering()) ? "J" : "N", dato(ompostering.datoOmposterFom()), false));
     }
 
     private static SokosSimuleringRequest.Oppdragslinje mapLinje(Oppdragslinje150Dto linje, Oppdrag110Dto oppdrag, String behandlingId) {
