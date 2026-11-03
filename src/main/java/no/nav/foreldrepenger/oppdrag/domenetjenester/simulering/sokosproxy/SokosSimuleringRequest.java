@@ -25,7 +25,7 @@ public record SokosSimuleringRequest(@JsonProperty("OsSimulerBeregningOperation"
                           String utbetFrekvens, String oppdragGjelderId,
                           String datoOppdragGjelderFom, String saksbehId) { }
 
-    public record Omposter(String ompostering, String datoOmposterFom) { }
+    public record Omposter(String ompostering, String datoOmposterFom, boolean feilreg) { }
 
     public record Enhet(String typeEnhet, String enhet, String datoEnhetFom) { }
 
