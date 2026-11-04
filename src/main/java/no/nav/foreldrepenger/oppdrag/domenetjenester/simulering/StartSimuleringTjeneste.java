@@ -35,7 +35,8 @@ public class StartSimuleringTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(StartSimuleringTjeneste.class);
 
-    private boolean skalKalleSokos;
+    private boolean sammenlignSokos;
+    private boolean brukSokos;
 
     private SimuleringRepository simuleringRepository;
     private FpWsProxySimuleringKlient fpWsProxySimuleringKlient;
@@ -54,7 +55,11 @@ public class StartSimuleringTjeneste {
                                    SimuleringResultatTransformer resultatTransformer,
                                    SimuleringBeregningTjeneste simuleringBeregningTjeneste) {
         this(simuleringRepository, fpWsProxySimuleringKlient, sokosOppdragProxyKlient, resultatTransformer,
-            simuleringBeregningTjeneste, Environment.current().getProperty("sokos.simulering.sammenlign", Boolean.class, false));
+            simuleringBeregningTjeneste,
+            Environment.current().getProperty("sokos.simulering.sammenlign", Boolean.class, false)
+                || Environment.current().getProperty("SOKOS_SIMULERING_SAMMENLIGN", Boolean.class, false),
+            Environment.current().getProperty("sokos.simulering.bruk", Boolean.class, false)
+                || Environment.current().getProperty("SOKOS_SIMULERING_BRUK", Boolean.class, false));
     }
 
     StartSimuleringTjeneste(SimuleringRepository simuleringRepository,
@@ -62,13 +67,15 @@ public class StartSimuleringTjeneste {
                             SokosOppdragProxyKlient sokosOppdragProxyKlient,
                             SimuleringResultatTransformer resultatTransformer,
                             SimuleringBeregningTjeneste simuleringBeregningTjeneste,
-                            boolean skalKalleSokos) {
+                            boolean sammenlignSokos,
+                            boolean brukSokos) {
         this.simuleringRepository = simuleringRepository;
         this.fpWsProxySimuleringKlient = fpWsProxySimuleringKlient;
         this.sokosOppdragProxyKlient = sokosOppdragProxyKlient;
         this.resultatTransformer = resultatTransformer;
         this.simuleringBeregningTjeneste = simuleringBeregningTjeneste;
-        this.skalKalleSokos = skalKalleSokos;
+        this.sammenlignSokos = sammenlignSokos;
+        this.brukSokos = brukSokos;
     }
 
     public void startSimulering(OppdragskontrollDto oppdragskontrollDto) {
@@ -76,9 +83,37 @@ public class StartSimuleringTjeneste {
         var behandlingId = Long.parseLong(oppdragskontrollDto.behandlingId());
         LOG.info("Starter simulering. behandlingID={} oppdragantall={}", behandlingId, oppdragskontrollDto.oppdrag().size());
 
+        if (brukSokos) {
+            startSimuleringViaSokos(oppdragskontrollDto, behandlingId);
+        } else if (sammenlignSokos) {
+            startSimuleringMedSammenligning(oppdragskontrollDto, behandlingId);
+        } else {
+            startSimuleringViaFpWsProxy(oppdragskontrollDto, behandlingId);
+        }
+        LOG.info("Fullført simulering. behandlingID={} tidsforbrukTotalt={} ms", behandlingId, System.currentTimeMillis() - t0);
+    }
+
+    private void startSimuleringViaFpWsProxy(OppdragskontrollDto oppdragskontrollDto, long behandlingId) {
+        long t0 = System.currentTimeMillis();
+        var simuleringResponsListe = utførSimuleringViaFpWsProxy(oppdragskontrollDto);
+        LOG.info("Simulering svarmeldinger mottatt fra FpWsProxy. behandlingID={} tidsforbruk={} ms",
+            behandlingId, System.currentTimeMillis() - t0);
+
+        if (harIkkeTomRespons(simuleringResponsListe)) {
+            var ytelseType = bestemYtelseType(behandlingId, oppdragskontrollDto.oppdrag());
+            var simuleringGrunnlag = transformerTilDatastruktur(behandlingId, simuleringResponsListe, ytelseType);
+            utførSimuleringUtenInntrekk(oppdragskontrollDto, simuleringGrunnlag);
+            simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
+        } else {
+            deaktiverBehandling(behandlingId);
+        }
+    }
+
+    private void startSimuleringMedSammenligning(OppdragskontrollDto oppdragskontrollDto, long behandlingId) {
+        long t0 = System.currentTimeMillis();
         var simuleringResponsListe = utførSimuleringViaFpWsProxy(oppdragskontrollDto);
 
-        LOG.info("Simulering svarmeldinger mottatt. behandlingID={} tidsforbruk={} ms",
+        LOG.info("Simulering svarmeldinger mottatt fra FpWsProxy før sammenligning. behandlingID={} tidsforbruk={} ms",
                 behandlingId,
                 System.currentTimeMillis() - t0);
 
@@ -88,9 +123,7 @@ public class StartSimuleringTjeneste {
 
             var simulertUtenInntrekk = utførSimuleringUtenInntrekk(oppdragskontrollDto, simuleringGrunnlag);
 
-            if (skalKalleSokos) {
-                sammenlignMedSokos(oppdragskontrollDto, simuleringGrunnlag, simulertUtenInntrekk);
-            }
+            sammenlignMedSokos(oppdragskontrollDto, simuleringGrunnlag, simulertUtenInntrekk);
 
             simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
         } else {
@@ -99,7 +132,22 @@ public class StartSimuleringTjeneste {
             // for å unngå å sende simuleringsresultat for forrige simulering når den nye simuleringen returnerer tomt resultat
             deaktiverBehandling(behandlingId);
         }
-        LOG.info("Fullført simulering. behandlingID={} tidsforbrukTotalt={} ms", behandlingId, System.currentTimeMillis() - t0);
+    }
+
+    private void startSimuleringViaSokos(OppdragskontrollDto oppdragskontrollDto, long behandlingId) {
+        long t0 = System.currentTimeMillis();
+        var beregninger = hentSokosBeregninger(oppdragskontrollDto, null, false);
+        LOG.info("Simulering svarmeldinger mottatt fra Sokos. behandlingID={} tidsforbruk={} ms",
+            behandlingId, System.currentTimeMillis() - t0);
+
+        if (!beregninger.isEmpty()) {
+            var ytelseType = bestemYtelseType(behandlingId, oppdragskontrollDto.oppdrag());
+            var simuleringGrunnlag = resultatTransformer.mapSokosSimulering(behandlingId, beregninger, ytelseType);
+            utførSokosSimuleringUtenInntrekk(oppdragskontrollDto, simuleringGrunnlag);
+            simuleringRepository.lagreSimuleringGrunnlag(simuleringGrunnlag);
+        } else {
+            deaktiverBehandling(behandlingId);
+        }
     }
 
     private List<BeregningDto> utførSimuleringViaFpWsProxy(OppdragskontrollDto oppdragskontrollDto) {
@@ -128,6 +176,15 @@ public class StartSimuleringTjeneste {
             return true;
         }
         return false;
+    }
+
+    private void utførSokosSimuleringUtenInntrekk(OppdragskontrollDto oppdragskontrollDto, SimuleringGrunnlag simuleringGrunnlag) {
+        var beregningResultat = simuleringBeregningTjeneste.hentBeregningsresultat(simuleringGrunnlag);
+        if (erResultatMedInntrekkOgFeilutbetaling(beregningResultat)) {
+            LOG.info("Utfører simulering uten inntrekk via Sokos.");
+            hentSokosBeregninger(oppdragskontrollDto, simuleringGrunnlag.getYtelseType(), true)
+                .forEach(beregning -> resultatTransformer.mapSokosSimuleringUtenInntrekk(beregning, simuleringGrunnlag));
+        }
     }
 
     private void sammenlignMedSokos(OppdragskontrollDto oppdrag, SimuleringGrunnlag fasit, boolean simulertUtenInntrekk) {
